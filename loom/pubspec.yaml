@@ -1,0 +1,36 @@
+name: loom
+version: 1.0.0+1
+publish_to: none
+environment:
+  sdk: ^3.5.4
+description: A new Flutter project.
+dependencies:
+  cupertino_icons: ^1.0.8
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^2.5.1
+  flutter_rust_bridge: 2.11.1
+  riverpod_annotation: ^2.3.5
+  rust_lib_loom:
+    path: rust_builder
+  # Platform adaptive widgets
+  adaptive_theme: ^3.6.0
+  dynamic_color: ^1.6.8
+  # Icons
+  lucide_icons: ^0.257.0
+  # File system
+  path: ^1.9.0
+dev_dependencies:
+  build_runner: ^2.4.13
+  custom_lint: ^0.6.4
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  pubspec_dependency_sorter: ^1.0.4
+  riverpod_generator: ^2.4.0
+  riverpod_lint: ^2.3.10
+  very_good_analysis: ^6.0.0
+flutter:
+  uses-material-design: true
