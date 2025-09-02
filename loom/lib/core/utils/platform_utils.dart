@@ -84,11 +84,11 @@ class AdaptiveConstants {
     final paradigm = PlatformUtils.getUIParadigm(context);
     switch (paradigm) {
       case UIParadigm.desktopLike:
-        return 240.0;
+        return 240;
       case UIParadigm.compactDesktop:
-        return 200.0;
+        return 200;
       case UIParadigm.tabletLike:
-        return 280.0;
+        return 280;
       case UIParadigm.mobileLike:
         return MediaQuery.of(context).size.width * 0.8;
     }
@@ -98,11 +98,11 @@ class AdaptiveConstants {
     final paradigm = PlatformUtils.getUIParadigm(context);
     switch (paradigm) {
       case UIParadigm.desktopLike:
-        return 320.0;
+        return 320;
       case UIParadigm.compactDesktop:
-        return 280.0;
+        return 280;
       case UIParadigm.tabletLike:
-        return 300.0;
+        return 300;
       case UIParadigm.mobileLike:
         return MediaQuery.of(context).size.width;
     }
@@ -113,11 +113,11 @@ class AdaptiveConstants {
     switch (paradigm) {
       case UIParadigm.desktopLike:
       case UIParadigm.compactDesktop:
-        return 35.0;
+        return 35;
       case UIParadigm.tabletLike:
-        return 48.0;
+        return 48;
       case UIParadigm.mobileLike:
-        return 56.0; // Standard AppBar height
+        return 56; // Standard AppBar height
     }
   }
 }

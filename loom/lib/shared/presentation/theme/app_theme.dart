@@ -1,4 +1,3 @@
-import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -8,7 +7,6 @@ class AppTheme {
     primary: Color(0xFF0066CC),
     secondary: Color(0xFF6366F1),
     surface: Color(0xFFFFFBFE),
-    background: Color(0xFFFFFBFE),
     error: Color(0xFFBA1A1A),
   );
 
@@ -16,7 +14,6 @@ class AppTheme {
     primary: Color(0xFF99CCFF),
     secondary: Color(0xFF9CA3FF),
     surface: Color(0xFF111111),
-    background: Color(0xFF111111),
     error: Color(0xFFFFB4AB),
   );
 
@@ -67,7 +64,9 @@ class AppTheme {
   }
 
   static Map<String, dynamic> _getWindowsTheme(
-      ColorScheme colorScheme, Brightness brightness) {
+    ColorScheme colorScheme,
+    Brightness brightness,
+  ) {
     return {
       'appBarTheme': AppBarTheme(
         backgroundColor: colorScheme.surface,
@@ -87,7 +86,9 @@ class AppTheme {
   }
 
   static Map<String, dynamic> _getMacOSTheme(
-      ColorScheme colorScheme, Brightness brightness) {
+    ColorScheme colorScheme,
+    Brightness brightness,
+  ) {
     return {
       'appBarTheme': AppBarTheme(
         backgroundColor: colorScheme.surface,
@@ -107,7 +108,9 @@ class AppTheme {
   }
 
   static Map<String, dynamic> _getLinuxTheme(
-      ColorScheme colorScheme, Brightness brightness) {
+    ColorScheme colorScheme,
+    Brightness brightness,
+  ) {
     return {
       'appBarTheme': AppBarTheme(
         backgroundColor: colorScheme.surface,
@@ -127,9 +130,9 @@ class AppTheme {
   }
 
   // VSCode-inspired dimensions
-  static const double sidebarWidth = 240.0;
-  static const double sidebarCollapsedWidth = 48.0;
-  static const double topBarHeight = 35.0;
-  static const double bottomBarHeight = 24.0;
-  static const double sidePanelWidth = 300.0;
+  static const double sidebarWidth = 240;
+  static const double sidebarCollapsedWidth = 48;
+  static const double topBarHeight = 35;
+  static const double bottomBarHeight = 24;
+  static const double sidePanelWidth = 300;
 }

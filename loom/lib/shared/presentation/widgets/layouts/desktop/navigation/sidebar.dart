@@ -13,11 +13,10 @@ class Sidebar extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
         border: Border(
           right: BorderSide(
             color: theme.dividerColor,
-            width: 1,
           ),
         ),
       ),
@@ -91,17 +90,16 @@ class Sidebar extends ConsumerWidget {
 }
 
 class _SidebarButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback? onPressed;
-
   const _SidebarButton({
     required this.icon,
     required this.label,
     this.isSelected = false,
     this.onPressed,
   });
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {

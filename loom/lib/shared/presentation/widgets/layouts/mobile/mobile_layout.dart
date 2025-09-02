@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
-import '../desktop/panels/content_area.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/panels/content_area.dart';
 
 /// Mobile-specific layout with completely different UX patterns
 /// - AppBar with hamburger menu instead of fixed top bar
@@ -114,28 +114,28 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
                 _DrawerItem(
                   icon: LucideIcons.folderOpen,
                   title: 'Recent Files',
-                  onTap: () => _navigateToRecentFiles(),
+                  onTap: _navigateToRecentFiles,
                 ),
                 _DrawerItem(
                   icon: LucideIcons.star,
                   title: 'Favorites',
-                  onTap: () => _navigateToFavorites(),
+                  onTap: _navigateToFavorites,
                 ),
                 _DrawerItem(
                   icon: LucideIcons.clock,
                   title: 'History',
-                  onTap: () => _navigateToHistory(),
+                  onTap: _navigateToHistory,
                 ),
                 const Divider(),
                 _DrawerItem(
                   icon: LucideIcons.settings,
                   title: 'Settings',
-                  onTap: () => _navigateToSettings(),
+                  onTap: _navigateToSettings,
                 ),
                 _DrawerItem(
                   icon: LucideIcons.helpCircle,
                   title: 'Help & Support',
-                  onTap: () => _navigateToHelp(),
+                  onTap: _navigateToHelp,
                 ),
               ],
             ),
@@ -167,7 +167,10 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
   }
 
   Widget _buildMobileContent(
-      BuildContext context, int selectedIndex, UIState uiState) {
+    BuildContext context,
+    int selectedIndex,
+    UIState uiState,
+  ) {
     switch (selectedIndex) {
       case 0: // Documents
         return const _MobileDocumentsView();
@@ -272,17 +275,16 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
 // Mobile-specific widgets
 
 class _DrawerItem extends StatelessWidget {
+  const _DrawerItem({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+    this.trailing,
+  });
   final IconData icon;
   final String title;
   final Widget? trailing;
   final VoidCallback onTap;
-
-  const _DrawerItem({
-    required this.icon,
-    required this.title,
-    this.trailing,
-    required this.onTap,
-  });
 
   @override
   Widget build(BuildContext context) {

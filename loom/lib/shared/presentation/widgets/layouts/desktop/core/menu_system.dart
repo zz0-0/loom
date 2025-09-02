@@ -1,0 +1,272 @@
+import 'package:flutter/material.dart';
+
+/// Interface for menu items
+abstract class MenuItem {
+  String get label;
+  List<MenuItem>? get children;
+  VoidCallback? get onPressed;
+  IconData? get icon;
+}
+
+/// Implementation of a simple menu item
+class SimpleMenuItem implements MenuItem {
+  const SimpleMenuItem({
+    required this.label,
+    this.children,
+    this.onPressed,
+    this.icon,
+  });
+
+  @override
+  final String label;
+
+  @override
+  final List<MenuItem>? children;
+
+  @override
+  final VoidCallback? onPressed;
+
+  @override
+  final IconData? icon;
+}
+
+/// Settings for top bar appearance
+class TopBarSettings {
+  const TopBarSettings({
+    this.showTitle = true,
+    this.showSearch = true,
+    this.showMenuAsHamburger = false,
+    this.title = 'Loom',
+  });
+
+  final bool showTitle;
+  final bool showSearch;
+  final bool showMenuAsHamburger;
+  final String title;
+
+  TopBarSettings copyWith({
+    bool? showTitle,
+    bool? showSearch,
+    bool? showMenuAsHamburger,
+    String? title,
+  }) {
+    return TopBarSettings(
+      showTitle: showTitle ?? this.showTitle,
+      showSearch: showSearch ?? this.showSearch,
+      showMenuAsHamburger: showMenuAsHamburger ?? this.showMenuAsHamburger,
+      title: title ?? this.title,
+    );
+  }
+}
+
+/// Menu registry for top bar menus
+class MenuRegistry {
+  static final MenuRegistry _instance = MenuRegistry._internal();
+  factory MenuRegistry() => _instance;
+  MenuRegistry._internal();
+
+  final List<MenuItem> _menus = [];
+
+  /// Register a menu
+  void registerMenu(MenuItem menu) {
+    _menus.removeWhere((existing) => existing.label == menu.label);
+    _menus.add(menu);
+  }
+
+  /// Register multiple menus
+  void registerMenus(List<MenuItem> menus) {
+    for (final menu in menus) {
+      registerMenu(menu);
+    }
+  }
+
+  /// Get all registered menus
+  List<MenuItem> get menus => List.unmodifiable(_menus);
+
+  /// Clear all registrations
+  void clear() {
+    _menus.clear();
+  }
+}
+
+/// Desktop-style menu widget
+class DesktopMenuBar extends StatelessWidget {
+  const DesktopMenuBar({
+    super.key,
+    required this.settings,
+    this.onMenuPressed,
+  });
+
+  final TopBarSettings settings;
+  final VoidCallback? onMenuPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final registry = MenuRegistry();
+    final menus = registry.menus;
+
+    if (settings.showMenuAsHamburger || menus.isEmpty) {
+      // Show hamburger menu
+      return IconButton(
+        icon: const Icon(Icons.menu, size: 16),
+        onPressed: onMenuPressed ?? () => _showHamburgerMenu(context, menus),
+        splashRadius: 16,
+      );
+    } else {
+      // Show desktop-style menu bar
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: menus.map((menu) => _MenuBarItem(menu: menu)).toList(),
+      );
+    }
+  }
+
+  void _showHamburgerMenu(BuildContext context, List<MenuItem> menus) {
+    final RenderBox button = context.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset.zero, ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero),
+            ancestor: overlay),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    showMenu(
+      context: context,
+      position: position,
+      items: _buildMenuItems(menus),
+    );
+  }
+
+  List<PopupMenuEntry<VoidCallback?>> _buildMenuItems(List<MenuItem> menus) {
+    final List<PopupMenuEntry<VoidCallback?>> items = [];
+
+    for (int i = 0; i < menus.length; i++) {
+      final menu = menus[i];
+
+      if (menu.children != null && menu.children!.isNotEmpty) {
+        // Submenu
+        items.add(
+          PopupMenuItem<VoidCallback?>(
+            value: null,
+            child: Row(
+              children: [
+                if (menu.icon != null) ...[
+                  Icon(menu.icon, size: 16),
+                  const SizedBox(width: 8),
+                ],
+                Expanded(child: Text(menu.label)),
+                const Icon(Icons.arrow_right, size: 16),
+              ],
+            ),
+          ),
+        );
+      } else {
+        // Regular menu item
+        items.add(
+          PopupMenuItem<VoidCallback?>(
+            value: menu.onPressed,
+            child: Row(
+              children: [
+                if (menu.icon != null) ...[
+                  Icon(menu.icon, size: 16),
+                  const SizedBox(width: 8),
+                ],
+                Text(menu.label),
+              ],
+            ),
+          ),
+        );
+      }
+
+      // Add divider if not last item
+      if (i < menus.length - 1) {
+        items.add(const PopupMenuDivider());
+      }
+    }
+
+    return items;
+  }
+}
+
+class _MenuBarItem extends StatefulWidget {
+  const _MenuBarItem({required this.menu});
+
+  final MenuItem menu;
+
+  @override
+  State<_MenuBarItem> createState() => _MenuBarItemState();
+}
+
+class _MenuBarItemState extends State<_MenuBarItem> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: Material(
+        color: _isHovered
+            ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.3)
+            : Colors.transparent,
+        child: InkWell(
+          onTap: widget.menu.onPressed ?? () => _showSubmenu(context),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Text(
+              widget.menu.label,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showSubmenu(BuildContext context) {
+    if (widget.menu.children == null || widget.menu.children!.isEmpty) return;
+
+    final RenderBox button = context.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
+    final RelativeRect position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset.zero, ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero),
+            ancestor: overlay),
+      ),
+      Offset.zero & overlay.size,
+    );
+
+    showMenu(
+      context: context,
+      position: position,
+      items: widget.menu.children!
+          .map((item) => PopupMenuItem<VoidCallback?>(
+                value: item.onPressed,
+                child: Row(
+                  children: [
+                    if (item.icon != null) ...[
+                      Icon(item.icon, size: 16),
+                      const SizedBox(width: 8),
+                    ],
+                    Text(item.label),
+                  ],
+                ),
+              ))
+          .toList(),
+    ).then((callback) {
+      if (callback != null) {
+        callback();
+      }
+    });
+  }
+}

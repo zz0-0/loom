@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class SidePanel extends ConsumerWidget {
-  final String? selectedItem;
-  final VoidCallback? onClose;
-
   const SidePanel({
     super.key,
     this.selectedItem,
     this.onClose,
   });
+  final String? selectedItem;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +22,6 @@ class SidePanel extends ConsumerWidget {
         border: Border(
           right: BorderSide(
             color: theme.dividerColor,
-            width: 1,
           ),
         ),
       ),
@@ -38,7 +35,6 @@ class SidePanel extends ConsumerWidget {
               border: Border(
                 bottom: BorderSide(
                   color: theme.dividerColor,
-                  width: 1,
                 ),
               ),
             ),
@@ -215,13 +211,6 @@ class _ExplorerPanel extends ConsumerWidget {
 }
 
 class _FileTreeItem extends StatelessWidget {
-  final IconData icon;
-  final String name;
-  final bool isExpanded;
-  final VoidCallback? onTap;
-  final List<_FileTreeItem>? children;
-  final int depth;
-
   const _FileTreeItem({
     required this.icon,
     required this.name,
@@ -230,6 +219,12 @@ class _FileTreeItem extends StatelessWidget {
     this.children,
     this.depth = 0,
   });
+  final IconData icon;
+  final String name;
+  final bool isExpanded;
+  final VoidCallback? onTap;
+  final List<_FileTreeItem>? children;
+  final int depth;
 
   @override
   Widget build(BuildContext context) {
@@ -245,9 +240,9 @@ class _FileTreeItem extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.only(
                 left: 8.0 + (depth * 16.0),
-                right: 8.0,
-                top: 4.0,
-                bottom: 4.0,
+                right: 8,
+                top: 4,
+                bottom: 4,
               ),
               child: Row(
                 children: [
@@ -281,14 +276,16 @@ class _FileTreeItem extends StatelessWidget {
           ),
         ),
         if (hasChildren && isExpanded)
-          ...children!.map((child) => _FileTreeItem(
-                icon: child.icon,
-                name: child.name,
-                isExpanded: child.isExpanded,
-                onTap: child.onTap,
-                children: child.children,
-                depth: depth + 1,
-              )),
+          ...children!.map(
+            (child) => _FileTreeItem(
+              icon: child.icon,
+              name: child.name,
+              isExpanded: child.isExpanded,
+              onTap: child.onTap,
+              depth: depth + 1,
+              children: child.children,
+            ),
+          ),
       ],
     );
   }
@@ -310,7 +307,8 @@ class _SourceControlPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-        child: Text('Source Control Panel\n(To be implemented)'));
+      child: Text('Source Control Panel\n(To be implemented)'),
+    );
   }
 }
 

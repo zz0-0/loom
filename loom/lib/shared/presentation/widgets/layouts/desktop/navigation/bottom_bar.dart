@@ -1,80 +1,77 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
 
+/// Extensible bottom bar that displays registered items
 class BottomBar extends StatelessWidget {
   const BottomBar({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final registry = BottomBarRegistry();
 
     return Container(
+      height: AppTheme.bottomBarHeight,
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: theme.brightness == Brightness.light
+            ? theme.colorScheme.surfaceContainerHighest
+            : theme.colorScheme.surface,
         border: Border(
           top: BorderSide(
             color: theme.dividerColor,
-            width: 1,
           ),
         ),
       ),
-      child: Row(
-        children: [
-          // Left side status items
-          Expanded(
-            child: Row(
-              children: [
-                _StatusItem(
-                  icon: LucideIcons.gitBranch,
-                  text: 'main',
-                  onTap: () {
-                    // TODO: Git branch info
-                  },
-                ),
-                _StatusItem(
-                  icon: LucideIcons.alertCircle,
-                  text: '0',
-                  color: theme.colorScheme.error,
-                  onTap: () {
-                    // TODO: Show errors
-                  },
-                ),
-                _StatusItem(
-                  icon: LucideIcons.alertTriangle,
-                  text: '0',
-                  color: Colors.orange,
-                  onTap: () {
-                    // TODO: Show warnings
-                  },
-                ),
-              ],
-            ),
-          ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Row(
+          children: [
+            // Left side items
+            ...registry.items
+                .where((item) => item.priority < 100)
+                .map((item) => item.build(context)),
 
-          // Right side status items
-          Row(
-            children: [
-              _StatusItem(
-                text: 'UTF-8',
-                onTap: () {
-                  // TODO: Encoding settings
-                },
-              ),
-              _StatusItem(
-                text: 'Dart',
-                onTap: () {
-                  // TODO: Language mode
-                },
-              ),
-              _StatusItem(
-                icon: LucideIcons.check,
-                text: 'Ready',
-                color: theme.colorScheme.primary,
-                onTap: () {
-                  // TODO: Status info
-                },
-              ),
-            ],
+            // Spacer
+            const Spacer(),
+
+            // Right side items
+            ...registry.items
+                .where((item) => item.priority >= 100)
+                .map((item) => item.build(context)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Default status items for the bottom bar
+class StatusBottomBarItem implements BottomBarItem {
+  @override
+  String get id => 'status';
+
+  @override
+  int get priority => 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.circle,
+            size: 8,
+            color: Colors.green,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'Ready',
+            style: theme.textTheme.bodySmall,
           ),
         ],
       ),
@@ -82,51 +79,64 @@ class BottomBar extends StatelessWidget {
   }
 }
 
-class _StatusItem extends StatelessWidget {
-  final IconData? icon;
-  final String text;
-  final Color? color;
-  final VoidCallback? onTap;
+class LanguageBottomBarItem implements BottomBarItem {
+  @override
+  String get id => 'language';
 
-  const _StatusItem({
-    this.icon,
-    required this.text,
-    this.color,
-    this.onTap,
-  });
+  @override
+  int get priority => 100;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final itemColor = color ?? theme.colorScheme.onSurfaceVariant;
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Icon(
-                  icon,
-                  size: 12,
-                  color: itemColor,
-                ),
-                const SizedBox(width: 4),
-              ],
-              Text(
-                text,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: itemColor,
-                  fontSize: 11,
-                ),
-              ),
-            ],
-          ),
-        ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Text(
+        'Dart',
+        style: theme.textTheme.bodySmall,
+      ),
+    );
+  }
+}
+
+class EncodingBottomBarItem implements BottomBarItem {
+  @override
+  String get id => 'encoding';
+
+  @override
+  int get priority => 101;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Text(
+        'UTF-8',
+        style: theme.textTheme.bodySmall,
+      ),
+    );
+  }
+}
+
+class LineEndingBottomBarItem implements BottomBarItem {
+  @override
+  String get id => 'line_ending';
+
+  @override
+  int get priority => 102;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Text(
+        'LF',
+        style: theme.textTheme.bodySmall,
       ),
     );
   }

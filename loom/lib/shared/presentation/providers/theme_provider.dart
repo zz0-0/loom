@@ -1,7 +1,7 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../theme/app_theme.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
 
 // Theme mode state notifier
 class ThemeModeNotifier extends StateNotifier<AdaptiveThemeMode> {
@@ -33,17 +33,16 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
 
 // UI State providers
 class UIState {
-  final bool isSidebarCollapsed;
-  final bool isSidePanelVisible;
-  final String? selectedSidebarItem;
-  final String? openedFile;
-
   const UIState({
     this.isSidebarCollapsed = false,
     this.isSidePanelVisible = true,
     this.selectedSidebarItem,
     this.openedFile,
   });
+  final bool isSidebarCollapsed;
+  final bool isSidePanelVisible;
+  final String? selectedSidebarItem;
+  final String? openedFile;
 
   UIState copyWith({
     bool? isSidebarCollapsed,
@@ -104,7 +103,7 @@ class UIStateNotifier extends StateNotifier<UIState> {
   }
 
   void closeFile() {
-    state = state.copyWith(openedFile: null);
+    state = state.copyWith();
   }
 }
 

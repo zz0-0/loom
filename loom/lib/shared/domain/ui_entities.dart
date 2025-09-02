@@ -1,18 +1,12 @@
 /// Core UI state entities that are platform-agnostic
 /// These represent the business logic of UI state, not the implementation
+library;
 
 /// Theme mode options
 enum AppThemeMode { light, dark, system }
 
 /// Global application UI state
 class AppUIState {
-  final bool isSidebarCollapsed;
-  final bool isSidePanelVisible;
-  final String? selectedSidebarItem;
-  final String? openedFile;
-  final AppThemeMode themeMode;
-  final String? activeWorkspace;
-
   const AppUIState({
     this.isSidebarCollapsed = false,
     this.isSidePanelVisible = true,
@@ -21,6 +15,12 @@ class AppUIState {
     this.themeMode = AppThemeMode.system,
     this.activeWorkspace,
   });
+  final bool isSidebarCollapsed;
+  final bool isSidePanelVisible;
+  final String? selectedSidebarItem;
+  final String? openedFile;
+  final AppThemeMode themeMode;
+  final String? activeWorkspace;
 
   AppUIState copyWith({
     bool? isSidebarCollapsed,
@@ -43,12 +43,6 @@ class AppUIState {
 
 /// Navigation item configuration - platform agnostic
 class NavigationItem {
-  final String id;
-  final String label;
-  final String iconName;
-  final int sortOrder;
-  final bool isVisible;
-
   const NavigationItem({
     required this.id,
     required this.label,
@@ -56,18 +50,15 @@ class NavigationItem {
     this.sortOrder = 0,
     this.isVisible = true,
   });
+  final String id;
+  final String label;
+  final String iconName;
+  final int sortOrder;
+  final bool isVisible;
 }
 
 /// Panel configuration - platform agnostic
 class PanelConfig {
-  final String id;
-  final String title;
-  final bool isCollapsible;
-  final bool isResizable;
-  final double? defaultWidth;
-  final double? minWidth;
-  final double? maxWidth;
-
   const PanelConfig({
     required this.id,
     required this.title,
@@ -77,10 +68,26 @@ class PanelConfig {
     this.minWidth,
     this.maxWidth,
   });
+  final String id;
+  final String title;
+  final bool isCollapsible;
+  final bool isResizable;
+  final double? defaultWidth;
+  final double? minWidth;
+  final double? maxWidth;
 }
 
 /// File/document reference - platform agnostic
 class DocumentReference {
+  const DocumentReference({
+    required this.id,
+    required this.path,
+    required this.title,
+    required this.lastModified,
+    this.subtitle,
+    this.isModified = false,
+    this.iconName,
+  });
   final String id;
   final String path;
   final String title;
@@ -88,14 +95,4 @@ class DocumentReference {
   final DateTime lastModified;
   final bool isModified;
   final String? iconName;
-
-  const DocumentReference({
-    required this.id,
-    required this.path,
-    required this.title,
-    this.subtitle,
-    required this.lastModified,
-    this.isModified = false,
-    this.iconName,
-  });
 }

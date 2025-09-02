@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class ContentArea extends StatelessWidget {
-  final String? openedFile;
-
   const ContentArea({
     super.key,
     this.openedFile,
   });
+  final String? openedFile;
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +23,11 @@ class ContentArea extends StatelessWidget {
             Container(
               height: 35,
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                color:
+                    theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 border: Border(
                   bottom: BorderSide(
                     color: theme.dividerColor,
-                    width: 1,
                   ),
                 ),
               ),
@@ -63,17 +62,16 @@ class ContentArea extends StatelessWidget {
 }
 
 class _FileTab extends StatelessWidget {
-  final String fileName;
-  final String filePath;
-  final bool isActive;
-  final VoidCallback? onClose;
-
   const _FileTab({
     required this.fileName,
     required this.filePath,
     this.isActive = false,
     this.onClose,
   });
+  final String fileName;
+  final String filePath;
+  final bool isActive;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +84,6 @@ class _FileTab extends StatelessWidget {
         border: Border(
           right: BorderSide(
             color: theme.dividerColor,
-            width: 1,
           ),
         ),
       ),
@@ -225,17 +222,16 @@ class _WelcomeView extends StatelessWidget {
 }
 
 class _WelcomeAction extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback? onTap;
-
   const _WelcomeAction({
     required this.icon,
     required this.title,
     required this.subtitle,
     this.onTap,
   });
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -287,9 +283,8 @@ class _WelcomeAction extends StatelessWidget {
 }
 
 class _EditorView extends StatelessWidget {
-  final String filePath;
-
   const _EditorView({required this.filePath});
+  final String filePath;
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +307,8 @@ class _EditorView extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                color:
+                    theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: theme.colorScheme.outline.withOpacity(0.2),
