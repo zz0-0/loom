@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 
 /// Extensible content area that displays content from registered providers
@@ -20,11 +21,70 @@ class ExtensibleContentArea extends ConsumerWidget {
     final contentProvider = registry.getContentProvider(contentId);
 
     if (contentProvider != null) {
-      return contentProvider.build(context);
+      return Column(
+        children: [
+          // Content header with close button (if content is open)
+          if (contentId != null)
+            Container(
+              height: 35,
+              decoration: BoxDecoration(
+                color:
+                    theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                border: Border(
+                  bottom: BorderSide(
+                    color: theme.dividerColor,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        _getContentTitle(contentId!),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 16),
+                    onPressed: () {
+                      ref.read(uiStateProvider.notifier).closeFile();
+                    },
+                    splashRadius: 12,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(
+                      minWidth: 28,
+                      minHeight: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              ),
+            ),
+
+          // Content area
+          Expanded(
+            child: contentProvider.build(context),
+          ),
+        ],
+      );
     }
 
     // Default empty state
     return _buildEmptyState(context, theme);
+  }
+
+  String _getContentTitle(String contentId) {
+    switch (contentId) {
+      case 'settings':
+        return 'Settings';
+      default:
+        return contentId.split('/').last; // Show filename for file paths
+    }
   }
 
   Widget _buildEmptyState(BuildContext context, ThemeData theme) {

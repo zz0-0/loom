@@ -19,7 +19,7 @@ Future<void> main() async {
     windowButtonVisibility: false,
   );
 
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
+  await windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();
   });

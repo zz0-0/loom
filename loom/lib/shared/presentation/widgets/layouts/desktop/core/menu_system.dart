@@ -92,7 +92,8 @@ class MenuRegistry {
 /// Desktop-style menu widget
 class DesktopMenuBar extends StatelessWidget {
   const DesktopMenuBar({
-    required this.settings, super.key,
+    required this.settings,
+    super.key,
     this.onMenuPressed,
   });
 
@@ -127,8 +128,10 @@ class DesktopMenuBar extends StatelessWidget {
     final position = RelativeRect.fromRect(
       Rect.fromPoints(
         button.localToGlobal(Offset.zero, ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero),
-            ancestor: overlay,),
+        button.localToGlobal(
+          button.size.bottomRight(Offset.zero),
+          ancestor: overlay,
+        ),
       ),
       Offset.zero & overlay.size,
     );
@@ -216,11 +219,12 @@ class _MenuBarItemState extends State<_MenuBarItem> {
         child: InkWell(
           onTap: widget.menu.onPressed ?? () => _showSubmenu(context),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             child: Text(
               widget.menu.label,
               style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w500,
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
@@ -237,9 +241,11 @@ class _MenuBarItemState extends State<_MenuBarItem> {
         Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
     final position = RelativeRect.fromRect(
       Rect.fromPoints(
-        button.localToGlobal(Offset.zero, ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero),
-            ancestor: overlay,),
+        button.localToGlobal(Offset(0, button.size.height), ancestor: overlay),
+        button.localToGlobal(
+          button.size.bottomRight(Offset.zero),
+          ancestor: overlay,
+        ),
       ),
       Offset.zero & overlay.size,
     );
@@ -248,18 +254,26 @@ class _MenuBarItemState extends State<_MenuBarItem> {
       context: context,
       position: position,
       items: widget.menu.children!
-          .map((item) => PopupMenuItem<VoidCallback?>(
-                value: item.onPressed,
-                child: Row(
-                  children: [
-                    if (item.icon != null) ...[
-                      Icon(item.icon, size: 16),
-                      const SizedBox(width: 8),
-                    ],
-                    Text(item.label),
+          .map(
+            (item) => PopupMenuItem<VoidCallback?>(
+              height: 32,
+              value: item.onPressed,
+              child: Row(
+                children: [
+                  if (item.icon != null) ...[
+                    Icon(item.icon, size: 14),
+                    const SizedBox(width: 6),
                   ],
-                ),
-              ),)
+                  Text(
+                    item.label,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontSize: 13,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          )
           .toList(),
     ).then((callback) {
       if (callback != null) {

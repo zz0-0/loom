@@ -29,7 +29,11 @@ class TopBar extends ConsumerWidget {
         ),
       ),
       child: _buildTopBarContent(
-          context, registry, windowSettings, topBarSettings,),
+        context,
+        registry,
+        windowSettings,
+        topBarSettings,
+      ),
     );
   }
 
@@ -51,13 +55,7 @@ class TopBar extends ConsumerWidget {
     final titleWidth = topBarSettings.showTitle ? 150.0 : 0.0;
     const menuMinWidth = 200.0; // Minimum space needed for full menu
 
-    // Determine if we should use hamburger menu based on space
-    final availableSpace =
-        screenWidth - windowControlsWidth - searchBarWidth - titleWidth;
-    final shouldUseHamburger =
-        topBarSettings.showMenuAsHamburger || availableSpace < menuMinWidth;
-
-    // Calculate space taken by left and right elements for true centering
+    // Calculate space occupied by window controls based on placement
     final leftControlsWidth =
         placement == WindowControlsPlacement.left && windowSettings.showControls
             ? windowControlsWidth
@@ -66,181 +64,228 @@ class TopBar extends ConsumerWidget {
             windowSettings.showControls
         ? windowControlsWidth
         : 0.0;
-    final menuWidth =
-        shouldUseHamburger ? 48.0 : 200.0; // Approximate menu widths
 
-    final leftSideWidth = leftControlsWidth + menuWidth + titleWidth;
-    final rightSideWidth = rightControlsWidth;
+    // Total space taken by fixed elements (controls + search + title)
+    final fixedElementsWidth = leftControlsWidth +
+        rightControlsWidth +
+        (topBarSettings.showSearch ? searchBarWidth : 0.0) +
+        titleWidth;
+
+    // Available space for menu
+    final availableSpaceForMenu = screenWidth - fixedElementsWidth;
+
+    // Determine if we should use hamburger menu based on actual available space
+    final shouldUseHamburger = topBarSettings.showMenuAsHamburger ||
+        availableSpaceForMenu < menuMinWidth;
 
     if (Platform.isMacOS) {
-      // macOS: Controls on left, content in center and right
-      return Row(
-        children: [
-          // Left side with fixed width
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Window controls (if on left and enabled)
-              if (placement == WindowControlsPlacement.left &&
-                  windowSettings.showControls)
-                Padding(
-                  padding: const EdgeInsets.only(left: 12),
-                  child: WindowControls(
+      return _buildMacOSLayout(
+        context,
+        registry,
+        windowSettings,
+        topBarSettings,
+        shouldUseHamburger,
+        leftItems,
+        centerItems,
+        rightItems,
+        placement,
+      );
+    } else {
+      return _buildDefaultLayout(
+        context,
+        registry,
+        windowSettings,
+        topBarSettings,
+        shouldUseHamburger,
+        leftItems,
+        centerItems,
+        rightItems,
+        placement,
+      );
+    }
+  }
+
+  Widget _buildMacOSLayout(
+    BuildContext context,
+    TopBarRegistry registry,
+    WindowControlsSettings windowSettings,
+    TopBarSettings topBarSettings,
+    bool shouldUseHamburger,
+    List<TopBarItem> leftItems,
+    List<TopBarItem> centerItems,
+    List<TopBarItem> rightItems,
+    WindowControlsPlacement placement,
+  ) {
+    return Stack(
+      children: [
+        // Absolutely centered search bar (unaffected by other components)
+        if (topBarSettings.showSearch)
+          Center(
+            child: _buildSearchBar(context),
+          ),
+
+        // Left and right components positioned normally
+        Row(
+          children: [
+            // Left side
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Window controls (if on left and enabled)
+                if (placement == WindowControlsPlacement.left &&
+                    windowSettings.showControls)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: WindowControls(
+                      placement: WindowControlsPlacement.left,
+                      order: windowSettings.effectiveOrder,
+                    ),
+                  ),
+
+                // Menu bar or hamburger
+                if (shouldUseHamburger)
+                  _buildHamburgerMenu(context)
+                else
+                  DesktopMenuBar(settings: topBarSettings),
+
+                // App title (if enabled)
+                if (topBarSettings.showTitle)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      topBarSettings.title,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ),
+
+                // Left items
+                ...leftItems.map((item) => item.build(context)),
+              ],
+            ),
+
+            // Spacer to push right items to the right
+            const Spacer(),
+
+            // Right side
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Right items
+                ...rightItems.map((item) => item.build(context)),
+
+                // Window controls (if on right and enabled)
+                if (placement == WindowControlsPlacement.right &&
+                    windowSettings.showControls)
+                  WindowControls(
+                    order: windowSettings.effectiveOrder,
+                  ),
+              ],
+            ),
+          ],
+        ),
+
+        // Center items positioned separately (if any)
+        if (centerItems.isNotEmpty && !topBarSettings.showSearch)
+          Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: centerItems.map((item) => item.build(context)).toList(),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildDefaultLayout(
+    BuildContext context,
+    TopBarRegistry registry,
+    WindowControlsSettings windowSettings,
+    TopBarSettings topBarSettings,
+    bool shouldUseHamburger,
+    List<TopBarItem> leftItems,
+    List<TopBarItem> centerItems,
+    List<TopBarItem> rightItems,
+    WindowControlsPlacement placement,
+  ) {
+    return Stack(
+      children: [
+        // Absolutely centered search bar (unaffected by other components)
+        if (topBarSettings.showSearch)
+          Center(
+            child: _buildSearchBar(context),
+          ),
+
+        // Left and right components positioned normally
+        Row(
+          children: [
+            // Left side
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Window controls (if on left and enabled)
+                if (placement == WindowControlsPlacement.left &&
+                    windowSettings.showControls)
+                  WindowControls(
                     placement: WindowControlsPlacement.left,
                     order: windowSettings.effectiveOrder,
                   ),
-                ),
 
-              // Menu bar or hamburger
-              if (shouldUseHamburger)
-                _buildHamburgerMenu(context)
-              else
-                DesktopMenuBar(settings: topBarSettings),
+                // Menu bar or hamburger
+                if (shouldUseHamburger)
+                  _buildHamburgerMenu(context)
+                else
+                  DesktopMenuBar(settings: topBarSettings),
 
-              // App title (if enabled)
-              if (topBarSettings.showTitle)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    topBarSettings.title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ),
-
-              // Left items
-              ...leftItems.map((item) => item.build(context)),
-            ],
-          ),
-
-          // Center area - truly centered between left and right sides
-          Expanded(
-            child: Stack(
-              children: [
-                // Add padding to offset left/right imbalance for true centering
-                Positioned.fill(
-                  left: leftSideWidth > rightSideWidth
-                      ? leftSideWidth - rightSideWidth
-                      : 0,
-                  right: rightSideWidth > leftSideWidth
-                      ? rightSideWidth - leftSideWidth
-                      : 0,
-                  child: Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (topBarSettings.showSearch) ...[
-                          _buildSearchBar(context),
-                        ],
-                        ...centerItems.map((item) => item.build(context)),
-                      ],
+                // App title (if enabled)
+                if (topBarSettings.showTitle)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      topBarSettings.title,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                   ),
-                ),
+
+                // Left items
+                ...leftItems.map((item) => item.build(context)),
               ],
             ),
-          ),
 
-          // Right side with fixed width
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Right items
-              ...rightItems.map((item) => item.build(context)),
+            // Spacer to push right items to the right
+            const Spacer(),
 
-              // Window controls (if on right and enabled)
-              if (placement == WindowControlsPlacement.right &&
-                  windowSettings.showControls)
-                WindowControls(
-                  order: windowSettings.effectiveOrder,
-                ),
-            ],
-          ),
-        ],
-      );
-    } else {
-      // Windows/Linux: Standard layout with responsive menu and true centering
-      return Row(
-        children: [
-          // Left side with fixed width
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Window controls (if on left and enabled)
-              if (placement == WindowControlsPlacement.left &&
-                  windowSettings.showControls)
-                const WindowControls(placement: WindowControlsPlacement.left),
-
-              // Menu bar or hamburger
-              if (shouldUseHamburger)
-                _buildHamburgerMenu(context)
-              else
-                DesktopMenuBar(settings: topBarSettings),
-
-              // App title (if enabled)
-              if (topBarSettings.showTitle)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    topBarSettings.title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ),
-
-              // Left items
-              ...leftItems.map((item) => item.build(context)),
-            ],
-          ),
-
-          // Center area - truly centered between left and right sides
-          Expanded(
-            child: Stack(
+            // Right side
+            Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // Add padding to offset left/right imbalance for true centering
-                Positioned.fill(
-                  left: leftSideWidth > rightSideWidth
-                      ? leftSideWidth - rightSideWidth
-                      : 0,
-                  right: rightSideWidth > leftSideWidth
-                      ? rightSideWidth - leftSideWidth
-                      : 0,
-                  child: Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (topBarSettings.showSearch) ...[
-                          _buildSearchBar(context),
-                        ],
-                        ...centerItems.map((item) => item.build(context)),
-                      ],
-                    ),
+                // Right items
+                ...rightItems.map((item) => item.build(context)),
+
+                // Window controls (if on right and enabled)
+                if (placement == WindowControlsPlacement.right &&
+                    windowSettings.showControls)
+                  WindowControls(
+                    order: windowSettings.effectiveOrder,
                   ),
-                ),
               ],
             ),
-          ),
+          ],
+        ),
 
-          // Right side with fixed width
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Right items
-              ...rightItems.map((item) => item.build(context)),
-
-              // Window controls (if on right and enabled)
-              if (placement == WindowControlsPlacement.right &&
-                  windowSettings.showControls)
-                WindowControls(
-                  order: windowSettings.effectiveOrder,
-                ),
-            ],
+        // Center items positioned separately (if any)
+        if (centerItems.isNotEmpty && !topBarSettings.showSearch)
+          Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: centerItems.map((item) => item.build(context)).toList(),
+            ),
           ),
-        ],
-      );
-    }
+      ],
+    );
   }
 
   Widget _buildSearchBar(BuildContext context) {
@@ -252,36 +297,39 @@ class TopBar extends ConsumerWidget {
 
     return Container(
       width: searchBarWidth,
-      height: 24,
+      height: 22,
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(3),
         border: Border.all(
           color: theme.colorScheme.outline.withOpacity(0.2),
         ),
       ),
       child: Row(
         children: [
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
           Icon(
             Icons.search,
-            size: 14,
-            color: theme.colorScheme.onSurfaceVariant,
+            size: 12,
+            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
           Expanded(
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search...',
                 hintStyle: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
                 ),
                 border: InputBorder.none,
                 isDense: true,
-                contentPadding: EdgeInsets.zero,
+                contentPadding: const EdgeInsets.symmetric(vertical: 4),
               ),
-              style: theme.textTheme.bodySmall,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: 12,
+              ),
             ),
           ),
         ],
@@ -308,7 +356,9 @@ class TopBar extends ConsumerWidget {
   }
 
   List<PopupMenuEntry<String>> _buildMenuItems(
-      BuildContext context, MenuItem menu,) {
+    BuildContext context,
+    MenuItem menu,
+  ) {
     final items = <PopupMenuEntry<String>>[];
 
     if (menu.children != null && menu.children!.isNotEmpty) {

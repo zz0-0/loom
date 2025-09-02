@@ -195,9 +195,9 @@ class WindowControls extends StatelessWidget {
 
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: placement == WindowControlsPlacement.right
-          ? orderedButtons
-          : orderedButtons.reversed.toList(),
+      children: placement == WindowControlsPlacement.left
+          ? orderedButtons.reversed.toList()
+          : orderedButtons,
     );
   }
 

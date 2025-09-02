@@ -39,8 +39,6 @@ class _ExampleExplorerItem implements SidebarItem {
       child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('File Explorer'),
-          SizedBox(height: 16),
           Text('This is where file exploration would go'),
           Text('Register your own explorer implementation here'),
         ],
@@ -65,21 +63,46 @@ class _ExampleSearchItem implements SidebarItem {
 
   @override
   Widget? buildPanel(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.all(16),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Search'),
-          SizedBox(height: 16),
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Search files...',
-              border: OutlineInputBorder(),
+          Container(
+            height: 28,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(3),
+              border: Border.all(
+                color: theme.colorScheme.outline.withOpacity(0.2),
+              ),
+            ),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search files...',
+                hintStyle: theme.textTheme.bodySmall?.copyWith(
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+                ),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              ),
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: 12,
+              ),
             ),
           ),
-          SizedBox(height: 16),
-          Text('Search results would appear here'),
+          const SizedBox(height: 12),
+          Text(
+            'Search results would appear here',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );

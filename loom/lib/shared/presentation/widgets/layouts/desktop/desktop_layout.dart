@@ -43,6 +43,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     // Register the settings sidebar item and content
     uiRegistry.registerSidebarItem(SettingsSidebarItem());
     uiRegistry.registerContentProvider(SettingsContentProvider());
+    uiRegistry.registerContentProvider(AppearanceSettingsContentProvider());
+    uiRegistry.registerContentProvider(InterfaceSettingsContentProvider());
+    uiRegistry.registerContentProvider(GeneralSettingsContentProvider());
+    uiRegistry.registerContentProvider(AboutSettingsContentProvider());
 
     // Register default menus
     menuRegistry.registerMenus([
@@ -51,7 +55,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
         children: [
           SimpleMenuItem(label: 'New', icon: Icons.add, onPressed: () {}),
           SimpleMenuItem(
-              label: 'Open', icon: Icons.folder_open, onPressed: () {},),
+            label: 'Open',
+            icon: Icons.folder_open,
+            onPressed: () {},
+          ),
           SimpleMenuItem(label: 'Save', icon: Icons.save, onPressed: () {}),
           SimpleMenuItem(label: 'Save As...', onPressed: () {}),
           SimpleMenuItem(label: 'Exit', onPressed: () {}),
@@ -63,7 +70,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           SimpleMenuItem(label: 'Undo', icon: Icons.undo, onPressed: () {}),
           SimpleMenuItem(label: 'Redo', icon: Icons.redo, onPressed: () {}),
           SimpleMenuItem(
-              label: 'Cut', icon: Icons.content_cut, onPressed: () {},),
+            label: 'Cut',
+            icon: Icons.content_cut,
+            onPressed: () {},
+          ),
           SimpleMenuItem(label: 'Copy', icon: Icons.copy, onPressed: () {}),
           SimpleMenuItem(label: 'Paste', icon: Icons.paste, onPressed: () {}),
         ],

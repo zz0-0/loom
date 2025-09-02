@@ -19,115 +19,72 @@ class SettingsContentProvider implements ContentProvider {
 
   @override
   Widget build(BuildContext context) {
-    return const SettingsPage();
+    // Default to appearance settings when just 'settings' is requested
+    return const AppearanceSettingsPage();
   }
 }
 
-/// Full settings page for the main content area
-class SettingsPage extends ConsumerWidget {
-  const SettingsPage({super.key});
+/// Appearance settings content provider
+class AppearanceSettingsContentProvider implements ContentProvider {
+  @override
+  String get id => 'settings:appearance';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+  bool canHandle(String? contentId) {
+    return contentId == 'settings:appearance';
+  }
 
-    return Container(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Page header
-          Text(
-            'Settings',
-            style: theme.textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Customize your Loom experience',
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 32),
+  @override
+  Widget build(BuildContext context) {
+    return const AppearanceSettingsPage();
+  }
+}
 
-          // Settings content
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Appearance section
-                  const _SettingsSection(
-                    title: 'Appearance',
-                    children: [
-                      ThemeSettings(),
-                      SizedBox(height: 16),
-                      TopBarSettings(),
-                      SizedBox(height: 16),
-                      WindowControlsSettings(),
-                    ],
-                  ),
+/// Interface settings content provider
+class InterfaceSettingsContentProvider implements ContentProvider {
+  @override
+  String get id => 'settings:interface';
 
-                  const SizedBox(height: 32),
+  @override
+  bool canHandle(String? contentId) {
+    return contentId == 'settings:interface';
+  }
 
-                  // General section
-                  _SettingsSection(
-                    title: 'General',
-                    children: [
-                      _SettingsItem(
-                        title: 'Auto Save',
-                        subtitle: 'Automatically save changes',
-                        trailing: Switch(
-                          value: true,
-                          onChanged: (value) {
-                            // TODO: Implement auto save toggle
-                          },
-                        ),
-                      ),
-                      _SettingsItem(
-                        title: 'Word Wrap',
-                        subtitle: 'Wrap long lines in editor',
-                        trailing: Switch(
-                          value: false,
-                          onChanged: (value) {
-                            // TODO: Implement word wrap toggle
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+  @override
+  Widget build(BuildContext context) {
+    return const InterfaceSettingsPage();
+  }
+}
 
-                  const SizedBox(height: 32),
+/// General settings content provider
+class GeneralSettingsContentProvider implements ContentProvider {
+  @override
+  String get id => 'settings:general';
 
-                  // About section
-                  _SettingsSection(
-                    title: 'About',
-                    children: [
-                      _SettingsItem(
-                        title: 'Version',
-                        subtitle: '1.0.0',
-                        onTap: () {
-                          // TODO: Show version info
-                        },
-                      ),
-                      _SettingsItem(
-                        title: 'Licenses',
-                        subtitle: 'View open source licenses',
-                        onTap: () {
-                          // TODO: Show licenses
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  @override
+  bool canHandle(String? contentId) {
+    return contentId == 'settings:general';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const GeneralSettingsPage();
+  }
+}
+
+/// About settings content provider
+class AboutSettingsContentProvider implements ContentProvider {
+  @override
+  String get id => 'settings:about';
+
+  @override
+  bool canHandle(String? contentId) {
+    return contentId == 'settings:about';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const AboutSettingsPage();
   }
 }
 
@@ -257,7 +214,7 @@ class WindowControlsSettings extends ConsumerWidget {
         ),
         _SettingsItem(
           title: 'Controls Order',
-          subtitle: 'Order of minimize, maximize, and close buttons',
+          subtitle: 'Order of window control buttons',
           trailing: DropdownButton<WindowControlsOrder>(
             value: settings.order,
             onChanged: (order) {
@@ -270,15 +227,15 @@ class WindowControlsSettings extends ConsumerWidget {
             items: const [
               DropdownMenuItem(
                 value: WindowControlsOrder.standard,
-                child: Text('Standard'),
+                child: Text('Minimize, Maximize, Close'),
               ),
               DropdownMenuItem(
                 value: WindowControlsOrder.macOS,
-                child: Text('macOS Style'),
+                child: Text('Close, Minimize, Maximize'),
               ),
               DropdownMenuItem(
                 value: WindowControlsOrder.reverse,
-                child: Text('Reverse'),
+                child: Text('Close, Maximize, Minimize'),
               ),
             ],
           ),
@@ -351,35 +308,6 @@ class TopBarSettings extends ConsumerWidget {
             },
           ),
         ),
-      ],
-    );
-  }
-}
-
-class _SettingsSection extends StatelessWidget {
-  const _SettingsSection({
-    required this.title,
-    required this.children,
-  });
-
-  final String title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: theme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 16),
-        ...children,
       ],
     );
   }
@@ -501,6 +429,351 @@ class _SettingsItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _GeneralSettings extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _SettingsItem(
+          title: 'Auto Save',
+          subtitle: 'Automatically save changes',
+          trailing: Switch(
+            value: true,
+            onChanged: (value) {
+              // TODO: Implement auto save toggle
+            },
+          ),
+        ),
+        _SettingsItem(
+          title: 'Word Wrap',
+          subtitle: 'Wrap long lines in editor',
+          trailing: Switch(
+            value: false,
+            onChanged: (value) {
+              // TODO: Implement word wrap toggle
+            },
+          ),
+        ),
+        _SettingsItem(
+          title: 'Startup Behavior',
+          subtitle: 'What to show when app starts',
+          trailing: DropdownButton<String>(
+            value: 'Welcome Screen',
+            onChanged: (value) {
+              // TODO: Implement startup behavior
+            },
+            items: const [
+              DropdownMenuItem(
+                value: 'Welcome Screen',
+                child: Text('Welcome Screen'),
+              ),
+              DropdownMenuItem(
+                value: 'Last Workspace',
+                child: Text('Last Workspace'),
+              ),
+              DropdownMenuItem(
+                value: 'Empty Workspace',
+                child: Text('Empty Workspace'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Individual settings pages for specific categories
+
+/// Appearance settings page
+class AppearanceSettingsPage extends ConsumerWidget {
+  const AppearanceSettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Appearance',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Customize the visual appearance of Loom',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 32),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const ThemeSettings(),
+                  const SizedBox(height: 32),
+                  _AppearanceGeneralSettings(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Interface settings page
+class InterfaceSettingsPage extends ConsumerWidget {
+  const InterfaceSettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Interface',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Configure window controls and layout options',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 32),
+          const Expanded(
+            child: SingleChildScrollView(
+              child: WindowControlsSettings(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// General settings page
+class GeneralSettingsPage extends ConsumerWidget {
+  const GeneralSettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'General',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'General preferences and application behavior',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 32),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const TopBarSettings(),
+                  const SizedBox(height: 24),
+                  _GeneralSettings(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// About settings page
+class AboutSettingsPage extends ConsumerWidget {
+  const AboutSettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'About',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Information about Loom',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 32),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _SettingsItem(
+                    title: 'Version',
+                    subtitle: '1.0.0',
+                    onTap: () {
+                      // TODO: Show version info
+                    },
+                  ),
+                  _SettingsItem(
+                    title: 'Licenses',
+                    subtitle: 'View open source licenses',
+                    onTap: () {
+                      // TODO: Show licenses
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AppearanceGeneralSettings extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Layout & Visual',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 16),
+        _SettingsItem(
+          title: 'Compact Mode',
+          subtitle: 'Use smaller UI elements and reduced spacing',
+          trailing: Switch(
+            value: false,
+            onChanged: (value) {
+              // TODO: Implement compact mode
+            },
+          ),
+        ),
+        _SettingsItem(
+          title: 'Show Icons in Menu',
+          subtitle: 'Display icons next to menu items',
+          trailing: Switch(
+            value: true,
+            onChanged: (value) {
+              // TODO: Implement menu icons toggle
+            },
+          ),
+        ),
+        _SettingsItem(
+          title: 'Animation Speed',
+          subtitle: 'Speed of UI animations and transitions',
+          trailing: DropdownButton<String>(
+            value: 'Normal',
+            onChanged: (value) {
+              // TODO: Implement animation speed
+            },
+            items: const [
+              DropdownMenuItem(
+                value: 'Slow',
+                child: Text('Slow'),
+              ),
+              DropdownMenuItem(
+                value: 'Normal',
+                child: Text('Normal'),
+              ),
+              DropdownMenuItem(
+                value: 'Fast',
+                child: Text('Fast'),
+              ),
+              DropdownMenuItem(
+                value: 'Disabled',
+                child: Text('Disabled'),
+              ),
+            ],
+          ),
+        ),
+        _SettingsItem(
+          title: 'Sidebar Transparency',
+          subtitle: 'Make sidebar background semi-transparent',
+          trailing: Switch(
+            value: false,
+            onChanged: (value) {
+              // TODO: Implement sidebar transparency
+            },
+          ),
+        ),
+        _SettingsItem(
+          title: 'Font Size',
+          subtitle: 'Overall application font size',
+          trailing: DropdownButton<String>(
+            value: 'Medium',
+            onChanged: (value) {
+              // TODO: Implement font size
+            },
+            items: const [
+              DropdownMenuItem(
+                value: 'Small',
+                child: Text('Small'),
+              ),
+              DropdownMenuItem(
+                value: 'Medium',
+                child: Text('Medium'),
+              ),
+              DropdownMenuItem(
+                value: 'Large',
+                child: Text('Large'),
+              ),
+              DropdownMenuItem(
+                value: 'Extra Large',
+                child: Text('Extra Large'),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

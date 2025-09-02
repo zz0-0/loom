@@ -35,7 +35,7 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
 class UIState {
   const UIState({
     this.isSidebarCollapsed = false,
-    this.isSidePanelVisible = true,
+    this.isSidePanelVisible = false,
     this.selectedSidebarItem,
     this.openedFile,
   });
@@ -49,12 +49,13 @@ class UIState {
     bool? isSidePanelVisible,
     String? selectedSidebarItem,
     String? openedFile,
+    bool clearOpenedFile = false,
   }) {
     return UIState(
       isSidebarCollapsed: isSidebarCollapsed ?? this.isSidebarCollapsed,
       isSidePanelVisible: isSidePanelVisible ?? this.isSidePanelVisible,
       selectedSidebarItem: selectedSidebarItem ?? this.selectedSidebarItem,
-      openedFile: openedFile ?? this.openedFile,
+      openedFile: clearOpenedFile ? null : (openedFile ?? this.openedFile),
     );
   }
 }
@@ -103,7 +104,7 @@ class UIStateNotifier extends StateNotifier<UIState> {
   }
 
   void closeFile() {
-    state = state.copyWith();
+    state = state.copyWith(clearOpenedFile: true);
   }
 }
 

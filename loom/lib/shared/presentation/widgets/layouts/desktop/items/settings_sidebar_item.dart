@@ -29,59 +29,48 @@ class SettingsQuickPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Quick Settings',
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Quick settings items
-          _QuickSettingItem(
+          // Settings categories
+          _SettingCategory(
             icon: Icons.palette,
             title: 'Appearance',
             subtitle: 'Theme, colors, layout',
             onTap: () {
-              // Open settings page in main content
-              ref.read(uiStateProvider.notifier).openFile('settings');
+              ref
+                  .read(uiStateProvider.notifier)
+                  .openFile('settings:appearance');
             },
           ),
 
-          _QuickSettingItem(
+          _SettingCategory(
             icon: Icons.tune,
-            title: 'Preferences',
-            subtitle: 'General settings',
+            title: 'Interface',
+            subtitle: 'Window controls, layout',
             onTap: () {
-              // Open settings page in main content
-              ref.read(uiStateProvider.notifier).openFile('settings');
+              ref.read(uiStateProvider.notifier).openFile('settings:interface');
             },
           ),
 
-          const Spacer(),
+          _SettingCategory(
+            icon: Icons.settings,
+            title: 'General',
+            subtitle: 'Preferences, behavior',
+            onTap: () {
+              ref.read(uiStateProvider.notifier).openFile('settings:general');
+            },
+          ),
 
-          // Open full settings button
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.only(top: 16),
-            child: ElevatedButton.icon(
-              onPressed: () {
-                // Open full settings in main content area
-                ref.read(uiStateProvider.notifier).openFile('settings');
-              },
-              icon: const Icon(Icons.settings, size: 16),
-              label: const Text('All Settings'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-            ),
+          _SettingCategory(
+            icon: Icons.info_outline,
+            title: 'About',
+            subtitle: 'Version, licenses',
+            onTap: () {
+              ref.read(uiStateProvider.notifier).openFile('settings:about');
+            },
           ),
         ],
       ),
@@ -89,8 +78,8 @@ class SettingsQuickPanel extends ConsumerWidget {
   }
 }
 
-class _QuickSettingItem extends StatelessWidget {
-  const _QuickSettingItem({
+class _SettingCategory extends StatelessWidget {
+  const _SettingCategory({
     required this.icon,
     required this.title,
     required this.subtitle,
@@ -110,15 +99,15 @@ class _QuickSettingItem extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         child: Container(
-          padding: const EdgeInsets.all(12),
-          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          margin: const EdgeInsets.only(bottom: 4),
           child: Row(
             children: [
               Icon(
                 icon,
-                size: 20,
+                size: 16,
                 color: theme.colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 12),
@@ -128,23 +117,19 @@ class _QuickSettingItem extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: theme.textTheme.bodyMedium?.copyWith(
+                      style: theme.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     Text(
                       subtitle,
                       style: theme.textTheme.bodySmall?.copyWith(
+                        fontSize: 11,
                         color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 14,
-                color: theme.colorScheme.onSurfaceVariant,
               ),
             ],
           ),
