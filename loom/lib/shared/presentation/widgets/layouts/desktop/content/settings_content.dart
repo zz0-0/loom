@@ -1,11 +1,11 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
-import 'package:loom/shared/presentation/providers/window_controls_provider.dart';
 import 'package:loom/shared/presentation/providers/top_bar_settings_provider.dart';
+import 'package:loom/shared/presentation/providers/window_controls_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/window_controls.dart';
-import 'package:adaptive_theme/adaptive_theme.dart';
 
 /// Settings content provider that displays settings in the main content area
 class SettingsContentProvider implements ContentProvider {
@@ -59,14 +59,14 @@ class SettingsPage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Appearance section
-                  _SettingsSection(
+                  const _SettingsSection(
                     title: 'Appearance',
                     children: [
-                      const ThemeSettings(),
-                      const SizedBox(height: 16),
-                      const TopBarSettings(),
-                      const SizedBox(height: 16),
-                      const WindowControlsSettings(),
+                      ThemeSettings(),
+                      SizedBox(height: 16),
+                      TopBarSettings(),
+                      SizedBox(height: 16),
+                      WindowControlsSettings(),
                     ],
                   ),
 

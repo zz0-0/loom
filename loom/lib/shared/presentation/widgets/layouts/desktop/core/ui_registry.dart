@@ -18,9 +18,9 @@ abstract class ContentProvider {
 
 /// Registry for UI components that can be dynamically registered
 class UIRegistry {
-  static final UIRegistry _instance = UIRegistry._internal();
   factory UIRegistry() => _instance;
   UIRegistry._internal();
+  static final UIRegistry _instance = UIRegistry._internal();
 
   final List<SidebarItem> _sidebarItems = [];
   final List<ContentProvider> _contentProviders = [];

@@ -9,9 +9,9 @@ abstract class BottomBarItem {
 
 /// Registry for bottom bar items
 class BottomBarRegistry {
-  static final BottomBarRegistry _instance = BottomBarRegistry._internal();
   factory BottomBarRegistry() => _instance;
   BottomBarRegistry._internal();
+  static final BottomBarRegistry _instance = BottomBarRegistry._internal();
 
   final List<BottomBarItem> _items = [];
 

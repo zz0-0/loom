@@ -17,9 +17,9 @@ enum TopBarPosition {
 
 /// Registry for top bar items
 class TopBarRegistry {
-  static final TopBarRegistry _instance = TopBarRegistry._internal();
   factory TopBarRegistry() => _instance;
   TopBarRegistry._internal();
+  static final TopBarRegistry _instance = TopBarRegistry._internal();
 
   final List<TopBarItem> _items = [];
 

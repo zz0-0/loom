@@ -1,8 +1,9 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:loom/shared/presentation/providers/window_controls_provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 /// Platform-aware window controls that follow system conventions
 class WindowControls extends StatelessWidget {
@@ -42,19 +43,19 @@ class WindowControls extends StatelessWidget {
     final buttons = [
       _WindowControlButton(
         icon: Icons.minimize,
-        onPressed: onMinimize ?? () => _minimize(),
+        onPressed: onMinimize ?? _minimize,
         tooltip: 'Minimize',
         theme: theme,
       ),
       _WindowControlButton(
         icon: Icons.crop_square,
-        onPressed: onMaximize ?? () => _maximize(),
+        onPressed: onMaximize ?? _maximize,
         tooltip: 'Maximize',
         theme: theme,
       ),
       _WindowControlButton(
         icon: Icons.close,
-        onPressed: onClose ?? () => _close(),
+        onPressed: onClose ?? _close,
         tooltip: 'Close',
         theme: theme,
         isClose: true,
@@ -67,12 +68,10 @@ class WindowControls extends StatelessWidget {
         orderedButtons = [
           buttons[2],
           buttons[0],
-          buttons[1]
+          buttons[1],
         ]; // Close, Minimize, Maximize
-        break;
       case WindowControlsOrder.reverse:
         orderedButtons = buttons.reversed.toList(); // Close, Maximize, Minimize
-        break;
       case WindowControlsOrder.standard:
       default:
         orderedButtons = buttons; // Minimize, Maximize, Close
@@ -91,17 +90,17 @@ class WindowControls extends StatelessWidget {
     final buttons = [
       _MacOSControlButton(
         color: Colors.red,
-        onPressed: onClose ?? () => _close(),
+        onPressed: onClose ?? _close,
         tooltip: 'Close',
       ),
       _MacOSControlButton(
         color: Colors.orange,
-        onPressed: onMinimize ?? () => _minimize(),
+        onPressed: onMinimize ?? _minimize,
         tooltip: 'Minimize',
       ),
       _MacOSControlButton(
         color: Colors.green,
-        onPressed: onMaximize ?? () => _maximize(),
+        onPressed: onMaximize ?? _maximize,
         tooltip: 'Zoom',
       ),
     ];
@@ -120,9 +119,8 @@ class WindowControls extends StatelessWidget {
           spacers[0],
           buttons[2],
           spacers[1],
-          buttons[0]
+          buttons[0],
         ];
-        break;
       case WindowControlsOrder.reverse:
         // Close, Maximize, Minimize
         orderedControls = [
@@ -130,9 +128,8 @@ class WindowControls extends StatelessWidget {
           spacers[0],
           buttons[2],
           spacers[1],
-          buttons[1]
+          buttons[1],
         ];
-        break;
       case WindowControlsOrder.macOS:
       default:
         // Close, Minimize, Maximize (default macOS order)
@@ -141,7 +138,7 @@ class WindowControls extends StatelessWidget {
           spacers[0],
           buttons[1],
           spacers[1],
-          buttons[2]
+          buttons[2],
         ];
         break;
     }
@@ -161,19 +158,19 @@ class WindowControls extends StatelessWidget {
     final buttons = [
       _WindowControlButton(
         icon: Icons.minimize,
-        onPressed: onMinimize ?? () => _minimize(),
+        onPressed: onMinimize ?? _minimize,
         tooltip: 'Minimize',
         theme: theme,
       ),
       _WindowControlButton(
         icon: Icons.crop_square,
-        onPressed: onMaximize ?? () => _maximize(),
+        onPressed: onMaximize ?? _maximize,
         tooltip: 'Maximize',
         theme: theme,
       ),
       _WindowControlButton(
         icon: Icons.close,
-        onPressed: onClose ?? () => _close(),
+        onPressed: onClose ?? _close,
         tooltip: 'Close',
         theme: theme,
         isClose: true,
@@ -186,12 +183,10 @@ class WindowControls extends StatelessWidget {
         orderedButtons = [
           buttons[2],
           buttons[0],
-          buttons[1]
+          buttons[1],
         ]; // Close, Minimize, Maximize
-        break;
       case WindowControlsOrder.reverse:
         orderedButtons = buttons.reversed.toList(); // Close, Maximize, Minimize
-        break;
       case WindowControlsOrder.standard:
       default:
         orderedButtons = buttons; // Minimize, Maximize, Close
@@ -206,7 +201,7 @@ class WindowControls extends StatelessWidget {
     );
   }
 
-  void _minimize() async {
+  Future<void> _minimize() async {
     try {
       await windowManager.minimize();
     } catch (e) {
@@ -214,7 +209,7 @@ class WindowControls extends StatelessWidget {
     }
   }
 
-  void _maximize() async {
+  Future<void> _maximize() async {
     try {
       if (await windowManager.isMaximized()) {
         await windowManager.unmaximize();
@@ -226,7 +221,7 @@ class WindowControls extends StatelessWidget {
     }
   }
 
-  void _close() async {
+  Future<void> _close() async {
     try {
       await windowManager.close();
     } catch (e) {

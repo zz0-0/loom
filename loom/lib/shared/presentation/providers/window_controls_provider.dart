@@ -59,7 +59,7 @@ class WindowControlsSettings {
 
 class WindowControlsSettingsNotifier
     extends StateNotifier<WindowControlsSettings> {
-  WindowControlsSettingsNotifier() : super(WindowControlsSettings());
+  WindowControlsSettingsNotifier() : super(const WindowControlsSettings());
 
   void setPlacement(WindowControlsPlacement placement) {
     state = state.copyWith(placement: placement);

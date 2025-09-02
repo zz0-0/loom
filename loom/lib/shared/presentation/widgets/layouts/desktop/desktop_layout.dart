@@ -3,17 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/content/settings_content.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_content_area.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_side_panel.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_sidebar.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/examples/example_feature_registration.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/items/settings_sidebar_item.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/bottom_bar.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/top_bar.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_sidebar.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_side_panel.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_content_area.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/items/settings_sidebar_item.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/content/settings_content.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/examples/example_feature_registration.dart';
 
 /// Extensible desktop layout with customizable UI components
 /// This serves as the main UI scaffold that features can register into
@@ -51,7 +51,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
         children: [
           SimpleMenuItem(label: 'New', icon: Icons.add, onPressed: () {}),
           SimpleMenuItem(
-              label: 'Open', icon: Icons.folder_open, onPressed: () {}),
+              label: 'Open', icon: Icons.folder_open, onPressed: () {},),
           SimpleMenuItem(label: 'Save', icon: Icons.save, onPressed: () {}),
           SimpleMenuItem(label: 'Save As...', onPressed: () {}),
           SimpleMenuItem(label: 'Exit', onPressed: () {}),
@@ -63,7 +63,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           SimpleMenuItem(label: 'Undo', icon: Icons.undo, onPressed: () {}),
           SimpleMenuItem(label: 'Redo', icon: Icons.redo, onPressed: () {}),
           SimpleMenuItem(
-              label: 'Cut', icon: Icons.content_cut, onPressed: () {}),
+              label: 'Cut', icon: Icons.content_cut, onPressed: () {},),
           SimpleMenuItem(label: 'Copy', icon: Icons.copy, onPressed: () {}),
           SimpleMenuItem(label: 'Paste', icon: Icons.paste, onPressed: () {}),
         ],

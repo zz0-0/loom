@@ -10,7 +10,7 @@ Future<void> main() async {
   // Initialize window manager to remove title bar
   await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = const WindowOptions(
+  const windowOptions = WindowOptions(
     size: Size(1200, 800),
     center: true,
     backgroundColor: Colors.transparent,

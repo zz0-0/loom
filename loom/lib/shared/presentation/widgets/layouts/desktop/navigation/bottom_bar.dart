@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
 
 /// Extensible bottom bar that displays registered items
 class BottomBar extends StatelessWidget {
@@ -63,7 +63,7 @@ class StatusBottomBarItem implements BottomBarItem {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          const Icon(
             Icons.circle,
             size: 8,
             color: Colors.green,

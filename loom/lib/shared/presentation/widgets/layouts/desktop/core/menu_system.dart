@@ -61,9 +61,9 @@ class TopBarSettings {
 
 /// Menu registry for top bar menus
 class MenuRegistry {
-  static final MenuRegistry _instance = MenuRegistry._internal();
   factory MenuRegistry() => _instance;
   MenuRegistry._internal();
+  static final MenuRegistry _instance = MenuRegistry._internal();
 
   final List<MenuItem> _menus = [];
 
@@ -92,8 +92,7 @@ class MenuRegistry {
 /// Desktop-style menu widget
 class DesktopMenuBar extends StatelessWidget {
   const DesktopMenuBar({
-    super.key,
-    required this.settings,
+    required this.settings, super.key,
     this.onMenuPressed,
   });
 
@@ -122,14 +121,14 @@ class DesktopMenuBar extends StatelessWidget {
   }
 
   void _showHamburgerMenu(BuildContext context, List<MenuItem> menus) {
-    final RenderBox button = context.findRenderObject() as RenderBox;
-    final RenderBox overlay =
-        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
-    final RelativeRect position = RelativeRect.fromRect(
+    final button = context.findRenderObject()! as RenderBox;
+    final overlay =
+        Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
+    final position = RelativeRect.fromRect(
       Rect.fromPoints(
         button.localToGlobal(Offset.zero, ancestor: overlay),
         button.localToGlobal(button.size.bottomRight(Offset.zero),
-            ancestor: overlay),
+            ancestor: overlay,),
       ),
       Offset.zero & overlay.size,
     );
@@ -142,16 +141,15 @@ class DesktopMenuBar extends StatelessWidget {
   }
 
   List<PopupMenuEntry<VoidCallback?>> _buildMenuItems(List<MenuItem> menus) {
-    final List<PopupMenuEntry<VoidCallback?>> items = [];
+    final items = <PopupMenuEntry<VoidCallback?>>[];
 
-    for (int i = 0; i < menus.length; i++) {
+    for (var i = 0; i < menus.length; i++) {
       final menu = menus[i];
 
       if (menu.children != null && menu.children!.isNotEmpty) {
         // Submenu
         items.add(
           PopupMenuItem<VoidCallback?>(
-            value: null,
             child: Row(
               children: [
                 if (menu.icon != null) ...[
@@ -234,14 +232,14 @@ class _MenuBarItemState extends State<_MenuBarItem> {
   void _showSubmenu(BuildContext context) {
     if (widget.menu.children == null || widget.menu.children!.isEmpty) return;
 
-    final RenderBox button = context.findRenderObject() as RenderBox;
-    final RenderBox overlay =
-        Navigator.of(context).overlay!.context.findRenderObject() as RenderBox;
-    final RelativeRect position = RelativeRect.fromRect(
+    final button = context.findRenderObject()! as RenderBox;
+    final overlay =
+        Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
+    final position = RelativeRect.fromRect(
       Rect.fromPoints(
         button.localToGlobal(Offset.zero, ancestor: overlay),
         button.localToGlobal(button.size.bottomRight(Offset.zero),
-            ancestor: overlay),
+            ancestor: overlay,),
       ),
       Offset.zero & overlay.size,
     );
@@ -261,7 +259,7 @@ class _MenuBarItemState extends State<_MenuBarItem> {
                     Text(item.label),
                   ],
                 ),
-              ))
+              ),)
           .toList(),
     ).then((callback) {
       if (callback != null) {

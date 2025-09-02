@@ -5,9 +5,7 @@ import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registr
 /// Extensible side panel that displays content for the selected sidebar item
 class ExtensibleSidePanel extends ConsumerWidget {
   const ExtensibleSidePanel({
-    super.key,
-    required this.selectedItemId,
-    required this.onClose,
+    required this.selectedItemId, required this.onClose, super.key,
   });
 
   final String? selectedItemId;

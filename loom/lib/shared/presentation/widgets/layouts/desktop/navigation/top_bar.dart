@@ -1,11 +1,12 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/shared/presentation/providers/window_controls_provider.dart';
 import 'package:loom/shared/presentation/providers/top_bar_settings_provider.dart';
+import 'package:loom/shared/presentation/providers/window_controls_provider.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/top_bar_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/window_controls.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
 
 /// Extensible top bar with registered items and window controls
 class TopBar extends ConsumerWidget {
@@ -28,7 +29,7 @@ class TopBar extends ConsumerWidget {
         ),
       ),
       child: _buildTopBarContent(
-          context, registry, windowSettings, topBarSettings),
+          context, registry, windowSettings, topBarSettings,),
     );
   }
 
@@ -46,9 +47,9 @@ class TopBar extends ConsumerWidget {
     // Calculate available space for responsive behavior
     final screenWidth = MediaQuery.of(context).size.width;
     final windowControlsWidth = windowSettings.showControls ? 100.0 : 0.0;
-    final searchBarWidth = 300.0;
+    const searchBarWidth = 300.0;
     final titleWidth = topBarSettings.showTitle ? 150.0 : 0.0;
-    final menuMinWidth = 200.0; // Minimum space needed for full menu
+    const menuMinWidth = 200.0; // Minimum space needed for full menu
 
     // Determine if we should use hamburger menu based on space
     final availableSpace =
@@ -152,7 +153,6 @@ class TopBar extends ConsumerWidget {
               if (placement == WindowControlsPlacement.right &&
                   windowSettings.showControls)
                 WindowControls(
-                  placement: WindowControlsPlacement.right,
                   order: windowSettings.effectiveOrder,
                 ),
             ],
@@ -234,7 +234,6 @@ class TopBar extends ConsumerWidget {
               if (placement == WindowControlsPlacement.right &&
                   windowSettings.showControls)
                 WindowControls(
-                  placement: WindowControlsPlacement.right,
                   order: windowSettings.effectiveOrder,
                 ),
             ],
@@ -309,7 +308,7 @@ class TopBar extends ConsumerWidget {
   }
 
   List<PopupMenuEntry<String>> _buildMenuItems(
-      BuildContext context, MenuItem menu) {
+      BuildContext context, MenuItem menu,) {
     final items = <PopupMenuEntry<String>>[];
 
     if (menu.children != null && menu.children!.isNotEmpty) {
@@ -331,6 +330,7 @@ class TopBar extends ConsumerWidget {
         items.add(
           PopupMenuItem<String>(
             value: '${menu.label}_${child.label}',
+            onTap: child.onPressed,
             child: Row(
               children: [
                 if (child.icon != null) ...[
@@ -340,7 +340,6 @@ class TopBar extends ConsumerWidget {
                 Text(child.label),
               ],
             ),
-            onTap: child.onPressed,
           ),
         );
       }

@@ -40,7 +40,7 @@ class ExtensibleSidebar extends ConsumerWidget {
                             .selectSidebarItem(item.id);
                       }
                     },
-                  )),
+                  ),),
 
           // Spacer to push settings to bottom
           const Spacer(),
@@ -61,7 +61,7 @@ class ExtensibleSidebar extends ConsumerWidget {
                             .selectSidebarItem(item.id);
                       }
                     },
-                  )),
+                  ),),
         ],
       ),
     );
