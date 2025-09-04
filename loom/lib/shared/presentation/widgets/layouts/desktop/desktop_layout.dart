@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
+import 'package:loom/features/explorer/presentation/items/explorer_sidebar_item.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/content/settings_content.dart';
@@ -39,6 +40,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
     // Register example features (demonstrating the extensible system)
     ExampleFeatureRegistration.register();
+
+    // Register the explorer feature
+    ExplorerFeatureRegistration.register();
 
     // Register the settings sidebar item and content
     uiRegistry
