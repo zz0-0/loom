@@ -17,9 +17,10 @@ class BottomBarRegistry {
 
   /// Register a bottom bar item
   void registerItem(BottomBarItem item) {
-    _items.removeWhere((existing) => existing.id == item.id);
-    _items.add(item);
-    _items.sort((a, b) => a.priority.compareTo(b.priority));
+    _items
+      ..removeWhere((existing) => existing.id == item.id)
+      ..add(item)
+      ..sort((a, b) => a.priority.compareTo(b.priority));
   }
 
   /// Register multiple bottom bar items

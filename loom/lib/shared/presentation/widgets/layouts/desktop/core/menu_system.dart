@@ -33,7 +33,7 @@ class SimpleMenuItem implements MenuItem {
 /// Settings for top bar appearance
 class TopBarSettings {
   const TopBarSettings({
-    this.showTitle = true,
+    this.showTitle = false,
     this.showSearch = true,
     this.showMenuAsHamburger = false,
     this.title = 'Loom',
@@ -69,8 +69,9 @@ class MenuRegistry {
 
   /// Register a menu
   void registerMenu(MenuItem menu) {
-    _menus.removeWhere((existing) => existing.label == menu.label);
-    _menus.add(menu);
+    _menus
+      ..removeWhere((existing) => existing.label == menu.label)
+      ..add(menu);
   }
 
   /// Register multiple menus

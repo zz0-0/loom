@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/shared/presentation/providers/theme_provider.dart';
+import 'package:loom/shared/presentation/providers/tab_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 
 /// Settings sidebar item that opens settings in the main content area
@@ -34,15 +34,35 @@ class SettingsQuickPanel extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Main settings option
+          _SettingCategory(
+            icon: Icons.settings,
+            title: 'Settings',
+            subtitle: 'All settings',
+            onTap: () {
+              ref.read(tabProvider.notifier).openTab(
+                    id: 'settings',
+                    title: 'Settings',
+                    contentType: 'settings',
+                    icon: 'settings',
+                  );
+            },
+          ),
+
+          const Divider(),
+
           // Settings categories
           _SettingCategory(
             icon: Icons.palette,
             title: 'Appearance',
             subtitle: 'Theme, colors, layout',
             onTap: () {
-              ref
-                  .read(uiStateProvider.notifier)
-                  .openFile('settings:appearance');
+              ref.read(tabProvider.notifier).openTab(
+                    id: 'settings:appearance',
+                    title: 'Appearance',
+                    contentType: 'settings',
+                    icon: 'settings',
+                  );
             },
           ),
 
@@ -51,7 +71,12 @@ class SettingsQuickPanel extends ConsumerWidget {
             title: 'Interface',
             subtitle: 'Window controls, layout',
             onTap: () {
-              ref.read(uiStateProvider.notifier).openFile('settings:interface');
+              ref.read(tabProvider.notifier).openTab(
+                    id: 'settings:interface',
+                    title: 'Interface',
+                    contentType: 'settings',
+                    icon: 'settings',
+                  );
             },
           ),
 
@@ -60,7 +85,12 @@ class SettingsQuickPanel extends ConsumerWidget {
             title: 'General',
             subtitle: 'Preferences, behavior',
             onTap: () {
-              ref.read(uiStateProvider.notifier).openFile('settings:general');
+              ref.read(tabProvider.notifier).openTab(
+                    id: 'settings:general',
+                    title: 'General',
+                    contentType: 'settings',
+                    icon: 'settings',
+                  );
             },
           ),
 
@@ -69,7 +99,12 @@ class SettingsQuickPanel extends ConsumerWidget {
             title: 'About',
             subtitle: 'Version, licenses',
             onTap: () {
-              ref.read(uiStateProvider.notifier).openFile('settings:about');
+              ref.read(tabProvider.notifier).openTab(
+                    id: 'settings:about',
+                    title: 'About',
+                    contentType: 'settings',
+                    icon: 'settings',
+                  );
             },
           ),
         ],

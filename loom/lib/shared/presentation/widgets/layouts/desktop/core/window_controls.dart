@@ -226,7 +226,7 @@ class WindowControls extends StatelessWidget {
       await windowManager.close();
     } catch (e) {
       debugPrint('Failed to close window: $e');
-      SystemNavigator.pop();
+      await SystemNavigator.pop();
     }
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/shared/presentation/providers/tab_provider.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/tab_bar.dart';
 
 /// Extensible content area that displays content from registered providers
 class ExtensibleContentArea extends ConsumerWidget {
@@ -16,15 +18,33 @@ class ExtensibleContentArea extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final registry = UIRegistry();
+    final tabState = ref.watch(tabProvider);
+
+    // Use active tab content if available, otherwise fall back to contentId
+    final activeTabId = tabState.activeTab?.id;
+    final displayContentId = activeTabId ?? contentId;
 
     // Try to find a content provider that can handle the current content
-    final contentProvider = registry.getContentProvider(contentId);
+    final contentProvider = registry.getContentProvider(displayContentId);
 
-    if (contentProvider != null) {
+    if (contentProvider != null && tabState.hasAnyTabs) {
+      return Column(
+        children: [
+          // Tab bar (replaces the old header with close button)
+          const ContentTabBar(),
+
+          // Content area
+          Expanded(
+            child: contentProvider.build(context),
+          ),
+        ],
+      );
+    } else if (contentProvider != null) {
+      // Legacy single content mode (for backward compatibility)
       return Column(
         children: [
           // Content header with close button (if content is open)
-          if (contentId != null)
+          if (displayContentId != null)
             Container(
               height: 35,
               decoration: BoxDecoration(
@@ -42,7 +62,7 @@ class ExtensibleContentArea extends ConsumerWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
-                        _getContentTitle(contentId!),
+                        _getContentTitle(displayContentId),
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),

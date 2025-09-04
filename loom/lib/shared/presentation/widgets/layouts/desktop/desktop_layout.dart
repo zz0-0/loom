@@ -41,12 +41,13 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     ExampleFeatureRegistration.register();
 
     // Register the settings sidebar item and content
-    uiRegistry.registerSidebarItem(SettingsSidebarItem());
-    uiRegistry.registerContentProvider(SettingsContentProvider());
-    uiRegistry.registerContentProvider(AppearanceSettingsContentProvider());
-    uiRegistry.registerContentProvider(InterfaceSettingsContentProvider());
-    uiRegistry.registerContentProvider(GeneralSettingsContentProvider());
-    uiRegistry.registerContentProvider(AboutSettingsContentProvider());
+    uiRegistry
+      ..registerSidebarItem(SettingsSidebarItem())
+      ..registerContentProvider(SettingsContentProvider())
+      ..registerContentProvider(AppearanceSettingsContentProvider())
+      ..registerContentProvider(InterfaceSettingsContentProvider())
+      ..registerContentProvider(GeneralSettingsContentProvider())
+      ..registerContentProvider(AboutSettingsContentProvider());
 
     // Register default menus
     menuRegistry.registerMenus([

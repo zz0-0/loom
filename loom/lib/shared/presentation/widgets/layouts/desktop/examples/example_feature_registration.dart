@@ -5,16 +5,10 @@ import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registr
 /// This should be called during app initialization
 class ExampleFeatureRegistration {
   static void register() {
-    final registry = UIRegistry();
-
-    // Example: Register an explorer sidebar item
-    registry.registerSidebarItem(_ExampleExplorerItem());
-
-    // Example: Register a search sidebar item
-    registry.registerSidebarItem(_ExampleSearchItem());
-
-    // Example: Register a content provider
-    registry.registerContentProvider(_ExampleContentProvider());
+    UIRegistry()
+      ..registerSidebarItem(_ExampleExplorerItem())
+      ..registerSidebarItem(_ExampleSearchItem())
+      ..registerContentProvider(_ExampleContentProvider());
   }
 }
 

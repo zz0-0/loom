@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/shared/presentation/providers/close_button_settings_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 
 /// Extensible side panel that displays content for the selected sidebar item
@@ -85,7 +86,7 @@ class ExtensibleSidePanel extends ConsumerWidget {
   }
 }
 
-class _PanelHeader extends StatelessWidget {
+class _PanelHeader extends ConsumerWidget {
   const _PanelHeader({
     required this.title,
     required this.onClose,
@@ -95,8 +96,9 @@ class _PanelHeader extends StatelessWidget {
   final VoidCallback onClose;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final closeButtonSettings = ref.watch(closeButtonSettingsProvider);
 
     return Container(
       height: 35,
@@ -109,28 +111,40 @@ class _PanelHeader extends StatelessWidget {
         ),
       ),
       child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              title.toUpperCase(),
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close, size: 16),
-            onPressed: onClose,
-            splashRadius: 16,
-            padding: const EdgeInsets.all(4),
-            constraints: const BoxConstraints(
-              minWidth: 24,
-              minHeight: 24,
-            ),
-          ),
-        ],
+        children: _buildHeaderChildren(theme, closeButtonSettings),
       ),
     );
+  }
+
+  List<Widget> _buildHeaderChildren(
+    ThemeData theme,
+    CloseButtonSettings settings,
+  ) {
+    final titleWidget = Expanded(
+      child: Text(
+        title.toUpperCase(),
+        style: theme.textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+
+    final closeButton = IconButton(
+      icon: const Icon(Icons.close, size: 16),
+      onPressed: onClose,
+      splashRadius: 16,
+      padding: const EdgeInsets.all(4),
+      constraints: const BoxConstraints(
+        minWidth: 24,
+        minHeight: 24,
+      ),
+    );
+
+    if (settings.effectivePanelPosition == CloseButtonPosition.left) {
+      return [closeButton, titleWidget];
+    } else {
+      return [titleWidget, closeButton];
+    }
   }
 }

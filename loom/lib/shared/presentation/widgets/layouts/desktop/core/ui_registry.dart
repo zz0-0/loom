@@ -27,8 +27,9 @@ class UIRegistry {
 
   /// Register a sidebar item
   void registerSidebarItem(SidebarItem item) {
-    _sidebarItems.removeWhere((existing) => existing.id == item.id);
-    _sidebarItems.add(item);
+    _sidebarItems
+      ..removeWhere((existing) => existing.id == item.id)
+      ..add(item);
   }
 
   /// Register multiple sidebar items
@@ -40,8 +41,9 @@ class UIRegistry {
 
   /// Register a content provider
   void registerContentProvider(ContentProvider provider) {
-    _contentProviders.removeWhere((existing) => existing.id == provider.id);
-    _contentProviders.add(provider);
+    _contentProviders
+      ..removeWhere((existing) => existing.id == provider.id)
+      ..add(provider);
   }
 
   /// Get all registered sidebar items

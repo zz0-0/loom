@@ -25,9 +25,10 @@ class TopBarRegistry {
 
   /// Register a top bar item
   void registerItem(TopBarItem item) {
-    _items.removeWhere((existing) => existing.id == item.id);
-    _items.add(item);
-    _items.sort((a, b) => a.priority.compareTo(b.priority));
+    _items
+      ..removeWhere((existing) => existing.id == item.id)
+      ..add(item)
+      ..sort((a, b) => a.priority.compareTo(b.priority));
   }
 
   /// Register multiple top bar items
