@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/explorer/data/models/workspace_settings.dart'
-    as models;
+import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
+    as domain;
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
@@ -13,7 +13,7 @@ class CollectionsWidget extends ConsumerWidget {
     super.key,
   });
 
-  final models.Workspace workspace;
+  final domain.Workspace workspace;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

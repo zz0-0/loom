@@ -6,14 +6,14 @@ part of 'workspace_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentWorkspaceHash() => r'38b7c87e7e702a9f8ba2b9de1f65e9281f12181d';
+String _$currentWorkspaceHash() => r'9e4195e93af274554d0a4eda2c0d2c12f5682cd0';
 
 /// Current workspace state
 ///
 /// Copied from [CurrentWorkspace].
 @ProviderFor(CurrentWorkspace)
 final currentWorkspaceProvider =
-    NotifierProvider<CurrentWorkspace, models.Workspace?>.internal(
+    NotifierProvider<CurrentWorkspace, domain.Workspace?>.internal(
   CurrentWorkspace.new,
   name: r'currentWorkspaceProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -23,8 +23,8 @@ final currentWorkspaceProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$CurrentWorkspace = Notifier<models.Workspace?>;
-String _$explorerViewModeHash() => r'ad55f46bb424205f29aaea948c09e54a6989f4ea';
+typedef _$CurrentWorkspace = Notifier<domain.Workspace?>;
+String _$explorerViewModeHash() => r'a0fbe0c9adfd48648fac6b6ea8d904708fae40f8';
 
 /// Explorer view mode (filesystem or collections)
 ///
@@ -43,7 +43,7 @@ final explorerViewModeProvider =
 
 typedef _$ExplorerViewMode = AutoDisposeNotifier<String>;
 String _$selectedSidebarViewHash() =>
-    r'835575c94e9659462f0e9fa4cc48930842a6fa99';
+    r'd41ba22ad6bb7b38635eaad08ca8c7ea5164585b';
 
 /// Currently selected sidebar view
 ///

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/explorer/data/models/workspace_settings.dart'
-    as models;
+import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
+    as domain;
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
@@ -13,7 +13,7 @@ class FileTreeWidget extends ConsumerWidget {
     super.key,
   });
 
-  final models.Workspace workspace;
+  final domain.Workspace workspace;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -81,7 +81,7 @@ class _FileTreeItem extends StatelessWidget {
     required this.onFileSelected,
   });
 
-  final models.FileTreeNode node;
+  final domain.FileTreeNode node;
   final int depth;
   final ValueChanged<String> onToggleExpansion;
   final ValueChanged<String> onFileSelected;
@@ -89,7 +89,7 @@ class _FileTreeItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDirectory = node.type == models.FileTreeNodeType.directory;
+    final isDirectory = node.type == domain.FileTreeNodeType.directory;
     final hasChildren = node.children.isNotEmpty;
 
     return Column(
@@ -170,8 +170,8 @@ class _FileTreeItem extends StatelessWidget {
     );
   }
 
-  IconData _getIcon(models.FileTreeNode node) {
-    if (node.type == models.FileTreeNodeType.directory) {
+  IconData _getIcon(domain.FileTreeNode node) {
+    if (node.type == domain.FileTreeNodeType.directory) {
       return node.isExpanded ? LucideIcons.folderOpen : LucideIcons.folder;
     }
 

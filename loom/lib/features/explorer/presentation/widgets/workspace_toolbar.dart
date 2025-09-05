@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/explorer/data/models/workspace_settings.dart'
-    as models;
+import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
+    as domain;
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -17,7 +17,7 @@ class WorkspaceToolbar extends ConsumerWidget {
     super.key,
   });
 
-  final models.Workspace workspace;
+  final domain.Workspace workspace;
   final String viewMode;
   final ValueChanged<String> onViewModeChanged;
   final VoidCallback onRefresh;
@@ -186,7 +186,7 @@ class _ToggleButton extends StatelessWidget {
 class _SettingsButton extends ConsumerWidget {
   const _SettingsButton({required this.settings});
 
-  final models.WorkspaceSettings settings;
+  final domain.WorkspaceSettings settings;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
