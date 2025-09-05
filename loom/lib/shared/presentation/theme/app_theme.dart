@@ -58,6 +58,7 @@ class AppTheme {
         return _getMacOSTheme(colorScheme, brightness);
       case TargetPlatform.linux:
         return _getLinuxTheme(colorScheme, brightness);
+      // ignore: no_default_cases
       default:
         return {};
     }

@@ -230,7 +230,9 @@ class ExplorerViewMode extends _$ExplorerViewMode {
     return settings.defaultSidebarView;
   }
 
-  void setViewMode(String mode) {
+  String get viewMode => state;
+
+  set viewMode(String mode) {
     state = mode;
   }
 
@@ -247,7 +249,9 @@ class SelectedSidebarView extends _$SelectedSidebarView {
     return null;
   }
 
-  void selectView(String view) {
+  String? get selectedView => state;
+
+  set selectedView(String? view) {
     state = view;
   }
 

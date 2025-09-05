@@ -1,6 +1,6 @@
 use std::fmt::Write;
 use crate::blox::ast::{Document, Block, BlockType, Attribute};
-use crate::blox::error::{BloxError, ParseResult};
+use crate::blox::error::ParseResult;
 
 pub struct BloxEncoder {
     indent_size: usize,

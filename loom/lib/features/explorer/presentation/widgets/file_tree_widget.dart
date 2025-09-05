@@ -35,7 +35,7 @@ class FileTreeWidget extends ConsumerWidget {
                 .toggleDirectoryExpansion(nodePath);
           },
           onFileSelected: (filePath) {
-            // TODO: Open file in editor
+            // TODO(user): Open file in editor
             // For now, we'll use the existing UI state provider
             // ref.read(uiStateProvider.notifier).openFile(filePath);
           },

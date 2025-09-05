@@ -13,7 +13,6 @@ class ExplorerPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
     final viewMode = ref.watch(explorerViewModeProvider);
     final workspace = ref.watch(currentWorkspaceProvider);
 
@@ -28,7 +27,7 @@ class ExplorerPanel extends ConsumerWidget {
           workspace: workspace,
           viewMode: viewMode,
           onViewModeChanged: (String mode) {
-            ref.read(explorerViewModeProvider.notifier).setViewMode(mode);
+            ref.read(explorerViewModeProvider.notifier).viewMode = mode;
           },
           onRefresh: () {
             ref.read(currentWorkspaceProvider.notifier).refreshFileTree();
@@ -100,7 +99,7 @@ class ExplorerPanel extends ConsumerWidget {
   }
 
   void _showOpenFolderDialog(BuildContext context, WidgetRef ref) {
-    // TODO: Implement folder picker
+    // TODO(user): Implement folder picker
     // For now, show a simple dialog
     showDialog<void>(
       context: context,
@@ -157,7 +156,7 @@ class ExplorerPanel extends ConsumerWidget {
           TextButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
-                // TODO: Create file
+                // TODO(user): Create file
                 Navigator.of(context).pop();
               }
             },
@@ -191,7 +190,7 @@ class ExplorerPanel extends ConsumerWidget {
           TextButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
-                // TODO: Create folder
+                // TODO(user): Create folder
                 Navigator.of(context).pop();
               }
             },

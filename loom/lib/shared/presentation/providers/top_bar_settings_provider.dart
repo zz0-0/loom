@@ -5,15 +5,15 @@ import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_syste
 class TopBarSettingsNotifier extends StateNotifier<TopBarSettings> {
   TopBarSettingsNotifier() : super(const TopBarSettings());
 
-  void setShowTitle(bool show) {
+  void setShowTitle({required bool show}) {
     state = state.copyWith(showTitle: show);
   }
 
-  void setShowSearch(bool show) {
+  void setShowSearch({required bool show}) {
     state = state.copyWith(showSearch: show);
   }
 
-  void setShowMenuAsHamburger(bool show) {
+  void setShowMenuAsHamburger({required bool show}) {
     state = state.copyWith(showMenuAsHamburger: show);
   }
 

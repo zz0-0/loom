@@ -33,7 +33,7 @@ class CollectionsWidget extends ConsumerWidget {
           collectionName: entry.key,
           files: entry.value,
           onFileSelected: (filePath) {
-            // TODO: Open file in editor
+            // TODO(user): Open file in editor
           },
           onRemoveFile: (filePath) {
             ref

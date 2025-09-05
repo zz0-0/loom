@@ -309,15 +309,19 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
         await ref
             .read(currentWorkspaceProvider.notifier)
             .openWorkspace(fullPath);
-        Navigator.of(context).pop();
+        if (mounted) {
+          Navigator.of(context).pop();
 
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Project "$projectName" created successfully!'),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        );
+          // Show success message
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Project "$projectName" created successfully!'),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+            );
+          }
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -354,10 +358,13 @@ class _FolderBrowserDialogState extends State<_FolderBrowserDialog> {
   }
 
   Future<void> _loadDirectories() async {
+    // ignore: avoid_slow_async_io
     setState(() => isLoading = true);
     try {
       final dir = Directory(currentPath);
+      // ignore: avoid_slow_async_io
       if (await dir.exists()) {
+        // ignore: avoid_slow_async_io
         final entities = await dir.list().toList();
         directories = entities
             .whereType<Directory>()
@@ -429,7 +436,7 @@ class _FolderBrowserDialogState extends State<_FolderBrowserDialog> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant,
+                color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

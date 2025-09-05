@@ -135,21 +135,21 @@ class _ExplorerPanel extends ConsumerWidget {
               IconButton(
                 icon: const Icon(LucideIcons.folderPlus, size: 16),
                 onPressed: () {
-                  // TODO: Add folder
+                  // TODO(user): Add folder
                 },
                 splashRadius: 12,
               ),
               IconButton(
                 icon: const Icon(LucideIcons.filePlus, size: 16),
                 onPressed: () {
-                  // TODO: Add file
+                  // TODO(user): Add file
                 },
                 splashRadius: 12,
               ),
               IconButton(
                 icon: const Icon(LucideIcons.refreshCw, size: 16),
                 onPressed: () {
-                  // TODO: Refresh
+                  // TODO(user): Refresh
                 },
                 splashRadius: 12,
               ),

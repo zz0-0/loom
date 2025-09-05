@@ -80,7 +80,7 @@ class _ExampleContentProvider implements ContentProvider {
 
   @override
   bool canHandle(String? contentId) {
-    return contentId?.startsWith('example:') == true;
+    return contentId?.startsWith('example:') ?? false;
   }
 
   @override

@@ -73,7 +73,7 @@ class WindowControlsSettingsNotifier
     state = state.copyWith(showControls: !state.showControls);
   }
 
-  void setShowControls(bool show) {
+  void setShowControls({required bool show}) {
     state = state.copyWith(showControls: show);
   }
 }

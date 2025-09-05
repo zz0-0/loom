@@ -4,7 +4,7 @@ use std::io::{BufRead, BufReader};
 use std::fs::File;
 
 use crate::blox::ast::{Document, Block, BlockType, Attribute};
-use crate::blox::error::{BloxError, ParseResult};
+use crate::blox::error::ParseResult;
 
 lazy_static! {
     /// Matches block start lines: #{1,6} block_type attributes

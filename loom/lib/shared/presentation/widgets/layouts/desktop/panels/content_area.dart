@@ -38,7 +38,7 @@ class ContentArea extends StatelessWidget {
                     filePath: openedFile!,
                     isActive: true,
                     onClose: () {
-                      // TODO: Close file
+                      // TODO(user): Close file
                     },
                   ),
                 ],
@@ -91,7 +91,7 @@ class _FileTab extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            // TODO: Switch to this tab
+            // TODO(user): Switch to this tab
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -192,7 +192,7 @@ class _WelcomeView extends StatelessWidget {
                 title: 'Open Folder',
                 subtitle: 'Open an existing workspace',
                 onTap: () {
-                  // TODO: Open folder
+                  // TODO(user): Open folder
                 },
               ),
               const SizedBox(width: 24),
@@ -201,7 +201,7 @@ class _WelcomeView extends StatelessWidget {
                 title: 'New File',
                 subtitle: 'Create a new document',
                 onTap: () {
-                  // TODO: New file
+                  // TODO(user): New file
                 },
               ),
               const SizedBox(width: 24),
@@ -210,7 +210,7 @@ class _WelcomeView extends StatelessWidget {
                 title: 'Clone Repository',
                 subtitle: 'Clone from Git',
                 onTap: () {
-                  // TODO: Clone repository
+                  // TODO(user): Clone repository
                 },
               ),
             ],

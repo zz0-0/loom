@@ -181,7 +181,7 @@ class WindowControlsSettings extends ConsumerWidget {
             onChanged: (value) {
               ref
                   .read(windowControlsSettingsProvider.notifier)
-                  .setShowControls(value);
+                  .setShowControls(show: value);
             },
           ),
         ),
@@ -271,7 +271,9 @@ class TopBarSettings extends ConsumerWidget {
           trailing: Switch(
             value: settings.showTitle,
             onChanged: (value) {
-              ref.read(topBarSettingsProvider.notifier).setShowTitle(value);
+              ref
+                  .read(topBarSettingsProvider.notifier)
+                  .setShowTitle(show: value);
             },
           ),
         ),
@@ -305,7 +307,9 @@ class TopBarSettings extends ConsumerWidget {
           trailing: Switch(
             value: settings.showSearch,
             onChanged: (value) {
-              ref.read(topBarSettingsProvider.notifier).setShowSearch(value);
+              ref
+                  .read(topBarSettingsProvider.notifier)
+                  .setShowSearch(show: value);
             },
           ),
         ),
@@ -445,7 +449,7 @@ class _GeneralSettings extends StatelessWidget {
           trailing: Switch(
             value: true,
             onChanged: (value) {
-              // TODO: Implement auto save toggle
+              // TODO(user): Implement auto save toggle
             },
           ),
         ),
@@ -455,7 +459,7 @@ class _GeneralSettings extends StatelessWidget {
           trailing: Switch(
             value: false,
             onChanged: (value) {
-              // TODO: Implement word wrap toggle
+              // TODO(user): Implement word wrap toggle
             },
           ),
         ),
@@ -465,7 +469,7 @@ class _GeneralSettings extends StatelessWidget {
           trailing: DropdownButton<String>(
             value: 'Welcome Screen',
             onChanged: (value) {
-              // TODO: Implement startup behavior
+              // TODO(user): Implement startup behavior
             },
             items: const [
               DropdownMenuItem(
@@ -659,14 +663,14 @@ class AboutSettingsPage extends ConsumerWidget {
                     title: 'Version',
                     subtitle: '1.0.0',
                     onTap: () {
-                      // TODO: Show version info
+                      // TODO(user): Show version info
                     },
                   ),
                   _SettingsItem(
                     title: 'Licenses',
                     subtitle: 'View open source licenses',
                     onTap: () {
-                      // TODO: Show licenses
+                      // TODO(user): Show licenses
                     },
                   ),
                 ],
@@ -700,7 +704,7 @@ class _AppearanceGeneralSettings extends StatelessWidget {
           trailing: Switch(
             value: false,
             onChanged: (value) {
-              // TODO: Implement compact mode
+              // TODO(user): Implement compact mode
             },
           ),
         ),
@@ -710,7 +714,7 @@ class _AppearanceGeneralSettings extends StatelessWidget {
           trailing: Switch(
             value: true,
             onChanged: (value) {
-              // TODO: Implement menu icons toggle
+              // TODO(user): Implement menu icons toggle
             },
           ),
         ),
@@ -720,7 +724,7 @@ class _AppearanceGeneralSettings extends StatelessWidget {
           trailing: DropdownButton<String>(
             value: 'Normal',
             onChanged: (value) {
-              // TODO: Implement animation speed
+              // TODO(user): Implement animation speed
             },
             items: const [
               DropdownMenuItem(
@@ -748,7 +752,7 @@ class _AppearanceGeneralSettings extends StatelessWidget {
           trailing: Switch(
             value: false,
             onChanged: (value) {
-              // TODO: Implement sidebar transparency
+              // TODO(user): Implement sidebar transparency
             },
           ),
         ),
@@ -758,7 +762,7 @@ class _AppearanceGeneralSettings extends StatelessWidget {
           trailing: DropdownButton<String>(
             value: 'Medium',
             onChanged: (value) {
-              // TODO: Implement font size
+              // TODO(user): Implement font size
             },
             items: const [
               DropdownMenuItem(

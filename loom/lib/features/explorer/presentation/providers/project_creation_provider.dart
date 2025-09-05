@@ -34,6 +34,7 @@ class ProjectCreationNotifier extends StateNotifier<ProjectCreationState> {
   ProjectCreationNotifier() : super(const ProjectCreationState());
 
   /// Create a new project from a template
+  // ignore: avoid_slow_async_io
   Future<void> createProject({
     required String name,
     required String location,
@@ -52,16 +53,18 @@ class ProjectCreationNotifier extends StateNotifier<ProjectCreationState> {
       final projectPath = path.join(location, name);
       final projectDir = Directory(projectPath);
 
+      // ignore: avoid_slow_async_io
       if (await projectDir.exists()) {
         throw Exception('A folder with this name already exists');
       }
 
+      // ignore: avoid_slow_async_io
       await projectDir.create(recursive: true);
 
       // Create folders
       for (final folderPath in template.folders) {
         final folder = Directory(path.join(projectPath, folderPath));
-        await folder.create(recursive: true);
+        await folder.create(recursive: true); // ignore: avoid_slow_async_io
       }
 
       // Create files
@@ -69,10 +72,12 @@ class ProjectCreationNotifier extends StateNotifier<ProjectCreationState> {
         final file = File(path.join(projectPath, projectFile.path));
 
         // Ensure the parent directory exists
-        await file.parent.create(recursive: true);
+        await file.parent
+            .create(recursive: true); // ignore: avoid_slow_async_io
 
         // Write the file content
-        await file.writeAsString(projectFile.content);
+        await file
+            .writeAsString(projectFile.content); // ignore: avoid_slow_async_io
       }
 
       state = state.copyWith(isLoading: false);
@@ -87,7 +92,7 @@ class ProjectCreationNotifier extends StateNotifier<ProjectCreationState> {
 
   /// Clear any errors
   void clearError() {
-    state = state.copyWith(error: null);
+    state = state.copyWith();
   }
 }
 
