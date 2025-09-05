@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
 import 'package:loom/features/explorer/presentation/items/explorer_sidebar_item.dart';
+import 'package:loom/features/settings/presentation/settings_feature_registration.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/content/settings_content.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_content_area.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_side_panel.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_sidebar.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/examples/example_feature_registration.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/items/settings_sidebar_item.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/bottom_bar.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/top_bar.dart';
 
@@ -34,25 +32,17 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
   /// Register default UI components
   void _registerDefaultComponents() {
-    final uiRegistry = UIRegistry();
     final bottomBarRegistry = BottomBarRegistry();
     final menuRegistry = MenuRegistry();
 
     // Register the explorer feature first (should be at position 1 in sidebar)
     ExplorerFeatureRegistration.register();
 
+    // Register settings feature
+    SettingsFeatureRegistration.register();
+
     // Register example features (demonstrating the extensible system)
     ExampleFeatureRegistration.register();
-
-    // Register the settings sidebar item and content
-
-    uiRegistry
-      ..registerSidebarItem(SettingsSidebarItem())
-      ..registerContentProvider(SettingsContentProvider())
-      ..registerContentProvider(AppearanceSettingsContentProvider())
-      ..registerContentProvider(InterfaceSettingsContentProvider())
-      ..registerContentProvider(GeneralSettingsContentProvider())
-      ..registerContentProvider(AboutSettingsContentProvider());
 
     // Register default menus
     menuRegistry.registerMenus([

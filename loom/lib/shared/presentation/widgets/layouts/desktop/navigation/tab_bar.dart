@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/shared/presentation/providers/close_button_settings_provider.dart';
+import 'package:loom/features/settings/presentation/providers/close_button_settings_provider.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
 
 /// Tab bar widget that displays and manages tabs in the main content area

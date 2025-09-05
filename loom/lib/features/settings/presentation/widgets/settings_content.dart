@@ -1,10 +1,10 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/shared/presentation/providers/close_button_settings_provider.dart';
+import 'package:loom/features/settings/presentation/providers/close_button_settings_provider.dart';
+import 'package:loom/features/settings/presentation/providers/top_bar_settings_provider.dart';
+import 'package:loom/features/settings/presentation/providers/window_controls_provider.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
-import 'package:loom/shared/presentation/providers/top_bar_settings_provider.dart';
-import 'package:loom/shared/presentation/providers/window_controls_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/window_controls.dart';
 
