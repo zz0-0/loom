@@ -8,6 +8,7 @@ dependencies:
   adaptive_theme: ^3.6.0
   cupertino_icons: ^1.0.8
   dynamic_color: ^1.6.8
+  file_picker: ^10.3.2
   flutter:
     sdk: flutter
   flutter_riverpod: ^2.5.1

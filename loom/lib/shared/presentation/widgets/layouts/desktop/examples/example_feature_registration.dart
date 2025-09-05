@@ -6,38 +6,8 @@ import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registr
 class ExampleFeatureRegistration {
   static void register() {
     UIRegistry()
-      ..registerSidebarItem(_ExampleExplorerItem())
       ..registerSidebarItem(_ExampleSearchItem())
       ..registerContentProvider(_ExampleContentProvider());
-  }
-}
-
-/// Example explorer sidebar item
-class _ExampleExplorerItem implements SidebarItem {
-  @override
-  String get id => 'explorer';
-
-  @override
-  IconData get icon => Icons.folder;
-
-  @override
-  String? get tooltip => 'Explorer';
-
-  @override
-  VoidCallback? get onPressed => null;
-
-  @override
-  Widget? buildPanel(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('This is where file exploration would go'),
-          Text('Register your own explorer implementation here'),
-        ],
-      ),
-    );
   }
 }
 

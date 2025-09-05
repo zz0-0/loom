@@ -38,13 +38,14 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     final bottomBarRegistry = BottomBarRegistry();
     final menuRegistry = MenuRegistry();
 
+    // Register the explorer feature first (should be at position 1 in sidebar)
+    ExplorerFeatureRegistration.register();
+
     // Register example features (demonstrating the extensible system)
     ExampleFeatureRegistration.register();
 
-    // Register the explorer feature
-    ExplorerFeatureRegistration.register();
-
     // Register the settings sidebar item and content
+
     uiRegistry
       ..registerSidebarItem(SettingsSidebarItem())
       ..registerContentProvider(SettingsContentProvider())

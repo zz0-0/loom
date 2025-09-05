@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
 import 'package:loom/features/explorer/presentation/widgets/collections_widget.dart';
+import 'package:loom/features/explorer/presentation/widgets/create_project_dialog.dart';
 import 'package:loom/features/explorer/presentation/widgets/file_tree_widget.dart';
 import 'package:loom/features/explorer/presentation/widgets/workspace_toolbar.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -127,19 +128,9 @@ class ExplorerPanel extends ConsumerWidget {
   }
 
   void _showCreateProjectDialog(BuildContext context, WidgetRef ref) {
-    // TODO: Implement project creation dialog
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Create Project'),
-        content: const Text('Project creation will be implemented here'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
+      builder: (context) => const CreateProjectDialog(),
     );
   }
 
