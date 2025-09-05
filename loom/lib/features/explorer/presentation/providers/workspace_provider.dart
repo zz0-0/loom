@@ -25,6 +25,7 @@ class CurrentWorkspace extends _$CurrentWorkspace {
       state = await useCase.call(path);
     } catch (e) {
       // Handle error - could emit an error state or show notification
+      state = null; // Reset state on error
       rethrow;
     }
   }
@@ -55,7 +56,9 @@ class CurrentWorkspace extends _$CurrentWorkspace {
       final newFileTree = await useCase.call(state!, settings);
       state = state!.copyWith(fileTree: newFileTree);
     } catch (e) {
-      // Handle error
+      // Handle error - could show user notification
+      // For now, just rethrow to let UI handle it
+      rethrow;
     }
   }
 
@@ -329,4 +332,24 @@ final setDefaultSidebarViewUseCaseProvider =
     Provider<SetDefaultSidebarViewUseCase>((ref) {
   final repository = ref.read(workspaceSettingsRepositoryProvider);
   return SetDefaultSidebarViewUseCase(repository);
+});
+
+final createFileUseCaseProvider = Provider<CreateFileUseCase>((ref) {
+  final repository = ref.read(workspaceRepositoryProvider);
+  return CreateFileUseCase(repository);
+});
+
+final createDirectoryUseCaseProvider = Provider<CreateDirectoryUseCase>((ref) {
+  final repository = ref.read(workspaceRepositoryProvider);
+  return CreateDirectoryUseCase(repository);
+});
+
+final deleteItemUseCaseProvider = Provider<DeleteItemUseCase>((ref) {
+  final repository = ref.read(workspaceRepositoryProvider);
+  return DeleteItemUseCase(repository);
+});
+
+final renameItemUseCaseProvider = Provider<RenameItemUseCase>((ref) {
+  final repository = ref.read(workspaceRepositoryProvider);
+  return RenameItemUseCase(repository);
 });

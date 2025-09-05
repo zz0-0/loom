@@ -70,6 +70,14 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         _currentFilePath = filePath;
         _loadFileContent(filePath);
       }
+    } else {
+      // Clear current file if no valid tab is selected
+      _currentFilePath = null;
+      _controller.clear();
+      setState(() {
+        _isLoading = false;
+        _error = null;
+      });
     }
   }
 

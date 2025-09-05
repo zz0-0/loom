@@ -28,16 +28,20 @@ abstract class WorkspaceRepository {
   Future<ProjectMetadata> loadProjectMetadata(String workspacePath);
 
   /// Create new file
-  Future<void> createFile(String filePath, {String content = ''});
+  Future<void> createFile(
+    String workspacePath,
+    String filePath, {
+    String content = '',
+  });
 
   /// Create new directory
-  Future<void> createDirectory(String directoryPath);
+  Future<void> createDirectory(String workspacePath, String directoryPath);
 
   /// Delete file or directory
-  Future<void> delete(String itemPath);
+  Future<void> delete(String workspacePath, String itemPath);
 
   /// Rename file or directory
-  Future<void> rename(String oldPath, String newPath);
+  Future<void> rename(String workspacePath, String oldPath, String newPath);
 }
 
 /// Repository for workspace settings

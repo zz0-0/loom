@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
@@ -100,32 +100,29 @@ class ExplorerPanel extends ConsumerWidget {
     );
   }
 
-  void _showOpenFolderDialog(BuildContext context, WidgetRef ref) {
-    // TODO(user): Implement folder picker
-    // For now, show a simple dialog
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Open Folder'),
-        content: const Text('Folder picker will be implemented here'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+  Future<void> _showOpenFolderDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    try {
+      // Use file_picker to select directory
+      final selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+      if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
+        await ref
+            .read(currentWorkspaceProvider.notifier)
+            .openWorkspace(selectedDirectory);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to open folder: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // Example: open current project directory
-              ref
-                  .read(currentWorkspaceProvider.notifier)
-                  .openWorkspace('/workspaces/loom');
-            },
-            child: const Text('Open Current Project'),
-          ),
-        ],
-      ),
-    );
+        );
+      }
+    }
   }
 
   void _showCreateProjectDialog(BuildContext context, WidgetRef ref) {
@@ -159,13 +156,34 @@ class ExplorerPanel extends ConsumerWidget {
           TextButton(
             onPressed: () async {
               if (controller.text.isNotEmpty && workspace != null) {
+                final fileName = controller.text.trim();
+
+                // Input validation
+                if (fileName.isEmpty || fileName.length > 255) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Invalid file name')),
+                  );
+                  return;
+                }
+
+                // Prevent directory traversal
+                if (fileName.contains('..') ||
+                    fileName.contains('/') ||
+                    fileName.contains(r'\')) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Invalid characters in file name'),
+                    ),
+                  );
+                  return;
+                }
+
                 try {
-                  final fileName = controller.text.trim();
                   final filePath = path.join(workspace.rootPath, fileName);
 
-                  // Create the file
-                  final file = File(filePath);
-                  await file.create(recursive: true);
+                  // Use repository through use case for security validation
+                  final createFileUseCase = ref.read(createFileUseCaseProvider);
+                  await createFileUseCase.call(workspace.rootPath, filePath);
 
                   // Refresh the file tree
                   await ref
@@ -222,13 +240,38 @@ class ExplorerPanel extends ConsumerWidget {
           TextButton(
             onPressed: () async {
               if (controller.text.isNotEmpty && workspace != null) {
+                final folderName = controller.text.trim();
+
+                // Input validation
+                if (folderName.isEmpty || folderName.length > 255) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Invalid folder name')),
+                  );
+                  return;
+                }
+
+                // Prevent directory traversal
+                if (folderName.contains('..') ||
+                    folderName.contains('/') ||
+                    folderName.contains(r'\')) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Invalid characters in folder name'),
+                    ),
+                  );
+                  return;
+                }
+
                 try {
-                  final folderName = controller.text.trim();
                   final folderPath = path.join(workspace.rootPath, folderName);
 
-                  // Create the folder
-                  final dir = Directory(folderPath);
-                  await dir.create(recursive: true);
+                  // Use repository through use case for security validation
+                  final createDirectoryUseCase =
+                      ref.read(createDirectoryUseCaseProvider);
+                  await createDirectoryUseCase.call(
+                    workspace.rootPath,
+                    folderPath,
+                  );
 
                   // Refresh the file tree
                   await ref

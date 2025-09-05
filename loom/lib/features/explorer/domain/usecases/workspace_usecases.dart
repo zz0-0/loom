@@ -69,8 +69,12 @@ class CreateFileUseCase {
 
   final WorkspaceRepository repository;
 
-  Future<void> call(String filePath, {String content = ''}) async {
-    return repository.createFile(filePath, content: content);
+  Future<void> call(
+    String workspacePath,
+    String filePath, {
+    String content = '',
+  }) async {
+    return repository.createFile(workspacePath, filePath, content: content);
   }
 }
 
@@ -80,8 +84,8 @@ class CreateDirectoryUseCase {
 
   final WorkspaceRepository repository;
 
-  Future<void> call(String directoryPath) async {
-    return repository.createDirectory(directoryPath);
+  Future<void> call(String workspacePath, String directoryPath) async {
+    return repository.createDirectory(workspacePath, directoryPath);
   }
 }
 
@@ -91,8 +95,8 @@ class DeleteItemUseCase {
 
   final WorkspaceRepository repository;
 
-  Future<void> call(String itemPath) async {
-    return repository.delete(itemPath);
+  Future<void> call(String workspacePath, String itemPath) async {
+    return repository.delete(workspacePath, itemPath);
   }
 }
 
@@ -102,7 +106,11 @@ class RenameItemUseCase {
 
   final WorkspaceRepository repository;
 
-  Future<void> call(String oldPath, String newPath) async {
-    return repository.rename(oldPath, newPath);
+  Future<void> call(
+    String workspacePath,
+    String oldPath,
+    String newPath,
+  ) async {
+    return repository.rename(workspacePath, oldPath, newPath);
   }
 }

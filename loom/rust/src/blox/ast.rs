@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct Document {
     pub blocks: Vec<Block>,
     pub metadata: HashMap<String, String>,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct Block {
     pub block_type: BlockType,
     pub level: usize,
@@ -16,7 +16,7 @@ pub struct Block {
     pub line_number: usize,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum BlockType {
     // Core blocks
     Section,
@@ -42,7 +42,7 @@ pub enum BlockType {
     Custom(String),
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct Attribute {
     pub key: String,
     pub value: String,

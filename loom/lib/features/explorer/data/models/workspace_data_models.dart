@@ -17,13 +17,29 @@ class WorkspaceSettingsModel extends WorkspaceSettings {
 
   factory WorkspaceSettingsModel.fromJson(Map<String, dynamic> json) {
     return WorkspaceSettingsModel(
-      theme: json['theme'] as String? ?? 'dark',
-      fontSize: json['fontSize'] as int? ?? 14,
-      defaultSidebarView: json['defaultSidebarView'] as String? ?? 'filesystem',
+      theme: _validateTheme(json['theme'] as String? ?? 'dark'),
+      fontSize: _validateFontSize(json['fontSize'] as int? ?? 14),
+      defaultSidebarView: _validateSidebarView(
+        json['defaultSidebarView'] as String? ?? 'filesystem',
+      ),
       filterFileExtensions: json['filterFileExtensions'] as bool? ?? true,
       showHiddenFiles: json['showHiddenFiles'] as bool? ?? false,
       wordWrap: json['wordWrap'] as bool? ?? true,
     );
+  }
+
+  static String _validateTheme(String theme) {
+    const validThemes = ['light', 'dark', 'system'];
+    return validThemes.contains(theme) ? theme : 'dark';
+  }
+
+  static int _validateFontSize(int fontSize) {
+    return fontSize.clamp(8, 72); // Reasonable font size range
+  }
+
+  static String _validateSidebarView(String view) {
+    const validViews = ['filesystem', 'collections'];
+    return validViews.contains(view) ? view : 'filesystem';
   }
 
   Map<String, dynamic> toJson() {
@@ -55,7 +71,7 @@ class ProjectMetadataModel extends ProjectMetadata {
     return ProjectMetadataModel(
       version: json['version'] as String? ?? '1.0',
       schemaVersion: json['schemaVersion'] as String? ?? '2023.1',
-      collections: Map<String, List<String>>.from(
+      collections: _validateCollections(
         (json['collections'] as Map<String, dynamic>? ?? {}).map(
           (key, value) => MapEntry(key, List<String>.from(value as List)),
         ),
@@ -83,6 +99,33 @@ class ProjectMetadataModel extends ProjectMetadata {
       'session': (session as SessionStateModel).toJson(),
       'migrationHistory': migrationHistory,
     };
+  }
+
+  static Map<String, List<String>> _validateCollections(
+    Map<String, List<String>> collections,
+  ) {
+    // Ensure collection names are reasonable and file paths are valid
+    final validated = <String, List<String>>{};
+
+    for (final entry in collections.entries) {
+      final collectionName = entry.key.trim();
+      if (collectionName.isEmpty || collectionName.length > 100) continue;
+
+      final validFiles = entry.value.where((path) {
+        // Basic path validation - ensure it's a reasonable file path
+        return path.isNotEmpty &&
+            path.length < 500 &&
+            !path.contains('..') && // Prevent directory traversal
+            (path.contains('/') ||
+                path.contains(r'\')); // Must look like a path
+      }).toList();
+
+      if (validFiles.isNotEmpty) {
+        validated[collectionName] = validFiles;
+      }
+    }
+
+    return validated;
   }
 
   ProjectMetadata toDomain() => this;

@@ -135,7 +135,19 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<void> createFile(String filePath, {String content = ''}) async {
+  Future<void> createFile(
+    String workspacePath,
+    String filePath, {
+    String content = '',
+  }) async {
+    // Security: Validate path is within workspace
+    final normalizedPath = path.normalize(filePath);
+    final normalizedWorkspacePath = path.normalize(workspacePath);
+
+    if (!path.isWithin(normalizedWorkspacePath, normalizedPath)) {
+      throw Exception('Access denied: Path outside workspace');
+    }
+
     final file = File(filePath);
     final directory = file.parent;
 
@@ -147,13 +159,32 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<void> createDirectory(String directoryPath) async {
+  Future<void> createDirectory(
+    String workspacePath,
+    String directoryPath,
+  ) async {
+    // Security: Validate path is within workspace
+    final normalizedPath = path.normalize(directoryPath);
+    final normalizedWorkspacePath = path.normalize(workspacePath);
+
+    if (!path.isWithin(normalizedWorkspacePath, normalizedPath)) {
+      throw Exception('Access denied: Path outside workspace');
+    }
+
     final directory = Directory(directoryPath);
     await directory.create(recursive: true);
   }
 
   @override
-  Future<void> delete(String itemPath) async {
+  Future<void> delete(String workspacePath, String itemPath) async {
+    // Security: Validate path is within workspace
+    final normalizedPath = path.normalize(itemPath);
+    final normalizedWorkspacePath = path.normalize(workspacePath);
+
+    if (!path.isWithin(normalizedWorkspacePath, normalizedPath)) {
+      throw Exception('Access denied: Path outside workspace');
+    }
+
     final file = File(itemPath);
     final directory = Directory(itemPath);
 
@@ -165,7 +196,21 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<void> rename(String oldPath, String newPath) async {
+  Future<void> rename(
+    String workspacePath,
+    String oldPath,
+    String newPath,
+  ) async {
+    // Security: Validate both paths are within workspace
+    final normalizedOldPath = path.normalize(oldPath);
+    final normalizedNewPath = path.normalize(newPath);
+    final normalizedWorkspacePath = path.normalize(workspacePath);
+
+    if (!path.isWithin(normalizedWorkspacePath, normalizedOldPath) ||
+        !path.isWithin(normalizedWorkspacePath, normalizedNewPath)) {
+      throw Exception('Access denied: Path outside workspace');
+    }
+
     final file = File(oldPath);
     final directory = Directory(oldPath);
 
