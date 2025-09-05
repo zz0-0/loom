@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 class Sidebar extends ConsumerWidget {
   const Sidebar({super.key});
@@ -24,7 +23,8 @@ class Sidebar extends ConsumerWidget {
         children: [
           // Activity bar items
           _SidebarButton(
-            icon: LucideIcons.files,
+            icon: Icons.folder_outlined,
+            filledIcon: Icons.folder_open,
             label: 'Explorer',
             isSelected: uiState.selectedSidebarItem == 'explorer',
             onPressed: () {
@@ -33,7 +33,8 @@ class Sidebar extends ConsumerWidget {
           ),
 
           _SidebarButton(
-            icon: LucideIcons.search,
+            icon: Icons.search_outlined,
+            filledIcon: Icons.search,
             label: 'Search',
             isSelected: uiState.selectedSidebarItem == 'search',
             onPressed: () {
@@ -42,7 +43,8 @@ class Sidebar extends ConsumerWidget {
           ),
 
           _SidebarButton(
-            icon: LucideIcons.gitBranch,
+            icon: Icons.account_tree_outlined,
+            filledIcon: Icons.account_tree,
             label: 'Source Control',
             isSelected: uiState.selectedSidebarItem == 'source_control',
             onPressed: () {
@@ -53,7 +55,8 @@ class Sidebar extends ConsumerWidget {
           ),
 
           _SidebarButton(
-            icon: LucideIcons.bug,
+            icon: Icons.bug_report_outlined,
+            filledIcon: Icons.bug_report,
             label: 'Debug',
             isSelected: uiState.selectedSidebarItem == 'debug',
             onPressed: () {
@@ -62,7 +65,8 @@ class Sidebar extends ConsumerWidget {
           ),
 
           _SidebarButton(
-            icon: LucideIcons.package,
+            icon: Icons.extension_outlined,
+            filledIcon: Icons.extension,
             label: 'Extensions',
             isSelected: uiState.selectedSidebarItem == 'extensions',
             onPressed: () {
@@ -76,7 +80,8 @@ class Sidebar extends ConsumerWidget {
 
           // Settings at bottom
           _SidebarButton(
-            icon: LucideIcons.settings,
+            icon: Icons.settings_outlined,
+            filledIcon: Icons.settings,
             label: 'Settings',
             isSelected: uiState.selectedSidebarItem == 'settings',
             onPressed: () {
@@ -89,30 +94,50 @@ class Sidebar extends ConsumerWidget {
   }
 }
 
-class _SidebarButton extends StatelessWidget {
+class _SidebarButton extends StatefulWidget {
   const _SidebarButton({
     required this.icon,
+    required this.filledIcon,
     required this.label,
     this.isSelected = false,
     this.onPressed,
   });
+
   final IconData icon;
+  final IconData filledIcon;
   final String label;
   final bool isSelected;
   final VoidCallback? onPressed;
 
   @override
+  State<_SidebarButton> createState() => _SidebarButtonState();
+}
+
+class _SidebarButtonState extends State<_SidebarButton> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final shouldShowFilled = widget.isSelected || _isHovered;
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 1),
       child: Material(
-        color: isSelected
-            ? theme.colorScheme.primary.withOpacity(0.1)
-            : Colors.transparent,
+        color: widget.isSelected
+            ? theme.colorScheme.primary.withOpacity(0.2)
+            : _isHovered
+                ? theme.colorScheme.primary.withOpacity(0.1)
+                : Colors.transparent,
+        borderRadius: BorderRadius.circular(6),
         child: InkWell(
-          onTap: onPressed,
+          onTap: widget.onPressed,
+          onHover: (hovered) {
+            setState(() {
+              _isHovered = hovered;
+            });
+          },
+          borderRadius: BorderRadius.circular(6),
           child: Container(
             width: double.infinity,
             height: 48,
@@ -121,20 +146,24 @@ class _SidebarButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  icon,
+                  shouldShowFilled ? widget.filledIcon : widget.icon,
                   size: 20,
-                  color: isSelected
+                  color: widget.isSelected
                       ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurfaceVariant,
+                      : _isHovered
+                          ? theme.colorScheme.primary.withOpacity(0.8)
+                          : theme.colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  label,
+                  widget.label,
                   style: theme.textTheme.labelSmall?.copyWith(
                     fontSize: 9,
-                    color: isSelected
+                    color: widget.isSelected
                         ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurfaceVariant,
+                        : _isHovered
+                            ? theme.colorScheme.primary.withOpacity(0.8)
+                            : theme.colorScheme.onSurfaceVariant,
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 1,

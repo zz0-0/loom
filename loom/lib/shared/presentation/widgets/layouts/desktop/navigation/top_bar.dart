@@ -380,7 +380,10 @@ class TopBar extends ConsumerWidget {
         items.add(
           PopupMenuItem<String>(
             value: '${menu.label}_${child.label}',
-            onTap: child.onPressed,
+            onTap: () {
+              child.onPressedWithContext?.call(context);
+              child.onPressed?.call();
+            },
             child: Row(
               children: [
                 if (child.icon != null) ...[

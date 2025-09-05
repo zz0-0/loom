@@ -157,7 +157,13 @@ class WorkspaceService {
         return [];
       }
 
-      final entities = await directory.list().toList();
+      List<FileSystemEntity> entities;
+      try {
+        entities = await directory.list().toList();
+      } catch (e) {
+        // Could not list directory (permission issues, removed dir, etc.)
+        return [];
+      }
       final nodes = <FileTreeNode>[];
 
       // Sort: directories first, then files, alphabetically
@@ -194,6 +200,15 @@ class WorkspaceService {
                 )
               : <FileTreeNode>[];
 
+          // statSync can throw (permission denied, deleted concurrently).
+          DateTime? lastModified;
+          try {
+            lastModified = entity.statSync().modified;
+          } catch (_) {
+            // Skip entries we can't stat
+            continue;
+          }
+
           nodes.add(
             FileTreeNode(
               name: entityName,
@@ -201,7 +216,7 @@ class WorkspaceService {
               type: FileTreeNodeType.directory,
               isExpanded: isExpanded,
               children: children,
-              lastModified: entity.statSync().modified,
+              lastModified: lastModified,
             ),
           );
         } else if (entity is File) {
@@ -209,17 +224,21 @@ class WorkspaceService {
           if (filterExtensions && !isSupportedFile(entityPath)) {
             continue;
           }
-
-          final stat = entity.statSync();
-          nodes.add(
-            FileTreeNode(
-              name: entityName,
-              path: entityPath,
-              type: FileTreeNodeType.file,
-              lastModified: stat.modified,
-              size: stat.size,
-            ),
-          );
+          // statSync can throw (permission denied, removed). Skip on error.
+          try {
+            final stat = entity.statSync();
+            nodes.add(
+              FileTreeNode(
+                name: entityName,
+                path: entityPath,
+                type: FileTreeNodeType.file,
+                lastModified: stat.modified,
+                size: stat.size,
+              ),
+            );
+          } catch (_) {
+            continue;
+          }
         }
       }
 

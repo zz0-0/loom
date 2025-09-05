@@ -1,10 +1,15 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
 import 'package:loom/features/explorer/presentation/items/explorer_sidebar_item.dart';
+import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
 import 'package:loom/features/settings/presentation/settings_feature_registration.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
+import 'package:loom/shared/presentation/widgets/folder_browser_dialog.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_content_area.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_side_panel.dart';
@@ -59,7 +64,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           SimpleMenuItem(
             label: 'Open',
             icon: Icons.folder_open,
-            onPressed: () {},
+            onPressedWithContext: (context) =>
+                _showOpenFolderDialog(context, ref),
           ),
           SimpleMenuItem(label: 'Save', icon: Icons.save, onPressed: () {}),
           SimpleMenuItem(label: 'Save As...', onPressed: () {}),
@@ -106,6 +112,78 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     ]);
 
     // Future features can register their own components here
+  }
+
+  Future<void> _showOpenFolderDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    try {
+      // Try to use file_picker to select directory
+      var selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+      // If FilePicker didn't work or returned null, show the shared folder browser
+      if (selectedDirectory == null || selectedDirectory.isEmpty) {
+        selectedDirectory = await showDialog<String>(
+          context: context,
+          builder: (context) => FolderBrowserDialog(
+            initialPath: Platform.environment['HOME'] ?? '/workspaces',
+          ),
+        );
+      }
+
+      if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
+        final dir = Directory(selectedDirectory);
+
+        if (!dir.existsSync()) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Directory does not exist'),
+              ),
+            );
+          }
+          return;
+        }
+
+        try {
+          // Try listing to ensure we have permissions to read the directory
+          await dir.list().toList();
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Cannot access directory: $e'),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+            );
+          }
+          return;
+        }
+
+        await ref
+            .read(currentWorkspaceProvider.notifier)
+            .openWorkspace(selectedDirectory);
+      } else {
+        // No directory selected
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No directory selected'),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to open folder: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
   }
 
   @override

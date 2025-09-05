@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
@@ -293,37 +294,112 @@ class _SettingsButton extends ConsumerWidget {
     );
   }
 
-  void _showOpenProjectDialog(BuildContext context, WidgetRef ref) {
-    // TODO(user): Implement proper folder picker
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Open Project'),
-        content: const Text('Folder picker will be implemented here'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // Example: open current project directory
-              ref
-                  .read(currentWorkspaceProvider.notifier)
-                  .openWorkspace('/workspaces/loom');
-            },
-            child: const Text('Open Current Project'),
-          ),
-        ],
-      ),
-    );
+  Future<void> _showOpenProjectDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    try {
+      // Use the same logic as in explorer_panel for consistency
+      final selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+      if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
+        await ref
+            .read(currentWorkspaceProvider.notifier)
+            .openWorkspace(selectedDirectory);
+      }
+    } catch (e) {
+      // Fallback: Show a dialog for manual path entry if file picker fails
+      if (context.mounted) {
+        final result = await showDialog<String>(
+          context: context,
+          builder: (context) => _FallbackFolderDialog(),
+        );
+
+        if (result != null && result.isNotEmpty) {
+          try {
+            await ref
+                .read(currentWorkspaceProvider.notifier)
+                .openWorkspace(result);
+          } catch (openError) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to open folder: $openError'),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ),
+              );
+            }
+          }
+        }
+      }
+    }
   }
 
   void _showCreateProjectDialog(BuildContext context, WidgetRef ref) {
     showDialog<void>(
       context: context,
       builder: (context) => const CreateProjectDialog(),
+    );
+  }
+}
+
+/// Fallback dialog for manual folder path entry
+class _FallbackFolderDialog extends StatefulWidget {
+  @override
+  State<_FallbackFolderDialog> createState() => _FallbackFolderDialogState();
+}
+
+class _FallbackFolderDialogState extends State<_FallbackFolderDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Default to current workspace or common paths
+    _controller.text = '/workspaces';
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Open Folder'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Enter the path to the folder you want to open:'),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _controller,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Folder Path',
+              hintText: '/path/to/your/project',
+            ),
+            autofocus: true,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () {
+            final path = _controller.text.trim();
+            if (path.isNotEmpty) {
+              Navigator.of(context).pop(path);
+            }
+          },
+          child: const Text('Open'),
+        ),
+      ],
     );
   }
 }

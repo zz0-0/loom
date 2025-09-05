@@ -5,6 +5,7 @@ abstract class MenuItem {
   String get label;
   List<MenuItem>? get children;
   VoidCallback? get onPressed;
+  void Function(BuildContext)? get onPressedWithContext;
   IconData? get icon;
 }
 
@@ -14,6 +15,7 @@ class SimpleMenuItem implements MenuItem {
     required this.label,
     this.children,
     this.onPressed,
+    this.onPressedWithContext,
     this.icon,
   });
 
@@ -25,6 +27,9 @@ class SimpleMenuItem implements MenuItem {
 
   @override
   final VoidCallback? onPressed;
+
+  @override
+  final void Function(BuildContext)? onPressedWithContext;
 
   @override
   final IconData? icon;
@@ -140,11 +145,14 @@ class DesktopMenuBar extends StatelessWidget {
     showMenu(
       context: context,
       position: position,
-      items: _buildMenuItems(menus),
+      items: _buildMenuItems(context, menus),
     );
   }
 
-  List<PopupMenuEntry<VoidCallback?>> _buildMenuItems(List<MenuItem> menus) {
+  List<PopupMenuEntry<VoidCallback?>> _buildMenuItems(
+    BuildContext context,
+    List<MenuItem> menus,
+  ) {
     final items = <PopupMenuEntry<VoidCallback?>>[];
 
     for (var i = 0; i < menus.length; i++) {
@@ -170,7 +178,10 @@ class DesktopMenuBar extends StatelessWidget {
         // Regular menu item
         items.add(
           PopupMenuItem<VoidCallback?>(
-            value: menu.onPressed,
+            value: () {
+              menu.onPressedWithContext?.call(context);
+              menu.onPressed?.call();
+            },
             child: Row(
               children: [
                 if (menu.icon != null) ...[
@@ -218,7 +229,15 @@ class _MenuBarItemState extends State<_MenuBarItem> {
             ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.3)
             : Colors.transparent,
         child: InkWell(
-          onTap: widget.menu.onPressed ?? () => _showSubmenu(context),
+          onTap: () {
+            if (widget.menu.onPressedWithContext != null) {
+              widget.menu.onPressedWithContext!(context);
+            } else if (widget.menu.onPressed != null) {
+              widget.menu.onPressed!();
+            } else {
+              _showSubmenu(context);
+            }
+          },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             child: Text(
@@ -258,7 +277,10 @@ class _MenuBarItemState extends State<_MenuBarItem> {
           .map(
             (item) => PopupMenuItem<VoidCallback?>(
               height: 32,
-              value: item.onPressed,
+              value: () {
+                item.onPressedWithContext?.call(context);
+                item.onPressed?.call();
+              },
               child: Row(
                 children: [
                   if (item.icon != null) ...[
