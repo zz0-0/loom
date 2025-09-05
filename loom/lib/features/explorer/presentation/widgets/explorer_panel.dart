@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
@@ -6,6 +7,7 @@ import 'package:loom/features/explorer/presentation/widgets/create_project_dialo
 import 'package:loom/features/explorer/presentation/widgets/file_tree_widget.dart';
 import 'package:loom/features/explorer/presentation/widgets/workspace_toolbar.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:path/path.dart' as path;
 
 /// Main explorer panel that contains both file system and collections view
 class ExplorerPanel extends ConsumerWidget {
@@ -135,6 +137,7 @@ class ExplorerPanel extends ConsumerWidget {
 
   void _showNewFileDialog(BuildContext context, WidgetRef ref) {
     final controller = TextEditingController();
+    final workspace = ref.read(currentWorkspaceProvider);
 
     showDialog<void>(
       context: context,
@@ -144,7 +147,7 @@ class ExplorerPanel extends ConsumerWidget {
           controller: controller,
           decoration: const InputDecoration(
             labelText: 'File name',
-            hintText: 'example.md',
+            hintText: 'example.blox',
           ),
           autofocus: true,
         ),
@@ -154,10 +157,38 @@ class ExplorerPanel extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              if (controller.text.isNotEmpty) {
-                // TODO(user): Create file
-                Navigator.of(context).pop();
+            onPressed: () async {
+              if (controller.text.isNotEmpty && workspace != null) {
+                try {
+                  final fileName = controller.text.trim();
+                  final filePath = path.join(workspace.rootPath, fileName);
+
+                  // Create the file
+                  final file = File(filePath);
+                  await file.create(recursive: true);
+
+                  // Refresh the file tree
+                  await ref
+                      .read(currentWorkspaceProvider.notifier)
+                      .refreshFileTree();
+
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('File "$fileName" created')),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to create file: $e'),
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                      ),
+                    );
+                  }
+                }
               }
             },
             child: const Text('Create'),
@@ -169,6 +200,7 @@ class ExplorerPanel extends ConsumerWidget {
 
   void _showNewFolderDialog(BuildContext context, WidgetRef ref) {
     final controller = TextEditingController();
+    final workspace = ref.read(currentWorkspaceProvider);
 
     showDialog<void>(
       context: context,
@@ -188,10 +220,38 @@ class ExplorerPanel extends ConsumerWidget {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () {
-              if (controller.text.isNotEmpty) {
-                // TODO(user): Create folder
-                Navigator.of(context).pop();
+            onPressed: () async {
+              if (controller.text.isNotEmpty && workspace != null) {
+                try {
+                  final folderName = controller.text.trim();
+                  final folderPath = path.join(workspace.rootPath, folderName);
+
+                  // Create the folder
+                  final dir = Directory(folderPath);
+                  await dir.create(recursive: true);
+
+                  // Refresh the file tree
+                  await ref
+                      .read(currentWorkspaceProvider.notifier)
+                      .refreshFileTree();
+
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Folder "$folderName" created')),
+                    );
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Failed to create folder: $e'),
+                        backgroundColor: Theme.of(context).colorScheme.error,
+                      ),
+                    );
+                  }
+                }
               }
             },
             child: const Text('Create'),

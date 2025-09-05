@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
     as domain;
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
+import 'package:loom/features/explorer/presentation/widgets/create_project_dialog.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 /// Toolbar for the workspace explorer with view toggle and actions
@@ -196,9 +197,15 @@ class _SettingsButton extends ConsumerWidget {
       icon: const Icon(LucideIcons.moreHorizontal, size: 16),
       iconSize: 16,
       splashRadius: 12,
-      tooltip: 'Explorer Settings',
+      tooltip: 'Project Options',
       onSelected: (value) {
         switch (value) {
+          case 'close_project':
+            ref.read(currentWorkspaceProvider.notifier).closeWorkspace();
+          case 'open_project':
+            _showOpenProjectDialog(context, ref);
+          case 'create_project':
+            _showCreateProjectDialog(context, ref);
           case 'toggle_filter':
             ref
                 .read(workspaceSettingsProvider.notifier)
@@ -210,6 +217,46 @@ class _SettingsButton extends ConsumerWidget {
         }
       },
       itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: 'close_project',
+          child: Row(
+            children: [
+              Icon(
+                LucideIcons.x,
+                size: 16,
+              ),
+              SizedBox(width: 8),
+              Text('Close Project'),
+            ],
+          ),
+        ),
+        const PopupMenuItem(
+          value: 'open_project',
+          child: Row(
+            children: [
+              Icon(
+                LucideIcons.folderOpen,
+                size: 16,
+              ),
+              SizedBox(width: 8),
+              Text('Open Project'),
+            ],
+          ),
+        ),
+        const PopupMenuItem(
+          value: 'create_project',
+          child: Row(
+            children: [
+              Icon(
+                LucideIcons.folderPlus,
+                size: 16,
+              ),
+              SizedBox(width: 8),
+              Text('Create Project'),
+            ],
+          ),
+        ),
+        const PopupMenuDivider(),
         PopupMenuItem(
           value: 'toggle_filter',
           child: Row(
@@ -243,6 +290,40 @@ class _SettingsButton extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _showOpenProjectDialog(BuildContext context, WidgetRef ref) {
+    // TODO(user): Implement proper folder picker
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Open Project'),
+        content: const Text('Folder picker will be implemented here'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // Example: open current project directory
+              ref
+                  .read(currentWorkspaceProvider.notifier)
+                  .openWorkspace('/workspaces/loom');
+            },
+            child: const Text('Open Current Project'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showCreateProjectDialog(BuildContext context, WidgetRef ref) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => const CreateProjectDialog(),
     );
   }
 }

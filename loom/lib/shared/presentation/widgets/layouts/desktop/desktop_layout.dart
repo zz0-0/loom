@@ -9,7 +9,9 @@ import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_content_area.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_side_panel.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_sidebar.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/file_content_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/examples/example_feature_registration.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/bottom_bar.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/top_bar.dart';
@@ -34,12 +36,16 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   void _registerDefaultComponents() {
     final bottomBarRegistry = BottomBarRegistry();
     final menuRegistry = MenuRegistry();
+    final uiRegistry = UIRegistry();
 
     // Register the explorer feature first (should be at position 1 in sidebar)
     ExplorerFeatureRegistration.register();
 
     // Register settings feature
     SettingsFeatureRegistration.register();
+
+    // Register file content provider
+    uiRegistry.registerContentProvider(FileContentProvider());
 
     // Register example features (demonstrating the extensible system)
     ExampleFeatureRegistration.register();

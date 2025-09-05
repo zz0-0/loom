@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
     as domain;
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
+import 'package:loom/shared/presentation/providers/tab_provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -33,7 +34,13 @@ class CollectionsWidget extends ConsumerWidget {
           collectionName: entry.key,
           files: entry.value,
           onFileSelected: (filePath) {
-            // TODO(user): Open file in editor
+            // Open file in editor
+            final fileName = path.basename(filePath);
+            ref.read(tabProvider.notifier).openTab(
+                  id: filePath,
+                  title: fileName,
+                  contentType: 'file',
+                );
           },
           onRemoveFile: (filePath) {
             ref

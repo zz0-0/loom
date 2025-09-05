@@ -55,23 +55,35 @@ class ProjectTemplates {
       icon: LucideIcons.file,
       files: [
         ProjectFile(
-          path: 'README.md',
+          path: 'welcome.blox',
           content: '''
-# New Project
+#document title="Welcome to Loom"
 
-Welcome to your new project!
+#section title="Getting Started"
+This is your new Loom project! Loom uses the Blox format for structured documents.
 
-## Getting Started
+#section title="What is Blox?"
+Blox is a powerful markup language designed for modern knowledge management. It combines the simplicity of Markdown with structured data capabilities.
 
-This is a blank project. You can start adding your files and organizing your content however you like.
+## Features
+- **Structured Content**: Organize your thoughts with clear hierarchies
+- **Rich Metadata**: Add properties and attributes to your content
+- **Extensible**: Supports custom block types and inline elements
+- **Future-Proof**: Designed for long-term knowledge preservation
 
-## Tips
+#section title="Next Steps"
+1. **Explore the Interface**: Familiarize yourself with the sidebar and main content area
+2. **Create Your First Document**: Use the file explorer to create new .blox files
+3. **Organize with Collections**: Group related files using the collections feature
+4. **Customize Settings**: Adjust the appearance and behavior to your preferences
 
-- Create folders to organize your content
-- Use markdown files for notes and documentation
-- Keep a consistent naming convention
-- Don't forget to update this README as your project grows
-''',
+#section title="Tips"
+- Use `#h1`, `#h2`, `#h3` for headings
+- Create lists with `#list type=unordered` or `#list type=ordered`
+- Add code blocks with `#code lang=rust`
+- Reference other documents with `{{@document-name}}`
+
+Happy writing with Loom! 🚀''',
         ),
       ],
     ),
