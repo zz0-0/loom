@@ -1,21 +1,22 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/shared/data/providers.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
 /// Reusable folder browser dialog used by multiple UI flows
-class FolderBrowserDialog extends StatefulWidget {
+class FolderBrowserDialog extends ConsumerStatefulWidget {
   const FolderBrowserDialog({required this.initialPath, super.key});
   final String initialPath;
 
   @override
-  State<FolderBrowserDialog> createState() => _FolderBrowserDialogState();
+  ConsumerState<FolderBrowserDialog> createState() =>
+      _FolderBrowserDialogState();
 }
 
-class _FolderBrowserDialogState extends State<FolderBrowserDialog> {
+class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
   late String currentPath;
-  List<Directory> directories = [];
+  List<String> directories = [];
   bool isLoading = true;
 
   @override
@@ -28,20 +29,15 @@ class _FolderBrowserDialogState extends State<FolderBrowserDialog> {
   Future<void> _loadDirectories() async {
     setState(() => isLoading = true);
     try {
-      final dir = Directory(currentPath);
-      if (dir.existsSync()) {
-        final entities = await dir.list().toList();
-        directories = entities
-            .whereType<Directory>()
-            .where((d) => !path.basename(d.path).startsWith('.'))
-            .toList();
-        directories.sort(
-          (a, b) => path
-              .basename(a.path)
-              .toLowerCase()
-              .compareTo(path.basename(b.path).toLowerCase()),
-        );
-      }
+      final fileRepository = ref.read(fileRepositoryProvider);
+      final dirs = await fileRepository.listDirectories(currentPath);
+      directories = dirs.map((dir) => dir.path).toList();
+      directories.sort(
+        (a, b) => path
+            .basename(a)
+            .toLowerCase()
+            .compareTo(path.basename(b).toLowerCase()),
+      );
     } catch (e) {
       directories = [];
     } finally {
@@ -50,15 +46,15 @@ class _FolderBrowserDialogState extends State<FolderBrowserDialog> {
   }
 
   void _navigateUp() {
-    final parent = Directory(currentPath).parent;
-    if (parent.path != currentPath) {
-      currentPath = parent.path;
+    final parent = path.dirname(currentPath);
+    if (parent != currentPath) {
+      currentPath = parent;
       _loadDirectories();
     }
   }
 
-  void _navigateToDirectory(Directory dir) {
-    currentPath = dir.path;
+  void _navigateToDirectory(String dirPath) {
+    currentPath = dirPath;
     _loadDirectories();
   }
 
@@ -132,7 +128,7 @@ class _FolderBrowserDialogState extends State<FolderBrowserDialog> {
                 _QuickAccessButton(
                   icon: LucideIcons.home,
                   label: 'Home',
-                  path: Platform.environment['HOME'] ?? '/home',
+                  path: '/home',
                   onTap: (path) {
                     currentPath = path;
                     _loadDirectories();
@@ -152,10 +148,7 @@ class _FolderBrowserDialogState extends State<FolderBrowserDialog> {
                 _QuickAccessButton(
                   icon: LucideIcons.folder,
                   label: 'Documents',
-                  path: path.join(
-                    Platform.environment['HOME'] ?? '/home',
-                    'Documents',
-                  ),
+                  path: path.join('/home', 'Documents'),
                   onTap: (path) {
                     currentPath = path;
                     _loadDirectories();
@@ -186,12 +179,12 @@ class _FolderBrowserDialogState extends State<FolderBrowserDialog> {
                       : ListView.builder(
                           itemCount: directories.length,
                           itemBuilder: (context, index) {
-                            final dir = directories[index];
-                            final name = path.basename(dir.path);
+                            final dirPath = directories[index];
+                            final name = path.basename(dirPath);
                             return ListTile(
                               leading: const Icon(LucideIcons.folder),
                               title: Text(name),
-                              onTap: () => _navigateToDirectory(dir),
+                              onTap: () => _navigateToDirectory(dirPath),
                               dense: true,
                             );
                           },

@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/export/data/repositories/export_repository_impl.dart';
+import 'package:loom/features/export/data/providers.dart';
 import 'package:loom/features/export/domain/entities/export_entities.dart';
 import 'package:loom/features/export/domain/repositories/export_repository.dart';
 import 'package:loom/features/export/domain/usecases/export_usecases.dart';
@@ -31,16 +31,15 @@ class ExportState {
 
 /// Export provider
 class ExportNotifier extends StateNotifier<ExportState> {
-  ExportNotifier() : super(const ExportState()) {
-    _initializeRepository();
+  ExportNotifier(this._repository) : super(const ExportState()) {
+    _initializeUseCases();
   }
 
-  late final ExportRepository _repository;
+  final ExportRepository _repository;
   late final ExportContentUseCase _exportContentUseCase;
   late final GetSupportedFormatsUseCase _getSupportedFormatsUseCase;
 
-  void _initializeRepository() {
-    _repository = ExportRepositoryImpl();
+  void _initializeUseCases() {
     _exportContentUseCase = ExportContentUseCase(_repository);
     _getSupportedFormatsUseCase = GetSupportedFormatsUseCase(_repository);
   }
@@ -72,5 +71,5 @@ class ExportNotifier extends StateNotifier<ExportState> {
 }
 
 final exportProvider = StateNotifierProvider<ExportNotifier, ExportState>(
-  (ref) => ExportNotifier(),
+  (ref) => ExportNotifier(ref.watch(exportRepositoryProvider)),
 );

@@ -1,6 +1,9 @@
 include: package:very_good_analysis/analysis_options.yaml
 
 analyzer:
+  errors:
+    public_member_api_docs: ignore
+    lines_longer_than_80_chars: ignore
   exclude: 
     - build/**
     - lib/src/rust/frb_generated.*.dart
@@ -8,8 +11,3 @@ analyzer:
     strict-casts: true
     strict-inference: true
     strict-raw-types: true
-linter:
-  rules:
-    public_member_api_docs: false
-    lines_longer_than_80_chars: false
-    one_member_abstracts: false

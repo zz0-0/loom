@@ -1,9 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/export/presentation/widgets/export_dialog.dart';
+import 'package:loom/shared/data/providers.dart';
+import 'package:loom/shared/domain/services/edit_history_service.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
 import 'package:loom/shared/presentation/widgets/editor/blox_syntax_highlighter.dart';
 import 'package:loom/shared/presentation/widgets/editor/find_replace_dialog.dart';
@@ -22,54 +22,6 @@ class ClipboardService {
   static Future<String?> pasteFromClipboard() async {
     final data = await Clipboard.getData(Clipboard.kTextPlain);
     return data?.text;
-  }
-}
-
-/// Undo/Redo manager for text editing
-class TextEditHistory {
-  final List<String> _history = [];
-  int _currentIndex = -1;
-  static const int maxHistorySize = 100;
-
-  void addState(String text) {
-    // Remove any redo states after current position
-    if (_currentIndex < _history.length - 1) {
-      _history.removeRange(_currentIndex + 1, _history.length);
-    }
-
-    // Add new state
-    _history.add(text);
-    _currentIndex = _history.length - 1;
-
-    // Limit history size
-    if (_history.length > maxHistorySize) {
-      _history.removeAt(0);
-      _currentIndex--;
-    }
-  }
-
-  String? undo() {
-    if (_currentIndex > 0) {
-      _currentIndex--;
-      return _history[_currentIndex];
-    }
-    return null;
-  }
-
-  String? redo() {
-    if (_currentIndex < _history.length - 1) {
-      _currentIndex++;
-      return _history[_currentIndex];
-    }
-    return null;
-  }
-
-  bool get canUndo => _currentIndex > 0;
-  bool get canRedo => _currentIndex < _history.length - 1;
-
-  void clear() {
-    _history.clear();
-    _currentIndex = -1;
   }
 }
 
@@ -107,8 +59,8 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   final FocusNode _keyboardFocusNode = FocusNode();
   final FocusNode _textFieldFocusNode = FocusNode();
 
-  // Undo/Redo system
-  final TextEditHistory _editHistory = TextEditHistory();
+  // Services from domain layer
+  late final EditHistoryService _editHistoryService;
 
   // Syntax highlighting
   BloxSyntaxHighlighter? _bloxHighlighter;
@@ -131,10 +83,15 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   @override
   void initState() {
     super.initState();
+    _initializeServices();
     _loadCurrentFile();
     _controller.addListener(_onTextChanged);
     _initializeSyntaxHighlighter();
     _foldingManager = CodeFoldingManager('');
+  }
+
+  void _initializeServices() {
+    _editHistoryService = ref.read(editHistoryServiceProvider);
   }
 
   @override
@@ -191,33 +148,27 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     });
 
     try {
-      final file = File(filePath);
-      if (file.existsSync()) {
-        final content = await file.readAsString();
+      final fileRepository = ref.read(fileRepositoryProvider);
+      final content = await fileRepository.readFile(filePath);
 
-        // Set flag to prevent marking as dirty during loading
-        _isLoadingFile = true;
-        _controller.text = content;
-        _isLoadingFile = false;
+      // Set flag to prevent marking as dirty during loading
+      _isLoadingFile = true;
+      _controller.text = content;
+      _isLoadingFile = false;
 
-        // Initialize undo/redo history with loaded content
-        _editHistory
-          ..clear()
-          ..addState(content);
+      // Initialize undo/redo history with loaded content
+      _editHistoryService.addState(content);
 
-        // Parse Blox content if it's a .blox file
-        if (_isBloxFile) {
-          await _parseBloxContent(content);
-        }
+      // Parse Blox content if it's a .blox file
+      if (_isBloxFile) {
+        await _parseBloxContent(content);
+      }
 
-        // Mark tab as clean after successful load
-        if (_currentFilePath != null) {
-          ref
-              .read(tabProvider.notifier)
-              .updateTab(_currentFilePath!, isDirty: false);
-        }
-      } else {
-        _error = 'File not found: $filePath';
+      // Mark tab as clean after successful load
+      if (_currentFilePath != null) {
+        ref
+            .read(tabProvider.notifier)
+            .updateTab(_currentFilePath!, isDirty: false);
       }
     } catch (e) {
       _error = 'Error loading file: $e';
@@ -249,8 +200,8 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     if (_currentFilePath == null) return;
 
     try {
-      final file = File(_currentFilePath!);
-      await file.writeAsString(_controller.text);
+      final fileRepository = ref.read(fileRepositoryProvider);
+      await fileRepository.writeFile(_currentFilePath!, _controller.text);
 
       // Re-parse if it's a Blox file
       if (_isBloxFile) {
@@ -285,7 +236,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           .updateTab(_currentFilePath!, isDirty: true);
 
       // Add current state to undo history
-      _editHistory.addState(_controller.text);
+      _editHistoryService.addState(_controller.text);
     }
 
     // Update code folding regions
@@ -298,7 +249,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   }
 
   void _undo() {
-    final previousState = _editHistory.undo();
+    final previousState = _editHistoryService.undo();
     if (previousState != null) {
       _controller.text = previousState;
       // Mark as dirty if the content changed
@@ -311,7 +262,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   }
 
   void _redo() {
-    final nextState = _editHistory.redo();
+    final nextState = _editHistoryService.redo();
     if (nextState != null) {
       _controller.text = nextState;
       // Mark as dirty if the content changed
@@ -668,13 +619,13 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
               IconButton(
                 icon: const Icon(Icons.undo),
-                onPressed: _editHistory.canUndo ? _undo : null,
+                onPressed: _editHistoryService.canUndo ? _undo : null,
                 tooltip: 'Undo (Ctrl+Z)',
               ),
 
               IconButton(
                 icon: const Icon(Icons.redo),
-                onPressed: _editHistory.canRedo ? _redo : null,
+                onPressed: _editHistoryService.canRedo ? _redo : null,
                 tooltip: 'Redo (Ctrl+Y)',
               ),
 

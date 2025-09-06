@@ -211,3 +211,43 @@ class Workspace {
     );
   }
 }
+
+/// Project template domain entity
+class ProjectTemplate {
+  const ProjectTemplate({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.files,
+    this.folders = const [],
+  });
+
+  /// Unique identifier for the template
+  final String id;
+
+  /// Display name of the template
+  final String name;
+
+  /// Description of what this template provides
+  final String description;
+
+  /// List of files to create with their content
+  final List<ProjectFile> files;
+
+  /// List of folders to create
+  final List<String> folders;
+}
+
+/// Represents a file to be created in a project
+class ProjectFile {
+  const ProjectFile({
+    required this.path,
+    required this.content,
+  });
+
+  /// Relative path of the file within the project
+  final String path;
+
+  /// Content of the file
+  final String content;
+}

@@ -1,9 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/explorer/data/repositories/settings_repository_impl.dart';
-import 'package:loom/features/explorer/data/repositories/workspace_repository_impl.dart';
+import 'package:loom/features/explorer/data/providers.dart';
 import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
     as domain;
-import 'package:loom/features/explorer/domain/repositories/workspace_repository.dart';
 import 'package:loom/features/explorer/domain/usecases/settings_usecases.dart';
 import 'package:loom/features/explorer/domain/usecases/workspace_usecases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -273,16 +271,6 @@ class SelectedSidebarView extends _$SelectedSidebarView {
     state = null;
   }
 }
-
-/// Repository providers
-final workspaceRepositoryProvider = Provider<WorkspaceRepository>((ref) {
-  return WorkspaceRepositoryImpl();
-});
-
-final workspaceSettingsRepositoryProvider =
-    Provider<WorkspaceSettingsRepository>((ref) {
-  return WorkspaceSettingsRepositoryImpl();
-});
 
 /// Use case providers
 final openWorkspaceUseCaseProvider = Provider<OpenWorkspaceUseCase>((ref) {

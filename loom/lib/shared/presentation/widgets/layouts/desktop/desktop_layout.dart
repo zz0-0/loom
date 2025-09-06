@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,9 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
 import 'package:loom/features/explorer/presentation/items/explorer_sidebar_item.dart';
 import 'package:loom/features/settings/presentation/widgets/settings_sidebar_item.dart';
+import 'package:loom/shared/data/providers.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
-import 'package:loom/shared/presentation/widgets/folder_browser_dialog.dart';
+import 'package:loom/shared/presentation/widgets/dialogs/folder_browser_dialog.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_content_area.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_side_panel.dart';
@@ -173,28 +172,18 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
         if (!context.mounted) return;
         selectedDirectory = await showDialog<String>(
           context: context,
-          builder: (context) => FolderBrowserDialog(
-            initialPath: Platform.environment['HOME'] ?? '/workspaces',
+          builder: (context) => const FolderBrowserDialog(
+            initialPath: '/workspaces',
           ),
         );
       }
 
       if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
-        final dir = Directory(selectedDirectory);
-
-        if (!dir.existsSync()) {
-          if (!context.mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Directory does not exist'),
-            ),
-          );
-          return;
-        }
+        final fileRepository = ref.read(fileRepositoryProvider);
 
         try {
           // Try listing to ensure we have permissions to read the directory
-          await dir.list().toList();
+          await fileRepository.listDirectories(selectedDirectory);
         } catch (e) {
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(

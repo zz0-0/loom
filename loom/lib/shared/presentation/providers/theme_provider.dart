@@ -1,20 +1,15 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/explorer/data/repositories/settings_repository_impl.dart';
-import 'package:loom/features/explorer/domain/repositories/workspace_repository.dart';
+import 'package:loom/shared/data/providers.dart';
+import 'package:loom/shared/domain/repositories/shared_settings_repository.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
-
-// Settings repository provider
-final settingsRepositoryProvider = Provider<WorkspaceSettingsRepository>(
-  (ref) => WorkspaceSettingsRepositoryImpl(),
-);
 
 // Theme mode state notifier
 class ThemeModeNotifier extends StateNotifier<AdaptiveThemeMode> {
   ThemeModeNotifier(this._settingsRepository) : super(AdaptiveThemeMode.system);
 
-  final WorkspaceSettingsRepository _settingsRepository;
+  final SharedSettingsRepository _settingsRepository;
 
   void setLight() {
     state = AdaptiveThemeMode.light;
@@ -40,10 +35,8 @@ class ThemeModeNotifier extends StateNotifier<AdaptiveThemeMode> {
 
   Future<void> _saveSettings() async {
     try {
-      final currentSettings = await _settingsRepository.loadSettings();
       final themeString = _adaptiveThemeModeToString(state);
-      final updatedSettings = currentSettings.copyWith(theme: themeString);
-      await _settingsRepository.saveSettings(updatedSettings);
+      await _settingsRepository.setTheme(themeString);
     } catch (e) {
       // Log error but don't crash the app
       debugPrint('Failed to save theme settings: $e');
@@ -76,8 +69,8 @@ class ThemeModeNotifier extends StateNotifier<AdaptiveThemeMode> {
 
   Future<void> loadSavedTheme() async {
     try {
-      final settings = await _settingsRepository.loadSettings();
-      state = _stringToAdaptiveThemeMode(settings.theme);
+      final themeString = await _settingsRepository.getTheme();
+      state = _stringToAdaptiveThemeMode(themeString);
     } catch (e) {
       // Use system default if loading fails
       state = AdaptiveThemeMode.system;
@@ -89,7 +82,7 @@ class ThemeModeNotifier extends StateNotifier<AdaptiveThemeMode> {
 // Theme providers
 final themeModeProvider =
     StateNotifierProvider<ThemeModeNotifier, AdaptiveThemeMode>(
-  (ref) => ThemeModeNotifier(ref.watch(settingsRepositoryProvider)),
+  (ref) => ThemeModeNotifier(ref.watch(sharedSettingsRepositoryProvider)),
 );
 
 final lightThemeProvider = Provider<ThemeData>((ref) {

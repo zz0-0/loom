@@ -1,54 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:loom/features/explorer/domain/entities/workspace_entities.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-/// Represents a project template that can be used to create new projects
-class ProjectTemplate {
-  const ProjectTemplate({
-    required this.id,
-    required this.name,
-    required this.description,
+/// UI model for project template with icon
+class ProjectTemplateModel extends ProjectTemplate {
+  const ProjectTemplateModel({
+    required super.id,
+    required super.name,
+    required super.description,
+    required super.files,
     required this.icon,
-    required this.files,
-    this.folders = const [],
+    super.folders,
   });
-
-  /// Unique identifier for the template
-  final String id;
-
-  /// Display name of the template
-  final String name;
-
-  /// Description of what this template provides
-  final String description;
 
   /// Icon to display in the UI
   final IconData icon;
 
-  /// List of files to create with their content
-  final List<ProjectFile> files;
-
-  /// List of folders to create
-  final List<String> folders;
-}
-
-/// Represents a file to be created in a project
-class ProjectFile {
-  const ProjectFile({
-    required this.path,
-    required this.content,
-  });
-
-  /// Relative path of the file within the project
-  final String path;
-
-  /// Content of the file
-  final String content;
+  /// Convert to domain entity
+  ProjectTemplate toDomain() => ProjectTemplate(
+        id: id,
+        name: name,
+        description: description,
+        files: files,
+        folders: folders,
+      );
 }
 
 /// Available project templates
 class ProjectTemplates {
-  static const List<ProjectTemplate> templates = [
-    ProjectTemplate(
+  static const List<ProjectTemplateModel> templates = [
+    ProjectTemplateModel(
       id: 'empty',
       name: 'Empty Project',
       description: 'Start with a blank slate',
@@ -90,11 +71,16 @@ Happy writing with Loom! 🚀''',
   ];
 
   /// Get a template by its ID
-  static ProjectTemplate? getTemplate(String id) {
+  static ProjectTemplateModel? getTemplate(String id) {
     try {
       return templates.firstWhere((template) => template.id == id);
     } catch (e) {
       return null;
     }
+  }
+
+  /// Get templates as domain entities
+  static List<ProjectTemplate> getDomainTemplates() {
+    return templates.map((t) => t.toDomain()).toList();
   }
 }

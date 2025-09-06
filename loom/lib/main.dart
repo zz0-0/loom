@@ -3,6 +3,9 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/app/app.dart';
+import 'package:loom/features/explorer/data/adapters/shared_settings_adapter.dart';
+import 'package:loom/features/explorer/data/providers.dart';
+import 'package:loom/shared/data/providers.dart';
 import 'package:loom/src/rust/frb_generated.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -41,8 +44,14 @@ Future<void> main() async {
   await RustLib.init();
 
   runApp(
-    const ProviderScope(
-      child: LoomApp(),
+    ProviderScope(
+      overrides: [
+        sharedSettingsRepositoryProvider.overrideWith((ref) {
+          final settingsRepo = ref.watch(workspaceSettingsRepositoryProvider);
+          return ExplorerSharedSettingsRepository(settingsRepo);
+        }),
+      ],
+      child: const LoomApp(),
     ),
   );
 }

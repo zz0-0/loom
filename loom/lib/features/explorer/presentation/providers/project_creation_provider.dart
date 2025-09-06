@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/explorer/data/models/project_template.dart';
+import 'package:loom/features/explorer/domain/entities/workspace_entities.dart';
 import 'package:path/path.dart' as path;
 
 /// State for project creation process
@@ -26,7 +27,7 @@ class ProjectCreationState {
 
 /// Provider for available project templates
 final projectTemplatesProvider = Provider<List<ProjectTemplate>>((ref) {
-  return ProjectTemplates.templates;
+  return ProjectTemplates.getDomainTemplates();
 });
 
 /// Notifier for project creation state
@@ -43,11 +44,12 @@ class ProjectCreationNotifier extends StateNotifier<ProjectCreationState> {
     state = state.copyWith(isLoading: true);
 
     try {
-      // Get the template
-      final template = ProjectTemplates.getTemplate(templateId);
-      if (template == null) {
-        throw Exception('Template not found: $templateId');
-      }
+      // Get available templates
+      final templates = ProjectTemplates.getDomainTemplates();
+      final template = templates.firstWhere(
+        (ProjectTemplate t) => t.id == templateId,
+        orElse: () => throw Exception('Template not found: $templateId'),
+      );
 
       // Create project directory
       final projectPath = path.join(location, name);

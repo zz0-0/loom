@@ -11,7 +11,37 @@ Comprehensive analysis of Loom's system architecture, covering architectural pat
 
 ## 🏛️ **1. Architectural Patterns**
 
-### **Core Architecture: Clean Architecture** ✅
+### **Clean Architecture** ✅
+```
+┌─────────────────────────────────────────┐
+│           Presentation Layer            │
+│  - UI Components (Widgets)              │
+│  - State Management (Riverpod)          │
+│  - Platform Adaptations                 │
+├─────────────────────────────────────────┤
+│           Domain Layer                  │
+│  - Business Logic (Use Cases)           │
+│  - Domain Entities                      │
+│  - Repository Interfaces                │
+├─────────────────────────────────────────┤
+│           Data Layer                    │
+│  - Repository Implementations           │
+│  - Data Models (JSON serialization)     │
+│  - External Service Integrations        │
+├─────────────────────────────────────────┤
+│           Infrastructure Layer          │
+│  - File System Operations               │
+│  - Rust Native Code (Blox Parser)       │
+│  - Platform-specific Implementations    │
+└─────────────────────────────────────────┘
+```
+
+**Strengths:**
+- ✅ Clear separation of concerns
+- ✅ Testable business logic
+- ✅ Framework-independent domain layer
+- ✅ Dependency inversion principle
+- ✅ **Recent Improvements:** Fixed presentation layer violations, created domain/data abstractions, eliminated duplicate code through shared utilities
 ```
 ┌─────────────────────────────────────────┐
 │           Presentation Layer            │
@@ -246,6 +276,32 @@ class ExplorerPlugin implements Plugin {
   }
 }
 ```
+
+### **Shared Utilities Architecture** ✅
+```dart
+// Centralized Constants (shared/constants/project_constants.dart)
+class ProjectConstants {
+  static const String projectDirName = '.loom';
+  static const String projectFileName = 'project.json';
+  static const String projectBackupFileName = 'project.backup.json';
+}
+
+// Shared File Utilities (shared/utils/file_utils.dart)
+class FileUtils {
+  static List<String> getSupportedExtensions() => ['.dart', '.md', '.json', '.txt'];
+  static bool isSupportedFile(String path) => getSupportedExtensions().contains(extension(path));
+  static bool isHiddenFile(String path) => basename(path).startsWith('.');
+  static Future<List<FileSystemEntity>> buildFileTree(String path) async {
+    // Centralized file tree building logic
+  }
+}
+```
+
+**Benefits:**
+- ✅ Eliminates code duplication across features
+- ✅ Centralized configuration management
+- ✅ Consistent behavior across the application
+- ✅ Easier maintenance and updates
 
 ### **Widget Composition Pattern**
 ```dart
@@ -506,11 +562,13 @@ class PerformanceMonitor {
 ## 🎯 **Architecture Assessment**
 
 ### **Strengths** ✅
-1. **Clean Architecture** - Well-structured separation of concerns
+1. **Clean Architecture** - Well-structured separation of concerns with recent fixes to presentation layer violations
 2. **Cross-Platform** - Excellent platform abstraction
 3. **Extensible Design** - Plugin system and component registry
 4. **Modern State Management** - Riverpod with proper patterns
 5. **Cross-Language Integration** - Effective Rust/Flutter bridge
+6. **Code Organization** - Shared utilities and constants eliminate duplication
+7. **Dependency Injection** - Proper separation through domain/data layer abstractions
 
 ### **Areas for Improvement** ⚠️
 1. **Performance Optimization** - Large file handling, virtualization
@@ -583,6 +641,12 @@ class PerformanceMonitor {
 ## 🎯 **Conclusion**
 
 The Loom system architecture demonstrates **excellent foundational design** with Clean Architecture principles, effective cross-platform abstraction, and extensible component systems. The architecture successfully separates concerns and provides a solid base for a modern code editor.
+
+**Recent Improvements:**
+- ✅ Fixed Clean Architecture violations in shared/presentation layer
+- ✅ Created shared utilities and constants to eliminate code duplication
+- ✅ Implemented proper dependency injection through domain/data abstractions
+- ✅ Enhanced code maintainability through centralized configuration
 
 **Key Recommendations:**
 1. **Strengthen the foundation** with comprehensive testing and monitoring

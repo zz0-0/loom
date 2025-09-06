@@ -6,18 +6,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:loom/features/explorer/data/models/workspace_data_models.dart';
-import 'package:loom/features/explorer/domain/entities/workspace_entities.dart';
+import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
+    as domain;
 import 'package:loom/features/explorer/domain/repositories/workspace_repository.dart';
+import 'package:loom/shared/constants/project_constants.dart';
+import 'package:loom/shared/utils/file_utils.dart';
 import 'package:path/path.dart' as path;
 
 /// Implementation of WorkspaceRepository
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
-  static const String projectDirName = '.loom';
-  static const String projectFileName = 'project.json';
-  static const String projectBackupFileName = 'project.json.backup';
-
   @override
-  Future<Workspace> openWorkspace(String workspacePath) async {
+  Future<domain.Workspace> openWorkspace(String workspacePath) async {
     final directory = Directory(workspacePath);
 
     if (!directory.existsSync()) {
@@ -33,7 +32,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       expandedPaths: metadata.fileSystemExplorerState.expandedPaths.toSet(),
     );
 
-    return Workspace(
+    return domain.Workspace(
       name: workspaceName,
       rootPath: workspacePath,
       metadata: metadata,
@@ -42,7 +41,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<Workspace> createWorkspace(String workspacePath) async {
+  Future<domain.Workspace> createWorkspace(String workspacePath) async {
     final directory = Directory(workspacePath);
 
     if (!directory.existsSync()) {
@@ -50,7 +49,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     final workspaceName = path.basename(workspacePath);
-    const metadata = ProjectMetadata();
+    const metadata = domain.ProjectMetadata();
 
     // Save initial project metadata
     await saveProjectMetadata(workspacePath, metadata);
@@ -58,7 +57,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     // Build initial file tree
     final fileTree = await _buildFileTree(workspacePath);
 
-    return Workspace(
+    return domain.Workspace(
       name: workspaceName,
       rootPath: workspacePath,
       metadata: metadata,
@@ -67,9 +66,9 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<List<FileTreeNode>> refreshFileTree(
-    Workspace workspace,
-    WorkspaceSettings settings,
+  Future<List<domain.FileTreeNode>> refreshFileTree(
+    domain.Workspace workspace,
+    domain.WorkspaceSettings settings,
   ) async {
     return _buildFileTree(
       workspace.rootPath,
@@ -83,16 +82,20 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   @override
   Future<void> saveProjectMetadata(
     String workspacePath,
-    ProjectMetadata metadata,
+    domain.ProjectMetadata metadata,
   ) async {
-    final projectDir = Directory(path.join(workspacePath, projectDirName));
+    final projectDir =
+        Directory(path.join(workspacePath, ProjectConstants.projectDirName));
 
     if (!projectDir.existsSync()) {
       await projectDir.create(recursive: true);
     }
 
-    final projectFile = File(path.join(projectDir.path, projectFileName));
-    final backupFile = File(path.join(projectDir.path, projectBackupFileName));
+    final projectFile =
+        File(path.join(projectDir.path, ProjectConstants.projectFileName));
+    final backupFile = File(
+      path.join(projectDir.path, ProjectConstants.projectBackupFileName),
+    );
 
     // Create backup if project file exists
     if (projectFile.existsSync()) {
@@ -120,12 +123,16 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<ProjectMetadata> loadProjectMetadata(String workspacePath) async {
-    final projectDir = Directory(path.join(workspacePath, projectDirName));
-    final projectFile = File(path.join(projectDir.path, projectFileName));
+  Future<domain.ProjectMetadata> loadProjectMetadata(
+    String workspacePath,
+  ) async {
+    final projectDir =
+        Directory(path.join(workspacePath, ProjectConstants.projectDirName));
+    final projectFile =
+        File(path.join(projectDir.path, ProjectConstants.projectFileName));
 
     if (!projectFile.existsSync()) {
-      return const ProjectMetadata();
+      return const domain.ProjectMetadata();
     }
 
     final jsonString = await projectFile.readAsString();
@@ -221,114 +228,17 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
   }
 
-  Future<List<FileTreeNode>> _buildFileTree(
+  Future<List<domain.FileTreeNode>> _buildFileTree(
     String directoryPath, {
     bool filterExtensions = true,
     bool showHiddenFiles = false,
     Set<String>? expandedPaths,
   }) async {
-    final directory = Directory(directoryPath);
-    if (!directory.existsSync()) {
-      return [];
-    }
-
-    List<FileSystemEntity> entities;
-    try {
-      entities = await directory.list().toList();
-    } catch (e) {
-      return [];
-    }
-    final nodes = <FileTreeNode>[];
-
-    // Sort: directories first, then files, alphabetically
-    entities.sort((a, b) {
-      final aIsDir = a is Directory;
-      final bIsDir = b is Directory;
-
-      if (aIsDir && !bIsDir) return -1;
-      if (!aIsDir && bIsDir) return 1;
-
-      return path
-          .basename(a.path)
-          .toLowerCase()
-          .compareTo(path.basename(b.path).toLowerCase());
-    });
-
-    for (final entity in entities) {
-      final entityPath = entity.path;
-      final entityName = path.basename(entityPath);
-
-      // Skip hidden files if not showing them
-      if (_isHiddenFile(entityPath, showHiddenFiles: showHiddenFiles)) {
-        continue;
-      }
-
-      if (entity is Directory) {
-        final isExpanded = expandedPaths?.contains(entityPath) ?? false;
-        final children = isExpanded
-            ? await _buildFileTree(
-                entityPath,
-                filterExtensions: filterExtensions,
-                showHiddenFiles: showHiddenFiles,
-                expandedPaths: expandedPaths,
-              )
-            : <FileTreeNode>[];
-
-        DateTime? lastModified;
-        try {
-          lastModified = entity.statSync().modified;
-        } catch (_) {
-          continue;
-        }
-
-        nodes.add(
-          FileTreeNode(
-            name: entityName,
-            path: entityPath,
-            type: FileTreeNodeType.directory,
-            isExpanded: isExpanded,
-            children: children,
-            lastModified: lastModified,
-          ),
-        );
-      } else if (entity is File) {
-        // Apply file extension filter
-        if (filterExtensions && !_isSupportedFile(entityPath)) {
-          continue;
-        }
-
-        try {
-          final stat = entity.statSync();
-          nodes.add(
-            FileTreeNode(
-              name: entityName,
-              path: entityPath,
-              type: FileTreeNodeType.file,
-              lastModified: stat.modified,
-              size: stat.size,
-            ),
-          );
-        } catch (_) {
-          continue;
-        }
-      }
-    }
-
-    return nodes;
-  }
-
-  bool _isSupportedFile(String filePath) {
-    final extension = path.extension(filePath).toLowerCase();
-    return {'.md', '.markdown', '.blox', '.txt'}.contains(extension);
-  }
-
-  bool _isHiddenFile(String filePath, {bool showHiddenFiles = false}) {
-    if (showHiddenFiles) return false;
-
-    final fileName = path.basename(filePath);
-    return fileName.startsWith('.') ||
-        fileName.startsWith('~') ||
-        fileName == 'Thumbs.db' ||
-        fileName == 'Desktop.ini';
+    return FileUtils.buildFileTree(
+      directoryPath,
+      filterExtensions: filterExtensions,
+      showHiddenFiles: showHiddenFiles,
+      expandedPaths: expandedPaths,
+    );
   }
 }

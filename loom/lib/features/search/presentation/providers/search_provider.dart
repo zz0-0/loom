@@ -1,13 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/search/data/repositories/search_repository_impl.dart';
+import 'package:loom/features/search/data/providers.dart';
 import 'package:loom/features/search/domain/entities/search_entities.dart';
-import 'package:loom/features/search/domain/repositories/search_repository.dart';
 import 'package:loom/features/search/domain/usecases/search_usecases.dart';
-
-// Repository provider
-final searchRepositoryProvider = Provider<SearchRepository>((ref) {
-  return SearchRepositoryImpl();
-});
 
 // Use case providers
 final searchInWorkspaceUseCaseProvider =
