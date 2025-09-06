@@ -470,10 +470,11 @@ class _FileTreeItem extends StatelessWidget {
     final workspaceNotifier = container.read(currentWorkspaceProvider.notifier);
 
     // Create collection if it doesn't exist
-    workspaceNotifier.createCollection(collectionName);
+    workspaceNotifier
+      ..createCollection(collectionName)
 
-    // Add file to collection
-    workspaceNotifier.addToCollection(collectionName, node.path);
+      // Add file to collection
+      ..addToCollection(collectionName, node.path);
 
     // Show success feedback
     ScaffoldMessenger.of(context).showSnackBar(

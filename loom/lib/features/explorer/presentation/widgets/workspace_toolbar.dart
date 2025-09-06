@@ -5,6 +5,7 @@ import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
     as domain;
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
 import 'package:loom/features/explorer/presentation/widgets/create_project_dialog.dart';
+import 'package:loom/shared/presentation/theme/app_animations.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -83,19 +84,19 @@ class WorkspaceToolbar extends ConsumerWidget {
                 onPressed: onNewFile,
                 splashRadius: 12,
                 tooltip: 'New File',
-              ),
+              ).withHoverAnimation().withPressAnimation(),
               IconButton(
                 icon: const Icon(LucideIcons.folderPlus, size: 16),
                 onPressed: onNewFolder,
                 splashRadius: 12,
                 tooltip: 'New Folder',
-              ),
+              ).withHoverAnimation().withPressAnimation(),
               IconButton(
                 icon: const Icon(LucideIcons.refreshCw, size: 16),
                 onPressed: onRefresh,
                 splashRadius: 12,
                 tooltip: 'Refresh',
-              ),
+              ).withHoverAnimation().withPressAnimation(),
               _SettingsButton(settings: settings),
             ],
           ),

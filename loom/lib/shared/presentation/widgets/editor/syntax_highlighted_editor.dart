@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_highlight/themes/vs2015.dart';
+import 'package:loom/shared/presentation/widgets/editor/blox_syntax_highlighter.dart';
 import 'package:path/path.dart' as path;
 
 /// A syntax-highlighted code editor widget
@@ -66,7 +67,7 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
 
     switch (extension) {
       case '.blox':
-        return 'markdown'; // Use markdown highlighting for Blox files
+        return 'blox'; // Custom Blox language support
       case '.dart':
         return 'dart';
       case '.js':
@@ -190,6 +191,11 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
     // Choose theme based on dark/light mode
     final highlightTheme = widget.isDarkTheme ? vs2015Theme : githubTheme;
 
+    // Use custom Blox highlighter for .blox files
+    if (language == 'blox') {
+      return _buildBloxEditor(theme, lines);
+    }
+
     return Row(
       children: [
         // Line numbers
@@ -215,6 +221,89 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
                     theme: highlightTheme,
                     padding: EdgeInsets.zero,
                     textStyle: widget.style?.copyWith(
+                          fontFamily: 'monospace',
+                          fontSize: 14,
+                          height: 1.5,
+                        ) ??
+                        TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 14,
+                          height: 1.5,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                  ),
+                ),
+              ),
+
+              // Invisible TextField for input handling
+              SingleChildScrollView(
+                controller: _scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 16,
+                    bottom: 8,
+                  ),
+                  child: TextField(
+                    controller: widget.controller,
+                    focusNode: widget.focusNode,
+                    maxLines: null,
+                    style: widget.style?.copyWith(
+                          fontFamily: 'monospace',
+                          fontSize: 14,
+                          height: 1.5,
+                          color: Colors.transparent, // Make text invisible
+                        ) ??
+                        const TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 14,
+                          height: 1.5,
+                          color: Colors.transparent,
+                        ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    onChanged: (_) => widget.onChanged(),
+                    cursorColor: theme.colorScheme.primary,
+                    selectionControls: MaterialTextSelectionControls(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBloxEditor(ThemeData theme, List<String> lines) {
+    final bloxController = BloxSyntaxHighlighter(text: widget.controller.text);
+    bloxController.updateTheme(theme);
+
+    return Row(
+      children: [
+        // Line numbers
+        if (widget.showLineNumbers) _buildLineNumbers(lines),
+
+        // Blox editor
+        Expanded(
+          child: Stack(
+            children: [
+              // Syntax highlighted display
+              SingleChildScrollView(
+                controller: _scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                    top: 16,
+                    bottom: 8,
+                  ),
+                  child: SelectableText.rich(
+                    bloxController.getHighlightedText(),
+                    style: widget.style?.copyWith(
                           fontFamily: 'monospace',
                           fontSize: 14,
                           height: 1.5,

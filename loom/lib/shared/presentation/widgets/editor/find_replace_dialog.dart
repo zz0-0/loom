@@ -263,3 +263,36 @@ class _FindIntent extends Intent {
 class _ReplaceIntent extends Intent {
   const _ReplaceIntent();
 }
+
+/// Keyboard shortcut helper for go to line
+class GoToLineShortcuts extends StatelessWidget {
+  const GoToLineShortcuts({
+    required this.child,
+    required this.onGoToLine,
+    super.key,
+  });
+
+  final Widget child;
+  final VoidCallback onGoToLine;
+
+  @override
+  Widget build(BuildContext context) {
+    return Shortcuts(
+      shortcuts: <LogicalKeySet, Intent>{
+        LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyG):
+            const _GoToLineIntent(),
+      },
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          _GoToLineIntent:
+              CallbackAction<_GoToLineIntent>(onInvoke: (_) => onGoToLine()),
+        },
+        child: child,
+      ),
+    );
+  }
+}
+
+class _GoToLineIntent extends Intent {
+  const _GoToLineIntent();
+}

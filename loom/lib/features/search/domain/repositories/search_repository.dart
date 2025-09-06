@@ -19,4 +19,19 @@ abstract class SearchRepository {
 
   /// Clear recent searches
   Future<void> clearRecentSearches();
+
+  /// Perform replace operations
+  Future<SearchResults> replaceInWorkspace(
+    SearchQuery query,
+    String replaceText,
+    bool replaceAll,
+  );
+
+  /// Perform replace in a specific file
+  Future<List<SearchResult>> replaceInFile(
+    String filePath,
+    SearchQuery query,
+    String replaceText,
+    bool replaceAll,
+  );
 }

@@ -11,7 +11,7 @@ Loom is a sophisticated desktop application that combines the power of Flutter's
 #### **Core Editing Capabilities**
 - **Multi-language Syntax Highlighting**: Support for Blox, Dart, JavaScript, Python, Rust, and more
 - **Advanced Text Editor**: Line numbers, syntax highlighting, find/replace with regex
-- **Multi-tab Interface**: Efficient document management with tabbed editing
+- **Multi-tab Interface**: Efficient document management with tabbed editing and drag-to-reorder functionality
 - **Keyboard Shortcuts**: Full shortcut support (Ctrl+Z/Y, Ctrl+C/V/X, Ctrl+A, Ctrl+S)
 - **Code Folding**: Expandable/collapsible code sections with visual indicators
 - **Undo/Redo System**: Complete edit history with keyboard and toolbar controls
@@ -164,7 +164,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 - ✅ Core architecture (Clean Architecture + MVVM)
 - ✅ Basic text editing with syntax highlighting
 - ✅ Blox language parser and validation
-- ✅ Multi-tab document management
+- ✅ Multi-tab document management with drag-to-reorder functionality
 - ✅ File system operations
 - ✅ Cross-platform desktop support
 - ✅ Theme system and adaptive UI

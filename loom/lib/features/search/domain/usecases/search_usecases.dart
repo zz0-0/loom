@@ -48,3 +48,32 @@ class ManageRecentSearchesUseCase {
     return _repository.clearRecentSearches();
   }
 }
+
+/// Use case for replacing text in workspace
+class ReplaceInWorkspaceUseCase {
+  const ReplaceInWorkspaceUseCase(this._repository);
+  final SearchRepository _repository;
+
+  Future<SearchResults> execute(
+    SearchQuery query,
+    String replaceText,
+    bool replaceAll,
+  ) {
+    return _repository.replaceInWorkspace(query, replaceText, replaceAll);
+  }
+}
+
+/// Use case for replacing text in a specific file
+class ReplaceInFileUseCase {
+  const ReplaceInFileUseCase(this._repository);
+  final SearchRepository _repository;
+
+  Future<List<SearchResult>> execute(
+    String filePath,
+    SearchQuery query,
+    String replaceText,
+    bool replaceAll,
+  ) {
+    return _repository.replaceInFile(filePath, query, replaceText, replaceAll);
+  }
+}

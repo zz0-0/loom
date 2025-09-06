@@ -371,8 +371,9 @@ class _CollectionItemState extends State<_CollectionItem> {
 
     if (sourceCollection != null && sourceCollection != widget.collectionName) {
       // Moving between collections
-      workspaceNotifier.removeFromCollection(sourceCollection, filePath);
-      workspaceNotifier.addToCollection(widget.collectionName, filePath);
+      workspaceNotifier
+        ..removeFromCollection(sourceCollection, filePath)
+        ..addToCollection(widget.collectionName, filePath);
 
       // Show success feedback
       ScaffoldMessenger.of(context).showSnackBar(
@@ -499,13 +500,14 @@ class _CollectionItemState extends State<_CollectionItem> {
     final workspaceNotifier = container.read(currentWorkspaceProvider.notifier);
 
     // Remove from current collection
-    workspaceNotifier.removeFromCollection(widget.collectionName, filePath);
+    workspaceNotifier
+      ..removeFromCollection(widget.collectionName, filePath)
 
-    // Create suggested collection if it doesn't exist
-    workspaceNotifier.createCollection(suggestion.displayName);
+      // Create suggested collection if it doesn't exist
+      ..createCollection(suggestion.displayName)
 
-    // Add to suggested collection
-    workspaceNotifier.addToCollection(suggestion.displayName, filePath);
+      // Add to suggested collection
+      ..addToCollection(suggestion.displayName, filePath);
 
     // Show success feedback
     ScaffoldMessenger.of(context).showSnackBar(

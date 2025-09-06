@@ -21,11 +21,65 @@ class ContentTabBar extends ConsumerStatefulWidget {
 
 class _ContentTabBarState extends ConsumerState<ContentTabBar> {
   final ScrollController _scrollController = ScrollController();
+  double _availableWidth = 0;
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  /// Calculates which tabs fit in the available space and which overflow
+  _TabLayout _calculateTabLayout(
+    List<ContentTab> tabs,
+    CloseButtonPosition closeButtonPosition,
+  ) {
+    if (tabs.isEmpty) return const _TabLayout(<ContentTab>[], <ContentTab>[]);
+
+    final visibleTabs = <ContentTab>[];
+    final overflowTabs = <ContentTab>[];
+    var usedWidth = 0.0;
+    const dropdownWidth = 40.0; // Space for overflow dropdown
+    final effectiveWidth =
+        _availableWidth - (tabs.length > 1 ? dropdownWidth : 0);
+
+    for (final tab in tabs) {
+      final tabWidth = _estimateTabWidth(tab, closeButtonPosition);
+      if (usedWidth + tabWidth <= effectiveWidth || visibleTabs.isEmpty) {
+        visibleTabs.add(tab);
+        usedWidth += tabWidth;
+      } else {
+        overflowTabs.add(tab);
+      }
+    }
+
+    return _TabLayout(visibleTabs, overflowTabs);
+  }
+
+  /// Estimates the width of a tab based on its content
+  double _estimateTabWidth(
+    ContentTab tab,
+    CloseButtonPosition closeButtonPosition,
+  ) {
+    const baseWidth = 120.0; // Minimum width
+    const charWidth = 8.0; // Approximate width per character
+    const iconWidth = 24.0; // Space for icon
+    const closeButtonWidth = 20.0; // Space for close button
+    const padding = 24.0; // Horizontal padding
+
+    var width = baseWidth;
+    width += tab.title.length * charWidth;
+
+    if (tab.icon != null) {
+      width += iconWidth;
+    }
+
+    if (closeButtonPosition == CloseButtonPosition.left ||
+        closeButtonPosition == CloseButtonPosition.right) {
+      width += closeButtonWidth;
+    }
+
+    return width + padding;
   }
 
   @override
@@ -73,58 +127,67 @@ class _ContentTabBarState extends ConsumerState<ContentTabBar> {
             ),
           ),
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Listener(
-                onPointerSignal: (pointerSignal) {
-                  if (pointerSignal is PointerScrollEvent) {
-                    // Handle horizontal scrolling with mouse wheel
-                    final delta = pointerSignal.scrollDelta.dy;
-                    if (_scrollController.hasClients) {
-                      final newOffset =
-                          (_scrollController.offset + delta).clamp(
-                        0.0,
-                        _scrollController.position.maxScrollExtent,
-                      );
-                      _scrollController.animateTo(
-                        newOffset,
-                        duration: const Duration(milliseconds: 100),
-                        curve: Curves.easeOut,
-                      );
-                    }
-                  }
-                },
-                child: Scrollbar(
-                  controller: _scrollController,
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: tabState.tabs.map((tab) {
-                        final isActive = tab.id == tabState.activeTabId;
-                        return _TabItem(
-                          tab: tab,
-                          isActive: isActive,
-                          closeButtonPosition:
-                              closeButtonSettings.effectiveTabPosition,
-                          onTap: () {
-                            ref.read(tabProvider.notifier).activateTab(tab.id);
-                            _ensureTabVisible(tab.id);
-                          },
-                          onClose: tab.canClose
-                              ? () => ref
-                                  .read(tabProvider.notifier)
-                                  .closeTab(tab.id)
-                              : null,
-                        );
-                      }).toList(),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            _availableWidth = constraints.maxWidth;
+            final tabLayout = _calculateTabLayout(
+              tabState.tabs,
+              closeButtonSettings.effectiveTabPosition,
+            );
+
+            return Row(
+              children: [
+                // Visible tabs in scrollable area
+                Expanded(
+                  child: Listener(
+                    onPointerSignal: (pointerSignal) {
+                      if (pointerSignal is PointerScrollEvent) {
+                        // Handle horizontal scrolling with mouse wheel
+                        final delta = pointerSignal.scrollDelta.dy;
+                        if (_scrollController.hasClients) {
+                          final newOffset =
+                              (_scrollController.offset + delta).clamp(
+                            0.0,
+                            _scrollController.position.maxScrollExtent,
+                          );
+                          _scrollController.animateTo(
+                            newOffset,
+                            duration: const Duration(milliseconds: 100),
+                            curve: Curves.easeOut,
+                          );
+                        }
+                      }
+                    },
+                    child: Scrollbar(
+                      controller: _scrollController,
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: _buildTabRow(
+                            tabLayout.visibleTabs,
+                            closeButtonSettings.effectiveTabPosition,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          ],
+                // Overflow dropdown
+                if (tabLayout.overflowTabs.isNotEmpty)
+                  _TabOverflowDropdown(
+                    overflowTabs: tabLayout.overflowTabs,
+                    activeTabId: tabState.activeTabId,
+                    onTabSelected: (String tabId) {
+                      ref.read(tabProvider.notifier).activateTab(tabId);
+                    },
+                    onTabClosed: (String tabId) {
+                      ref.read(tabProvider.notifier).closeTab(tabId);
+                    },
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -191,6 +254,61 @@ class _ContentTabBarState extends ConsumerState<ContentTabBar> {
     _ensureTabVisible(previousTab.id);
   }
 
+  List<Widget> _buildTabRow(
+    List<ContentTab> visibleTabs,
+    CloseButtonPosition closeButtonPosition,
+  ) {
+    final tabState = ref.watch(tabProvider);
+    final children = <Widget>[];
+
+    for (var i = 0; i < visibleTabs.length; i++) {
+      final tab = visibleTabs[i];
+
+      // Add drag target before each tab (except the first)
+      if (i > 0) {
+        children.add(
+          _TabDragTarget(
+            tabIndex: i,
+            onAccept: (draggedIndex) {
+              ref.read(tabProvider.notifier).reorderTabs(draggedIndex, i);
+            },
+          ),
+        );
+      }
+
+      // Add the tab itself
+      final isActive = tab.id == tabState.activeTabId;
+      children.add(
+        _TabItem(
+          tab: tab,
+          isActive: isActive,
+          closeButtonPosition: closeButtonPosition,
+          onTap: () {
+            ref.read(tabProvider.notifier).activateTab(tab.id);
+            _ensureTabVisible(tab.id);
+          },
+          onClose: tab.canClose
+              ? () => ref.read(tabProvider.notifier).closeTab(tab.id)
+              : null,
+        ),
+      );
+    }
+
+    // Add drag target after the last tab
+    children.add(
+      _TabDragTarget(
+        tabIndex: visibleTabs.length,
+        onAccept: (draggedIndex) {
+          ref
+              .read(tabProvider.notifier)
+              .reorderTabs(draggedIndex, visibleTabs.length - 1);
+        },
+      ),
+    );
+
+    return children;
+  }
+
   void _closeCurrentTab(TabState tabState) {
     final activeTab = tabState.activeTab;
     if (activeTab != null && activeTab.canClose) {
@@ -234,31 +352,88 @@ class _TabItemState extends State<_TabItem> {
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: Container(
-          constraints: const BoxConstraints(
-            minWidth: 120,
-            maxWidth: 200,
-          ),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            border: widget.isActive
-                ? Border(
-                    left: BorderSide(color: theme.dividerColor),
-                    right: BorderSide(color: theme.dividerColor),
-                    top: BorderSide(
-                      color: theme.colorScheme.primary,
-                      width: 2,
-                    ),
-                  )
-                : null,
-          ),
-          child: Padding(
+      child: Draggable<int>(
+        data: widget.tab.id.hashCode, // Use hashCode as drag data
+        onDragStarted: () {},
+        onDragEnd: (details) {},
+        feedback: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(4),
+          child: Container(
+            constraints: const BoxConstraints(
+              minWidth: 120,
+              maxWidth: 200,
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(
+                color: theme.colorScheme.primary,
+                width: 2,
+              ),
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: _buildTabChildren(theme),
+              children: _buildTabChildren(theme, isFeedback: true),
+            ),
+          ),
+        ),
+        childWhenDragging: Opacity(
+          opacity: 0.5,
+          child: Container(
+            constraints: const BoxConstraints(
+              minWidth: 120,
+              maxWidth: 200,
+            ),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              border: widget.isActive
+                  ? Border(
+                      left: BorderSide(color: theme.dividerColor),
+                      right: BorderSide(color: theme.dividerColor),
+                      top: BorderSide(
+                        color: theme.colorScheme.primary,
+                        width: 2,
+                      ),
+                    )
+                  : null,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: _buildTabChildren(theme),
+              ),
+            ),
+          ),
+        ),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Container(
+            constraints: const BoxConstraints(
+              minWidth: 120,
+              maxWidth: 200,
+            ),
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              border: widget.isActive
+                  ? Border(
+                      left: BorderSide(color: theme.dividerColor),
+                      right: BorderSide(color: theme.dividerColor),
+                      top: BorderSide(
+                        color: theme.colorScheme.primary,
+                        width: 2,
+                      ),
+                    )
+                  : null,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: _buildTabChildren(theme),
+              ),
             ),
           ),
         ),
@@ -267,7 +442,7 @@ class _TabItemState extends State<_TabItem> {
   }
 
   /// Build tab children based on close button position
-  List<Widget> _buildTabChildren(ThemeData theme) {
+  List<Widget> _buildTabChildren(ThemeData theme, {bool isFeedback = false}) {
     final closeButton =
         widget.onClose != null && (_isHovered || widget.isActive)
             ? InkWell(
@@ -349,6 +524,180 @@ class _TabItemState extends State<_TabItem> {
   }
 
   IconData _getIconData(String iconName) {
+    switch (iconName) {
+      case 'settings':
+        return Icons.settings;
+      case 'file':
+        return Icons.description;
+      case 'folder':
+        return Icons.folder;
+      default:
+        return Icons.description;
+    }
+  }
+}
+
+/// Drag target widget for tab reordering
+class _TabDragTarget extends StatelessWidget {
+  const _TabDragTarget({
+    required this.tabIndex,
+    required this.onAccept,
+  });
+
+  final int tabIndex;
+  final void Function(int draggedIndex) onAccept;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final theme = Theme.of(context);
+
+        return DragTarget<int>(
+          onWillAcceptWithDetails: (details) => true,
+          onAcceptWithDetails: (details) {
+            // Find the original index of the dragged tab
+            final tabState = ref.read(tabProvider);
+            final draggedIndex = tabState.tabs.indexWhere(
+              (ContentTab tab) => tab.id.hashCode == details.data,
+            );
+
+            if (draggedIndex != -1) {
+              onAccept(draggedIndex);
+            }
+          },
+          builder: (context, candidateData, rejectedData) {
+            final isHovered = candidateData.isNotEmpty;
+            return Container(
+              width: isHovered ? 40 : 8,
+              height: 35,
+              decoration: BoxDecoration(
+                color: isHovered
+                    ? theme.colorScheme.primary.withOpacity(0.2)
+                    : Colors.transparent,
+                border: isHovered
+                    ? Border.all(
+                        color: theme.colorScheme.primary,
+                        width: 2,
+                      )
+                    : null,
+              ),
+              child: isHovered
+                  ? Center(
+                      child: Icon(
+                        Icons.arrow_forward,
+                        size: 16,
+                        color: theme.colorScheme.primary,
+                      ),
+                    )
+                  : null,
+            );
+          },
+        );
+      },
+    );
+  }
+}
+
+/// Data class for tab layout calculation results
+class _TabLayout {
+  const _TabLayout(this.visibleTabs, this.overflowTabs);
+
+  final List<ContentTab> visibleTabs;
+  final List<ContentTab> overflowTabs;
+}
+
+/// Dropdown widget for overflow tabs
+class _TabOverflowDropdown extends StatelessWidget {
+  const _TabOverflowDropdown({
+    required this.overflowTabs,
+    required this.activeTabId,
+    required this.onTabSelected,
+    required this.onTabClosed,
+  });
+
+  final List<ContentTab> overflowTabs;
+  final String? activeTabId;
+  final void Function(String) onTabSelected;
+  final void Function(String) onTabClosed;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return PopupMenuButton<String>(
+      icon: Icon(
+        Icons.more_horiz,
+        size: 16,
+        color: theme.colorScheme.onSurfaceVariant,
+      ),
+      itemBuilder: (context) => overflowTabs.map((tab) {
+        final isActive = tab.id == activeTabId;
+        return PopupMenuItem<String>(
+          value: tab.id,
+          child: Row(
+            children: [
+              // Tab icon
+              if (tab.icon != null)
+                Icon(
+                  _getIconData(tab.icon!),
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+
+              // Tab title
+              Expanded(
+                child: Text(
+                  tab.title,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
+                    color: isActive
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurface,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+              // Dirty indicator
+              if (tab.isDirty)
+                Container(
+                  width: 6,
+                  height: 6,
+                  margin: const EdgeInsets.only(left: 8),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+
+              // Close button
+              if (tab.canClose)
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the menu
+                    onTabClosed(tab.id);
+                  },
+                  borderRadius: AppRadius.radiusSm,
+                  child: Container(
+                    padding: AppSpacing.paddingXs,
+                    margin: const EdgeInsets.only(left: 8),
+                    child: Icon(
+                      Icons.close,
+                      size: 14,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      }).toList(),
+      onSelected: onTabSelected,
+    );
+  }
+
+  static IconData _getIconData(String iconName) {
     switch (iconName) {
       case 'settings':
         return Icons.settings;

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:loom/features/search/domain/entities/search_entities.dart';
 import 'package:loom/features/search/presentation/providers/search_provider.dart';
+import 'package:loom/shared/presentation/theme/app_animations.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 
 /// Global search dialog
@@ -15,6 +16,7 @@ class GlobalSearchDialog extends ConsumerStatefulWidget {
 
 class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _replaceController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   bool _caseSensitive = false;
   bool _useRegex = false;
@@ -31,6 +33,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
   @override
   void dispose() {
     _searchController.dispose();
+    _replaceController.dispose();
     _searchFocusNode.dispose();
     super.dispose();
   }
@@ -61,7 +64,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                 IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () => Navigator.of(context).pop(),
-                ),
+                ).withHoverAnimation().withPressAnimation(),
               ],
             ),
             const SizedBox(height: 16),
@@ -86,7 +89,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                       onPressed: () =>
                           setState(() => _caseSensitive = !_caseSensitive),
                       tooltip: 'Case sensitive',
-                    ),
+                    ).withHoverAnimation().withPressAnimation(),
                     IconButton(
                       icon: Icon(
                         _useRegex ? Icons.code : Icons.code_outlined,
@@ -94,12 +97,23 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                       ),
                       onPressed: () => setState(() => _useRegex = !_useRegex),
                       tooltip: 'Use regex',
-                    ),
+                    ).withHoverAnimation().withPressAnimation(),
                   ],
                 ),
                 border: const OutlineInputBorder(),
               ),
               onSubmitted: (_) => _performSearch(),
+            ),
+            const SizedBox(height: 8),
+
+            // Replace input
+            TextField(
+              controller: _replaceController,
+              decoration: const InputDecoration(
+                hintText: 'Replace with...',
+                prefixIcon: Icon(Icons.find_replace),
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 8),
 
@@ -118,24 +132,54 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
             ),
             const SizedBox(height: 16),
 
-            // Search button
-            ElevatedButton.icon(
-              onPressed: searchState.isSearching ? null : _performSearch,
-              icon: searchState.isSearching
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.search),
-              label: Text(searchState.isSearching ? 'Searching...' : 'Search'),
-            ),
-            const SizedBox(height: 16),
-
             // Results
             Expanded(
               child: _buildResults(context, searchState, theme),
             ),
+
+            // Replace buttons
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: searchState.isSearching
+                        ? null
+                        : () => _performReplace(replaceAll: false),
+                    icon: searchState.isSearching
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.find_replace),
+                    label: Text(
+                      searchState.isSearching ? 'Replacing...' : 'Replace',
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: searchState.isSearching
+                        ? null
+                        : () => _performReplace(replaceAll: true),
+                    icon: searchState.isSearching
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.find_replace),
+                    label: Text(
+                      searchState.isSearching
+                          ? 'Replacing All...'
+                          : 'Replace All',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
 
             // Recent searches
             if (searchState.recentSearches.isNotEmpty) ...[
@@ -399,6 +443,25 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
 
     if (query.searchText.isNotEmpty) {
       ref.read(searchProvider.notifier).search(query);
+    }
+  }
+
+  void _performReplace({required bool replaceAll}) {
+    final query = SearchQuery(
+      searchText: _searchController.text.trim(),
+      caseSensitive: _caseSensitive,
+      useRegex: _useRegex,
+      includeHiddenFiles: _includeHiddenFiles,
+      fileExtensions: _fileExtensions,
+      excludePatterns: _excludePatterns,
+    );
+
+    if (query.searchText.isNotEmpty) {
+      ref.read(searchProvider.notifier).replace(
+            query,
+            _replaceController.text,
+            replaceAll,
+          );
     }
   }
 }

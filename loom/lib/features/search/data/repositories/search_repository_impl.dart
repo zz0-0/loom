@@ -113,6 +113,109 @@ class SearchRepositoryImpl implements SearchRepository {
     _recentSearches.clear();
   }
 
+  @override
+  Future<SearchResults> replaceInWorkspace(
+    SearchQuery query,
+    String replaceText,
+    bool replaceAll,
+  ) async {
+    final stopwatch = Stopwatch()..start();
+
+    final workspacePath = Directory.current.path;
+    final allFiles = await _getAllFiles(workspacePath, query);
+
+    final groups = <SearchResultsGroup>[];
+    var totalMatches = 0;
+
+    for (final filePath in allFiles) {
+      final fileResults =
+          await replaceInFile(filePath, query, replaceText, replaceAll);
+      if (fileResults.isNotEmpty) {
+        groups.add(SearchResultsGroup.fromResults(fileResults));
+        totalMatches += fileResults.length;
+      }
+    }
+
+    stopwatch.stop();
+
+    return SearchResults(
+      groups: groups,
+      totalFiles: groups.length,
+      totalMatches: totalMatches,
+      searchTime: stopwatch.elapsed,
+      query: query,
+    );
+  }
+
+  @override
+  Future<List<SearchResult>> replaceInFile(
+    String filePath,
+    SearchQuery query,
+    String replaceText,
+    bool replaceAll,
+  ) async {
+    final results = <SearchResult>[];
+
+    try {
+      final file = File(filePath);
+      if (!file.existsSync()) return results;
+
+      var content = await file.readAsString();
+      final originalContent = content;
+      final lines = content.split('\n');
+
+      for (var i = 0; i < lines.length; i++) {
+        final line = lines[i];
+        final matches = _findMatchesInLine(line, query);
+
+        if (matches.isNotEmpty) {
+          if (replaceAll) {
+            // Replace all matches in this line
+            var newLine = line;
+            for (final match in matches.reversed) {
+              final beforeMatch = newLine.substring(0, match.start);
+              final afterMatch = newLine.substring(match.end);
+              newLine = beforeMatch + replaceText + afterMatch;
+            }
+            lines[i] = newLine;
+          } else {
+            // Replace only first match
+            final match = matches.first;
+            final beforeMatch = line.substring(0, match.start);
+            final afterMatch = line.substring(match.end);
+            lines[i] = beforeMatch + replaceText + afterMatch;
+          }
+
+          // Record the replacement
+          final match = matches.first; // Use first match for result
+          results.add(
+            SearchResult.fromMatch(
+              filePath,
+              i + 1,
+              lines[i], // Use the new line content
+              match.start,
+              match.start + replaceText.length,
+            ),
+          );
+
+          if (!replaceAll) {
+            break; // Stop after first replacement if not replace all
+          }
+        }
+      }
+
+      // Write back the modified content
+      if (content != originalContent) {
+        content = lines.join('\n');
+        await file.writeAsString(content);
+      }
+    } catch (e) {
+      // Skip files that can't be read/written
+    }
+
+    return results;
+  }
+
   /// Get all files in workspace that match the search criteria
   Future<List<String>> _getAllFiles(
     String workspacePath,

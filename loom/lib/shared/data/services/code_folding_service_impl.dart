@@ -9,6 +9,7 @@ class CodeFoldingServiceImpl implements CodeFoldingService {
     _regions.clear();
     final lines = content.split('\n');
 
+    // Parse markdown-style blocks first
     for (var i = 0; i < lines.length; i++) {
       final line = lines[i];
 
@@ -77,7 +78,137 @@ class CodeFoldingServiceImpl implements CodeFoldingService {
       }
     }
 
+    // Parse programming language constructs
+    _parseProgrammingConstructs(lines);
+
     return _regions;
+  }
+
+  void _parseProgrammingConstructs(List<String> lines) {
+    var braceCount = 0;
+    var blockStart = -1;
+    var inFunction = false;
+    var inClass = false;
+
+    for (var i = 0; i < lines.length; i++) {
+      final line = lines[i].trim();
+
+      // Detect class definitions
+      if (line.startsWith('class ') ||
+          line.startsWith('abstract class ') ||
+          line.startsWith('interface ')) {
+        inClass = true;
+        blockStart = i;
+      }
+
+      // Detect function definitions
+      else if ((line.contains('function') ||
+              line.contains('def ') ||
+              line.contains('void ') ||
+              line.contains('Future ') ||
+              line.contains('String ') ||
+              line.contains('int ') ||
+              line.contains('bool ') ||
+              line.contains('double ')) &&
+          line.contains('(') &&
+          line.contains(')')) {
+        inFunction = true;
+        blockStart = i;
+      }
+
+      // Count braces for block detection
+      braceCount += '{'.allMatches(line).length;
+      braceCount -= '}'.allMatches(line).length;
+
+      // End of block
+      if (braceCount == 0 && blockStart != -1) {
+        if (i > blockStart + 1) {
+          // Only fold multi-line blocks
+          if (inClass) {
+            _regions.add(
+              FoldableRegion(
+                startLine: blockStart,
+                endLine: i,
+                title: _extractClassName(lines[blockStart]),
+                type: FoldableRegionType.classDefinition,
+                level: _getIndentLevel(lines[blockStart]),
+              ),
+            );
+            inClass = false;
+          } else if (inFunction) {
+            _regions.add(
+              FoldableRegion(
+                startLine: blockStart,
+                endLine: i,
+                title: _extractFunctionName(lines[blockStart]),
+                type: FoldableRegionType.function,
+                level: _getIndentLevel(lines[blockStart]),
+              ),
+            );
+            inFunction = false;
+          }
+        }
+        blockStart = -1;
+      }
+
+      // Detect comment blocks
+      if (line.startsWith('/*') ||
+          line.startsWith('///') ||
+          (line.startsWith('//') &&
+              i + 1 < lines.length &&
+              lines[i + 1].trim().startsWith('//'))) {
+        final commentStart = i;
+        var commentEnd = i;
+
+        // Find end of comment block
+        while (commentEnd < lines.length) {
+          final commentLine = lines[commentEnd].trim();
+          if (commentLine.endsWith('*/') ||
+              (commentEnd > commentStart && !commentLine.startsWith('//'))) {
+            break;
+          }
+          commentEnd++;
+        }
+
+        if (commentEnd > commentStart + 1) {
+          _regions.add(
+            FoldableRegion(
+              startLine: commentStart,
+              endLine: commentEnd,
+              title: 'Comment Block',
+              type: FoldableRegionType.commentBlock,
+              level: _getIndentLevel(lines[commentStart]),
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  int _getIndentLevel(String line) {
+    return line.length - line.trimLeft().length;
+  }
+
+  String _extractClassName(String line) {
+    final parts = line.trim().split(' ');
+    for (var i = 0; i < parts.length; i++) {
+      if (parts[i] == 'class' || parts[i] == 'interface') {
+        if (i + 1 < parts.length) {
+          return parts[i + 1].split('<').first; // Remove generics
+        }
+      }
+    }
+    return 'Class';
+  }
+
+  String _extractFunctionName(String line) {
+    final parts = line.trim().split('(');
+    if (parts.isNotEmpty) {
+      final beforeParen = parts[0].trim();
+      final nameParts = beforeParen.split(' ');
+      return nameParts.last;
+    }
+    return 'Function';
   }
 
   @override

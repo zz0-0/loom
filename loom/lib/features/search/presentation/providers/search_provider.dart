@@ -27,6 +27,17 @@ final manageRecentSearchesUseCaseProvider =
   return ManageRecentSearchesUseCase(repository);
 });
 
+final replaceInWorkspaceUseCaseProvider =
+    Provider<ReplaceInWorkspaceUseCase>((ref) {
+  final repository = ref.watch(searchRepositoryProvider);
+  return ReplaceInWorkspaceUseCase(repository);
+});
+
+final replaceInFileUseCaseProvider = Provider<ReplaceInFileUseCase>((ref) {
+  final repository = ref.watch(searchRepositoryProvider);
+  return ReplaceInFileUseCase(repository);
+});
+
 // Search state
 class SearchState {
   const SearchState({
@@ -60,11 +71,13 @@ class SearchNotifier extends StateNotifier<SearchState> {
   SearchNotifier(
     this._searchInWorkspaceUseCase,
     this._manageRecentSearchesUseCase,
+    this._replaceInWorkspaceUseCase,
   ) : super(const SearchState()) {
     _loadRecentSearches();
   }
   final SearchInWorkspaceUseCase _searchInWorkspaceUseCase;
   final ManageRecentSearchesUseCase _manageRecentSearchesUseCase;
+  final ReplaceInWorkspaceUseCase _replaceInWorkspaceUseCase;
 
   Future<void> _loadRecentSearches() async {
     try {
@@ -99,6 +112,37 @@ class SearchNotifier extends StateNotifier<SearchState> {
     }
   }
 
+  Future<void> replace(
+    SearchQuery query,
+    String replaceText,
+    bool replaceAll,
+  ) async {
+    if (query.searchText.trim().isEmpty) return;
+
+    state = state.copyWith(isSearching: true);
+
+    try {
+      final results = await _replaceInWorkspaceUseCase.execute(
+        query,
+        replaceText,
+        replaceAll,
+      );
+      state = state.copyWith(
+        isSearching: false,
+        results: results,
+      );
+
+      // Save to recent searches
+      await _manageRecentSearchesUseCase.saveRecentSearch(query);
+      await _loadRecentSearches();
+    } catch (e) {
+      state = state.copyWith(
+        isSearching: false,
+        error: e.toString(),
+      );
+    }
+  }
+
   void clearResults() {
     state = state.copyWith();
   }
@@ -113,6 +157,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
 final searchProvider =
     StateNotifierProvider<SearchNotifier, SearchState>((ref) {
   final searchUseCase = ref.watch(searchInWorkspaceUseCaseProvider);
+  final replaceUseCase = ref.watch(replaceInWorkspaceUseCaseProvider);
   final manageSearchesUseCase = ref.watch(manageRecentSearchesUseCaseProvider);
-  return SearchNotifier(searchUseCase, manageSearchesUseCase);
+  return SearchNotifier(searchUseCase, manageSearchesUseCase, replaceUseCase);
 });
