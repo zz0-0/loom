@@ -2,9 +2,12 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/settings/presentation/providers/close_button_settings_provider.dart';
+import 'package:loom/features/settings/presentation/providers/custom_theme_provider.dart';
 import 'package:loom/features/settings/presentation/providers/top_bar_settings_provider.dart';
 import 'package:loom/features/settings/presentation/providers/window_controls_provider.dart';
+import 'package:loom/features/settings/presentation/widgets/theme_customization_widgets.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/window_controls.dart';
 
@@ -97,6 +100,8 @@ class ThemeSettings extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final currentMode = ref.watch(themeModeProvider);
+    final customTheme = ref.watch(customThemeProvider);
+    final fontSettings = ref.watch(fontSettingsProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,43 +114,139 @@ class ThemeSettings extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
 
-        // Theme options in a row layout
-        Row(
+        // Theme mode selection (System/Light/Dark)
+        _SettingsSection(
+          title: 'Theme Mode',
+          subtitle: 'Choose your preferred theme mode',
           children: [
-            Expanded(
-              child: _ThemeCard(
-                title: 'System',
-                icon: Icons.brightness_auto,
-                isSelected: currentMode == AdaptiveThemeMode.system,
-                onTap: () {
-                  ref.read(themeModeProvider.notifier).setSystem();
-                  AdaptiveTheme.of(context).setSystem();
-                },
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: _ThemeCard(
+                    title: 'System',
+                    icon: Icons.brightness_auto,
+                    isSelected: currentMode == AdaptiveThemeMode.system,
+                    onTap: () {
+                      ref.read(themeModeProvider.notifier).setSystem();
+                      AdaptiveTheme.of(context).setSystem();
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _ThemeCard(
+                    title: 'Light',
+                    icon: Icons.wb_sunny,
+                    isSelected: currentMode == AdaptiveThemeMode.light,
+                    onTap: () {
+                      ref.read(themeModeProvider.notifier).setLight();
+                      AdaptiveTheme.of(context).setLight();
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _ThemeCard(
+                    title: 'Dark',
+                    icon: Icons.nightlight_round,
+                    isSelected: currentMode == AdaptiveThemeMode.dark,
+                    onTap: () {
+                      ref.read(themeModeProvider.notifier).setDark();
+                      AdaptiveTheme.of(context).setDark();
+                    },
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _ThemeCard(
-                title: 'Light',
-                icon: Icons.wb_sunny,
-                isSelected: currentMode == AdaptiveThemeMode.light,
-                onTap: () {
-                  ref.read(themeModeProvider.notifier).setLight();
-                  AdaptiveTheme.of(context).setLight();
-                },
-              ),
+          ],
+        ),
+
+        const SizedBox(height: 24),
+
+        // Built-in theme presets
+        _SettingsSection(
+          title: 'Theme Presets',
+          subtitle: 'Choose from pre-designed themes',
+          children: [
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: BuiltInThemes.all.map((presetTheme) {
+                final isSelected = customTheme.name == presetTheme.name;
+                return _PresetThemeCard(
+                  theme: presetTheme,
+                  isSelected: isSelected,
+                  onTap: () {
+                    ref
+                        .read(customThemeProvider.notifier)
+                        .setTheme(presetTheme);
+                  },
+                );
+              }).toList(),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _ThemeCard(
-                title: 'Dark',
-                icon: Icons.nightlight_round,
-                isSelected: currentMode == AdaptiveThemeMode.dark,
-                onTap: () {
-                  ref.read(themeModeProvider.notifier).setDark();
-                  AdaptiveTheme.of(context).setDark();
-                },
-              ),
+          ],
+        ),
+
+        const SizedBox(height: 24),
+
+        // Custom theme colors
+        _SettingsSection(
+          title: 'Customize Colors',
+          subtitle: 'Personalize your theme colors',
+          children: [
+            ColorPickerButton(
+              color: customTheme.primaryColor,
+              label: 'Primary Color',
+              onColorChanged: (color) {
+                ref.read(customThemeProvider.notifier).updateTheme(
+                      (theme) => theme.copyWith(primaryColor: color),
+                    );
+              },
+            ),
+            const SizedBox(height: 12),
+            ColorPickerButton(
+              color: customTheme.secondaryColor,
+              label: 'Secondary Color',
+              onColorChanged: (color) {
+                ref.read(customThemeProvider.notifier).updateTheme(
+                      (theme) => theme.copyWith(secondaryColor: color),
+                    );
+              },
+            ),
+            const SizedBox(height: 12),
+            ColorPickerButton(
+              color: customTheme.surfaceColor,
+              label: 'Surface Color',
+              onColorChanged: (color) {
+                ref.read(customThemeProvider.notifier).updateTheme(
+                      (theme) => theme.copyWith(surfaceColor: color),
+                    );
+              },
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 24),
+
+        // Font settings
+        _SettingsSection(
+          title: 'Typography',
+          subtitle: 'Customize fonts and text appearance',
+          children: [
+            FontFamilySelector(
+              currentFontFamily: fontSettings.fontFamily,
+              onFontFamilyChanged: (fontFamily) {
+                ref
+                    .read(fontSettingsProvider.notifier)
+                    .setFontFamily(fontFamily);
+              },
+            ),
+            const SizedBox(height: 16),
+            FontSizeSelector(
+              currentFontSize: fontSettings.fontSize,
+              onFontSizeChanged: (fontSize) {
+                ref.read(fontSettingsProvider.notifier).setFontSize(fontSize);
+              },
             ),
           ],
         ),
@@ -339,11 +440,11 @@ class _ThemeCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.radiusXl,
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingMd,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.radiusXl,
             color: isSelected
                 ? theme.colorScheme.primary.withOpacity(0.1)
                 : theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
@@ -901,6 +1002,97 @@ class CloseButtonSettings extends ConsumerWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+/// Preset theme card widget
+class _PresetThemeCard extends StatelessWidget {
+  const _PresetThemeCard({
+    required this.theme,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final CustomThemeData theme;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final themeData = Theme.of(context);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.radiusMd,
+        child: Container(
+          width: 120,
+          padding: AppSpacing.paddingMd,
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.radiusMd,
+            color: isSelected
+                ? theme.primaryColor.withOpacity(0.1)
+                : themeData.colorScheme.surfaceContainerHighest
+                    .withOpacity(0.3),
+            border: Border.all(
+              color: isSelected
+                  ? theme.primaryColor.withOpacity(0.3)
+                  : themeData.colorScheme.outline.withOpacity(0.2),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Color preview
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: theme.primaryColor,
+                      borderRadius: AppRadius.radiusSm,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: theme.secondaryColor,
+                      borderRadius: AppRadius.radiusSm,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: theme.surfaceColor,
+                      borderRadius: AppRadius.radiusSm,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                theme.name,
+                style: themeData.textTheme.bodySmall?.copyWith(
+                  fontWeight: isSelected ? FontWeight.w600 : null,
+                  color: isSelected
+                      ? theme.primaryColor
+                      : themeData.colorScheme.onSurface,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

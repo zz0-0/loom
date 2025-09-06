@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:loom/features/export/domain/entities/export_entities.dart';
 import 'package:loom/features/export/presentation/providers/export_provider.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
 
 /// Export dialog for configuring and executing exports
 class ExportDialog extends ConsumerStatefulWidget {
@@ -45,7 +46,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.paddingMd,
               child: Row(
                 children: [
                   Icon(Icons.file_download, color: theme.colorScheme.primary),
@@ -68,7 +69,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
             // Content
             Flexible(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.paddingMd,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -98,10 +99,10 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
                     if (exportState.errorMessage != null) ...[
                       const SizedBox(height: 16),
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: AppSpacing.paddingSm,
                         decoration: BoxDecoration(
                           color: theme.colorScheme.errorContainer,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: AppRadius.radiusMd,
                         ),
                         child: Row(
                           children: [
@@ -128,10 +129,10 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
                     if (exportState.lastResult?.success ?? false) ...[
                       const SizedBox(height: 16),
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: AppSpacing.paddingSm,
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: AppRadius.radiusMd,
                         ),
                         child: Row(
                           children: [
@@ -162,7 +163,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
 
             // Actions
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.paddingMd,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -268,7 +269,11 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
           ),
           if (_options.includeHeader) ...[
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+              padding: const EdgeInsets.only(
+                left: AppSpacing.md,
+                right: AppSpacing.md,
+                bottom: AppSpacing.sm,
+              ),
               child: TextField(
                 decoration: const InputDecoration(
                   labelText: 'Header text',

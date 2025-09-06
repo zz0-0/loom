@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/explorer/presentation/providers/project_creation_provider.dart';
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:loom/shared/presentation/widgets/dialogs/folder_browser_dialog.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
@@ -47,7 +48,7 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
       child: Container(
         width: 600,
         height: 480,
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.paddingXl,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -171,7 +172,7 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
                                 color: theme.colorScheme.primary,
                                 width: 2,
                               ),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: AppRadius.radiusLg,
                               color: theme.colorScheme.primary.withOpacity(0.1),
                             ),
                             child: Row(

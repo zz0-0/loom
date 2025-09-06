@@ -5,6 +5,7 @@ import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
     as domain;
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
 import 'package:loom/features/explorer/presentation/widgets/create_project_dialog.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 /// Toolbar for the workspace explorer with view toggle and actions
@@ -32,7 +33,7 @@ class WorkspaceToolbar extends ConsumerWidget {
     final settings = ref.watch(workspaceSettingsProvider);
 
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: AppSpacing.paddingSm,
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -121,7 +122,7 @@ class _ViewModeToggle extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: AppRadius.radiusSm,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -165,10 +166,10 @@ class _ToggleButton extends StatelessWidget {
       color: isSelected
           ? theme.colorScheme.primary.withOpacity(0.12)
           : Colors.transparent,
-      borderRadius: BorderRadius.circular(4),
+      borderRadius: AppRadius.radiusSm,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: AppRadius.radiusSm,
         child: Container(
           padding: const EdgeInsets.all(4),
           child: Icon(

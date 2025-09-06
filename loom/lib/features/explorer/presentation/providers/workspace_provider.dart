@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/features/explorer/data/models/collection_template.dart';
 import 'package:loom/features/explorer/data/providers.dart';
 import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
     as domain;
@@ -145,6 +146,32 @@ class CurrentWorkspace extends _$CurrentWorkspace {
   /// Create new collection
   Future<void> createCollection(String collectionName) async {
     if (state?.metadata == null) return;
+
+    final currentMetadata = state!.metadata!;
+    final collections =
+        Map<String, List<String>>.from(currentMetadata.collections);
+
+    if (!collections.containsKey(collectionName)) {
+      collections[collectionName] = [];
+
+      final newMetadata = currentMetadata.copyWith(collections: collections);
+      state = state!.copyWith(metadata: newMetadata);
+
+      // Save metadata
+      final useCase = ref.read(saveProjectMetadataUseCaseProvider);
+      await useCase.call(state!.rootPath, newMetadata);
+    }
+  }
+
+  /// Create collection from template
+  Future<void> createCollectionFromTemplate(
+    String collectionName,
+    String templateId,
+  ) async {
+    if (state?.metadata == null) return;
+
+    final template = CollectionTemplates.getTemplate(templateId);
+    if (template == null) return;
 
     final currentMetadata = state!.metadata!;
     final collections =
@@ -340,4 +367,10 @@ final deleteItemUseCaseProvider = Provider<DeleteItemUseCase>((ref) {
 final renameItemUseCaseProvider = Provider<RenameItemUseCase>((ref) {
   final repository = ref.read(workspaceRepositoryProvider);
   return RenameItemUseCase(repository);
+});
+
+/// Collection templates provider
+final collectionTemplatesProvider =
+    Provider<List<CollectionTemplateModel>>((ref) {
+  return CollectionTemplates.templates;
 });

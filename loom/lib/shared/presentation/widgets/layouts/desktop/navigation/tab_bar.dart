@@ -1,8 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/settings/presentation/providers/close_button_settings_provider.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
 
 /// Tab bar widget that displays and manages tabs in the main content area
 class ContentTabBar extends ConsumerStatefulWidget {
@@ -36,66 +38,94 @@ class _ContentTabBarState extends ConsumerState<ContentTabBar> {
       return const SizedBox.shrink();
     }
 
-    return Container(
-      height: widget.height,
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-        border: Border(
-          bottom: BorderSide(
-            color: theme.dividerColor,
+    return KeyboardListener(
+      focusNode: FocusNode(),
+      onKeyEvent: (event) {
+        if (HardwareKeyboard.instance.isControlPressed) {
+          if (event.logicalKey == LogicalKeyboardKey.tab) {
+            // Ctrl+Tab: Next tab
+            _switchToNextTab(tabState);
+          } else if (event.logicalKey == LogicalKeyboardKey.pageUp) {
+            // Ctrl+PageUp: Previous tab
+            _switchToPreviousTab(tabState);
+          } else if (event.logicalKey == LogicalKeyboardKey.keyW) {
+            // Ctrl+W: Close current tab
+            _closeCurrentTab(tabState);
+          }
+        } else if (HardwareKeyboard.instance.isShiftPressed &&
+            HardwareKeyboard.instance.isControlPressed) {
+          if (event.logicalKey == LogicalKeyboardKey.tab) {
+            // Ctrl+Shift+Tab: Previous tab
+            _switchToPreviousTab(tabState);
+          } else if (event.logicalKey == LogicalKeyboardKey.pageDown) {
+            // Ctrl+Shift+PageDown: Next tab
+            _switchToNextTab(tabState);
+          }
+        }
+      },
+      child: Container(
+        height: widget.height,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+          border: Border(
+            bottom: BorderSide(
+              color: theme.dividerColor,
+            ),
           ),
         ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Listener(
-              onPointerSignal: (pointerSignal) {
-                if (pointerSignal is PointerScrollEvent) {
-                  // Handle horizontal scrolling with mouse wheel
-                  final delta = pointerSignal.scrollDelta.dy;
-                  if (_scrollController.hasClients) {
-                    final newOffset = (_scrollController.offset + delta).clamp(
-                      0.0,
-                      _scrollController.position.maxScrollExtent,
-                    );
-                    _scrollController.animateTo(
-                      newOffset,
-                      duration: const Duration(milliseconds: 100),
-                      curve: Curves.easeOut,
-                    );
-                  }
-                }
-              },
-              child: Scrollbar(
-                controller: _scrollController,
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: tabState.tabs.map((tab) {
-                      final isActive = tab.id == tabState.activeTabId;
-                      return _TabItem(
-                        tab: tab,
-                        isActive: isActive,
-                        closeButtonPosition:
-                            closeButtonSettings.effectiveTabPosition,
-                        onTap: () {
-                          ref.read(tabProvider.notifier).activateTab(tab.id);
-                          _ensureTabVisible(tab.id);
-                        },
-                        onClose: tab.canClose
-                            ? () =>
-                                ref.read(tabProvider.notifier).closeTab(tab.id)
-                            : null,
+        child: Row(
+          children: [
+            Expanded(
+              child: Listener(
+                onPointerSignal: (pointerSignal) {
+                  if (pointerSignal is PointerScrollEvent) {
+                    // Handle horizontal scrolling with mouse wheel
+                    final delta = pointerSignal.scrollDelta.dy;
+                    if (_scrollController.hasClients) {
+                      final newOffset =
+                          (_scrollController.offset + delta).clamp(
+                        0.0,
+                        _scrollController.position.maxScrollExtent,
                       );
-                    }).toList(),
+                      _scrollController.animateTo(
+                        newOffset,
+                        duration: const Duration(milliseconds: 100),
+                        curve: Curves.easeOut,
+                      );
+                    }
+                  }
+                },
+                child: Scrollbar(
+                  controller: _scrollController,
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: tabState.tabs.map((tab) {
+                        final isActive = tab.id == tabState.activeTabId;
+                        return _TabItem(
+                          tab: tab,
+                          isActive: isActive,
+                          closeButtonPosition:
+                              closeButtonSettings.effectiveTabPosition,
+                          onTap: () {
+                            ref.read(tabProvider.notifier).activateTab(tab.id);
+                            _ensureTabVisible(tab.id);
+                          },
+                          onClose: tab.canClose
+                              ? () => ref
+                                  .read(tabProvider.notifier)
+                                  .closeTab(tab.id)
+                              : null,
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -134,6 +164,38 @@ class _ContentTabBarState extends ConsumerState<ContentTabBar> {
         }
       }
     });
+  }
+
+  void _switchToNextTab(TabState tabState) {
+    if (tabState.tabs.isEmpty) return;
+
+    final currentIndex =
+        tabState.tabs.indexWhere((tab) => tab.id == tabState.activeTabId);
+    final nextIndex = (currentIndex + 1) % tabState.tabs.length;
+    final nextTab = tabState.tabs[nextIndex];
+
+    ref.read(tabProvider.notifier).activateTab(nextTab.id);
+    _ensureTabVisible(nextTab.id);
+  }
+
+  void _switchToPreviousTab(TabState tabState) {
+    if (tabState.tabs.isEmpty) return;
+
+    final currentIndex =
+        tabState.tabs.indexWhere((tab) => tab.id == tabState.activeTabId);
+    final previousIndex =
+        currentIndex <= 0 ? tabState.tabs.length - 1 : currentIndex - 1;
+    final previousTab = tabState.tabs[previousIndex];
+
+    ref.read(tabProvider.notifier).activateTab(previousTab.id);
+    _ensureTabVisible(previousTab.id);
+  }
+
+  void _closeCurrentTab(TabState tabState) {
+    final activeTab = tabState.activeTab;
+    if (activeTab != null && activeTab.canClose) {
+      ref.read(tabProvider.notifier).closeTab(activeTab.id);
+    }
   }
 }
 
@@ -210,9 +272,9 @@ class _TabItemState extends State<_TabItem> {
         widget.onClose != null && (_isHovered || widget.isActive)
             ? InkWell(
                 onTap: widget.onClose,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppRadius.radiusXl,
                 child: Container(
-                  padding: const EdgeInsets.all(2),
+                  padding: AppSpacing.paddingXs,
                   child: Icon(
                     Icons.close,
                     size: 14,

@@ -6,6 +6,7 @@ import 'package:loom/features/explorer/presentation/widgets/collections_widget.d
 import 'package:loom/features/explorer/presentation/widgets/create_project_dialog.dart';
 import 'package:loom/features/explorer/presentation/widgets/file_tree_widget.dart';
 import 'package:loom/features/explorer/presentation/widgets/workspace_toolbar.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -54,7 +55,7 @@ class ExplorerPanel extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingMd,
       child: Column(
         children: [
           Icon(
@@ -326,7 +327,7 @@ class _WelcomeAction extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.radiusLg,
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(12),
@@ -334,7 +335,7 @@ class _WelcomeAction extends StatelessWidget {
             border: Border.all(
               color: theme.colorScheme.outline.withOpacity(0.2),
             ),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: AppRadius.radiusLg,
           ),
           child: Row(
             children: [

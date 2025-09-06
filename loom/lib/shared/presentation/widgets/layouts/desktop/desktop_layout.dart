@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
 import 'package:loom/features/explorer/presentation/items/explorer_sidebar_item.dart';
+import 'package:loom/features/settings/presentation/widgets/settings_content.dart';
 import 'package:loom/features/settings/presentation/widgets/settings_sidebar_item.dart';
 import 'package:loom/shared/data/providers.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
@@ -141,6 +142,14 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   void _registerSettingsFeature() {
     final settingsItem = SettingsSidebarItem();
     UIRegistry().registerSidebarItem(settingsItem);
+
+    // Register settings content providers
+    UIRegistry()
+      ..registerContentProvider(SettingsContentProvider())
+      ..registerContentProvider(AppearanceSettingsContentProvider())
+      ..registerContentProvider(InterfaceSettingsContentProvider())
+      ..registerContentProvider(GeneralSettingsContentProvider())
+      ..registerContentProvider(AboutSettingsContentProvider());
   }
 
   void _registerSearchFeature() {

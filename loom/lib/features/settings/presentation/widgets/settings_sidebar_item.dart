@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 
 /// Settings sidebar item that opens settings in the main content area
@@ -30,7 +31,7 @@ class SettingsQuickPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -134,10 +135,13 @@ class _SettingCategory extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: AppRadius.radiusSm,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          margin: const EdgeInsets.only(bottom: 4),
+          padding: const EdgeInsets.symmetric(
+            vertical: AppSpacing.sm,
+            horizontal: AppSpacing.sm,
+          ),
+          margin: const EdgeInsets.only(bottom: AppSpacing.xs),
           child: Row(
             children: [
               Icon(

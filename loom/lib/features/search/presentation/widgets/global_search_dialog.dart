@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:loom/features/search/domain/entities/search_entities.dart';
 import 'package:loom/features/search/presentation/providers/search_provider.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
 
 /// Global search dialog
 class GlobalSearchDialog extends ConsumerStatefulWidget {
@@ -43,7 +44,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
       child: Container(
         width: 800,
         height: 600,
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
