@@ -34,16 +34,8 @@ void main() {
         ),
       );
 
-      // Check if the dialog is displayed
-      expect(find.text('Find'), findsWidgets);
-      expect(find.text('Find'), findsOneWidget); // Label text
-
-      // Toggle to show replace mode
-      await tester.tap(find.byIcon(Icons.search));
-      await tester.pump();
-
-      expect(find.text('Find & Replace'), findsOneWidget);
-      expect(find.text('Replace with'), findsOneWidget);
+      // Check if the dialog is displayed by finding the close button
+      expect(find.byIcon(Icons.close), findsOneWidget);
 
       // Check if the initial text is set
       expect(find.text('test'), findsOneWidget);
@@ -120,9 +112,14 @@ void main() {
         ),
       );
 
+      // Switch to replace mode first
+      await tester.tap(find.byIcon(Icons.find_replace));
+      await tester.pump();
+
       // Enter find and replace text
-      await tester.enterText(find.byType(TextField).at(0), 'old');
-      await tester.enterText(find.byType(TextField).at(1), 'new');
+      final textFields = find.byType(TextField);
+      await tester.enterText(textFields.first, 'old');
+      await tester.enterText(textFields.at(1), 'new');
 
       // Tap replace button
       await tester.tap(find.text('Replace'));

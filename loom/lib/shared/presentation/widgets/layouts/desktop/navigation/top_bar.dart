@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/features/search/presentation/widgets/global_search_dialog.dart';
 import 'package:loom/features/settings/presentation/providers/top_bar_settings_provider.dart';
 import 'package:loom/features/settings/presentation/providers/window_controls_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
@@ -295,45 +296,55 @@ class TopBar extends ConsumerWidget {
     // Make search bar responsive - smaller on narrow screens
     final searchBarWidth = screenWidth < 800 ? 200.0 : 300.0;
 
-    return Container(
-      width: searchBarWidth,
-      height: 22,
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(3),
-        border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
-        ),
-      ),
-      child: Row(
-        children: [
-          const SizedBox(width: 6),
-          Icon(
-            Icons.search,
-            size: 12,
-            color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+    return InkWell(
+      onTap: () => _showGlobalSearchDialog(context),
+      child: Container(
+        width: searchBarWidth,
+        height: 22,
+        margin: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(3),
+          border: Border.all(
+            color: theme.colorScheme.outline.withOpacity(0.2),
           ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search...',
-                hintStyle: theme.textTheme.bodySmall?.copyWith(
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 6),
+            Icon(
+              Icons.search,
+              size: 12,
+              color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                'Search...',
+                style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 12,
                   color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
                 ),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(vertical: 4),
-              ),
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontSize: 12,
               ),
             ),
-          ),
-        ],
+            const SizedBox(width: 6),
+            Text(
+              '⌘K',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontSize: 10,
+                color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  void _showGlobalSearchDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => const GlobalSearchDialog(),
     );
   }
 

@@ -1,0 +1,124 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/features/search/data/repositories/search_repository_impl.dart';
+import 'package:loom/features/search/domain/entities/search_entities.dart';
+import 'package:loom/features/search/domain/repositories/search_repository.dart';
+import 'package:loom/features/search/domain/usecases/search_usecases.dart';
+
+// Repository provider
+final searchRepositoryProvider = Provider<SearchRepository>((ref) {
+  return SearchRepositoryImpl();
+});
+
+// Use case providers
+final searchInWorkspaceUseCaseProvider =
+    Provider<SearchInWorkspaceUseCase>((ref) {
+  final repository = ref.watch(searchRepositoryProvider);
+  return SearchInWorkspaceUseCase(repository);
+});
+
+final searchInOpenFilesUseCaseProvider =
+    Provider<SearchInOpenFilesUseCase>((ref) {
+  final repository = ref.watch(searchRepositoryProvider);
+  return SearchInOpenFilesUseCase(repository);
+});
+
+final searchInFileUseCaseProvider = Provider<SearchInFileUseCase>((ref) {
+  final repository = ref.watch(searchRepositoryProvider);
+  return SearchInFileUseCase(repository);
+});
+
+final manageRecentSearchesUseCaseProvider =
+    Provider<ManageRecentSearchesUseCase>((ref) {
+  final repository = ref.watch(searchRepositoryProvider);
+  return ManageRecentSearchesUseCase(repository);
+});
+
+// Search state
+class SearchState {
+  const SearchState({
+    this.isSearching = false,
+    this.results,
+    this.error,
+    this.recentSearches = const [],
+  });
+  final bool isSearching;
+  final SearchResults? results;
+  final String? error;
+  final List<SearchQuery> recentSearches;
+
+  SearchState copyWith({
+    bool? isSearching,
+    SearchResults? results,
+    String? error,
+    List<SearchQuery>? recentSearches,
+  }) {
+    return SearchState(
+      isSearching: isSearching ?? this.isSearching,
+      results: results ?? this.results,
+      error: error ?? this.error,
+      recentSearches: recentSearches ?? this.recentSearches,
+    );
+  }
+}
+
+// Search notifier
+class SearchNotifier extends StateNotifier<SearchState> {
+  SearchNotifier(
+    this._searchInWorkspaceUseCase,
+    this._manageRecentSearchesUseCase,
+  ) : super(const SearchState()) {
+    _loadRecentSearches();
+  }
+  final SearchInWorkspaceUseCase _searchInWorkspaceUseCase;
+  final ManageRecentSearchesUseCase _manageRecentSearchesUseCase;
+
+  Future<void> _loadRecentSearches() async {
+    try {
+      final recentSearches =
+          await _manageRecentSearchesUseCase.getRecentSearches();
+      state = state.copyWith(recentSearches: recentSearches);
+    } catch (e) {
+      // Handle error silently
+    }
+  }
+
+  Future<void> search(SearchQuery query) async {
+    if (query.searchText.trim().isEmpty) return;
+
+    state = state.copyWith(isSearching: true);
+
+    try {
+      final results = await _searchInWorkspaceUseCase.execute(query);
+      state = state.copyWith(
+        isSearching: false,
+        results: results,
+      );
+
+      // Save to recent searches
+      await _manageRecentSearchesUseCase.saveRecentSearch(query);
+      await _loadRecentSearches();
+    } catch (e) {
+      state = state.copyWith(
+        isSearching: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  void clearResults() {
+    state = state.copyWith();
+  }
+
+  Future<void> clearRecentSearches() async {
+    await _manageRecentSearchesUseCase.clearRecentSearches();
+    state = state.copyWith(recentSearches: []);
+  }
+}
+
+// Search provider
+final searchProvider =
+    StateNotifierProvider<SearchNotifier, SearchState>((ref) {
+  final searchUseCase = ref.watch(searchInWorkspaceUseCaseProvider);
+  final manageSearchesUseCase = ref.watch(manageRecentSearchesUseCaseProvider);
+  return SearchNotifier(searchUseCase, manageSearchesUseCase);
+});

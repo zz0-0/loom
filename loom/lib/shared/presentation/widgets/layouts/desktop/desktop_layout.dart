@@ -2,11 +2,9 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
-import 'package:loom/features/explorer/presentation/items/explorer_sidebar_item.dart';
-import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
-import 'package:loom/features/settings/presentation/settings_feature_registration.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:loom/shared/presentation/widgets/folder_browser_dialog.dart';
@@ -17,7 +15,6 @@ import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/file_content_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/examples/example_feature_registration.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/bottom_bar.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/top_bar.dart';
 
@@ -43,17 +40,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     final menuRegistry = MenuRegistry();
     final uiRegistry = UIRegistry();
 
-    // Register the explorer feature first (should be at position 1 in sidebar)
-    ExplorerFeatureRegistration.register();
-
-    // Register settings feature
-    SettingsFeatureRegistration.register();
-
     // Register file content provider
     uiRegistry.registerContentProvider(FileContentProvider());
-
-    // Register example features (demonstrating the extensible system)
-    ExampleFeatureRegistration.register();
 
     // Register default menus
     menuRegistry.registerMenus([
@@ -69,6 +57,11 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           ),
           SimpleMenuItem(label: 'Save', icon: Icons.save, onPressed: () {}),
           SimpleMenuItem(label: 'Save As...', onPressed: () {}),
+          SimpleMenuItem(
+            label: 'Export',
+            icon: Icons.file_download,
+            onPressedWithContext: _showExportDialog,
+          ),
           SimpleMenuItem(label: 'Exit', onPressed: () {}),
         ],
       ),
@@ -112,6 +105,14 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     ]);
 
     // Future features can register their own components here
+  }
+
+  void _showGlobalSearchDialog(BuildContext context) {
+    // TODO(user): Implement global search dialog
+  }
+
+  void _showExportDialog(BuildContext context) {
+    // TODO(user): Implement export dialog
   }
 
   Future<void> _showOpenFolderDialog(
@@ -161,9 +162,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           return;
         }
 
-        await ref
-            .read(currentWorkspaceProvider.notifier)
-            .openWorkspace(selectedDirectory);
+        // TODO(user): Implement workspace opening
+        // await ref
+        //     .read(currentWorkspaceProvider.notifier)
+        //     .openWorkspace(selectedDirectory);
       } else {
         // No directory selected
         if (context.mounted) {
@@ -190,62 +192,85 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   Widget build(BuildContext context) {
     final uiState = ref.watch(uiStateProvider);
 
-    return Scaffold(
-      body: Column(
-        children: [
-          // Top bar with registered items and window controls
-          SizedBox(
-            height: AdaptiveConstants.topBarHeight(context),
-            child: const TopBar(),
-          ),
-
-          // Main content area
-          Expanded(
-            child: Row(
-              children: [
-                // Extensible sidebar (icon-only)
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: AppTheme.sidebarCollapsedWidth,
-                  child: const ExtensibleSidebar(),
-                ),
-
-                // Extensible side panel
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: uiState.isSidePanelVisible
-                      ? AdaptiveConstants.sidePanelWidth(context)
-                      : 0,
-                  child: uiState.isSidePanelVisible
-                      ? ExtensibleSidePanel(
-                          selectedItemId: uiState.selectedSidebarItem,
-                          onClose: () {
-                            ref.read(uiStateProvider.notifier).hideSidePanel();
-                          },
-                        )
-                      : null,
-                ),
-
-                // Vertical divider
-                if (uiState.isSidePanelVisible)
-                  Container(
-                    width: 1,
-                    color: Theme.of(context).dividerColor,
-                  ),
-
-                // Extensible main content area
-                Expanded(
-                  child: ExtensibleContentArea(
-                    contentId: uiState.openedFile,
-                  ),
-                ),
-              ],
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent) {
+          // Handle global shortcuts
+          if (HardwareKeyboard.instance.isControlPressed &&
+              HardwareKeyboard.instance.isShiftPressed &&
+              event.logicalKey == LogicalKeyboardKey.keyF) {
+            _showGlobalSearchDialog(context);
+            return KeyEventResult.handled;
+          }
+          // Export shortcut (Ctrl+E)
+          if (HardwareKeyboard.instance.isControlPressed &&
+              event.logicalKey == LogicalKeyboardKey.keyE) {
+            _showExportDialog(context);
+            return KeyEventResult.handled;
+          }
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Scaffold(
+        body: Column(
+          children: [
+            // Top bar with registered items and window controls
+            SizedBox(
+              height: AdaptiveConstants.topBarHeight(context),
+              child: const TopBar(),
             ),
-          ),
 
-          // Extensible bottom bar
-          const BottomBar(),
-        ],
+            // Main content area
+            Expanded(
+              child: Row(
+                children: [
+                  // Extensible sidebar (icon-only)
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: AppTheme.sidebarCollapsedWidth,
+                    child: const ExtensibleSidebar(),
+                  ),
+
+                  // Extensible side panel
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: uiState.isSidePanelVisible
+                        ? AdaptiveConstants.sidePanelWidth(context)
+                        : 0,
+                    child: uiState.isSidePanelVisible
+                        ? ExtensibleSidePanel(
+                            selectedItemId: uiState.selectedSidebarItem,
+                            onClose: () {
+                              ref
+                                  .read(uiStateProvider.notifier)
+                                  .hideSidePanel();
+                            },
+                          )
+                        : null,
+                  ),
+
+                  // Vertical divider
+                  if (uiState.isSidePanelVisible)
+                    Container(
+                      width: 1,
+                      color: Theme.of(context).dividerColor,
+                    ),
+
+                  // Extensible main content area
+                  Expanded(
+                    child: ExtensibleContentArea(
+                      contentId: uiState.openedFile,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Extensible bottom bar
+            const BottomBar(),
+          ],
+        ),
       ),
     );
   }
