@@ -11,19 +11,23 @@ class FindReplaceDialog extends StatefulWidget {
     this.initialSearchText = '',
   });
 
-  final void Function(String text, bool caseSensitive, bool useRegex) onFind;
+  final void Function(
+    String text, {
+    required bool caseSensitive,
+    required bool useRegex,
+  }) onFind;
   final void Function(
     String findText,
-    String replaceText,
-    bool caseSensitive,
-    bool useRegex,
-  ) onReplace;
+    String replaceText, {
+    required bool caseSensitive,
+    required bool useRegex,
+  }) onReplace;
   final void Function(
     String findText,
-    String replaceText,
-    bool caseSensitive,
-    bool useRegex,
-  ) onReplaceAll;
+    String replaceText, {
+    required bool caseSensitive,
+    required bool useRegex,
+  }) onReplaceAll;
   final String initialSearchText;
 
   @override
@@ -183,7 +187,11 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
   void _performFind() {
     final searchText = _findController.text;
     if (searchText.isNotEmpty) {
-      widget.onFind(searchText, _caseSensitive, _useRegex);
+      widget.onFind(
+        searchText,
+        caseSensitive: _caseSensitive,
+        useRegex: _useRegex,
+      );
     }
   }
 
@@ -191,7 +199,12 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
     final findText = _findController.text;
     final replaceText = _replaceController.text;
     if (findText.isNotEmpty) {
-      widget.onReplace(findText, replaceText, _caseSensitive, _useRegex);
+      widget.onReplace(
+        findText,
+        replaceText,
+        caseSensitive: _caseSensitive,
+        useRegex: _useRegex,
+      );
     }
   }
 
@@ -199,7 +212,12 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
     final findText = _findController.text;
     final replaceText = _replaceController.text;
     if (findText.isNotEmpty) {
-      widget.onReplaceAll(findText, replaceText, _caseSensitive, _useRegex);
+      widget.onReplaceAll(
+        findText,
+        replaceText,
+        caseSensitive: _caseSensitive,
+        useRegex: _useRegex,
+      );
     }
   }
 }

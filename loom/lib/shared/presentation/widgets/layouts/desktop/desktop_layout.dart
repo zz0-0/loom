@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
+import 'package:loom/features/explorer/presentation/items/explorer_sidebar_item.dart';
+import 'package:loom/features/settings/presentation/widgets/settings_sidebar_item.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:loom/shared/presentation/widgets/folder_browser_dialog.dart';
@@ -42,6 +44,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
     // Register file content provider
     uiRegistry.registerContentProvider(FileContentProvider());
+
+    // Register feature components
+    _registerFeatures();
 
     // Register default menus
     menuRegistry.registerMenus([
@@ -107,6 +112,46 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     // Future features can register their own components here
   }
 
+  /// Register all features
+  void _registerFeatures() {
+    // Import feature registrations
+    // Note: These imports are done here to avoid circular dependencies
+    // and to ensure features are registered at the right time
+
+    try {
+      // Register explorer feature
+      // We can't directly import due to potential circular dependencies,
+      // so we'll register the components directly
+      _registerExplorerFeature();
+      _registerSettingsFeature();
+      _registerSearchFeature();
+      _registerExportFeature();
+    } catch (e) {
+      // If feature registration fails, continue without them
+      debugPrint('Feature registration failed: $e');
+    }
+  }
+
+  void _registerExplorerFeature() {
+    // Import the explorer feature registration
+    // This is a workaround for the circular dependency issue
+    final explorerItem = ExplorerSidebarItem();
+    UIRegistry().registerSidebarItem(explorerItem);
+  }
+
+  void _registerSettingsFeature() {
+    final settingsItem = SettingsSidebarItem();
+    UIRegistry().registerSidebarItem(settingsItem);
+  }
+
+  void _registerSearchFeature() {
+    // TODO(user): Register search feature when implemented
+  }
+
+  void _registerExportFeature() {
+    // TODO(user): Register export feature when implemented
+  }
+
   void _showGlobalSearchDialog(BuildContext context) {
     // TODO(user): Implement global search dialog
   }
@@ -125,6 +170,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
       // If FilePicker didn't work or returned null, show the shared folder browser
       if (selectedDirectory == null || selectedDirectory.isEmpty) {
+        if (!context.mounted) return;
         selectedDirectory = await showDialog<String>(
           context: context,
           builder: (context) => FolderBrowserDialog(
@@ -137,13 +183,12 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
         final dir = Directory(selectedDirectory);
 
         if (!dir.existsSync()) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Directory does not exist'),
-              ),
-            );
-          }
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Directory does not exist'),
+            ),
+          );
           return;
         }
 
@@ -151,14 +196,13 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           // Try listing to ensure we have permissions to read the directory
           await dir.list().toList();
         } catch (e) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Cannot access directory: $e'),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
-            );
-          }
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Cannot access directory: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
           return;
         }
 
@@ -168,23 +212,21 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
         //     .openWorkspace(selectedDirectory);
       } else {
         // No directory selected
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('No directory selected'),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      if (context.mounted) {
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to open folder: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
+          const SnackBar(
+            content: Text('No directory selected'),
           ),
         );
       }
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to open folder: $e'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
     }
   }
 

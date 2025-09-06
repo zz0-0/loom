@@ -8,7 +8,9 @@ import 'package:loom/features/export/presentation/providers/export_provider.dart
 /// Export dialog for configuring and executing exports
 class ExportDialog extends ConsumerStatefulWidget {
   const ExportDialog({
-    required this.content, required this.fileName, super.key,
+    required this.content,
+    required this.fileName,
+    super.key,
   });
 
   final String content;
@@ -123,7 +125,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
                     ],
 
                     // Success message
-                    if (exportState.lastResult?.success == true) ...[
+                    if (exportState.lastResult?.success ?? false) ...[
                       const SizedBox(height: 16),
                       Container(
                         padding: const EdgeInsets.all(12),
@@ -179,7 +181,8 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
                           )
                         : const Icon(Icons.file_download),
                     label: Text(
-                        exportState.isExporting ? 'Exporting...' : 'Export',),
+                      exportState.isExporting ? 'Exporting...' : 'Export',
+                    ),
                   ),
                 ],
               ),

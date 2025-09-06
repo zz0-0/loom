@@ -1,0 +1,225 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.5'
+        channel: 'stable'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Run Flutter analyze
+      run: flutter analyze
+
+    - name: Run Flutter format check
+      run: |
+        if [ "$(flutter format --dry-run --set-exit-if-changed .)" ]; then
+          echo "Code is not properly formatted. Run 'flutter format .' to fix."
+          exit 1
+        fi
+
+    - name: Run tests
+      run: flutter test --coverage
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.5'
+        channel: 'stable'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Build Linux app
+      run: flutter build linux --release
+
+    - name: Upload Linux build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: loom-linux
+        path: build/linux/x64/release/bundle/
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    needs: test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.5'
+        channel: 'stable'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Build Windows app
+      run: flutter build windows --release
+
+    - name: Upload Windows build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: loom-windows
+        path: build/windows/x64/runner/Release/
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    needs: test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.5'
+        channel: 'stable'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Build macOS app
+      run: flutter build macos --release
+
+    - name: Upload macOS build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: loom-macos
+        path: build/macos/Build/Products/Release/
+
+  rust-tests:
+    name: Rust Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Rust
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Cache Rust dependencies
+      uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: "./rust -> target"
+
+    - name: Run Rust tests
+      working-directory: ./rust
+      run: cargo test --verbose
+
+    - name: Run Rust lints
+      working-directory: ./rust
+      run: |
+        cargo clippy -- -D warnings
+        cargo fmt --check
+
+  dependency-check:
+    name: Dependency Security Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.5'
+        channel: 'stable'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Run dependency check
+      run: |
+        # Check for outdated packages
+        flutter pub outdated
+
+        # Check for known vulnerabilities (if available)
+        # Note: Flutter doesn't have a built-in vulnerability scanner like npm audit
+        # Consider adding dependency_validator or similar tools
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [test, build-linux, build-windows, build-macos, rust-tests]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download Linux build
+      uses: actions/download-artifact@v4
+      with:
+        name: loom-linux
+        path: ./artifacts/linux/
+
+    - name: Download Windows build
+      uses: actions/download-artifact@v4
+      with:
+        name: loom-windows
+        path: ./artifacts/windows/
+
+    - name: Download macOS build
+      uses: actions/download-artifact@v4
+      with:
+        name: loom-macos
+        path: ./artifacts/macos/
+
+    - name: Create release archives
+      run: |
+        cd artifacts
+        tar -czf loom-linux.tar.gz -C linux .
+        zip -r loom-windows.zip windows/
+        zip -r loom-macos.zip macos/
+
+    - name: Create GitHub release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          artifacts/loom-linux.tar.gz
+          artifacts/loom-windows.zip
+          artifacts/loom-macos.zip
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

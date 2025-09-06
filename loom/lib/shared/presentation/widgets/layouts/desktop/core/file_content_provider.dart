@@ -7,6 +7,7 @@ import 'package:loom/features/export/presentation/widgets/export_dialog.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
 import 'package:loom/shared/presentation/widgets/editor/blox_syntax_highlighter.dart';
 import 'package:loom/shared/presentation/widgets/editor/find_replace_dialog.dart';
+import 'package:loom/shared/presentation/widgets/editor/minimap_widget.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 import 'package:loom/src/rust/api/blox_api.dart';
 
@@ -119,6 +120,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   bool _showLineNumbers = true;
   bool _isBloxFile = false;
   bool _isLoadingFile = false; // Flag to track if we're loading a file
+  bool _showMinimap = false; // Minimap visibility toggle
 
   // Code folding
   late CodeFoldingManager _foldingManager;
@@ -549,6 +551,16 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     setState(() {});
   }
 
+  void _scrollToPosition(double position) {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        position,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   void _debounceParse() {
     // Simple debounce - in a real app, you'd use a proper debouncer
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -635,6 +647,15 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                 onPressed: () =>
                     setState(() => _showLineNumbers = !_showLineNumbers),
                 tooltip: 'Toggle line numbers',
+              ),
+
+              // Minimap toggle
+              IconButton(
+                icon: Icon(
+                  _showMinimap ? Icons.map : Icons.map_outlined,
+                ),
+                onPressed: () => setState(() => _showMinimap = !_showMinimap),
+                tooltip: 'Toggle minimap',
               ),
 
               // Syntax validation for Blox files
@@ -763,6 +784,23 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                   Expanded(
                     child: _buildEditor(theme),
                   ),
+
+                  // Minimap (optional)
+                  if (_showMinimap)
+                    MinimapWidget(
+                      text: _controller.text,
+                      scrollPosition: _scrollController.hasClients
+                          ? _scrollController.position.pixels
+                          : 0,
+                      maxScrollExtent: _scrollController.hasClients
+                          ? _scrollController.position.maxScrollExtent
+                          : 0,
+                      viewportHeight: _scrollController.hasClients
+                          ? _scrollController.position.viewportDimension
+                          : 0,
+                      onScrollToPosition: _scrollToPosition,
+                      isBloxFile: _isBloxFile,
+                    ),
                 ],
               ),
             ),
@@ -1041,94 +1079,104 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     );
   }
 
-  void _performFind(String searchText, bool caseSensitive, bool useRegex) {
-    // Basic find implementation
-    final text = _controller.text;
-    if (text.isEmpty || searchText.isEmpty) return;
+  void _performFind(
+    String searchText, {
+    required bool caseSensitive,
+    required bool useRegex,
+  }) {
+    {
+      // Basic find implementation
+      final text = _controller.text;
+      if (text.isEmpty || searchText.isEmpty) return;
 
-    var searchPattern = searchText;
-    if (!caseSensitive) {
-      searchPattern = searchPattern.toLowerCase();
-    }
+      var searchPattern = searchText;
+      if (!caseSensitive) {
+        searchPattern = searchPattern.toLowerCase();
+      }
 
-    final searchTarget = caseSensitive ? text : text.toLowerCase();
-    final index =
-        searchTarget.indexOf(searchPattern, _controller.selection.start);
+      final searchTarget = caseSensitive ? text : text.toLowerCase();
+      final index =
+          searchTarget.indexOf(searchPattern, _controller.selection.start);
 
-    if (index != -1) {
-      _controller.selection = TextSelection(
-        baseOffset: index,
-        extentOffset: index + searchText.length,
-      );
-    } else {
-      // Show message if not found
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No matches found for "$searchText"')),
-      );
+      if (index != -1) {
+        _controller.selection = TextSelection(
+          baseOffset: index,
+          extentOffset: index + searchText.length,
+        );
+      } else {
+        // Show message if not found
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No matches found for "$searchText"')),
+        );
+      }
     }
   }
 
   void _performReplace(
     String findText,
-    String replaceText,
-    bool caseSensitive,
-    bool useRegex,
-  ) {
-    final selection = _controller.selection;
-    if (selection.isValid && !selection.isCollapsed) {
-      final selectedText =
-          _controller.text.substring(selection.start, selection.end);
-      final match = caseSensitive
-          ? selectedText == findText
-          : selectedText.toLowerCase() == findText.toLowerCase();
+    String replaceText, {
+    required bool caseSensitive,
+    required bool useRegex,
+  }) {
+    {
+      final selection = _controller.selection;
+      if (selection.isValid && !selection.isCollapsed) {
+        final selectedText =
+            _controller.text.substring(selection.start, selection.end);
+        final match = caseSensitive
+            ? selectedText == findText
+            : selectedText.toLowerCase() == findText.toLowerCase();
 
-      if (match) {
-        _controller
-          ..text = _controller.text.replaceRange(
-            selection.start,
-            selection.end,
-            replaceText,
-          )
+        if (match) {
+          _controller
+            ..text = _controller.text.replaceRange(
+              selection.start,
+              selection.end,
+              replaceText,
+            )
 
-          // Move cursor after replacement
-          ..selection = TextSelection.collapsed(
-            offset: selection.start + replaceText.length,
-          );
+            // Move cursor after replacement
+            ..selection = TextSelection.collapsed(
+              offset: selection.start + replaceText.length,
+            );
+        }
       }
-    }
 
-    // Find next occurrence
-    _performFind(findText, caseSensitive, useRegex);
+      // Find next occurrence
+      _performFind(findText, caseSensitive: caseSensitive, useRegex: useRegex);
+    }
   }
 
   void _performReplaceAll(
     String findText,
-    String replaceText,
-    bool caseSensitive,
-    bool useRegex,
-  ) {
-    if (findText.isEmpty) return;
+    String replaceText, {
+    required bool caseSensitive,
+    required bool useRegex,
+  }) {
+    {
+      if (findText.isEmpty) return;
 
-    var text = _controller.text;
-    var replacements = 0;
+      var text = _controller.text;
+      var replacements = 0;
 
-    if (caseSensitive) {
-      final count = findText.allMatches(text).length;
-      text = text.replaceAll(findText, replaceText);
-      replacements = count;
-    } else {
-      final pattern = RegExp(RegExp.escape(findText), caseSensitive: false);
-      final count = pattern.allMatches(text).length;
-      text = text.replaceAll(pattern, replaceText);
-      replacements = count;
+      if (caseSensitive) {
+        final count = findText.allMatches(text).length;
+        text = text.replaceAll(findText, replaceText);
+        replacements = count;
+      } else {
+        final pattern = RegExp(RegExp.escape(findText), caseSensitive: false);
+        final count = pattern.allMatches(text).length;
+        text = text.replaceAll(pattern, replaceText);
+        replacements = count;
+      }
+
+      _controller.text = text;
+
+      // Show result
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Replaced $replacements occurrences')),
+      );
     }
-
-    _controller.text = text;
-
-    // Show result
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Replaced $replacements occurrences')),
-    );
   }
 }
 

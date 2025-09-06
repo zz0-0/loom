@@ -13,21 +13,25 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: FindReplaceDialog(
-              onFind: (String text, bool caseSensitive, bool useRegex) {
+              onFind: (
+                String text, {
+                required bool caseSensitive,
+                required bool useRegex,
+              }) {
                 findCalled = true;
               },
               onReplace: (
                 String find,
-                String replace,
-                bool caseSensitive,
-                bool useRegex,
-              ) {},
+                String replace, {
+                required bool caseSensitive,
+                required bool useRegex,
+              }) {},
               onReplaceAll: (
                 String find,
-                String replace,
-                bool caseSensitive,
-                bool useRegex,
-              ) {},
+                String replace, {
+                required bool caseSensitive,
+                required bool useRegex,
+              }) {},
             ),
           ),
         ),
@@ -52,19 +56,23 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: FindReplaceDialog(
-              onFind: (String text, bool caseSensitive, bool useRegex) {},
+              onFind: (
+                String text, {
+                required bool caseSensitive,
+                required bool useRegex,
+              }) {},
               onReplace: (
                 String find,
-                String replace,
-                bool caseSensitive,
-                bool useRegex,
-              ) {},
+                String replace, {
+                required bool caseSensitive,
+                required bool useRegex,
+              }) {},
               onReplaceAll: (
                 String find,
-                String replace,
-                bool caseSensitive,
-                bool useRegex,
-              ) {},
+                String replace, {
+                required bool caseSensitive,
+                required bool useRegex,
+              }) {},
             ),
           ),
         ),
@@ -147,14 +155,13 @@ void main() {
     test('should clear redo states when new change is made', () {
       final history = TextEditHistory();
 
-      history
-        ..addState('State 1')
-        ..addState('State 2')
-        ..addState('State 3')
+      history.addState('State 1');
+      history.addState('State 2');
+      history.addState('State 3');
 
-        // Undo twice
-        ..undo() // At State 2
-        ..undo(); // At State 1
+      // Undo twice
+      history.undo(); // At State 2
+      history.undo(); // At State 1
 
       expect(history.canRedo, isTrue);
 
