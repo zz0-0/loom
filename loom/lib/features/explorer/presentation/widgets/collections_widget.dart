@@ -339,11 +339,9 @@ class _CollectionItemState extends State<_CollectionItem> {
     setState(() => _isDragOver = false);
 
     // Use Riverpod to access the workspace provider
-    final container = ProviderScope.containerOf(context);
-    final workspaceNotifier = container.read(currentWorkspaceProvider.notifier);
-
-    // Add file to this collection
-    workspaceNotifier.addToCollection(widget.collectionName, filePath);
+    ProviderScope.containerOf(context)
+        .read(currentWorkspaceProvider.notifier)
+        .addToCollection(widget.collectionName, filePath);
 
     // Show success feedback
     ScaffoldMessenger.of(context).showSnackBar(
@@ -386,7 +384,9 @@ class _CollectionItemState extends State<_CollectionItem> {
       );
     } else {
       // Adding from file tree or same collection (shouldn't happen)
-      workspaceNotifier.addToCollection(widget.collectionName, filePath);
+      ProviderScope.containerOf(context)
+          .read(currentWorkspaceProvider.notifier)
+          .addToCollection(widget.collectionName, filePath);
 
       // Show success feedback
       ScaffoldMessenger.of(context).showSnackBar(
@@ -496,17 +496,9 @@ class _CollectionItemState extends State<_CollectionItem> {
     CollectionSuggestion suggestion,
     BuildContext context,
   ) {
-    final container = ProviderScope.containerOf(context);
-    final workspaceNotifier = container.read(currentWorkspaceProvider.notifier);
-
-    // Remove from current collection
-    workspaceNotifier
+    ProviderScope.containerOf(context).read(currentWorkspaceProvider.notifier)
       ..removeFromCollection(widget.collectionName, filePath)
-
-      // Create suggested collection if it doesn't exist
       ..createCollection(suggestion.displayName)
-
-      // Add to suggested collection
       ..addToCollection(suggestion.displayName, filePath);
 
     // Show success feedback

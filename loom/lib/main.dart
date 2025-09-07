@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/app/app.dart';
 import 'package:loom/features/explorer/data/adapters/shared_settings_adapter.dart';
 import 'package:loom/features/explorer/data/providers.dart';
+import 'package:loom/features/plugin_system/domain/plugin_bootstrapper.dart';
 import 'package:loom/shared/data/providers.dart';
 import 'package:loom/src/rust/frb_generated.dart';
 import 'package:window_manager/window_manager.dart';
@@ -37,6 +38,9 @@ Future<void> main() async {
   // Initialize Rust bridge
   await RustLib.init();
 
+  // Initialize plugin system
+  final pluginBootstrapper = PluginBootstrapper();
+
   runApp(
     ProviderScope(
       overrides: [
@@ -45,7 +49,7 @@ Future<void> main() async {
           return ExplorerSharedSettingsRepository(settingsRepo);
         }),
       ],
-      child: const LoomApp(),
+      child: LoomApp(pluginBootstrapper: pluginBootstrapper),
     ),
   );
 }

@@ -22,12 +22,7 @@ class FileRepositoryImpl implements FileRepository {
   }
 
   @override
-  Future<Directory> getDirectory(String path) async {
-    return Directory(path);
-  }
-
-  @override
-  Future<List<Directory>> listDirectories(String path) async {
+  Future<List<String>> listDirectories(String path) async {
     final dir = Directory(path);
     if (!dir.existsSync()) {
       return [];
@@ -37,7 +32,54 @@ class FileRepositoryImpl implements FileRepository {
     return entities
         .whereType<Directory>()
         .where((d) => !d.path.split('/').last.startsWith('.'))
+        .map((d) => d.path)
         .toList();
+  }
+
+  @override
+  Future<List<String>> listFiles(String path) async {
+    final dir = Directory(path);
+    if (!dir.existsSync()) {
+      return [];
+    }
+
+    final entities = await dir.list().toList();
+    return entities
+        .whereType<File>()
+        .where((f) => !f.path.split('/').last.startsWith('.'))
+        .map((f) => f.path)
+        .toList();
+  }
+
+  @override
+  Future<List<String>> listFilesRecursively(String path) async {
+    final files = <String>[];
+    await _collectFilesRecursively(Directory(path), files);
+    return files;
+  }
+
+  Future<void> _collectFilesRecursively(
+      Directory dir, List<String> files,) async {
+    try {
+      await for (final entity in dir.list()) {
+        if (entity is File) {
+          // Skip hidden files
+          if (!entity.path.split('/').last.startsWith('.')) {
+            files.add(entity.path);
+          }
+        } else if (entity is Directory) {
+          // Skip hidden directories and common build directories
+          final dirName = entity.path.split('/').last;
+          if (!dirName.startsWith('.') &&
+              !['node_modules', 'build', '.dart_tool', 'android', 'ios', '.git']
+                  .contains(dirName)) {
+            await _collectFilesRecursively(entity, files);
+          }
+        }
+      }
+    } catch (e) {
+      // Skip directories that can't be read
+    }
   }
 
   @override
@@ -52,5 +94,26 @@ class FileRepositoryImpl implements FileRepository {
     if (file.existsSync()) {
       await file.delete();
     }
+  }
+
+  @override
+  Future<void> deleteDirectory(String path) async {
+    final directory = Directory(path);
+    if (directory.existsSync()) {
+      await directory.delete(recursive: true);
+    }
+  }
+
+  @override
+  Future<bool> directoryExists(String path) async {
+    final directory = Directory(path);
+    return directory.existsSync();
+  }
+
+  @override
+  Future<bool> isDirectory(String path) async {
+    final directory = Directory(path);
+    return directory.existsSync() &&
+        directory.statSync().type == FileSystemEntityType.directory;
   }
 }

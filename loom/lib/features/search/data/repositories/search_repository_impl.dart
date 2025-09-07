@@ -1,11 +1,15 @@
-import 'dart:io';
+import 'dart:io' show Directory;
 
 import 'package:loom/features/search/domain/entities/search_entities.dart';
 import 'package:loom/features/search/domain/repositories/search_repository.dart';
+import 'package:loom/shared/domain/repositories/file_repository.dart';
 import 'package:path/path.dart' as path;
 
 /// Implementation of SearchRepository
 class SearchRepositoryImpl implements SearchRepository {
+  SearchRepositoryImpl(this._fileRepository);
+
+  final FileRepository _fileRepository;
   static const int _maxRecentSearches = 10;
   final List<SearchQuery> _recentSearches = [];
 
@@ -59,10 +63,7 @@ class SearchRepositoryImpl implements SearchRepository {
     final results = <SearchResult>[];
 
     try {
-      final file = File(filePath);
-      if (!file.existsSync()) return results;
-
-      final content = await file.readAsString();
+      final content = await _fileRepository.readFile(filePath);
       final lines = content.split('\n');
 
       for (var i = 0; i < lines.length; i++) {
@@ -116,9 +117,9 @@ class SearchRepositoryImpl implements SearchRepository {
   @override
   Future<SearchResults> replaceInWorkspace(
     SearchQuery query,
-    String replaceText,
-    bool replaceAll,
-  ) async {
+    String replaceText, {
+    bool replaceAll = false,
+  }) async {
     final stopwatch = Stopwatch()..start();
 
     final workspacePath = Directory.current.path;
@@ -128,8 +129,12 @@ class SearchRepositoryImpl implements SearchRepository {
     var totalMatches = 0;
 
     for (final filePath in allFiles) {
-      final fileResults =
-          await replaceInFile(filePath, query, replaceText, replaceAll);
+      final fileResults = await replaceInFile(
+        filePath,
+        query,
+        replaceText,
+        replaceAll: replaceAll,
+      );
       if (fileResults.isNotEmpty) {
         groups.add(SearchResultsGroup.fromResults(fileResults));
         totalMatches += fileResults.length;
@@ -151,16 +156,13 @@ class SearchRepositoryImpl implements SearchRepository {
   Future<List<SearchResult>> replaceInFile(
     String filePath,
     SearchQuery query,
-    String replaceText,
-    bool replaceAll,
-  ) async {
+    String replaceText, {
+    bool replaceAll = false,
+  }) async {
     final results = <SearchResult>[];
 
     try {
-      final file = File(filePath);
-      if (!file.existsSync()) return results;
-
-      var content = await file.readAsString();
+      var content = await _fileRepository.readFile(filePath);
       final originalContent = content;
       final lines = content.split('\n');
 
@@ -207,7 +209,7 @@ class SearchRepositoryImpl implements SearchRepository {
       // Write back the modified content
       if (content != originalContent) {
         content = lines.join('\n');
-        await file.writeAsString(content);
+        await _fileRepository.writeFile(filePath, content);
       }
     } catch (e) {
       // Skip files that can't be read/written
@@ -221,68 +223,32 @@ class SearchRepositoryImpl implements SearchRepository {
     String workspacePath,
     SearchQuery query,
   ) async {
-    final files = <String>[];
+    final allFiles = await _fileRepository.listFilesRecursively(workspacePath);
 
-    await _collectFiles(Directory(workspacePath), files, query);
-    return files;
-  }
+    return allFiles.where((filePath) {
+      // Skip hidden files unless explicitly included
+      if (!query.includeHiddenFiles &&
+          path.basename(filePath).startsWith('.')) {
+        return false;
+      }
 
-  /// Recursively collect files matching the criteria
-  Future<void> _collectFiles(
-    Directory dir,
-    List<String> files,
-    SearchQuery query,
-  ) async {
-    try {
-      await for (final entity in dir.list()) {
-        if (entity is File) {
-          final filePath = entity.path;
-
-          // Skip hidden files unless explicitly included
-          if (!query.includeHiddenFiles &&
-              path.basename(filePath).startsWith('.')) {
-            continue;
-          }
-
-          // Check file extension filter
-          if (query.fileExtensions.isNotEmpty) {
-            final extension = path.extension(filePath).toLowerCase();
-            if (!query.fileExtensions.contains(extension)) {
-              continue;
-            }
-          }
-
-          // Check exclude patterns
-          var shouldExclude = false;
-          for (final pattern in query.excludePatterns) {
-            if (filePath.contains(pattern)) {
-              shouldExclude = true;
-              break;
-            }
-          }
-          if (shouldExclude) continue;
-
-          files.add(filePath);
-        } else if (entity is Directory) {
-          // Skip hidden directories unless explicitly included
-          if (!query.includeHiddenFiles &&
-              path.basename(entity.path).startsWith('.')) {
-            continue;
-          }
-
-          // Skip common directories that shouldn't be searched
-          final dirName = path.basename(entity.path);
-          if (['.git', 'node_modules', 'build', '.dart_tool', 'android', 'ios']
-              .contains(dirName)) {
-            continue;
-          }
-
-          await _collectFiles(entity, files, query);
+      // Check file extension filter
+      if (query.fileExtensions.isNotEmpty) {
+        final extension = path.extension(filePath).toLowerCase();
+        if (!query.fileExtensions.contains(extension)) {
+          return false;
         }
       }
-    } catch (e) {
-      // Skip directories that can't be read
-    }
+
+      // Check exclude patterns
+      for (final pattern in query.excludePatterns) {
+        if (filePath.contains(pattern)) {
+          return false;
+        }
+      }
+
+      return true;
+    }).toList();
   }
 
   /// Find all matches in a line based on the search query

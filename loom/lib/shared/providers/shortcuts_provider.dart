@@ -5,9 +5,7 @@ import 'package:loom/shared/services/keyboard_shortcuts_service.dart';
 
 /// Provider for the keyboard shortcuts service
 final shortcutsServiceProvider = Provider<KeyboardShortcutsService>((ref) {
-  final service = KeyboardShortcutsService.instance;
-  service.initialize();
-  return service;
+  return KeyboardShortcutsService.instance..initialize();
 });
 
 /// Provider for all shortcuts

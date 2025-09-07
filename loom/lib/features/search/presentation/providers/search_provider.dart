@@ -114,9 +114,9 @@ class SearchNotifier extends StateNotifier<SearchState> {
 
   Future<void> replace(
     SearchQuery query,
-    String replaceText,
-    bool replaceAll,
-  ) async {
+    String replaceText, {
+    bool replaceAll = false,
+  }) async {
     if (query.searchText.trim().isEmpty) return;
 
     state = state.copyWith(isSearching: true);
@@ -125,7 +125,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
       final results = await _replaceInWorkspaceUseCase.execute(
         query,
         replaceText,
-        replaceAll,
+        replaceAll: replaceAll,
       );
       state = state.copyWith(
         isSearching: false,

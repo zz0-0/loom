@@ -460,7 +460,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
       ref.read(searchProvider.notifier).replace(
             query,
             _replaceController.text,
-            replaceAll,
+            replaceAll: replaceAll,
           );
     }
   }

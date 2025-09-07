@@ -1,12 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' show Directory;
 
 import 'package:loom/features/export/domain/entities/export_entities.dart';
 import 'package:loom/features/export/domain/repositories/export_repository.dart';
+import 'package:loom/shared/domain/repositories/file_repository.dart';
 import 'package:path/path.dart' as path;
 
 /// Implementation of export repository
 class ExportRepositoryImpl implements ExportRepository {
+  ExportRepositoryImpl(this._fileRepository);
+
+  final FileRepository _fileRepository;
   @override
   Future<ExportResult> exportContent(ExportRequest request) async {
     try {
@@ -98,14 +102,14 @@ class ExportRepositoryImpl implements ExportRepository {
     // For now, export as HTML since we don't have PDF library
     // In a real implementation, you'd use pdf package
     final htmlContent = _generateHtml(content, options);
-    final file = File(filePath.replaceAll('.pdf', '.html'));
+    final htmlFilePath = filePath.replaceAll('.pdf', '.html');
 
-    await file.writeAsString(htmlContent);
+    await _fileRepository.writeFile(htmlFilePath, htmlContent);
 
     return ExportResult(
       success: true,
-      filePath: file.path,
-      fileSize: await file.length(),
+      filePath: htmlFilePath,
+      fileSize: htmlContent.length, // Approximate file size
     );
   }
 
@@ -115,14 +119,13 @@ class ExportRepositoryImpl implements ExportRepository {
     ExportOptions options,
   ) async {
     final htmlContent = _generateHtml(content, options);
-    final file = File(filePath);
 
-    await file.writeAsString(htmlContent);
+    await _fileRepository.writeFile(filePath, htmlContent);
 
     return ExportResult(
       success: true,
-      filePath: file.path,
-      fileSize: await file.length(),
+      filePath: filePath,
+      fileSize: htmlContent.length, // Approximate file size
     );
   }
 
@@ -132,14 +135,13 @@ class ExportRepositoryImpl implements ExportRepository {
     ExportOptions options,
   ) async {
     final markdownContent = _generateMarkdown(content, options);
-    final file = File(filePath);
 
-    await file.writeAsString(markdownContent);
+    await _fileRepository.writeFile(filePath, markdownContent);
 
     return ExportResult(
       success: true,
-      filePath: file.path,
-      fileSize: await file.length(),
+      filePath: filePath,
+      fileSize: markdownContent.length, // Approximate file size
     );
   }
 
@@ -148,14 +150,12 @@ class ExportRepositoryImpl implements ExportRepository {
     String filePath,
     ExportOptions options,
   ) async {
-    final file = File(filePath);
-
-    await file.writeAsString(content);
+    await _fileRepository.writeFile(filePath, content);
 
     return ExportResult(
       success: true,
-      filePath: file.path,
-      fileSize: await file.length(),
+      filePath: filePath,
+      fileSize: content.length, // Approximate file size
     );
   }
 

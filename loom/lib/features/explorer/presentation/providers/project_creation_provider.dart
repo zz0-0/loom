@@ -1,7 +1,8 @@
-import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/explorer/data/models/project_template.dart';
 import 'package:loom/features/explorer/domain/entities/workspace_entities.dart';
+import 'package:loom/shared/data/providers.dart';
+import 'package:loom/shared/domain/repositories/file_repository.dart';
 import 'package:path/path.dart' as path;
 
 /// State for project creation process
@@ -32,10 +33,12 @@ final projectTemplatesProvider = Provider<List<ProjectTemplate>>((ref) {
 
 /// Notifier for project creation state
 class ProjectCreationNotifier extends StateNotifier<ProjectCreationState> {
-  ProjectCreationNotifier() : super(const ProjectCreationState());
+  ProjectCreationNotifier(this._fileRepository)
+      : super(const ProjectCreationState());
+
+  final FileRepository _fileRepository;
 
   /// Create a new project from a template
-  // ignore: avoid_slow_async_io
   Future<void> createProject({
     required String name,
     required String location,
@@ -53,33 +56,24 @@ class ProjectCreationNotifier extends StateNotifier<ProjectCreationState> {
 
       // Create project directory
       final projectPath = path.join(location, name);
-      final projectDir = Directory(projectPath);
 
-      // ignore: avoid_slow_async_io
-      if (await projectDir.exists()) {
+      // Check if directory already exists
+      if (await _fileRepository.directoryExists(projectPath)) {
         throw Exception('A folder with this name already exists');
       }
 
-      // ignore: avoid_slow_async_io
-      await projectDir.create(recursive: true);
+      await _fileRepository.createDirectory(projectPath);
 
       // Create folders
       for (final folderPath in template.folders) {
-        final folder = Directory(path.join(projectPath, folderPath));
-        await folder.create(recursive: true); // ignore: avoid_slow_async_io
+        final fullPath = path.join(projectPath, folderPath);
+        await _fileRepository.createDirectory(fullPath);
       }
 
       // Create files
       for (final projectFile in template.files) {
-        final file = File(path.join(projectPath, projectFile.path));
-
-        // Ensure the parent directory exists
-        await file.parent
-            .create(recursive: true); // ignore: avoid_slow_async_io
-
-        // Write the file content
-        await file
-            .writeAsString(projectFile.content); // ignore: avoid_slow_async_io
+        final filePath = path.join(projectPath, projectFile.path);
+        await _fileRepository.writeFile(filePath, projectFile.content);
       }
 
       state = state.copyWith(isLoading: false);
@@ -101,5 +95,6 @@ class ProjectCreationNotifier extends StateNotifier<ProjectCreationState> {
 /// Provider for project creation state
 final projectCreationStateProvider =
     StateNotifierProvider<ProjectCreationNotifier, ProjectCreationState>((ref) {
-  return ProjectCreationNotifier();
+  final fileRepository = ref.watch(fileRepositoryProvider);
+  return ProjectCreationNotifier(fileRepository);
 });

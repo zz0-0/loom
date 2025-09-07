@@ -56,10 +56,14 @@ class ReplaceInWorkspaceUseCase {
 
   Future<SearchResults> execute(
     SearchQuery query,
-    String replaceText,
-    bool replaceAll,
-  ) {
-    return _repository.replaceInWorkspace(query, replaceText, replaceAll);
+    String replaceText, {
+    bool replaceAll = false,
+  }) {
+    return _repository.replaceInWorkspace(
+      query,
+      replaceText,
+      replaceAll: replaceAll,
+    );
   }
 }
 
@@ -71,9 +75,14 @@ class ReplaceInFileUseCase {
   Future<List<SearchResult>> execute(
     String filePath,
     SearchQuery query,
-    String replaceText,
-    bool replaceAll,
-  ) {
-    return _repository.replaceInFile(filePath, query, replaceText, replaceAll);
+    String replaceText, {
+    bool replaceAll = false,
+  }) {
+    return _repository.replaceInFile(
+      filePath,
+      query,
+      replaceText,
+      replaceAll: replaceAll,
+    );
   }
 }

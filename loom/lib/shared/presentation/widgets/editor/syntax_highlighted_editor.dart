@@ -279,8 +279,8 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
   }
 
   Widget _buildBloxEditor(ThemeData theme, List<String> lines) {
-    final bloxController = BloxSyntaxHighlighter(text: widget.controller.text);
-    bloxController.updateTheme(theme);
+    final bloxController = BloxSyntaxHighlighter(text: widget.controller.text)
+      ..updateTheme(theme);
 
     return Row(
       children: [

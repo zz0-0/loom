@@ -468,7 +468,7 @@ class _FileTreeItemState extends State<_FileTreeItem> {
         ),
       ],
     ).then((value) {
-      if (value != null) {
+      if (value != null && context.mounted) {
         _handleContextMenuAction(context, value, node);
       }
     });
@@ -492,14 +492,18 @@ class _FileTreeItemState extends State<_FileTreeItem> {
         }
       case 'rename':
         // TODO(user): Implement rename functionality
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Rename functionality coming soon')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Rename functionality coming soon')),
+          );
+        }
       case 'delete':
         // TODO(user): Implement delete functionality
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Delete functionality coming soon')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Delete functionality coming soon')),
+          );
+        }
       default:
         // Handle collection suggestion actions
         if (action.startsWith('add_to_collection_')) {
@@ -523,24 +527,20 @@ class _FileTreeItemState extends State<_FileTreeItem> {
     final collectionName = template.name;
 
     // Use Riverpod to access the workspace provider
-    final container = ProviderScope.containerOf(context);
-    final workspaceNotifier = container.read(currentWorkspaceProvider.notifier);
-
-    // Create collection if it doesn't exist
-    workspaceNotifier
+    ProviderScope.containerOf(context).read(currentWorkspaceProvider.notifier)
       ..createCollection(collectionName)
-
-      // Add file to collection
       ..addToCollection(collectionName, node.path);
 
     // Show success feedback
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Added ${path.basename(node.path)} to $collectionName collection',
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Added ${path.basename(node.path)} to $collectionName collection',
+          ),
+          duration: const Duration(seconds: 2),
         ),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      );
+    }
   }
 }

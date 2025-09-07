@@ -23,15 +23,15 @@ abstract class SearchRepository {
   /// Perform replace operations
   Future<SearchResults> replaceInWorkspace(
     SearchQuery query,
-    String replaceText,
-    bool replaceAll,
-  );
+    String replaceText, {
+    bool replaceAll = false,
+  });
 
   /// Perform replace in a specific file
   Future<List<SearchResult>> replaceInFile(
     String filePath,
     SearchQuery query,
-    String replaceText,
-    bool replaceAll,
-  );
+    String replaceText, {
+    bool replaceAll = false,
+  });
 }

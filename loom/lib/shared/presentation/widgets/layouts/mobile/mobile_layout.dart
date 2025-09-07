@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/features/plugin_system/domain/plugin_bootstrapper.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/panels/content_area.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -11,7 +12,9 @@ import 'package:lucide_icons/lucide_icons.dart';
 /// - Full-screen content editing
 /// - Modal sheets for secondary content
 class MobileLayout extends ConsumerStatefulWidget {
-  const MobileLayout({super.key});
+  const MobileLayout({required this.pluginBootstrapper, super.key});
+
+  final PluginBootstrapper pluginBootstrapper;
 
   @override
   ConsumerState<MobileLayout> createState() => _MobileLayoutState();
@@ -20,6 +23,21 @@ class MobileLayout extends ConsumerStatefulWidget {
 class _MobileLayoutState extends ConsumerState<MobileLayout> {
   int _selectedBottomNavIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePluginSystem();
+  }
+
+  /// Initialize the plugin system
+  Future<void> _initializePluginSystem() async {
+    try {
+      await widget.pluginBootstrapper.initializePlugins(context);
+    } catch (e) {
+      debugPrint('Failed to initialize plugin system: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

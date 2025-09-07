@@ -3,6 +3,7 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 import 'package:loom/src/rust/frb_generated.dart';
@@ -44,6 +45,7 @@ String decodeBloxDocument({
 List<String> validateBloxSyntax({required String content}) =>
     RustLib.instance.api.crateApiBloxApiValidateBloxSyntax(content: content);
 
+@immutable
 class BloxBlock {
   const BloxBlock({
     required this.blockType,
@@ -94,6 +96,7 @@ class BloxBlock {
           table == other.table;
 }
 
+@immutable
 class BloxDocument {
   const BloxDocument({
     required this.blocks,
@@ -163,6 +166,7 @@ sealed class BloxInlineElement with _$BloxInlineElement {
   }) = BloxInlineElement_Custom;
 }
 
+@immutable
 class BloxListItem {
   const BloxListItem({
     required this.itemType,
@@ -209,6 +213,7 @@ enum BloxOutputFormat {
   ;
 }
 
+@immutable
 class BloxTable {
   const BloxTable({
     required this.rows,
@@ -232,6 +237,7 @@ class BloxTable {
           rows == other.rows;
 }
 
+@immutable
 class BloxTableCell {
   const BloxTableCell({
     required this.content,
@@ -262,6 +268,7 @@ class BloxTableCell {
           isHeader == other.isHeader;
 }
 
+@immutable
 class BloxTableRow {
   const BloxTableRow({
     required this.cells,

@@ -4,9 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
 import 'package:loom/features/explorer/presentation/items/explorer_sidebar_item.dart';
+import 'package:loom/features/plugin_system/domain/plugin_bootstrapper.dart';
 import 'package:loom/features/settings/presentation/widgets/settings_content.dart';
 import 'package:loom/features/settings/presentation/widgets/settings_sidebar_item.dart';
-import 'package:loom/shared/data/providers.dart';
+import 'package:loom/shared/presentation/providers/directory_operations_provider.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:loom/shared/presentation/widgets/dialogs/folder_browser_dialog.dart';
@@ -23,7 +24,9 @@ import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/top_
 /// Extensible desktop layout with customizable UI components
 /// This serves as the main UI scaffold that features can register into
 class DesktopLayout extends ConsumerStatefulWidget {
-  const DesktopLayout({super.key});
+  const DesktopLayout({required this.pluginBootstrapper, super.key});
+
+  final PluginBootstrapper pluginBootstrapper;
 
   @override
   ConsumerState<DesktopLayout> createState() => _DesktopLayoutState();
@@ -33,17 +36,26 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   @override
   void initState() {
     super.initState();
+    _initializePluginSystem();
     _registerDefaultComponents();
+  }
+
+  /// Initialize the plugin system
+  Future<void> _initializePluginSystem() async {
+    try {
+      await widget.pluginBootstrapper.initializePlugins(context);
+    } catch (e) {
+      debugPrint('Failed to initialize plugin system: $e');
+    }
   }
 
   /// Register default UI components
   void _registerDefaultComponents() {
     final bottomBarRegistry = BottomBarRegistry();
     final menuRegistry = MenuRegistry();
-    final uiRegistry = UIRegistry();
 
     // Register file content provider
-    uiRegistry.registerContentProvider(FileContentProvider());
+    UIRegistry().registerContentProvider(FileContentProvider());
 
     // Register feature components
     _registerFeatures();
@@ -188,16 +200,15 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       }
 
       if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
-        final fileRepository = ref.read(fileRepositoryProvider);
+        final directoryOps = ref.read(directoryOperationsProvider.notifier);
+        await directoryOps.validateDirectory(selectedDirectory);
+        final state = ref.read(directoryOperationsProvider);
 
-        try {
-          // Try listing to ensure we have permissions to read the directory
-          await fileRepository.listDirectories(selectedDirectory);
-        } catch (e) {
+        if (state.error != null) {
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Cannot access directory: $e'),
+              content: Text('Cannot access directory: ${state.error}'),
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );

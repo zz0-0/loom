@@ -107,7 +107,7 @@ class _BloxDocumentViewerState extends State<BloxDocumentViewer> {
               foregroundColor: theme.colorScheme.onSurface,
             )
           : null,
-      body: Container(
+      body: ColoredBox(
         color: theme.colorScheme.surface,
         child: BloxViewer(
           blocks: widget.blocks,
@@ -138,36 +138,32 @@ class BloxPreview extends StatelessWidget {
     final displayBlocks = blocks.take(maxBlocks).toList();
     final hasMore = blocks.length > maxBlocks;
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: theme.dividerColor,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ...displayBlocks.map(
-            (block) => BloxBlockWidget(
-              block: block,
-              isDark: isDark,
-            ),
-          ),
-          if (hasMore)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                '... and ${blocks.length - maxBlocks} more blocks',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontStyle: FontStyle.italic,
-                ),
+    return ColoredBox(
+      color: theme.colorScheme.surfaceContainerHighest,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...displayBlocks.map(
+              (block) => BloxBlockWidget(
+                block: block,
+                isDark: isDark,
               ),
             ),
-        ],
+            if (hasMore)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  '... and ${blocks.length - maxBlocks} more blocks',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

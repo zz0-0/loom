@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/shared/data/providers.dart';
+import 'package:loom/shared/presentation/providers/folder_browser_provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -15,51 +15,26 @@ class FolderBrowserDialog extends ConsumerStatefulWidget {
 }
 
 class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
-  late String currentPath;
-  List<String> directories = [];
-  bool isLoading = true;
-
   @override
   void initState() {
     super.initState();
-    currentPath = widget.initialPath;
-    _loadDirectories();
-  }
-
-  Future<void> _loadDirectories() async {
-    setState(() => isLoading = true);
-    try {
-      final fileRepository = ref.read(fileRepositoryProvider);
-      final dirs = await fileRepository.listDirectories(currentPath);
-      directories = dirs.map((dir) => dir.path).toList();
-      directories.sort(
-        (a, b) => path
-            .basename(a)
-            .toLowerCase()
-            .compareTo(path.basename(b).toLowerCase()),
-      );
-    } catch (e) {
-      directories = [];
-    } finally {
-      setState(() => isLoading = false);
-    }
+    // Initialize the provider with the initial path
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(folderBrowserProvider.notifier).initialize(widget.initialPath);
+    });
   }
 
   void _navigateUp() {
-    final parent = path.dirname(currentPath);
-    if (parent != currentPath) {
-      currentPath = parent;
-      _loadDirectories();
-    }
+    ref.read(folderBrowserProvider.notifier).navigateUp();
   }
 
   void _navigateToDirectory(String dirPath) {
-    currentPath = dirPath;
-    _loadDirectories();
+    ref.read(folderBrowserProvider.notifier).navigateTo(dirPath);
   }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(folderBrowserProvider);
     final theme = Theme.of(context);
 
     return Dialog(
@@ -101,7 +76,7 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                 children: [
                   Expanded(
                     child: Text(
-                      currentPath,
+                      state.currentPath,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontFamily: 'monospace',
                       ),
@@ -129,30 +104,21 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                   icon: LucideIcons.home,
                   label: 'Home',
                   path: '/home',
-                  onTap: (path) {
-                    currentPath = path;
-                    _loadDirectories();
-                  },
+                  onTap: _navigateToDirectory,
                 ),
                 const SizedBox(width: 8),
                 _QuickAccessButton(
                   icon: LucideIcons.code,
                   label: 'Workspaces',
                   path: '/workspaces',
-                  onTap: (path) {
-                    currentPath = path;
-                    _loadDirectories();
-                  },
+                  onTap: _navigateToDirectory,
                 ),
                 const SizedBox(width: 8),
                 _QuickAccessButton(
                   icon: LucideIcons.folder,
                   label: 'Documents',
                   path: path.join('/home', 'Documents'),
-                  onTap: (path) {
-                    currentPath = path;
-                    _loadDirectories();
-                  },
+                  onTap: _navigateToDirectory,
                 ),
               ],
             ),
@@ -165,9 +131,9 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: isLoading
+              child: state.isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : directories.isEmpty
+                  : state.directories.isEmpty
                       ? Center(
                           child: Text(
                             'No folders found',
@@ -177,9 +143,9 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                           ),
                         )
                       : ListView.builder(
-                          itemCount: directories.length,
+                          itemCount: state.directories.length,
                           itemBuilder: (context, index) {
-                            final dirPath = directories[index];
+                            final dirPath = state.directories[index];
                             final name = path.basename(dirPath);
                             return ListTile(
                               leading: const Icon(LucideIcons.folder),
@@ -196,7 +162,8 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
               children: [
                 TextButton.icon(
                   onPressed: () async {
-                    final controller = TextEditingController(text: currentPath);
+                    final controller =
+                        TextEditingController(text: state.currentPath);
                     final customPath = await showDialog<String>(
                       context: context,
                       builder: (context) => AlertDialog(
@@ -222,8 +189,7 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                       ),
                     );
                     if (customPath != null && customPath.isNotEmpty) {
-                      currentPath = customPath;
-                      await _loadDirectories();
+                      _navigateToDirectory(customPath);
                     }
                   },
                   icon: const Icon(LucideIcons.edit),
@@ -237,7 +203,8 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                     ),
                     const SizedBox(width: 8),
                     FilledButton(
-                      onPressed: () => Navigator.of(context).pop(currentPath),
+                      onPressed: () =>
+                          Navigator.of(context).pop(state.currentPath),
                       child: const Text('Select'),
                     ),
                   ],
