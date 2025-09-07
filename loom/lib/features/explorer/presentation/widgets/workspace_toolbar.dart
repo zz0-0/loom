@@ -163,26 +163,41 @@ class _ToggleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Material(
-      color: isSelected
-          ? theme.colorScheme.primary.withOpacity(0.12)
-          : Colors.transparent,
-      borderRadius: AppRadius.radiusSm,
-      child: InkWell(
-        onTap: onPressed,
+    return AnimatedContainer(
+      duration: AppAnimations.fast,
+      curve: AppAnimations.scaleCurve,
+      decoration: BoxDecoration(
+        color: isSelected
+            ? theme.colorScheme.primary.withOpacity(0.12)
+            : Colors.transparent,
         borderRadius: AppRadius.radiusSm,
-        child: Container(
-          padding: const EdgeInsets.all(4),
-          child: Icon(
-            icon,
-            size: 14,
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.onSurfaceVariant,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: AppRadius.radiusSm,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: AppRadius.radiusSm,
+          child: AnimatedContainer(
+            duration: AppAnimations.fast,
+            curve: AppAnimations.scaleCurve,
+            padding: const EdgeInsets.all(4),
+            child: AnimatedScale(
+              scale: isSelected ? 1.1 : 1.0,
+              duration: AppAnimations.fast,
+              curve: AppAnimations.scaleCurve,
+              child: Icon(
+                icon,
+                size: 14,
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
           ),
         ),
       ),
-    );
+    ).withHoverAnimation();
   }
 }
 
@@ -196,104 +211,120 @@ class _SettingsButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    return PopupMenuButton<String>(
-      icon: const Icon(LucideIcons.moreHorizontal, size: 16),
-      iconSize: 16,
-      splashRadius: 12,
-      tooltip: 'Project Options',
-      onSelected: (value) {
-        switch (value) {
-          case 'close_project':
-            ref.read(currentWorkspaceProvider.notifier).closeWorkspace();
-          case 'open_project':
-            _showOpenProjectDialog(context, ref);
-          case 'create_project':
-            _showCreateProjectDialog(context, ref);
-          case 'toggle_filter':
-            ref
-                .read(workspaceSettingsProvider.notifier)
-                .toggleFileExtensionFilter();
-          case 'toggle_hidden':
-            ref
-                .read(workspaceSettingsProvider.notifier)
-                .toggleShowHiddenFiles();
-        }
-      },
-      itemBuilder: (context) => [
-        const PopupMenuItem(
-          value: 'close_project',
-          child: Row(
-            children: [
-              Icon(
-                LucideIcons.x,
-                size: 16,
-              ),
-              SizedBox(width: 8),
-              Text('Close Project'),
-            ],
+    return AnimatedContainer(
+      duration: AppAnimations.fast,
+      curve: AppAnimations.scaleCurve,
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: AppRadius.radiusSm,
+      ),
+      child: PopupMenuButton<String>(
+        icon: const Icon(LucideIcons.moreHorizontal, size: 16),
+        iconSize: 16,
+        splashRadius: 12,
+        tooltip: 'Project Options',
+        onSelected: (value) {
+          switch (value) {
+            case 'close_project':
+              ref.read(currentWorkspaceProvider.notifier).closeWorkspace();
+            case 'open_project':
+              _showOpenProjectDialog(context, ref);
+            case 'create_project':
+              _showCreateProjectDialog(context, ref);
+            case 'toggle_filter':
+              ref
+                  .read(workspaceSettingsProvider.notifier)
+                  .toggleFileExtensionFilter();
+            case 'toggle_hidden':
+              ref
+                  .read(workspaceSettingsProvider.notifier)
+                  .toggleShowHiddenFiles();
+          }
+        },
+        itemBuilder: (context) => [
+          const PopupMenuItem(
+            value: 'close_project',
+            child: Row(
+              children: [
+                Icon(
+                  LucideIcons.x,
+                  size: 16,
+                ),
+                SizedBox(width: 8),
+                Text('Close Project'),
+              ],
+            ),
           ),
-        ),
-        const PopupMenuItem(
-          value: 'open_project',
-          child: Row(
-            children: [
-              Icon(
-                LucideIcons.folderOpen,
-                size: 16,
-              ),
-              SizedBox(width: 8),
-              Text('Open Project'),
-            ],
+          const PopupMenuItem(
+            value: 'open_project',
+            child: Row(
+              children: [
+                Icon(
+                  LucideIcons.folderOpen,
+                  size: 16,
+                ),
+                SizedBox(width: 8),
+                Text('Open Project'),
+              ],
+            ),
           ),
-        ),
-        const PopupMenuItem(
-          value: 'create_project',
-          child: Row(
-            children: [
-              Icon(
-                LucideIcons.folderPlus,
-                size: 16,
-              ),
-              SizedBox(width: 8),
-              Text('Create Project'),
-            ],
+          const PopupMenuItem(
+            value: 'create_project',
+            child: Row(
+              children: [
+                Icon(
+                  LucideIcons.folderPlus,
+                  size: 16,
+                ),
+                SizedBox(width: 8),
+                Text('Create Project'),
+              ],
+            ),
           ),
-        ),
-        const PopupMenuDivider(),
-        PopupMenuItem(
-          value: 'toggle_filter',
-          child: Row(
-            children: [
-              Icon(
-                settings.filterFileExtensions
-                    ? LucideIcons.check
-                    : LucideIcons.square,
-                size: 16,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: 8),
-              const Text('Filter File Extensions'),
-            ],
+          const PopupMenuDivider(),
+          PopupMenuItem(
+            value: 'toggle_filter',
+            child: Row(
+              children: [
+                AnimatedSwitcher(
+                  duration: AppAnimations.fast,
+                  child: Icon(
+                    settings.filterFileExtensions
+                        ? LucideIcons.check
+                        : LucideIcons.square,
+                    size: 16,
+                    color: theme.colorScheme.onSurfaceVariant,
+                    key: ValueKey(settings.filterFileExtensions),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Text('Filter File Extensions'),
+              ],
+            ),
           ),
-        ),
-        PopupMenuItem(
-          value: 'toggle_hidden',
-          child: Row(
-            children: [
-              Icon(
-                settings.showHiddenFiles
-                    ? LucideIcons.check
-                    : LucideIcons.square,
-                size: 16,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: 8),
-              const Text('Show Hidden Files'),
-            ],
+          PopupMenuItem(
+            value: 'toggle_hidden',
+            child: Row(
+              children: [
+                AnimatedSwitcher(
+                  duration: AppAnimations.fast,
+                  child: Icon(
+                    settings.showHiddenFiles
+                        ? LucideIcons.check
+                        : LucideIcons.square,
+                    size: 16,
+                    color: theme.colorScheme.onSurfaceVariant,
+                    key: ValueKey(settings.showHiddenFiles),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Text('Show Hidden Files'),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      ),
+    ).withHoverAnimation().withPressAnimation();
   }
 
   Future<void> _showOpenProjectDialog(
@@ -384,14 +415,14 @@ class _FallbackFolderDialogState extends State<_FallbackFolderDialog> {
               hintText: '/path/to/your/project',
             ),
             autofocus: true,
-          ),
+          ).withFocusAnimation(),
         ],
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancel'),
-        ),
+        ).withHoverAnimation().withPressAnimation(),
         TextButton(
           onPressed: () {
             final path = _controller.text.trim();
@@ -400,8 +431,8 @@ class _FallbackFolderDialogState extends State<_FallbackFolderDialog> {
             }
           },
           child: const Text('Open'),
-        ),
+        ).withHoverAnimation().withPressAnimation(),
       ],
-    );
+    ).withFadeInAnimation();
   }
 }

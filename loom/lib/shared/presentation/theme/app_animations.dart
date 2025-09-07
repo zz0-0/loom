@@ -37,6 +37,406 @@ class AppAnimations {
   static const double borderRadiusPressed = 0.95;
 }
 
+/// Skeleton loading animation for content placeholders
+class SkeletonLoader extends StatefulWidget {
+  const SkeletonLoader({
+    super.key,
+    this.width,
+    this.height = 16,
+    this.borderRadius = 4,
+    this.duration = const Duration(milliseconds: 1500),
+    this.baseColor,
+    this.highlightColor,
+  });
+
+  final double? width;
+  final double height;
+  final double borderRadius;
+  final Duration duration;
+  final Color? baseColor;
+  final Color? highlightColor;
+
+  @override
+  State<SkeletonLoader> createState() => _SkeletonLoaderState();
+}
+
+class _SkeletonLoaderState extends State<SkeletonLoader>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    )..repeat();
+
+    _animation = Tween<double>(begin: -1, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final baseColor =
+        widget.baseColor ?? theme.colorScheme.surfaceContainerHighest;
+    final highlightColor = widget.highlightColor ?? theme.colorScheme.surface;
+
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          width: widget.width,
+          height: widget.height,
+          decoration: BoxDecoration(
+            color: baseColor,
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+          ),
+          child: ShaderMask(
+            shaderCallback: (bounds) {
+              return LinearGradient(
+                colors: [
+                  baseColor,
+                  highlightColor,
+                  baseColor,
+                ],
+                stops: const [
+                  0.0,
+                  0.5,
+                  1.0,
+                ],
+                transform: GradientRotation(_animation.value * 3.14159),
+              ).createShader(bounds);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Shimmer effect for loading states
+class ShimmerEffect extends StatefulWidget {
+  const ShimmerEffect({
+    required this.child,
+    super.key,
+    this.duration = const Duration(milliseconds: 1500),
+    this.baseColor,
+    this.highlightColor,
+    this.enabled = true,
+  });
+
+  final Widget child;
+  final Duration duration;
+  final Color? baseColor;
+  final Color? highlightColor;
+  final bool enabled;
+
+  @override
+  State<ShimmerEffect> createState() => _ShimmerEffectState();
+}
+
+class _ShimmerEffectState extends State<ShimmerEffect>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+
+    _animation = Tween<double>(begin: -1, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    if (widget.enabled) {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void didUpdateWidget(ShimmerEffect oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.enabled != oldWidget.enabled) {
+      if (widget.enabled) {
+        _controller.repeat();
+      } else {
+        _controller.stop();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.enabled) return widget.child;
+
+    final theme = Theme.of(context);
+    final baseColor =
+        widget.baseColor ?? theme.colorScheme.surfaceContainerHighest;
+    final highlightColor = widget.highlightColor ?? theme.colorScheme.surface;
+
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return ShaderMask(
+          shaderCallback: (bounds) {
+            return LinearGradient(
+              colors: [
+                baseColor,
+                highlightColor,
+                baseColor,
+              ],
+              stops: const [
+                0.0,
+                0.5,
+                1.0,
+              ],
+              transform: GradientRotation(_animation.value * 3.14159),
+            ).createShader(bounds);
+          },
+          child: widget.child,
+        );
+      },
+    );
+  }
+}
+
+/// Enhanced loading indicator with smooth transitions
+class SmoothLoadingIndicator extends StatefulWidget {
+  const SmoothLoadingIndicator({
+    super.key,
+    this.size = 24,
+    this.strokeWidth = 2,
+    this.color,
+    this.duration = const Duration(milliseconds: 1200),
+  });
+
+  final double size;
+  final double strokeWidth;
+  final Color? color;
+  final Duration duration;
+
+  @override
+  State<SmoothLoadingIndicator> createState() => _SmoothLoadingIndicatorState();
+}
+
+class _SmoothLoadingIndicatorState extends State<SmoothLoadingIndicator>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _rotationAnimation;
+  late final Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    )..repeat();
+
+    _rotationAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.linear),
+    );
+
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 1, end: 1.2), weight: 25),
+      TweenSequenceItem(tween: Tween(begin: 1.2, end: 0.8), weight: 50),
+      TweenSequenceItem(tween: Tween(begin: 0.8, end: 1), weight: 25),
+    ]).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = widget.color ?? theme.colorScheme.primary;
+
+    return AnimatedBuilder(
+      animation: Listenable.merge([_rotationAnimation, _scaleAnimation]),
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Transform.rotate(
+            angle: _rotationAnimation.value * 2 * 3.14159,
+            child: SizedBox(
+              width: widget.size,
+              height: widget.size,
+              child: CircularProgressIndicator(
+                strokeWidth: widget.strokeWidth,
+                valueColor: AlwaysStoppedAnimation<Color>(color),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Pulse animation for attention-grabbing elements
+class PulseAnimation extends StatefulWidget {
+  const PulseAnimation({
+    required this.child,
+    super.key,
+    this.duration = const Duration(milliseconds: 1500),
+    this.minOpacity = 0.5,
+    this.maxOpacity = 1.0,
+    this.curve = Curves.easeInOut,
+  });
+
+  final Widget child;
+  final Duration duration;
+  final double minOpacity;
+  final double maxOpacity;
+  final Curve curve;
+
+  @override
+  State<PulseAnimation> createState() => _PulseAnimationState();
+}
+
+class _PulseAnimationState extends State<PulseAnimation>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _animation = Tween<double>(
+      begin: widget.minOpacity,
+      end: widget.maxOpacity,
+    ).animate(
+      CurvedAnimation(parent: _controller, curve: widget.curve),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _animation.value,
+          child: widget.child,
+        );
+      },
+    );
+  }
+}
+
+/// Success animation with bounce effect
+class SuccessAnimation extends StatefulWidget {
+  const SuccessAnimation({
+    required this.child,
+    super.key,
+    this.duration = const Duration(milliseconds: 600),
+    this.delay = Duration.zero,
+  });
+
+  final Widget child;
+  final Duration duration;
+  final Duration delay;
+
+  @override
+  State<SuccessAnimation> createState() => _SuccessAnimationState();
+}
+
+class _SuccessAnimationState extends State<SuccessAnimation>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scaleAnimation;
+  late final Animation<double> _opacityAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+
+    _scaleAnimation = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.8, end: 1.2), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 1.2, end: 1), weight: 60),
+    ]).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
+    );
+
+    _opacityAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+
+    Future.delayed(widget.delay, () {
+      if (mounted) _controller.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_scaleAnimation, _opacityAnimation]),
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Opacity(
+            opacity: _opacityAnimation.value,
+            child: widget.child,
+          ),
+        );
+      },
+    );
+  }
+}
+
 /// Pre-built animation widgets for common interactions
 class AnimatedHover extends StatefulWidget {
   const AnimatedHover({
@@ -421,17 +821,62 @@ extension AnimationExtensions on Widget {
     );
   }
 
-  /// Adds bounce animation
-  Widget withBounceAnimation({
-    Duration duration = AppAnimations.slow,
-    Curve curve = AppAnimations.bounceCurve,
-    double scale = 1.1,
+  /// Adds shimmer effect
+  Widget withShimmer({
+    Duration duration = const Duration(milliseconds: 1500),
+    Color? baseColor,
+    Color? highlightColor,
+    bool enabled = true,
   }) {
-    return AnimatedBounce(
+    return ShimmerEffect(
       duration: duration,
-      curve: curve,
-      scale: scale,
+      baseColor: baseColor,
+      highlightColor: highlightColor,
+      enabled: enabled,
       child: this,
+    );
+  }
+
+  /// Adds pulse animation
+  Widget withPulse({
+    Duration duration = const Duration(milliseconds: 1500),
+    double minOpacity = 0.5,
+    double maxOpacity = 1.0,
+    Curve curve = Curves.easeInOut,
+  }) {
+    return PulseAnimation(
+      duration: duration,
+      minOpacity: minOpacity,
+      maxOpacity: maxOpacity,
+      curve: curve,
+      child: this,
+    );
+  }
+
+  /// Adds success animation
+  Widget withSuccessAnimation({
+    Duration duration = const Duration(milliseconds: 600),
+    Duration delay = Duration.zero,
+  }) {
+    return SuccessAnimation(
+      duration: duration,
+      delay: delay,
+      child: this,
+    );
+  }
+
+  /// Adds smooth loading indicator
+  Widget withSmoothLoading({
+    double size = 24,
+    double strokeWidth = 2,
+    Color? color,
+    Duration duration = const Duration(milliseconds: 1200),
+  }) {
+    return SmoothLoadingIndicator(
+      size: size,
+      strokeWidth: strokeWidth,
+      color: color,
+      duration: duration,
     );
   }
 }

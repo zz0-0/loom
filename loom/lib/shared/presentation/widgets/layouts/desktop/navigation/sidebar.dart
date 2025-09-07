@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
+import 'package:loom/shared/presentation/theme/app_animations.dart';
 
 class Sidebar extends ConsumerWidget {
   const Sidebar({super.key});
@@ -123,53 +124,74 @@ class _SidebarButtonState extends State<_SidebarButton> {
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 1),
-      child: Material(
-        color: widget.isSelected
-            ? theme.colorScheme.primary.withOpacity(0.2)
-            : _isHovered
-                ? theme.colorScheme.primary.withOpacity(0.1)
-                : Colors.transparent,
-        borderRadius: BorderRadius.circular(6),
-        child: InkWell(
-          onTap: widget.onPressed,
-          onHover: (hovered) {
-            setState(() {
-              _isHovered = hovered;
-            });
-          },
+      child: AnimatedContainer(
+        duration: AppAnimations.fast,
+        curve: AppAnimations.scaleCurve,
+        decoration: BoxDecoration(
+          color: widget.isSelected
+              ? theme.colorScheme.primary.withOpacity(0.2)
+              : _isHovered
+                  ? theme.colorScheme.primary.withOpacity(0.1)
+                  : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
-          child: Container(
-            width: double.infinity,
-            height: 48,
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  shouldShowFilled ? widget.filledIcon : widget.icon,
-                  size: 20,
-                  color: widget.isSelected
-                      ? theme.colorScheme.primary
-                      : _isHovered
-                          ? theme.colorScheme.primary.withOpacity(0.8)
-                          : theme.colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  widget.label,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    fontSize: 9,
-                    color: widget.isSelected
-                        ? theme.colorScheme.primary
-                        : _isHovered
-                            ? theme.colorScheme.primary.withOpacity(0.8)
-                            : theme.colorScheme.onSurfaceVariant,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+          child: InkWell(
+            onTap: widget.onPressed,
+            onHover: (hovered) {
+              setState(() {
+                _isHovered = hovered;
+              });
+            },
+            borderRadius: BorderRadius.circular(6),
+            child: AnimatedContainer(
+              duration: AppAnimations.fast,
+              curve: AppAnimations.scaleCurve,
+              width: double.infinity,
+              height: 48,
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AnimatedScale(
+                    scale: _isHovered ? AppAnimations.scaleHover : 1.0,
+                    duration: AppAnimations.fast,
+                    curve: AppAnimations.scaleCurve,
+                    child: Icon(
+                      shouldShowFilled ? widget.filledIcon : widget.icon,
+                      size: 20,
+                      color: widget.isSelected
+                          ? theme.colorScheme.primary
+                          : _isHovered
+                              ? theme.colorScheme.primary.withOpacity(0.8)
+                              : theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                  const SizedBox(height: 2),
+                  AnimatedDefaultTextStyle(
+                    duration: AppAnimations.fast,
+                    curve: AppAnimations.scaleCurve,
+                    style: theme.textTheme.labelSmall!.copyWith(
+                      fontSize: 9,
+                      color: widget.isSelected
+                          ? theme.colorScheme.primary
+                          : _isHovered
+                              ? theme.colorScheme.primary.withOpacity(0.8)
+                              : theme.colorScheme.onSurfaceVariant,
+                      fontWeight:
+                          _isHovered ? FontWeight.w600 : FontWeight.w400,
+                    ),
+                    child: Text(
+                      widget.label,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

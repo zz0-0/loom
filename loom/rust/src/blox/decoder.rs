@@ -1,4 +1,4 @@
-use crate::blox::{Document, Block, InlineElement, BloxError, ParseResult};
+use crate::blox::{Document, Block, BloxError, ParseResult};
 use std::collections::HashMap;
 
 pub struct BloxDecoder {

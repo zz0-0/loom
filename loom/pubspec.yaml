@@ -15,6 +15,7 @@ dependencies:
   flutter_highlight: ^0.7.0
   flutter_riverpod: ^2.5.1
   flutter_rust_bridge: 2.11.1
+  freezed_annotation: ^2.4.4
   lucide_icons: ^0.257.0
   path: ^1.9.0
   riverpod_annotation: ^2.3.5
@@ -27,6 +28,7 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
+  freezed: ^2.5.7
   integration_test:
     sdk: flutter
   mockito: ^5.4.4

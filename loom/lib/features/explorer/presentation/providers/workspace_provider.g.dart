@@ -6,7 +6,7 @@ part of 'workspace_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentWorkspaceHash() => r'eb0eb903c090f36017523cd84a4c4721ce1f058d';
+String _$currentWorkspaceHash() => r'756b9358927af945e5a70d2451f23981cea38a5f';
 
 /// Current workspace state
 ///

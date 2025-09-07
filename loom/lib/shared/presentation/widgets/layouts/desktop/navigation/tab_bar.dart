@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/settings/presentation/providers/close_button_settings_provider.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
+import 'package:loom/shared/presentation/theme/app_animations.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 
 /// Tab bar widget that displays and manages tabs in the main content area
@@ -337,23 +338,56 @@ class _TabItem extends StatefulWidget {
   State<_TabItem> createState() => _TabItemState();
 }
 
-class _TabItemState extends State<_TabItem> {
+class _TabItemState extends State<_TabItem>
+    with SingleTickerProviderStateMixin {
   bool _isHovered = false;
+  late final AnimationController _activeController;
+  late final Animation<double> _activeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _activeController = AnimationController(
+      duration: AppAnimations.normal,
+      vsync: this,
+    );
+
+    _activeAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _activeController, curve: Curves.easeInOut),
+    );
+
+    if (widget.isActive) {
+      _activeController.value = 1.0;
+    }
+  }
+
+  @override
+  void didUpdateWidget(_TabItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isActive != oldWidget.isActive) {
+      if (widget.isActive) {
+        _activeController.forward();
+      } else {
+        _activeController.reverse();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _activeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final backgroundColor = widget.isActive
-        ? theme.colorScheme.surface
-        : _isHovered
-            ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.5)
-            : Colors.transparent;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: Draggable<int>(
-        data: widget.tab.id.hashCode, // Use hashCode as drag data
+        data: widget.tab.id.hashCode,
         onDragStarted: () {},
         onDragEnd: (details) {},
         feedback: Material(
@@ -387,7 +421,7 @@ class _TabItemState extends State<_TabItem> {
               maxWidth: 200,
             ),
             decoration: BoxDecoration(
-              color: backgroundColor,
+              color: Colors.transparent,
               border: widget.isActive
                   ? Border(
                       left: BorderSide(color: theme.dividerColor),
@@ -408,34 +442,59 @@ class _TabItemState extends State<_TabItem> {
             ),
           ),
         ),
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: Container(
-            constraints: const BoxConstraints(
-              minWidth: 120,
-              maxWidth: 200,
-            ),
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              border: widget.isActive
-                  ? Border(
-                      left: BorderSide(color: theme.dividerColor),
-                      right: BorderSide(color: theme.dividerColor),
-                      top: BorderSide(
-                        color: theme.colorScheme.primary,
-                        width: 2,
-                      ),
-                    )
-                  : null,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: _buildTabChildren(theme),
+        child: AnimatedBuilder(
+          animation: _activeAnimation,
+          builder: (context, child) {
+            final backgroundColor = Color.lerp(
+              _isHovered
+                  ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.5)
+                  : Colors.transparent,
+              theme.colorScheme.surface,
+              _activeAnimation.value,
+            )!;
+
+            final scale = _isHovered ? AppAnimations.scaleHover : 1.0;
+
+            return AnimatedScale(
+              scale: scale,
+              duration: AppAnimations.fast,
+              curve: AppAnimations.scaleCurve,
+              child: GestureDetector(
+                onTap: widget.onTap,
+                child: Container(
+                  constraints: const BoxConstraints(
+                    minWidth: 120,
+                    maxWidth: 200,
+                  ),
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    border: widget.isActive
+                        ? Border(
+                            left: BorderSide(color: theme.dividerColor),
+                            right: BorderSide(color: theme.dividerColor),
+                            top: BorderSide(
+                              color: theme.colorScheme.primary,
+                              width: 2 * _activeAnimation.value,
+                            ),
+                          )
+                        : null,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(4 * _activeAnimation.value),
+                      topRight: Radius.circular(4 * _activeAnimation.value),
+                    ),
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _buildTabChildren(theme),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

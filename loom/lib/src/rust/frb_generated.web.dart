@@ -34,13 +34,37 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BloxDocument dco_decode_blox_document(dynamic raw);
 
   @protected
+  BloxInlineElement dco_decode_blox_inline_element(dynamic raw);
+
+  @protected
+  BloxListItem dco_decode_blox_list_item(dynamic raw);
+
+  @protected
+  BloxListItemType dco_decode_blox_list_item_type(dynamic raw);
+
+  @protected
   BloxOutputFormat dco_decode_blox_output_format(dynamic raw);
+
+  @protected
+  BloxTable dco_decode_blox_table(dynamic raw);
+
+  @protected
+  BloxTableCell dco_decode_blox_table_cell(dynamic raw);
+
+  @protected
+  BloxTableRow dco_decode_blox_table_row(dynamic raw);
 
   @protected
   bool dco_decode_bool(dynamic raw);
 
   @protected
   BloxDocument dco_decode_box_autoadd_blox_document(dynamic raw);
+
+  @protected
+  BloxTable dco_decode_box_autoadd_blox_table(dynamic raw);
+
+  @protected
+  BloxTableRow dco_decode_box_autoadd_blox_table_row(dynamic raw);
 
   @protected
   int dco_decode_i_32(dynamic raw);
@@ -52,10 +76,31 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<BloxBlock> dco_decode_list_blox_block(dynamic raw);
 
   @protected
+  List<BloxInlineElement> dco_decode_list_blox_inline_element(dynamic raw);
+
+  @protected
+  List<BloxListItem> dco_decode_list_blox_list_item(dynamic raw);
+
+  @protected
+  List<BloxTableCell> dco_decode_list_blox_table_cell(dynamic raw);
+
+  @protected
+  List<BloxTableRow> dco_decode_list_blox_table_row(dynamic raw);
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
+
+  @protected
+  String? dco_decode_opt_String(dynamic raw);
+
+  @protected
+  BloxTable? dco_decode_opt_box_autoadd_blox_table(dynamic raw);
+
+  @protected
+  BloxTableRow? dco_decode_opt_box_autoadd_blox_table_row(dynamic raw);
 
   @protected
   (String, String) dco_decode_record_string_string(dynamic raw);
@@ -83,13 +128,39 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BloxDocument sse_decode_blox_document(SseDeserializer deserializer);
 
   @protected
+  BloxInlineElement sse_decode_blox_inline_element(
+      SseDeserializer deserializer);
+
+  @protected
+  BloxListItem sse_decode_blox_list_item(SseDeserializer deserializer);
+
+  @protected
+  BloxListItemType sse_decode_blox_list_item_type(SseDeserializer deserializer);
+
+  @protected
   BloxOutputFormat sse_decode_blox_output_format(SseDeserializer deserializer);
+
+  @protected
+  BloxTable sse_decode_blox_table(SseDeserializer deserializer);
+
+  @protected
+  BloxTableCell sse_decode_blox_table_cell(SseDeserializer deserializer);
+
+  @protected
+  BloxTableRow sse_decode_blox_table_row(SseDeserializer deserializer);
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
   BloxDocument sse_decode_box_autoadd_blox_document(
+      SseDeserializer deserializer);
+
+  @protected
+  BloxTable sse_decode_box_autoadd_blox_table(SseDeserializer deserializer);
+
+  @protected
+  BloxTableRow sse_decode_box_autoadd_blox_table_row(
       SseDeserializer deserializer);
 
   @protected
@@ -102,10 +173,37 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<BloxBlock> sse_decode_list_blox_block(SseDeserializer deserializer);
 
   @protected
+  List<BloxInlineElement> sse_decode_list_blox_inline_element(
+      SseDeserializer deserializer);
+
+  @protected
+  List<BloxListItem> sse_decode_list_blox_list_item(
+      SseDeserializer deserializer);
+
+  @protected
+  List<BloxTableCell> sse_decode_list_blox_table_cell(
+      SseDeserializer deserializer);
+
+  @protected
+  List<BloxTableRow> sse_decode_list_blox_table_row(
+      SseDeserializer deserializer);
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
   List<(String, String)> sse_decode_list_record_string_string(
+      SseDeserializer deserializer);
+
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer);
+
+  @protected
+  BloxTable? sse_decode_opt_box_autoadd_blox_table(
+      SseDeserializer deserializer);
+
+  @protected
+  BloxTableRow? sse_decode_opt_box_autoadd_blox_table_row(
       SseDeserializer deserializer);
 
   @protected
@@ -135,8 +233,28 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_blox_document(BloxDocument self, SseSerializer serializer);
 
   @protected
+  void sse_encode_blox_inline_element(
+      BloxInlineElement self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_blox_list_item(BloxListItem self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_blox_list_item_type(
+      BloxListItemType self, SseSerializer serializer);
+
+  @protected
   void sse_encode_blox_output_format(
       BloxOutputFormat self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_blox_table(BloxTable self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_blox_table_cell(BloxTableCell self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_blox_table_row(BloxTableRow self, SseSerializer serializer);
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
@@ -144,6 +262,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_blox_document(
       BloxDocument self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_blox_table(
+      BloxTable self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_blox_table_row(
+      BloxTableRow self, SseSerializer serializer);
 
   @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
@@ -156,12 +282,39 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       List<BloxBlock> self, SseSerializer serializer);
 
   @protected
+  void sse_encode_list_blox_inline_element(
+      List<BloxInlineElement> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_blox_list_item(
+      List<BloxListItem> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_blox_table_cell(
+      List<BloxTableCell> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_blox_table_row(
+      List<BloxTableRow> self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
       Uint8List self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_record_string_string(
       List<(String, String)> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_blox_table(
+      BloxTable? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_blox_table_row(
+      BloxTableRow? self, SseSerializer serializer);
 
   @protected
   void sse_encode_record_string_string(

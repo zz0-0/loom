@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loom/features/settings/presentation/providers/window_controls_provider.dart';
+import 'package:loom/shared/presentation/theme/app_animations.dart';
 import 'package:window_manager/window_manager.dart';
 
 /// Platform-aware window controls that follow system conventions
@@ -265,7 +266,9 @@ class _WindowControlButtonState extends State<_WindowControlButton> {
         onExit: (_) => setState(() => _isHovered = false),
         child: GestureDetector(
           onTap: widget.onPressed,
-          child: Container(
+          child: AnimatedContainer(
+            duration: AppAnimations.fast,
+            curve: AppAnimations.scaleCurve,
             width: 46,
             height: 32,
             decoration: BoxDecoration(
@@ -274,13 +277,19 @@ class _WindowControlButtonState extends State<_WindowControlButton> {
                       ? Colors.red
                       : widget.theme.colorScheme.surfaceContainerHighest
                   : Colors.transparent,
+              borderRadius: BorderRadius.circular(4),
             ),
-            child: Icon(
-              widget.icon,
-              size: 16,
-              color: _isHovered && widget.isClose
-                  ? Colors.white
-                  : widget.theme.colorScheme.onSurface,
+            child: AnimatedScale(
+              scale: _isHovered ? AppAnimations.scaleHover : 1.0,
+              duration: AppAnimations.fast,
+              curve: AppAnimations.scaleCurve,
+              child: Icon(
+                widget.icon,
+                size: 16,
+                color: _isHovered && widget.isClose
+                    ? Colors.white
+                    : widget.theme.colorScheme.onSurface,
+              ),
             ),
           ),
         ),
@@ -305,21 +314,41 @@ class _MacOSControlButton extends StatefulWidget {
 }
 
 class _MacOSControlButtonState extends State<_MacOSControlButton> {
+  bool _isHovered = false;
+
   @override
   Widget build(BuildContext context) {
     return Tooltip(
       message: widget.tooltip,
-      child: GestureDetector(
-        onTap: widget.onPressed,
-        child: Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: widget.color,
-            border: Border.all(
-              color: widget.color.withOpacity(0.3),
-              width: 0.5,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: GestureDetector(
+          onTap: widget.onPressed,
+          child: AnimatedContainer(
+            duration: AppAnimations.fast,
+            curve: AppAnimations.scaleCurve,
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: widget.color,
+              border: Border.all(
+                color: widget.color.withOpacity(0.3),
+                width: 0.5,
+              ),
+            ),
+            child: AnimatedScale(
+              scale: _isHovered ? AppAnimations.scaleHover : 1.0,
+              duration: AppAnimations.fast,
+              curve: AppAnimations.scaleCurve,
+              child: _isHovered
+                  ? Icon(
+                      Icons.close,
+                      size: 8,
+                      color: Colors.white.withOpacity(0.9),
+                    )
+                  : const SizedBox.shrink(),
             ),
           ),
         ),

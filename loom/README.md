@@ -21,6 +21,11 @@ Loom is a sophisticated desktop application that combines the power of Flutter's
 - **Real-time Validation**: Instant syntax checking with error reporting
 - **Format Conversion**: Export to HTML, Markdown, JSON, and PDF
 - **Rich Content**: Support for structured blocks, metadata, and custom formatting
+- **Advanced Inline Elements**: Bold, italic, code, links, strikethrough, highlight, subscript, superscript, math expressions
+- **Complex Lists**: Ordered, unordered, task lists with nested support
+- **Table Rendering**: Markdown-style tables with headers and data rows
+- **Preview Mode**: Live preview of Blox documents with rich formatting
+- **Enhanced Editor**: Syntax highlighting with preview toggle for immediate visual feedback
 
 #### **Workspace Management**
 - **File Explorer**: Dual-view system with filesystem and collections
@@ -53,6 +58,8 @@ Infrastructure Layer (Rust/File System)
 - **Integration**: flutter_rust_bridge for seamless Dart-Rust interop
 - **UI Framework**: Material 3 with adaptive components
 - **Build System**: Flutter's multi-platform build pipeline
+- **Code Generation**: Freezed for enhanced data structures and serialization
+- **State Management**: Reactive state with Riverpod and flutter_hooks
 
 ### **Key Components**
 - **Text Editor**: Custom-built editor with syntax highlighting
@@ -85,6 +92,14 @@ cd rust && cargo build
 flutter run
 ```
 
+### **Try the Demo**
+After installation, open the demo file to see the enhanced Blox features:
+```bash
+# The demo file is located at:
+# demo/enhanced_blox_demo.blox
+```
+This file showcases all the new advanced features including inline elements, complex lists, and table rendering.
+
 ### **Development Setup**
 1. Open in VS Code
 2. Use the provided dev container for consistent environment
@@ -99,10 +114,31 @@ loom/
 │   ├── app/               # Application layer
 │   ├── core/              # Core business logic
 │   ├── features/          # Feature modules
-│   └── shared/            # Shared utilities
+│   │   ├── explorer/      # File explorer and workspace management
+│   │   ├── export/        # Document export functionality
+│   │   ├── search/        # Global search capabilities
+│   │   └── settings/      # Application settings
+│   └── shared/            # Shared utilities and widgets
+│       ├── presentation/  # UI components and theming
+│       │   ├── widgets/   # Reusable widgets
+│       │   │   ├── blox_renderer.dart    # Rich Blox document rendering
+│       │   │   ├── blox_viewer.dart      # Blox document viewer components
+│       │   │   └── layouts/              # Layout components
+│       │   └── theme/    # Theme and styling
+│       └── data/         # Shared data models and providers
 ├── rust/                  # Rust native code
-│   ├── src/              # Rust source files
+│   ├── src/
+│   │   ├── api/          # Flutter Rust Bridge API
+│   │   │   └── blox_api.rs # Blox parsing and conversion API
+│   │   ├── blox/         # Blox language implementation
+│   │   │   ├── ast.rs    # Abstract Syntax Tree definitions
+│   │   │   ├── parser.rs # Blox document parser
+│   │   │   ├── encoder.rs # Blox document encoder
+│   │   │   └── decoder.rs # Output format conversion
+│   │   └── lib.rs        # Main library interface
 │   └── Cargo.toml        # Rust dependencies
+├── demo/                  # Demo files and examples
+│   └── enhanced_blox_demo.blox # Feature demonstration
 ├── test/                  # Test suites
 ├── android/               # Android platform code
 ├── ios/                   # iOS platform code
@@ -174,6 +210,10 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 - ✅ Undo/Redo with keyboard shortcuts
 - ✅ Clipboard operations
 - ✅ Code folding
+- ✅ **Advanced Blox Features**: Inline elements, lists, tables with rich rendering
+- ✅ **Preview Mode**: Live document preview with enhanced BloxRenderer
+- ✅ **Enhanced UI Components**: BloxViewer, BloxDocumentViewer widgets
+- ✅ **Rust-Flutter Integration**: Complete bidirectional data conversion
 
 ### **Roadmap**
 - 🔄 Comprehensive test suite (>80% coverage)
@@ -182,6 +222,49 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 - 🔄 Version control integration
 - 🔄 Collaboration features
 - 🔄 Advanced editor features (multiple cursors, minimap)
+- 🔄 Web platform support
+- 🔄 Mobile app development
+- 🔄 AI-powered content suggestions
+- 🔄 Advanced Blox features (custom blocks, templates)
+
+## 🎉 **Recent Enhancements (v1.0)**
+
+### **Advanced Blox Language Features**
+Loom now supports comprehensive Blox document formatting with rich inline elements and complex structures:
+
+#### **Inline Elements**
+- **Text Formatting**: `**bold**`, `*italic*`, `~~strikethrough~~`, `==highlight==`
+- **Code & Math**: `` `code` ``, `$math expressions$`
+- **Links & References**: `[text](url)`, `@references`
+- **Sub/Superscript**: `H₂O`, `E=mc²`
+
+#### **Advanced Lists**
+- **Ordered Lists**: `1. First item`, `2. Second item`
+- **Unordered Lists**: `- Item`, `* Alternative bullet`
+- **Task Lists**: `- [ ] Unchecked`, `- [x] Checked`
+- **Nested Lists**: Proper indentation and hierarchy support
+
+#### **Table Support**
+- **Markdown Tables**: 
+  ```markdown
+  | Name | Age | City |
+  |------|-----|------|
+  | John | 25  | NYC  |
+  ```
+- **Header Support**: Automatic header detection and styling
+- **Responsive Design**: Tables adapt to content and screen size
+
+#### **Preview Mode**
+- **Live Preview**: Toggle between edit and preview modes
+- **Rich Rendering**: Full visual representation of Blox documents
+- **Syntax Highlighting**: Enhanced editor with Blox-specific highlighting
+- **Real-time Updates**: Instant preview as you type
+
+### **Technical Improvements**
+- **Enhanced Rust Parser**: Complete rewrite with advanced feature support
+- **Flutter Integration**: Seamless Rust-Flutter data conversion
+- **Performance Optimization**: Efficient rendering of complex documents
+- **Memory Management**: Optimized for large document handling
 
 ## 📄 **License**
 

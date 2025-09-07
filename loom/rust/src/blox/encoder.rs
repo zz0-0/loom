@@ -109,7 +109,7 @@ impl BloxEncoder {
         
         // Handle positional attributes first
         if let Some(positional) = self.get_positional_attribute(attributes, block_type) {
-            parts.push(self.quote_value(&positional.value));
+            parts.push(self.quote_positional_value(&positional.value));
         }
         
         // Handle key=value attributes
@@ -153,11 +153,11 @@ impl BloxEncoder {
         }
     }
     
-    fn quote_value(&self, value: &str) -> String {
-        if value.contains(' ') || value.contains('"') || value.is_empty() {
-            format!("\"{}\"", value.replace('"', "\\\""))
+    fn quote_positional_value(&self, value: &str) -> String {
+        if value.is_empty() {
+            format!("\"{}\"", value)
         } else {
-            value.to_string()
+            format!("\"{}\"", value.replace('"', "\\\""))
         }
     }
 }
@@ -171,7 +171,7 @@ impl Default for BloxEncoder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::blox::{BlockType, Block, Attribute};
+    use crate::blox::{BlockType, Block};
     
     #[test]
     fn test_simple_encoding() {

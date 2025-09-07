@@ -6,6 +6,7 @@ import 'package:loom/shared/data/providers.dart';
 import 'package:loom/shared/domain/services/edit_history_service.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
 import 'package:loom/shared/presentation/theme/app_animations.dart';
+import 'package:loom/shared/presentation/widgets/blox_viewer.dart';
 import 'package:loom/shared/presentation/widgets/editor/blox_syntax_highlighter.dart';
 import 'package:loom/shared/presentation/widgets/editor/find_replace_dialog.dart';
 import 'package:loom/shared/presentation/widgets/editor/go_to_line_dialog.dart';
@@ -75,6 +76,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   bool _isBloxFile = false;
   bool _isLoadingFile = false; // Flag to track if we're loading a file
   bool _showMinimap = false; // Minimap visibility toggle
+  bool _showPreview = false; // Preview mode toggle for Blox files
 
   // Code folding
   late CodeFoldingManager _foldingManager;
@@ -611,6 +613,16 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                 tooltip: 'Toggle minimap',
               ).withHoverAnimation().withPressAnimation(),
 
+              // Preview toggle for Blox files
+              if (_isBloxFile)
+                IconButton(
+                  icon: Icon(
+                    _showPreview ? Icons.visibility : Icons.visibility_outlined,
+                  ),
+                  onPressed: () => setState(() => _showPreview = !_showPreview),
+                  tooltip: _showPreview ? 'Show editor' : 'Show preview',
+                ).withHoverAnimation().withPressAnimation(),
+
               // Syntax validation for Blox files
               if (_isBloxFile && _syntaxWarnings.isNotEmpty)
                 IconButton(
@@ -693,6 +705,9 @@ class _FileEditorState extends ConsumerState<FileEditor> {
               child: KeyboardListener(
                 focusNode: _keyboardFocusNode,
                 onKeyEvent: (event) {
+                  // Disable editing shortcuts in preview mode
+                  if (_showPreview) return;
+
                   if (HardwareKeyboard.instance.isControlPressed) {
                     if (event.logicalKey == LogicalKeyboardKey.keyS) {
                       _saveFile();
@@ -765,7 +780,9 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
         // Status bar
         if (_isBloxFile &&
-            (_parsedDocument != null || _syntaxWarnings.isNotEmpty))
+            (_parsedDocument != null ||
+                _syntaxWarnings.isNotEmpty ||
+                _showPreview))
           Container(
             height: 24,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -779,7 +796,25 @@ class _FileEditorState extends ConsumerState<FileEditor> {
             ),
             child: Row(
               children: [
-                if (_parsedDocument != null)
+                if (_showPreview)
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.visibility,
+                        size: 14,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Preview Mode',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  )
+                else if (_parsedDocument != null)
                   Text(
                     '${_parsedDocument!.blocks.length} blocks',
                     style: theme.textTheme.bodySmall,
@@ -803,7 +838,11 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   }
 
   Widget _buildEditor(ThemeData theme) {
-    if (_isBloxFile && _enableSyntaxHighlighting && _bloxHighlighter != null) {
+    if (_isBloxFile && _showPreview && _parsedDocument != null) {
+      return _buildBloxPreview(theme);
+    } else if (_isBloxFile &&
+        _enableSyntaxHighlighting &&
+        _bloxHighlighter != null) {
       return _buildBloxEditor(theme);
     } else {
       return _buildPlainEditor(theme);
@@ -970,6 +1009,20 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           focusNode: _textFieldFocusNode,
         ),
       ),
+    );
+  }
+
+  Widget _buildBloxPreview(ThemeData theme) {
+    if (_parsedDocument == null) {
+      return const Center(
+        child: Text('No content to preview'),
+      );
+    }
+
+    return BloxViewer(
+      blocks: _parsedDocument!.blocks,
+      scrollController: _scrollController,
+      isDark: theme.brightness == Brightness.dark,
     );
   }
 

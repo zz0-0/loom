@@ -4,11 +4,14 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
+import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 import 'package:loom/src/rust/frb_generated.dart';
 
+part 'blox_api.freezed.dart';
+
 // These functions are ignored because they are not marked as `pub`: `convert_to_internal_block`, `convert_to_internal_document`
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `ParseProgress`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `BloxListType`, `ParseProgress`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `clone`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `fmt`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`, `from`
 // These functions have error during generation (see debug logs or enable `stop_on_error: true` for more details): `parse_blox_file_with_progress`
 
 /// Parse a Blox document from string content
@@ -49,6 +52,9 @@ class BloxBlock {
     required this.content,
     required this.children,
     required this.lineNumber,
+    required this.inlineElements,
+    required this.listItems,
+    this.table,
   });
   final String blockType;
   final BigInt level;
@@ -56,6 +62,9 @@ class BloxBlock {
   final String content;
   final List<BloxBlock> children;
   final BigInt lineNumber;
+  final List<BloxInlineElement> inlineElements;
+  final List<BloxListItem> listItems;
+  final BloxTable? table;
 
   @override
   int get hashCode =>
@@ -64,7 +73,10 @@ class BloxBlock {
       attributes.hashCode ^
       content.hashCode ^
       children.hashCode ^
-      lineNumber.hashCode;
+      lineNumber.hashCode ^
+      inlineElements.hashCode ^
+      listItems.hashCode ^
+      table.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -76,7 +88,10 @@ class BloxBlock {
           attributes == other.attributes &&
           content == other.content &&
           children == other.children &&
-          lineNumber == other.lineNumber;
+          lineNumber == other.lineNumber &&
+          inlineElements == other.inlineElements &&
+          listItems == other.listItems &&
+          table == other.table;
 }
 
 class BloxDocument {
@@ -99,10 +114,167 @@ class BloxDocument {
           metadata == other.metadata;
 }
 
+@freezed
+sealed class BloxInlineElement with _$BloxInlineElement {
+  const BloxInlineElement._();
+
+  const factory BloxInlineElement.text(
+    String field0,
+  ) = BloxInlineElement_Text;
+  const factory BloxInlineElement.link({
+    required String text,
+    required String url,
+  }) = BloxInlineElement_Link;
+  const factory BloxInlineElement.bold(
+    String field0,
+  ) = BloxInlineElement_Bold;
+  const factory BloxInlineElement.italic(
+    String field0,
+  ) = BloxInlineElement_Italic;
+  const factory BloxInlineElement.code(
+    String field0,
+  ) = BloxInlineElement_Code;
+  const factory BloxInlineElement.math(
+    String field0,
+  ) = BloxInlineElement_Math;
+  const factory BloxInlineElement.strikethrough(
+    String field0,
+  ) = BloxInlineElement_Strikethrough;
+  const factory BloxInlineElement.highlight(
+    String field0,
+  ) = BloxInlineElement_Highlight;
+  const factory BloxInlineElement.subscript(
+    String field0,
+  ) = BloxInlineElement_Subscript;
+  const factory BloxInlineElement.superscript(
+    String field0,
+  ) = BloxInlineElement_Superscript;
+  const factory BloxInlineElement.reference(
+    String field0,
+  ) = BloxInlineElement_Reference;
+  const factory BloxInlineElement.footnote({
+    required String id,
+    required String text,
+  }) = BloxInlineElement_Footnote;
+  const factory BloxInlineElement.custom({
+    required String elementType,
+    required Map<String, String> attributes,
+    required String content,
+  }) = BloxInlineElement_Custom;
+}
+
+class BloxListItem {
+  const BloxListItem({
+    required this.itemType,
+    required this.content,
+    required this.children,
+    required this.level,
+  });
+  final BloxListItemType itemType;
+  final String content;
+  final List<BloxListItem> children;
+  final BigInt level;
+
+  @override
+  int get hashCode =>
+      itemType.hashCode ^ content.hashCode ^ children.hashCode ^ level.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BloxListItem &&
+          runtimeType == other.runtimeType &&
+          itemType == other.itemType &&
+          content == other.content &&
+          children == other.children &&
+          level == other.level;
+}
+
+@freezed
+sealed class BloxListItemType with _$BloxListItemType {
+  const BloxListItemType._();
+
+  const factory BloxListItemType.unchecked() = BloxListItemType_Unchecked;
+  const factory BloxListItemType.checked() = BloxListItemType_Checked;
+  const factory BloxListItemType.definition({
+    required String term,
+  }) = BloxListItemType_Definition;
+}
+
 enum BloxOutputFormat {
   html,
   markdown,
   json,
   plainText,
   ;
+}
+
+class BloxTable {
+  const BloxTable({
+    required this.rows,
+    this.caption,
+    this.header,
+  });
+  final String? caption;
+  final BloxTableRow? header;
+  final List<BloxTableRow> rows;
+
+  @override
+  int get hashCode => caption.hashCode ^ header.hashCode ^ rows.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BloxTable &&
+          runtimeType == other.runtimeType &&
+          caption == other.caption &&
+          header == other.header &&
+          rows == other.rows;
+}
+
+class BloxTableCell {
+  const BloxTableCell({
+    required this.content,
+    required this.colspan,
+    required this.rowspan,
+    required this.isHeader,
+  });
+  final String content;
+  final BigInt colspan;
+  final BigInt rowspan;
+  final bool isHeader;
+
+  @override
+  int get hashCode =>
+      content.hashCode ^
+      colspan.hashCode ^
+      rowspan.hashCode ^
+      isHeader.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BloxTableCell &&
+          runtimeType == other.runtimeType &&
+          content == other.content &&
+          colspan == other.colspan &&
+          rowspan == other.rowspan &&
+          isHeader == other.isHeader;
+}
+
+class BloxTableRow {
+  const BloxTableRow({
+    required this.cells,
+  });
+  final List<BloxTableCell> cells;
+
+  @override
+  int get hashCode => cells.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BloxTableRow &&
+          runtimeType == other.runtimeType &&
+          cells == other.cells;
 }

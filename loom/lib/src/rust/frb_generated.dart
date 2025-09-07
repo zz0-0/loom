@@ -329,8 +329,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BloxBlock dco_decode_blox_block(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 9)
+      throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
     return BloxBlock(
       blockType: dco_decode_String(arr[0]),
       level: dco_decode_usize(arr[1]),
@@ -338,6 +338,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       content: dco_decode_String(arr[3]),
       children: dco_decode_list_blox_block(arr[4]),
       lineNumber: dco_decode_usize(arr[5]),
+      inlineElements: dco_decode_list_blox_inline_element(arr[6]),
+      listItems: dco_decode_list_blox_list_item(arr[7]),
+      table: dco_decode_opt_box_autoadd_blox_table(arr[8]),
     );
   }
 
@@ -354,9 +357,143 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  BloxInlineElement dco_decode_blox_inline_element(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return BloxInlineElement_Text(
+          dco_decode_String(raw[1]),
+        );
+      case 1:
+        return BloxInlineElement_Link(
+          text: dco_decode_String(raw[1]),
+          url: dco_decode_String(raw[2]),
+        );
+      case 2:
+        return BloxInlineElement_Bold(
+          dco_decode_String(raw[1]),
+        );
+      case 3:
+        return BloxInlineElement_Italic(
+          dco_decode_String(raw[1]),
+        );
+      case 4:
+        return BloxInlineElement_Code(
+          dco_decode_String(raw[1]),
+        );
+      case 5:
+        return BloxInlineElement_Math(
+          dco_decode_String(raw[1]),
+        );
+      case 6:
+        return BloxInlineElement_Strikethrough(
+          dco_decode_String(raw[1]),
+        );
+      case 7:
+        return BloxInlineElement_Highlight(
+          dco_decode_String(raw[1]),
+        );
+      case 8:
+        return BloxInlineElement_Subscript(
+          dco_decode_String(raw[1]),
+        );
+      case 9:
+        return BloxInlineElement_Superscript(
+          dco_decode_String(raw[1]),
+        );
+      case 10:
+        return BloxInlineElement_Reference(
+          dco_decode_String(raw[1]),
+        );
+      case 11:
+        return BloxInlineElement_Footnote(
+          id: dco_decode_String(raw[1]),
+          text: dco_decode_String(raw[2]),
+        );
+      case 12:
+        return BloxInlineElement_Custom(
+          elementType: dco_decode_String(raw[1]),
+          attributes: dco_decode_Map_String_String_None(raw[2]),
+          content: dco_decode_String(raw[3]),
+        );
+      default:
+        throw Exception('unreachable');
+    }
+  }
+
+  @protected
+  BloxListItem dco_decode_blox_list_item(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return BloxListItem(
+      itemType: dco_decode_blox_list_item_type(arr[0]),
+      content: dco_decode_String(arr[1]),
+      children: dco_decode_list_blox_list_item(arr[2]),
+      level: dco_decode_usize(arr[3]),
+    );
+  }
+
+  @protected
+  BloxListItemType dco_decode_blox_list_item_type(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return const BloxListItemType_Unchecked();
+      case 1:
+        return const BloxListItemType_Checked();
+      case 2:
+        return BloxListItemType_Definition(
+          term: dco_decode_String(raw[1]),
+        );
+      default:
+        throw Exception('unreachable');
+    }
+  }
+
+  @protected
   BloxOutputFormat dco_decode_blox_output_format(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return BloxOutputFormat.values[raw as int];
+  }
+
+  @protected
+  BloxTable dco_decode_blox_table(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return BloxTable(
+      caption: dco_decode_opt_String(arr[0]),
+      header: dco_decode_opt_box_autoadd_blox_table_row(arr[1]),
+      rows: dco_decode_list_blox_table_row(arr[2]),
+    );
+  }
+
+  @protected
+  BloxTableCell dco_decode_blox_table_cell(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return BloxTableCell(
+      content: dco_decode_String(arr[0]),
+      colspan: dco_decode_usize(arr[1]),
+      rowspan: dco_decode_usize(arr[2]),
+      isHeader: dco_decode_bool(arr[3]),
+    );
+  }
+
+  @protected
+  BloxTableRow dco_decode_blox_table_row(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 1)
+      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
+    return BloxTableRow(
+      cells: dco_decode_list_blox_table_cell(arr[0]),
+    );
   }
 
   @protected
@@ -369,6 +506,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BloxDocument dco_decode_box_autoadd_blox_document(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_blox_document(raw);
+  }
+
+  @protected
+  BloxTable dco_decode_box_autoadd_blox_table(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_blox_table(raw);
+  }
+
+  @protected
+  BloxTableRow dco_decode_box_autoadd_blox_table_row(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_blox_table_row(raw);
   }
 
   @protected
@@ -390,6 +539,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<BloxInlineElement> dco_decode_list_blox_inline_element(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_blox_inline_element).toList();
+  }
+
+  @protected
+  List<BloxListItem> dco_decode_list_blox_list_item(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_blox_list_item).toList();
+  }
+
+  @protected
+  List<BloxTableCell> dco_decode_list_blox_table_cell(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_blox_table_cell).toList();
+  }
+
+  @protected
+  List<BloxTableRow> dco_decode_list_blox_table_row(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_blox_table_row).toList();
+  }
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
@@ -399,6 +572,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_record_string_string).toList();
+  }
+
+  @protected
+  String? dco_decode_opt_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_String(raw);
+  }
+
+  @protected
+  BloxTable? dco_decode_opt_box_autoadd_blox_table(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_blox_table(raw);
+  }
+
+  @protected
+  BloxTableRow? dco_decode_opt_box_autoadd_blox_table_row(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_blox_table_row(raw);
   }
 
   @protected
@@ -457,6 +648,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     final var_content = sse_decode_String(deserializer);
     final var_children = sse_decode_list_blox_block(deserializer);
     final var_lineNumber = sse_decode_usize(deserializer);
+    final var_inlineElements =
+        sse_decode_list_blox_inline_element(deserializer);
+    final var_listItems = sse_decode_list_blox_list_item(deserializer);
+    final var_table = sse_decode_opt_box_autoadd_blox_table(deserializer);
     return BloxBlock(
       blockType: var_blockType,
       level: var_level,
@@ -464,6 +659,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       content: var_content,
       children: var_children,
       lineNumber: var_lineNumber,
+      inlineElements: var_inlineElements,
+      listItems: var_listItems,
+      table: var_table,
     );
   }
 
@@ -476,10 +674,136 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  BloxInlineElement sse_decode_blox_inline_element(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    final tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        final var_field0 = sse_decode_String(deserializer);
+        return BloxInlineElement_Text(var_field0);
+      case 1:
+        final var_text = sse_decode_String(deserializer);
+        final var_url = sse_decode_String(deserializer);
+        return BloxInlineElement_Link(text: var_text, url: var_url);
+      case 2:
+        final var_field0 = sse_decode_String(deserializer);
+        return BloxInlineElement_Bold(var_field0);
+      case 3:
+        final var_field0 = sse_decode_String(deserializer);
+        return BloxInlineElement_Italic(var_field0);
+      case 4:
+        final var_field0 = sse_decode_String(deserializer);
+        return BloxInlineElement_Code(var_field0);
+      case 5:
+        final var_field0 = sse_decode_String(deserializer);
+        return BloxInlineElement_Math(var_field0);
+      case 6:
+        final var_field0 = sse_decode_String(deserializer);
+        return BloxInlineElement_Strikethrough(var_field0);
+      case 7:
+        final var_field0 = sse_decode_String(deserializer);
+        return BloxInlineElement_Highlight(var_field0);
+      case 8:
+        final var_field0 = sse_decode_String(deserializer);
+        return BloxInlineElement_Subscript(var_field0);
+      case 9:
+        final var_field0 = sse_decode_String(deserializer);
+        return BloxInlineElement_Superscript(var_field0);
+      case 10:
+        final var_field0 = sse_decode_String(deserializer);
+        return BloxInlineElement_Reference(var_field0);
+      case 11:
+        final var_id = sse_decode_String(deserializer);
+        final var_text = sse_decode_String(deserializer);
+        return BloxInlineElement_Footnote(id: var_id, text: var_text);
+      case 12:
+        final var_elementType = sse_decode_String(deserializer);
+        final var_attributes = sse_decode_Map_String_String_None(deserializer);
+        final var_content = sse_decode_String(deserializer);
+        return BloxInlineElement_Custom(
+          elementType: var_elementType,
+          attributes: var_attributes,
+          content: var_content,
+        );
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  BloxListItem sse_decode_blox_list_item(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    final var_itemType = sse_decode_blox_list_item_type(deserializer);
+    final var_content = sse_decode_String(deserializer);
+    final var_children = sse_decode_list_blox_list_item(deserializer);
+    final var_level = sse_decode_usize(deserializer);
+    return BloxListItem(
+      itemType: var_itemType,
+      content: var_content,
+      children: var_children,
+      level: var_level,
+    );
+  }
+
+  @protected
+  BloxListItemType sse_decode_blox_list_item_type(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    final tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        return const BloxListItemType_Unchecked();
+      case 1:
+        return const BloxListItemType_Checked();
+      case 2:
+        final var_term = sse_decode_String(deserializer);
+        return BloxListItemType_Definition(term: var_term);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
   BloxOutputFormat sse_decode_blox_output_format(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     final inner = sse_decode_i_32(deserializer);
     return BloxOutputFormat.values[inner];
+  }
+
+  @protected
+  BloxTable sse_decode_blox_table(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    final var_caption = sse_decode_opt_String(deserializer);
+    final var_header = sse_decode_opt_box_autoadd_blox_table_row(deserializer);
+    final var_rows = sse_decode_list_blox_table_row(deserializer);
+    return BloxTable(caption: var_caption, header: var_header, rows: var_rows);
+  }
+
+  @protected
+  BloxTableCell sse_decode_blox_table_cell(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    final var_content = sse_decode_String(deserializer);
+    final var_colspan = sse_decode_usize(deserializer);
+    final var_rowspan = sse_decode_usize(deserializer);
+    final var_isHeader = sse_decode_bool(deserializer);
+    return BloxTableCell(
+      content: var_content,
+      colspan: var_colspan,
+      rowspan: var_rowspan,
+      isHeader: var_isHeader,
+    );
+  }
+
+  @protected
+  BloxTableRow sse_decode_blox_table_row(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    final var_cells = sse_decode_list_blox_table_cell(deserializer);
+    return BloxTableRow(cells: var_cells);
   }
 
   @protected
@@ -494,6 +818,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return sse_decode_blox_document(deserializer);
+  }
+
+  @protected
+  BloxTable sse_decode_box_autoadd_blox_table(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return sse_decode_blox_table(deserializer);
+  }
+
+  @protected
+  BloxTableRow sse_decode_box_autoadd_blox_table_row(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return sse_decode_blox_table_row(deserializer);
   }
 
   @protected
@@ -527,6 +865,62 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<BloxInlineElement> sse_decode_list_blox_inline_element(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    final len_ = sse_decode_i_32(deserializer);
+    final ans_ = <BloxInlineElement>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_blox_inline_element(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<BloxListItem> sse_decode_list_blox_list_item(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    final len_ = sse_decode_i_32(deserializer);
+    final ans_ = <BloxListItem>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_blox_list_item(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<BloxTableCell> sse_decode_list_blox_table_cell(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    final len_ = sse_decode_i_32(deserializer);
+    final ans_ = <BloxTableCell>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_blox_table_cell(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<BloxTableRow> sse_decode_list_blox_table_row(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    final len_ = sse_decode_i_32(deserializer);
+    final ans_ = <BloxTableRow>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_blox_table_row(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     final len_ = sse_decode_i_32(deserializer);
@@ -545,6 +939,43 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ans_.add(sse_decode_record_string_string(deserializer));
     }
     return ans_;
+  }
+
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return sse_decode_String(deserializer);
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  BloxTable? sse_decode_opt_box_autoadd_blox_table(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return sse_decode_box_autoadd_blox_table(deserializer);
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  BloxTableRow? sse_decode_opt_box_autoadd_blox_table_row(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return sse_decode_box_autoadd_blox_table_row(deserializer);
+    } else {
+      return null;
+    }
   }
 
   @protected
@@ -601,6 +1032,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.content, serializer);
     sse_encode_list_blox_block(self.children, serializer);
     sse_encode_usize(self.lineNumber, serializer);
+    sse_encode_list_blox_inline_element(self.inlineElements, serializer);
+    sse_encode_list_blox_list_item(self.listItems, serializer);
+    sse_encode_opt_box_autoadd_blox_table(self.table, serializer);
   }
 
   @protected
@@ -611,12 +1045,121 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_blox_inline_element(
+    BloxInlineElement self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case BloxInlineElement_Text(field0: final field0):
+        sse_encode_i_32(0, serializer);
+        sse_encode_String(field0, serializer);
+      case BloxInlineElement_Link(text: final text, url: final url):
+        sse_encode_i_32(1, serializer);
+        sse_encode_String(text, serializer);
+        sse_encode_String(url, serializer);
+      case BloxInlineElement_Bold(field0: final field0):
+        sse_encode_i_32(2, serializer);
+        sse_encode_String(field0, serializer);
+      case BloxInlineElement_Italic(field0: final field0):
+        sse_encode_i_32(3, serializer);
+        sse_encode_String(field0, serializer);
+      case BloxInlineElement_Code(field0: final field0):
+        sse_encode_i_32(4, serializer);
+        sse_encode_String(field0, serializer);
+      case BloxInlineElement_Math(field0: final field0):
+        sse_encode_i_32(5, serializer);
+        sse_encode_String(field0, serializer);
+      case BloxInlineElement_Strikethrough(field0: final field0):
+        sse_encode_i_32(6, serializer);
+        sse_encode_String(field0, serializer);
+      case BloxInlineElement_Highlight(field0: final field0):
+        sse_encode_i_32(7, serializer);
+        sse_encode_String(field0, serializer);
+      case BloxInlineElement_Subscript(field0: final field0):
+        sse_encode_i_32(8, serializer);
+        sse_encode_String(field0, serializer);
+      case BloxInlineElement_Superscript(field0: final field0):
+        sse_encode_i_32(9, serializer);
+        sse_encode_String(field0, serializer);
+      case BloxInlineElement_Reference(field0: final field0):
+        sse_encode_i_32(10, serializer);
+        sse_encode_String(field0, serializer);
+      case BloxInlineElement_Footnote(id: final id, text: final text):
+        sse_encode_i_32(11, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_String(text, serializer);
+      case BloxInlineElement_Custom(
+          elementType: final elementType,
+          attributes: final attributes,
+          content: final content
+        ):
+        sse_encode_i_32(12, serializer);
+        sse_encode_String(elementType, serializer);
+        sse_encode_Map_String_String_None(attributes, serializer);
+        sse_encode_String(content, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_blox_list_item(BloxListItem self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_blox_list_item_type(self.itemType, serializer);
+    sse_encode_String(self.content, serializer);
+    sse_encode_list_blox_list_item(self.children, serializer);
+    sse_encode_usize(self.level, serializer);
+  }
+
+  @protected
+  void sse_encode_blox_list_item_type(
+    BloxListItemType self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case BloxListItemType_Unchecked():
+        sse_encode_i_32(0, serializer);
+      case BloxListItemType_Checked():
+        sse_encode_i_32(1, serializer);
+      case BloxListItemType_Definition(term: final term):
+        sse_encode_i_32(2, serializer);
+        sse_encode_String(term, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_blox_output_format(
     BloxOutputFormat self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_blox_table(BloxTable self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_opt_String(self.caption, serializer);
+    sse_encode_opt_box_autoadd_blox_table_row(self.header, serializer);
+    sse_encode_list_blox_table_row(self.rows, serializer);
+  }
+
+  @protected
+  void sse_encode_blox_table_cell(
+    BloxTableCell self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.content, serializer);
+    sse_encode_usize(self.colspan, serializer);
+    sse_encode_usize(self.rowspan, serializer);
+    sse_encode_bool(self.isHeader, serializer);
+  }
+
+  @protected
+  void sse_encode_blox_table_row(BloxTableRow self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_blox_table_cell(self.cells, serializer);
   }
 
   @protected
@@ -632,6 +1175,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_blox_document(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_blox_table(
+    BloxTable self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_blox_table(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_blox_table_row(
+    BloxTableRow self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_blox_table_row(self, serializer);
   }
 
   @protected
@@ -662,6 +1223,54 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_blox_inline_element(
+    List<BloxInlineElement> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_blox_inline_element(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_blox_list_item(
+    List<BloxListItem> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_blox_list_item(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_blox_table_cell(
+    List<BloxTableCell> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_blox_table_cell(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_blox_table_row(
+    List<BloxTableRow> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_blox_table_row(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_list_prim_u_8_strict(
     Uint8List self,
     SseSerializer serializer,
@@ -680,6 +1289,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_record_string_string(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_String(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_blox_table(
+    BloxTable? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_blox_table(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_blox_table_row(
+    BloxTableRow? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_blox_table_row(self, serializer);
     }
   }
 

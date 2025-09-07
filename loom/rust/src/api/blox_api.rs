@@ -1,5 +1,6 @@
 use flutter_rust_bridge::frb;
 use crate::blox::{BloxParser, BloxEncoder, BloxDecoder, Document, OutputFormat};
+use crate::blox::ast::{Block, ListItem, ListItemType, Table, TableRow, TableCell};
 
 #[derive(Debug, Clone)]
 #[frb]
@@ -17,6 +18,77 @@ pub struct BloxBlock {
     pub content: String,
     pub children: Vec<BloxBlock>,
     pub line_number: usize,
+    // Enhanced fields
+    pub inline_elements: Vec<BloxInlineElement>,
+    pub list_items: Vec<BloxListItem>,
+    pub table: Option<BloxTable>,
+}
+
+#[derive(Debug, Clone)]
+#[frb]
+pub enum BloxInlineElement {
+    Text(String),
+    Link { text: String, url: String },
+    Bold(String),
+    Italic(String),
+    Code(String),
+    Math(String),
+    Strikethrough(String),
+    Highlight(String),
+    Subscript(String),
+    Superscript(String),
+    Reference(String),
+    Footnote { id: String, text: String },
+    Custom { element_type: String, attributes: std::collections::HashMap<String, String>, content: String },
+}
+
+#[derive(Debug, Clone)]
+#[frb]
+pub enum BloxListType {
+    Unordered,
+    Ordered,
+    Check,
+    Definition,
+}
+
+#[derive(Debug, Clone)]
+#[frb]
+pub enum BloxListItemType {
+    Unchecked,
+    Checked,
+    Definition { term: String },
+}
+
+#[derive(Debug, Clone)]
+#[frb]
+pub struct BloxListItem {
+    pub item_type: BloxListItemType,
+    pub content: String,
+    pub children: Vec<BloxListItem>,
+    pub level: usize,
+}
+
+#[derive(Debug, Clone)]
+#[frb]
+pub struct BloxTableCell {
+    pub content: String,
+    pub colspan: usize,
+    pub rowspan: usize,
+    pub is_header: bool,
+}
+
+#[derive(Debug, Clone)]
+#[frb]
+pub struct BloxTableRow {
+    pub cells: Vec<BloxTableCell>,
+}
+
+#[derive(Debug, Clone)]
+#[frb]
+pub struct BloxTable {
+    pub caption: Option<String>,
+    pub header: Option<BloxTableRow>,
+    pub rows: Vec<BloxTableRow>,
 }
 
 #[derive(Debug, Clone)]
@@ -45,20 +117,179 @@ impl From<Document> for BloxDocument {
     }
 }
 
-impl From<crate::blox::Block> for BloxBlock {
-    fn from(block: crate::blox::Block) -> Self {
+impl From<Block> for BloxBlock {
+    fn from(block: Block) -> Self {
+        let block_type = block.block_type.to_str().to_string();
         let attributes = block.attributes
             .into_iter()
             .map(|attr| (attr.key, attr.value))
             .collect();
         
+        let children = block.children.into_iter().map(Into::into).collect();
+        let inline_elements = block.inline_elements.into_iter().map(Into::into).collect();
+        let list_items = block.list_items.into_iter().map(Into::into).collect();
+        let table = block.table.map(Into::into);
+        
         Self {
-            block_type: block.block_type.to_str().to_string(),
+            block_type,
             level: block.level,
             attributes,
             content: block.content,
-            children: block.children.into_iter().map(Into::into).collect(),
+            children,
             line_number: block.line_number,
+            inline_elements,
+            list_items,
+            table,
+        }
+    }
+}
+
+impl From<crate::blox::InlineElement> for BloxInlineElement {
+    fn from(element: crate::blox::InlineElement) -> Self {
+        match element {
+            crate::blox::InlineElement::Text(content) => BloxInlineElement::Text(content),
+            crate::blox::InlineElement::Link { text, url } => BloxInlineElement::Link { text, url },
+            crate::blox::InlineElement::Bold(content) => BloxInlineElement::Bold(content),
+            crate::blox::InlineElement::Italic(content) => BloxInlineElement::Italic(content),
+            crate::blox::InlineElement::Code(content) => BloxInlineElement::Code(content),
+            crate::blox::InlineElement::Math(content) => BloxInlineElement::Math(content),
+            crate::blox::InlineElement::Strikethrough(content) => BloxInlineElement::Strikethrough(content),
+            crate::blox::InlineElement::Highlight(content) => BloxInlineElement::Highlight(content),
+            crate::blox::InlineElement::Subscript(content) => BloxInlineElement::Subscript(content),
+            crate::blox::InlineElement::Superscript(content) => BloxInlineElement::Superscript(content),
+            crate::blox::InlineElement::Reference(content) => BloxInlineElement::Reference(content),
+            crate::blox::InlineElement::Footnote { id, text } => BloxInlineElement::Footnote { id, text },
+            crate::blox::InlineElement::Custom { element_type, attributes, content } => {
+                let attrs = attributes.into_iter()
+                    .map(|attr| (attr.key, attr.value))
+                    .collect();
+                BloxInlineElement::Custom { element_type, attributes: attrs, content }
+            }
+        }
+    }
+}
+
+impl From<ListItem> for BloxListItem {
+    fn from(item: ListItem) -> Self {
+        let item_type = match item.item_type {
+            ListItemType::Unchecked => BloxListItemType::Unchecked,
+            ListItemType::Checked => BloxListItemType::Checked,
+            ListItemType::Definition { term } => BloxListItemType::Definition { term },
+        };
+        
+        let children = item.children.into_iter().map(Into::into).collect();
+        
+        Self {
+            item_type,
+            content: item.content,
+            children,
+            level: item.level,
+        }
+    }
+}
+
+impl From<Table> for BloxTable {
+    fn from(table: Table) -> Self {
+        let header = table.header.map(Into::into);
+        let rows = table.rows.into_iter().map(Into::into).collect();
+        
+        Self {
+            caption: table.caption,
+            header,
+            rows,
+        }
+    }
+}
+
+impl From<TableRow> for BloxTableRow {
+    fn from(row: TableRow) -> Self {
+        let cells = row.cells.into_iter().map(Into::into).collect();
+        Self { cells }
+    }
+}
+
+impl From<TableCell> for BloxTableCell {
+    fn from(cell: TableCell) -> Self {
+        Self {
+            content: cell.content,
+            colspan: cell.colspan,
+            rowspan: cell.rowspan,
+            is_header: cell.is_header,
+        }
+    }
+}
+
+impl From<BloxInlineElement> for crate::blox::InlineElement {
+    fn from(element: BloxInlineElement) -> Self {
+        match element {
+            BloxInlineElement::Text(content) => crate::blox::InlineElement::Text(content),
+            BloxInlineElement::Link { text, url } => crate::blox::InlineElement::Link { text, url },
+            BloxInlineElement::Bold(content) => crate::blox::InlineElement::Bold(content),
+            BloxInlineElement::Italic(content) => crate::blox::InlineElement::Italic(content),
+            BloxInlineElement::Code(content) => crate::blox::InlineElement::Code(content),
+            BloxInlineElement::Math(content) => crate::blox::InlineElement::Math(content),
+            BloxInlineElement::Strikethrough(content) => crate::blox::InlineElement::Strikethrough(content),
+            BloxInlineElement::Highlight(content) => crate::blox::InlineElement::Highlight(content),
+            BloxInlineElement::Subscript(content) => crate::blox::InlineElement::Subscript(content),
+            BloxInlineElement::Superscript(content) => crate::blox::InlineElement::Superscript(content),
+            BloxInlineElement::Reference(content) => crate::blox::InlineElement::Reference(content),
+            BloxInlineElement::Footnote { id, text } => crate::blox::InlineElement::Footnote { id, text },
+            BloxInlineElement::Custom { element_type, attributes, content } => {
+                let attrs = attributes.into_iter()
+                    .map(|(k, v)| crate::blox::Attribute { key: k, value: v })
+                    .collect();
+                crate::blox::InlineElement::Custom { element_type, attributes: attrs, content }
+            }
+        }
+    }
+}
+
+impl From<BloxListItem> for ListItem {
+    fn from(item: BloxListItem) -> Self {
+        let item_type = match item.item_type {
+            BloxListItemType::Unchecked => ListItemType::Unchecked,
+            BloxListItemType::Checked => ListItemType::Checked,
+            BloxListItemType::Definition { term } => ListItemType::Definition { term },
+        };
+        
+        let children = item.children.into_iter().map(Into::into).collect();
+        
+        Self {
+            item_type,
+            content: item.content,
+            children,
+            level: item.level,
+        }
+    }
+}
+
+impl From<BloxTable> for Table {
+    fn from(table: BloxTable) -> Self {
+        let header = table.header.map(Into::into);
+        let rows = table.rows.into_iter().map(Into::into).collect();
+        
+        Self {
+            caption: table.caption,
+            header,
+            rows,
+        }
+    }
+}
+
+impl From<BloxTableRow> for TableRow {
+    fn from(row: BloxTableRow) -> Self {
+        let cells = row.cells.into_iter().map(Into::into).collect();
+        Self { cells }
+    }
+}
+
+impl From<BloxTableCell> for TableCell {
+    fn from(cell: BloxTableCell) -> Self {
+        Self {
+            content: cell.content,
+            colspan: cell.colspan,
+            rowspan: cell.rowspan,
+            is_header: cell.is_header,
         }
     }
 }
@@ -244,6 +475,19 @@ fn convert_to_internal_block(block: BloxBlock) -> crate::blox::Block {
         .into_iter()
         .map(convert_to_internal_block)
         .collect();
+    
+    // Convert enhanced fields
+    internal_block.inline_elements = block.inline_elements
+        .into_iter()
+        .map(Into::into)
+        .collect();
+    
+    internal_block.list_items = block.list_items
+        .into_iter()
+        .map(Into::into)
+        .collect();
+    
+    internal_block.table = block.table.map(Into::into);
     
     internal_block
 }

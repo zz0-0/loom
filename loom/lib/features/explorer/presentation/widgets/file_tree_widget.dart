@@ -6,6 +6,7 @@ import 'package:loom/features/explorer/domain/entities/workspace_entities.dart'
 import 'package:loom/features/explorer/domain/services/smart_categorization_service.dart';
 import 'package:loom/features/explorer/presentation/providers/workspace_provider.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
+import 'package:loom/shared/presentation/theme/app_animations.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
@@ -111,7 +112,7 @@ class FileTreeWidget extends ConsumerWidget {
 }
 
 /// Individual file tree item widget
-class _FileTreeItem extends StatelessWidget {
+class _FileTreeItem extends StatefulWidget {
   const _FileTreeItem({
     required this.node,
     required this.depth,
@@ -125,10 +126,17 @@ class _FileTreeItem extends StatelessWidget {
   final ValueChanged<String> onFileSelected;
 
   @override
+  State<_FileTreeItem> createState() => _FileTreeItemState();
+}
+
+class _FileTreeItemState extends State<_FileTreeItem> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDirectory = node.type == domain.FileTreeNodeType.directory;
-    final hasChildren = node.children.isNotEmpty;
+    final isDirectory = widget.node.type == domain.FileTreeNodeType.directory;
+    final hasChildren = widget.node.children.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,103 +144,152 @@ class _FileTreeItem extends StatelessWidget {
         // Current node
         Material(
           color: Colors.transparent,
-          child: GestureDetector(
-            onSecondaryTapDown: (details) =>
-                _showContextMenu(context, details.globalPosition, node),
-            child: InkWell(
-              onTap: () {
-                if (isDirectory) {
-                  onToggleExpansion(node.path);
-                } else {
-                  onFileSelected(node.path);
-                }
-              },
-              child: Container(
+          child: MouseRegion(
+            onEnter: (_) => setState(() => _isHovered = true),
+            onExit: (_) => setState(() => _isHovered = false),
+            child: GestureDetector(
+              onSecondaryTapDown: (details) => _showContextMenu(
+                context,
+                details.globalPosition,
+                widget.node,
+              ),
+              child: AnimatedContainer(
+                duration: AppAnimations.fast,
+                curve: AppAnimations.scaleCurve,
                 padding: EdgeInsets.only(
-                  left: AppSpacing.sm + (depth * 16.0),
+                  left: AppSpacing.sm + (widget.depth * 16.0),
                   right: AppSpacing.sm,
                   top: AppSpacing.xs,
                   bottom: AppSpacing.xs,
                 ),
-                child: Stack(
-                  children: [
-                    // Indentation guides
-                    if (depth > 0)
-                      Positioned.fill(
-                        child: Row(
-                          children: List.generate(depth, (index) {
-                            final isLast = index == depth - 1;
-                            return Container(
-                              width: 16,
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                width: 1,
-                                color: theme.dividerColor.withOpacity(0.3),
-                                margin: EdgeInsets.only(
-                                  left: isLast ? 8 : 0,
-                                  right: isLast ? 8 : 16,
+                decoration: BoxDecoration(
+                  color: _isHovered
+                      ? theme.colorScheme.surfaceContainerHighest
+                          .withOpacity(0.3)
+                      : Colors.transparent,
+                  borderRadius: AppRadius.radiusSm,
+                ),
+                child: InkWell(
+                  onTap: () {
+                    if (isDirectory) {
+                      widget.onToggleExpansion(widget.node.path);
+                    } else {
+                      widget.onFileSelected(widget.node.path);
+                    }
+                  },
+                  borderRadius: AppRadius.radiusSm,
+                  child: Stack(
+                    children: [
+                      // Indentation guides
+                      if (widget.depth > 0)
+                        Positioned.fill(
+                          child: Row(
+                            children: List.generate(widget.depth, (index) {
+                              final isLast = index == widget.depth - 1;
+                              return Container(
+                                width: 16,
+                                alignment: Alignment.centerLeft,
+                                child: Container(
+                                  width: 1,
+                                  color: theme.dividerColor.withOpacity(0.3),
+                                  margin: EdgeInsets.only(
+                                    left: isLast ? 8 : 0,
+                                    right: isLast ? 8 : 16,
+                                  ),
                                 ),
-                              ),
-                            );
-                          }),
-                        ),
-                      ),
-
-                    // Content
-                    Row(
-                      children: [
-                        // Expansion indicator
-                        if (isDirectory)
-                          Icon(
-                            hasChildren
-                                ? (node.isExpanded
-                                    ? LucideIcons.chevronDown
-                                    : LucideIcons.chevronRight)
-                                : LucideIcons.chevronRight,
-                            size: 12,
-                            color: hasChildren
-                                ? theme.colorScheme.onSurfaceVariant
-                                : Colors.transparent,
-                          )
-                        else
-                          const SizedBox(width: 12),
-
-                        const SizedBox(width: 4),
-
-                        // File/folder icon
-                        Icon(
-                          _getIcon(node),
-                          size: 14,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-
-                        const SizedBox(width: 6),
-
-                        // File/folder name
-                        Expanded(
-                          child: Text(
-                            node.name,
-                            style: theme.textTheme.bodySmall,
-                            overflow: TextOverflow.ellipsis,
+                              );
+                            }),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
+
+                      // Content
+                      Row(
+                        children: [
+                          // Expansion indicator with rotation animation
+                          if (isDirectory)
+                            AnimatedRotation(
+                              turns: widget.node.isExpanded ? 0.25 : 0.0,
+                              duration: AppAnimations.normal,
+                              curve: Curves.easeInOut,
+                              child: Icon(
+                                hasChildren
+                                    ? LucideIcons.chevronRight
+                                    : LucideIcons.chevronRight,
+                                size: 12,
+                                color: hasChildren
+                                    ? (_isHovered
+                                        ? theme.colorScheme.primary
+                                        : theme.colorScheme.onSurfaceVariant)
+                                    : Colors.transparent,
+                              ),
+                            )
+                          else
+                            const SizedBox(width: 12),
+
+                          const SizedBox(width: 4),
+
+                          // File/folder icon with hover effect
+                          AnimatedScale(
+                            scale: _isHovered ? AppAnimations.scaleHover : 1.0,
+                            duration: AppAnimations.fast,
+                            curve: AppAnimations.scaleCurve,
+                            child: Icon(
+                              _getIcon(widget.node),
+                              size: 14,
+                              color: _isHovered
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+
+                          const SizedBox(width: 6),
+
+                          // File/folder name with hover effect
+                          Expanded(
+                            child: AnimatedDefaultTextStyle(
+                              duration: AppAnimations.fast,
+                              curve: AppAnimations.scaleCurve,
+                              style: theme.textTheme.bodySmall!.copyWith(
+                                color: _isHovered
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.onSurface,
+                                fontWeight: _isHovered
+                                    ? FontWeight.w500
+                                    : FontWeight.w400,
+                              ),
+                              child: Text(
+                                widget.node.name,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ),
 
-        // Children (if expanded)
-        if (isDirectory && node.isExpanded && hasChildren)
-          ...node.children.map(
-            (child) => _FileTreeItem(
-              node: child,
-              depth: depth + 1,
-              onToggleExpansion: onToggleExpansion,
-              onFileSelected: onFileSelected,
+        // Children (if expanded) with fade-in animation
+        if (isDirectory && widget.node.isExpanded && hasChildren)
+          AnimatedOpacity(
+            opacity: 1,
+            duration: AppAnimations.normal,
+            curve: Curves.easeInOut,
+            child: Column(
+              children: widget.node.children
+                  .map(
+                    (child) => _FileTreeItem(
+                      node: child,
+                      depth: widget.depth + 1,
+                      onToggleExpansion: widget.onToggleExpansion,
+                      onFileSelected: widget.onFileSelected,
+                    ),
+                  )
+                  .toList(),
             ),
           ),
       ],
@@ -425,13 +482,13 @@ class _FileTreeItem extends StatelessWidget {
     switch (action) {
       case 'open':
         if (node.type == domain.FileTreeNodeType.directory) {
-          onToggleExpansion(node.path);
+          widget.onToggleExpansion(node.path);
         } else {
-          onFileSelected(node.path);
+          widget.onFileSelected(node.path);
         }
       case 'open_new_tab':
         if (node.type != domain.FileTreeNodeType.directory) {
-          onFileSelected(node.path);
+          widget.onFileSelected(node.path);
         }
       case 'rename':
         // TODO(user): Implement rename functionality

@@ -12,12 +12,6 @@ import 'package:window_manager/window_manager.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize window manager to remove title bar only when a display is
-  // available. In headless/devcontainer environments DISPLAY and
-  // WAYLAND_DISPLAY are often not set which causes GTK/FL assertions
-  // (e.g. 'FL_IS_VIEW(self)') when plugins try to manipulate the native
-  // window. Skip window_manager in that case so the app can run in CI
-  // or headless containers.
   final hasDisplay = !Platform.isLinux ||
       Platform.environment['DISPLAY'] != null ||
       Platform.environment['WAYLAND_DISPLAY'] != null;

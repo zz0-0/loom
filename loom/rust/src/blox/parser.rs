@@ -31,6 +31,51 @@ lazy_static! {
     static ref INLINE: Regex = Regex::new(
         r"\{\{([^:}]+):([^}]*)\}\}"
     ).unwrap();
+    
+    /// Matches bold text: **text**
+    static ref BOLD: Regex = Regex::new(
+        r"\*\*([^*]+)\*\*"
+    ).unwrap();
+    
+    /// Matches italic text: *text*
+    static ref ITALIC: Regex = Regex::new(
+        r"(?<!\*)\*([^*]+)\*(?!\*)"
+    ).unwrap();
+    
+    /// Matches code text: `code`
+    static ref CODE_INLINE: Regex = Regex::new(
+        r"`([^`]+)`"
+    ).unwrap();
+    
+    /// Matches links: [text](url)
+    static ref LINK: Regex = Regex::new(
+        r"\[([^\]]+)\]\(([^)]+)\)"
+    ).unwrap();
+    
+    /// Matches strikethrough: ~~text~~
+    static ref STRIKETHROUGH: Regex = Regex::new(
+        r"~~([^~]+)~~"
+    ).unwrap();
+    
+    /// Matches highlight: ==text==
+    static ref HIGHLIGHT: Regex = Regex::new(
+        r"==([^=]+)=="
+    ).unwrap();
+    
+    /// Matches superscript: ^text^
+    static ref SUPERSCRIPT: Regex = Regex::new(
+        r"\^([^^]+)\^"
+    ).unwrap();
+    
+    /// Matches subscript: _text_
+    static ref SUBSCRIPT: Regex = Regex::new(
+        r"(?<!\w)_([^_]+)_(?!\w)"
+    ).unwrap();
+    
+    /// Matches math: $formula$
+    static ref MATH_INLINE: Regex = Regex::new(
+        r"\$([^$]+)\$"
+    ).unwrap();
 }
 
 pub struct BloxParser {
@@ -230,12 +275,43 @@ impl BloxParser {
                 break;
             }
             
-            let completed_block = self.block_stack.pop().unwrap();
+            let mut completed_block = self.block_stack.pop().unwrap();
+            
+            // Parse enhanced features based on block type
+            self.parse_enhanced_features(&mut completed_block);
             
             if let Some(parent) = self.block_stack.last_mut() {
                 parent.children.push(completed_block);
             } else {
                 self.document.blocks.push(completed_block);
+            }
+        }
+    }
+    
+    fn parse_enhanced_features(&self, block: &mut Block) {
+        // Parse inline elements for all blocks
+        if let Err(e) = block.parse_inline_elements() {
+            eprintln!("Warning: Failed to parse inline elements: {}", e);
+        }
+        
+        // Parse specific features based on block type
+        match block.block_type {
+            BlockType::List => {
+                if let Err(e) = block.parse_list_items() {
+                    eprintln!("Warning: Failed to parse list items: {}", e);
+                }
+            }
+            BlockType::Table => {
+                if let Err(e) = block.parse_table() {
+                    eprintln!("Warning: Failed to parse table: {}", e);
+                }
+            }
+            BlockType::Paragraph | BlockType::Section | BlockType::H1 | BlockType::H2 | BlockType::H3 | BlockType::H4 | BlockType::H5 | BlockType::H6 => {
+                // For paragraphs and headings, always try to parse inline elements
+                // (already done above)
+            }
+            _ => {
+                // For other block types, inline parsing is sufficient
             }
         }
     }

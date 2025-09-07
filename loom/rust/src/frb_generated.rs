@@ -300,6 +300,10 @@ impl SseDecode for crate::api::blox_api::BloxBlock {
         let mut var_content = <String>::sse_decode(deserializer);
         let mut var_children = <Vec<crate::api::blox_api::BloxBlock>>::sse_decode(deserializer);
         let mut var_lineNumber = <usize>::sse_decode(deserializer);
+        let mut var_inlineElements =
+            <Vec<crate::api::blox_api::BloxInlineElement>>::sse_decode(deserializer);
+        let mut var_listItems = <Vec<crate::api::blox_api::BloxListItem>>::sse_decode(deserializer);
+        let mut var_table = <Option<crate::api::blox_api::BloxTable>>::sse_decode(deserializer);
         return crate::api::blox_api::BloxBlock {
             block_type: var_blockType,
             level: var_level,
@@ -307,6 +311,9 @@ impl SseDecode for crate::api::blox_api::BloxBlock {
             content: var_content,
             children: var_children,
             line_number: var_lineNumber,
+            inline_elements: var_inlineElements,
+            list_items: var_listItems,
+            table: var_table,
         };
     }
 }
@@ -324,6 +331,123 @@ impl SseDecode for crate::api::blox_api::BloxDocument {
     }
 }
 
+impl SseDecode for crate::api::blox_api::BloxInlineElement {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Text(var_field0);
+            }
+            1 => {
+                let mut var_text = <String>::sse_decode(deserializer);
+                let mut var_url = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Link {
+                    text: var_text,
+                    url: var_url,
+                };
+            }
+            2 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Bold(var_field0);
+            }
+            3 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Italic(var_field0);
+            }
+            4 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Code(var_field0);
+            }
+            5 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Math(var_field0);
+            }
+            6 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Strikethrough(var_field0);
+            }
+            7 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Highlight(var_field0);
+            }
+            8 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Subscript(var_field0);
+            }
+            9 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Superscript(var_field0);
+            }
+            10 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Reference(var_field0);
+            }
+            11 => {
+                let mut var_id = <String>::sse_decode(deserializer);
+                let mut var_text = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Footnote {
+                    id: var_id,
+                    text: var_text,
+                };
+            }
+            12 => {
+                let mut var_elementType = <String>::sse_decode(deserializer);
+                let mut var_attributes =
+                    <std::collections::HashMap<String, String>>::sse_decode(deserializer);
+                let mut var_content = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxInlineElement::Custom {
+                    element_type: var_elementType,
+                    attributes: var_attributes,
+                    content: var_content,
+                };
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::blox_api::BloxListItem {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_itemType = <crate::api::blox_api::BloxListItemType>::sse_decode(deserializer);
+        let mut var_content = <String>::sse_decode(deserializer);
+        let mut var_children = <Vec<crate::api::blox_api::BloxListItem>>::sse_decode(deserializer);
+        let mut var_level = <usize>::sse_decode(deserializer);
+        return crate::api::blox_api::BloxListItem {
+            item_type: var_itemType,
+            content: var_content,
+            children: var_children,
+            level: var_level,
+        };
+    }
+}
+
+impl SseDecode for crate::api::blox_api::BloxListItemType {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                return crate::api::blox_api::BloxListItemType::Unchecked;
+            }
+            1 => {
+                return crate::api::blox_api::BloxListItemType::Checked;
+            }
+            2 => {
+                let mut var_term = <String>::sse_decode(deserializer);
+                return crate::api::blox_api::BloxListItemType::Definition { term: var_term };
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
 impl SseDecode for crate::api::blox_api::BloxOutputFormat {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -335,6 +459,44 @@ impl SseDecode for crate::api::blox_api::BloxOutputFormat {
             3 => crate::api::blox_api::BloxOutputFormat::PlainText,
             _ => unreachable!("Invalid variant for BloxOutputFormat: {}", inner),
         };
+    }
+}
+
+impl SseDecode for crate::api::blox_api::BloxTable {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_caption = <Option<String>>::sse_decode(deserializer);
+        let mut var_header = <Option<crate::api::blox_api::BloxTableRow>>::sse_decode(deserializer);
+        let mut var_rows = <Vec<crate::api::blox_api::BloxTableRow>>::sse_decode(deserializer);
+        return crate::api::blox_api::BloxTable {
+            caption: var_caption,
+            header: var_header,
+            rows: var_rows,
+        };
+    }
+}
+
+impl SseDecode for crate::api::blox_api::BloxTableCell {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_content = <String>::sse_decode(deserializer);
+        let mut var_colspan = <usize>::sse_decode(deserializer);
+        let mut var_rowspan = <usize>::sse_decode(deserializer);
+        let mut var_isHeader = <bool>::sse_decode(deserializer);
+        return crate::api::blox_api::BloxTableCell {
+            content: var_content,
+            colspan: var_colspan,
+            rowspan: var_rowspan,
+            is_header: var_isHeader,
+        };
+    }
+}
+
+impl SseDecode for crate::api::blox_api::BloxTableRow {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_cells = <Vec<crate::api::blox_api::BloxTableCell>>::sse_decode(deserializer);
+        return crate::api::blox_api::BloxTableRow { cells: var_cells };
     }
 }
 
@@ -376,6 +538,62 @@ impl SseDecode for Vec<crate::api::blox_api::BloxBlock> {
     }
 }
 
+impl SseDecode for Vec<crate::api::blox_api::BloxInlineElement> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::blox_api::BloxInlineElement>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::blox_api::BloxListItem> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::blox_api::BloxListItem>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::blox_api::BloxTableCell> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::blox_api::BloxTableCell>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::blox_api::BloxTableRow> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = vec![];
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::blox_api::BloxTableRow>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Vec<u8> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -397,6 +615,41 @@ impl SseDecode for Vec<(String, String)> {
             ans_.push(<(String, String)>::sse_decode(deserializer));
         }
         return ans_;
+    }
+}
+
+impl SseDecode for Option<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<String>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::blox_api::BloxTable> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::blox_api::BloxTable>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::blox_api::BloxTableRow> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::blox_api::BloxTableRow>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
     }
 }
 
@@ -472,6 +725,9 @@ impl flutter_rust_bridge::IntoDart for crate::api::blox_api::BloxBlock {
             self.content.into_into_dart().into_dart(),
             self.children.into_into_dart().into_dart(),
             self.line_number.into_into_dart().into_dart(),
+            self.inline_elements.into_into_dart().into_dart(),
+            self.list_items.into_into_dart().into_dart(),
+            self.table.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -509,6 +765,129 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::blox_api::BloxDocument>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::blox_api::BloxInlineElement {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::blox_api::BloxInlineElement::Text(field0) => {
+                [0.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::blox_api::BloxInlineElement::Link { text, url } => [
+                1.into_dart(),
+                text.into_into_dart().into_dart(),
+                url.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::blox_api::BloxInlineElement::Bold(field0) => {
+                [2.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::blox_api::BloxInlineElement::Italic(field0) => {
+                [3.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::blox_api::BloxInlineElement::Code(field0) => {
+                [4.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::blox_api::BloxInlineElement::Math(field0) => {
+                [5.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::blox_api::BloxInlineElement::Strikethrough(field0) => {
+                [6.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::blox_api::BloxInlineElement::Highlight(field0) => {
+                [7.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::blox_api::BloxInlineElement::Subscript(field0) => {
+                [8.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::blox_api::BloxInlineElement::Superscript(field0) => {
+                [9.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::blox_api::BloxInlineElement::Reference(field0) => {
+                [10.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::blox_api::BloxInlineElement::Footnote { id, text } => [
+                11.into_dart(),
+                id.into_into_dart().into_dart(),
+                text.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::blox_api::BloxInlineElement::Custom {
+                element_type,
+                attributes,
+                content,
+            } => [
+                12.into_dart(),
+                element_type.into_into_dart().into_dart(),
+                attributes.into_into_dart().into_dart(),
+                content.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::blox_api::BloxInlineElement
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::blox_api::BloxInlineElement>
+    for crate::api::blox_api::BloxInlineElement
+{
+    fn into_into_dart(self) -> crate::api::blox_api::BloxInlineElement {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::blox_api::BloxListItem {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.item_type.into_into_dart().into_dart(),
+            self.content.into_into_dart().into_dart(),
+            self.children.into_into_dart().into_dart(),
+            self.level.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::blox_api::BloxListItem
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::blox_api::BloxListItem>
+    for crate::api::blox_api::BloxListItem
+{
+    fn into_into_dart(self) -> crate::api::blox_api::BloxListItem {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::blox_api::BloxListItemType {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::blox_api::BloxListItemType::Unchecked => [0.into_dart()].into_dart(),
+            crate::api::blox_api::BloxListItemType::Checked => [1.into_dart()].into_dart(),
+            crate::api::blox_api::BloxListItemType::Definition { term } => {
+                [2.into_dart(), term.into_into_dart().into_dart()].into_dart()
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::blox_api::BloxListItemType
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::blox_api::BloxListItemType>
+    for crate::api::blox_api::BloxListItemType
+{
+    fn into_into_dart(self) -> crate::api::blox_api::BloxListItemType {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::blox_api::BloxOutputFormat {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self {
@@ -528,6 +907,68 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::blox_api::BloxOutputFormat>
     for crate::api::blox_api::BloxOutputFormat
 {
     fn into_into_dart(self) -> crate::api::blox_api::BloxOutputFormat {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::blox_api::BloxTable {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.caption.into_into_dart().into_dart(),
+            self.header.into_into_dart().into_dart(),
+            self.rows.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::blox_api::BloxTable
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::blox_api::BloxTable>
+    for crate::api::blox_api::BloxTable
+{
+    fn into_into_dart(self) -> crate::api::blox_api::BloxTable {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::blox_api::BloxTableCell {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.content.into_into_dart().into_dart(),
+            self.colspan.into_into_dart().into_dart(),
+            self.rowspan.into_into_dart().into_dart(),
+            self.is_header.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::blox_api::BloxTableCell
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::blox_api::BloxTableCell>
+    for crate::api::blox_api::BloxTableCell
+{
+    fn into_into_dart(self) -> crate::api::blox_api::BloxTableCell {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::blox_api::BloxTableRow {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [self.cells.into_into_dart().into_dart()].into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::blox_api::BloxTableRow
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::blox_api::BloxTableRow>
+    for crate::api::blox_api::BloxTableRow
+{
+    fn into_into_dart(self) -> crate::api::blox_api::BloxTableRow {
         self
     }
 }
@@ -555,6 +996,12 @@ impl SseEncode for crate::api::blox_api::BloxBlock {
         <String>::sse_encode(self.content, serializer);
         <Vec<crate::api::blox_api::BloxBlock>>::sse_encode(self.children, serializer);
         <usize>::sse_encode(self.line_number, serializer);
+        <Vec<crate::api::blox_api::BloxInlineElement>>::sse_encode(
+            self.inline_elements,
+            serializer,
+        );
+        <Vec<crate::api::blox_api::BloxListItem>>::sse_encode(self.list_items, serializer);
+        <Option<crate::api::blox_api::BloxTable>>::sse_encode(self.table, serializer);
     }
 }
 
@@ -563,6 +1010,108 @@ impl SseEncode for crate::api::blox_api::BloxDocument {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<crate::api::blox_api::BloxBlock>>::sse_encode(self.blocks, serializer);
         <std::collections::HashMap<String, String>>::sse_encode(self.metadata, serializer);
+    }
+}
+
+impl SseEncode for crate::api::blox_api::BloxInlineElement {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::blox_api::BloxInlineElement::Text(field0) => {
+                <i32>::sse_encode(0, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Link { text, url } => {
+                <i32>::sse_encode(1, serializer);
+                <String>::sse_encode(text, serializer);
+                <String>::sse_encode(url, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Bold(field0) => {
+                <i32>::sse_encode(2, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Italic(field0) => {
+                <i32>::sse_encode(3, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Code(field0) => {
+                <i32>::sse_encode(4, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Math(field0) => {
+                <i32>::sse_encode(5, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Strikethrough(field0) => {
+                <i32>::sse_encode(6, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Highlight(field0) => {
+                <i32>::sse_encode(7, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Subscript(field0) => {
+                <i32>::sse_encode(8, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Superscript(field0) => {
+                <i32>::sse_encode(9, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Reference(field0) => {
+                <i32>::sse_encode(10, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Footnote { id, text } => {
+                <i32>::sse_encode(11, serializer);
+                <String>::sse_encode(id, serializer);
+                <String>::sse_encode(text, serializer);
+            }
+            crate::api::blox_api::BloxInlineElement::Custom {
+                element_type,
+                attributes,
+                content,
+            } => {
+                <i32>::sse_encode(12, serializer);
+                <String>::sse_encode(element_type, serializer);
+                <std::collections::HashMap<String, String>>::sse_encode(attributes, serializer);
+                <String>::sse_encode(content, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::blox_api::BloxListItem {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <crate::api::blox_api::BloxListItemType>::sse_encode(self.item_type, serializer);
+        <String>::sse_encode(self.content, serializer);
+        <Vec<crate::api::blox_api::BloxListItem>>::sse_encode(self.children, serializer);
+        <usize>::sse_encode(self.level, serializer);
+    }
+}
+
+impl SseEncode for crate::api::blox_api::BloxListItemType {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::blox_api::BloxListItemType::Unchecked => {
+                <i32>::sse_encode(0, serializer);
+            }
+            crate::api::blox_api::BloxListItemType::Checked => {
+                <i32>::sse_encode(1, serializer);
+            }
+            crate::api::blox_api::BloxListItemType::Definition { term } => {
+                <i32>::sse_encode(2, serializer);
+                <String>::sse_encode(term, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
     }
 }
 
@@ -581,6 +1130,32 @@ impl SseEncode for crate::api::blox_api::BloxOutputFormat {
             },
             serializer,
         );
+    }
+}
+
+impl SseEncode for crate::api::blox_api::BloxTable {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<String>>::sse_encode(self.caption, serializer);
+        <Option<crate::api::blox_api::BloxTableRow>>::sse_encode(self.header, serializer);
+        <Vec<crate::api::blox_api::BloxTableRow>>::sse_encode(self.rows, serializer);
+    }
+}
+
+impl SseEncode for crate::api::blox_api::BloxTableCell {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.content, serializer);
+        <usize>::sse_encode(self.colspan, serializer);
+        <usize>::sse_encode(self.rowspan, serializer);
+        <bool>::sse_encode(self.is_header, serializer);
+    }
+}
+
+impl SseEncode for crate::api::blox_api::BloxTableRow {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<crate::api::blox_api::BloxTableCell>>::sse_encode(self.cells, serializer);
     }
 }
 
@@ -618,6 +1193,46 @@ impl SseEncode for Vec<crate::api::blox_api::BloxBlock> {
     }
 }
 
+impl SseEncode for Vec<crate::api::blox_api::BloxInlineElement> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::blox_api::BloxInlineElement>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::blox_api::BloxListItem> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::blox_api::BloxListItem>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::blox_api::BloxTableCell> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::blox_api::BloxTableCell>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::blox_api::BloxTableRow> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::blox_api::BloxTableRow>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Vec<u8> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -634,6 +1249,36 @@ impl SseEncode for Vec<(String, String)> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <(String, String)>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <String>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::blox_api::BloxTable> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::blox_api::BloxTable>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::blox_api::BloxTableRow> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::blox_api::BloxTableRow>::sse_encode(value, serializer);
         }
     }
 }
