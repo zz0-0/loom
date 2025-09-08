@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/export/presentation/widgets/export_dialog.dart';
+import 'package:loom/features/core/export/presentation/widgets/export_dialog.dart';
+import 'package:loom/features/core/settings/presentation/providers/general_settings_provider.dart';
 import 'package:loom/shared/data/providers.dart';
 import 'package:loom/shared/domain/services/edit_history_service.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
@@ -9,9 +10,9 @@ import 'package:loom/shared/presentation/theme/app_animations.dart';
 import 'package:loom/shared/presentation/widgets/blox_viewer.dart';
 import 'package:loom/shared/presentation/widgets/editor/blox_syntax_highlighter.dart';
 import 'package:loom/shared/presentation/widgets/editor/find_replace_dialog.dart';
-import 'package:loom/shared/presentation/widgets/editor/go_to_line_dialog.dart';
 import 'package:loom/shared/presentation/widgets/editor/minimap_widget.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
+import 'package:loom/shared/services/auto_save_service.dart';
 import 'package:loom/src/rust/api/blox_api.dart';
 
 /// Clipboard service for text operations
@@ -66,6 +67,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
   // Services from domain layer
   late final EditHistoryService _editHistoryService;
+  late final AutoSaveService _autoSaveService;
 
   // Syntax highlighting
   BloxSyntaxHighlighter? _bloxHighlighter;
@@ -117,6 +119,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
   void _initializeServices() {
     _editHistoryService = ref.read(editHistoryServiceProvider);
+    _autoSaveService = ref.read(autoSaveServiceProvider);
   }
 
   @override
@@ -135,6 +138,12 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     _keyboardFocusNode.dispose();
     _textFieldFocusNode.dispose();
     _bloxHighlighter?.dispose();
+
+    // Clean up auto-save for current file
+    if (_currentFilePath != null) {
+      _autoSaveService.cleanupFile(_currentFilePath!);
+    }
+
     super.dispose();
   }
 
@@ -152,6 +161,11 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       // Only reload if the file path has changed
       if (_currentFilePath != filePath) {
+        // Clean up previous file's auto-save
+        if (_currentFilePath != null) {
+          _autoSaveService.cleanupFile(_currentFilePath!);
+        }
+
         _currentFilePath = filePath;
         _isBloxFile = filePath.toLowerCase().endsWith('.blox');
         _loadFileContent(filePath);
@@ -198,6 +212,9 @@ class _FileEditorState extends ConsumerState<FileEditor> {
             .read(tabProvider.notifier)
             .updateTab(_currentFilePath!, isDirty: false);
       }
+
+      // Initialize auto-save for this file
+      _initializeAutoSaveForFile(filePath);
     } catch (e) {
       _error = 'Error loading file: $e';
     } finally {
@@ -205,6 +222,19 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         _isLoading = false;
       });
     }
+  }
+
+  void _initializeAutoSaveForFile(String filePath) {
+    final autoSaveState = ref.read(autoSaveProvider);
+    final isEnabled = autoSaveState.isEnabled;
+    final intervalSeconds = autoSaveState.intervalSeconds;
+
+    _autoSaveService.initializeAutoSave(
+      filePath,
+      isEnabled,
+      intervalSeconds,
+      _saveFile,
+    );
   }
 
   Future<void> _parseBloxContent(String content) async {
@@ -241,6 +271,9 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           .read(tabProvider.notifier)
           .updateTab(_currentFilePath!, isDirty: false);
 
+      // Mark changes as saved for auto-save
+      _autoSaveService.markChangesSaved(_currentFilePath!);
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('File saved successfully')),
@@ -265,6 +298,9 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       // Add current state to undo history
       _editHistoryService.addState(_controller.text);
+
+      // Mark unsaved changes for auto-save
+      _autoSaveService.markUnsavedChanges(_currentFilePath!);
     }
 
     // Update code folding regions
@@ -710,80 +746,77 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           child: FindReplaceShortcuts(
             onFind: _showFindDialog,
             onReplace: _showReplaceDialog,
-            child: GoToLineShortcuts(
-              onGoToLine: _showGoToLineDialog,
-              child: KeyboardListener(
-                focusNode: _keyboardFocusNode,
-                onKeyEvent: (event) {
-                  // Disable editing shortcuts in preview mode
-                  if (_showPreview) return;
+            child: KeyboardListener(
+              focusNode: _keyboardFocusNode,
+              onKeyEvent: (event) {
+                // Disable editing shortcuts in preview mode
+                if (_showPreview) return;
 
-                  if (HardwareKeyboard.instance.isControlPressed) {
-                    if (event.logicalKey == LogicalKeyboardKey.keyS) {
-                      _saveFile();
-                    } else if (event.logicalKey == LogicalKeyboardKey.keyZ) {
-                      _undo();
-                    } else if (event.logicalKey == LogicalKeyboardKey.keyY) {
-                      _redo();
-                    } else if (event.logicalKey == LogicalKeyboardKey.keyC) {
-                      _copySelection();
-                    } else if (event.logicalKey == LogicalKeyboardKey.keyV) {
-                      _pasteFromClipboard();
-                    } else if (event.logicalKey == LogicalKeyboardKey.keyX) {
-                      _cutSelection();
-                    } else if (event.logicalKey == LogicalKeyboardKey.keyA) {
-                      _selectAll();
-                    } else if (event.logicalKey == LogicalKeyboardKey.keyE) {
-                      _showExportDialog();
-                    } else if (HardwareKeyboard.instance.isShiftPressed) {
-                      if (event.logicalKey == LogicalKeyboardKey.bracketLeft) {
-                        _foldAll();
-                      } else if (event.logicalKey ==
-                          LogicalKeyboardKey.bracketRight) {
-                        _unfoldAll();
-                      }
-                    }
-                  } else {
-                    // Handle Tab and Shift+Tab for indentation
-                    if (event.logicalKey == LogicalKeyboardKey.tab) {
-                      if (HardwareKeyboard.instance.isShiftPressed) {
-                        _dedentSelection();
-                      } else {
-                        _indentSelection();
-                      }
-                      return; // Prevent default tab behavior
+                if (HardwareKeyboard.instance.isControlPressed) {
+                  if (event.logicalKey == LogicalKeyboardKey.keyS) {
+                    _saveFile();
+                  } else if (event.logicalKey == LogicalKeyboardKey.keyZ) {
+                    _undo();
+                  } else if (event.logicalKey == LogicalKeyboardKey.keyY) {
+                    _redo();
+                  } else if (event.logicalKey == LogicalKeyboardKey.keyC) {
+                    _copySelection();
+                  } else if (event.logicalKey == LogicalKeyboardKey.keyV) {
+                    _pasteFromClipboard();
+                  } else if (event.logicalKey == LogicalKeyboardKey.keyX) {
+                    _cutSelection();
+                  } else if (event.logicalKey == LogicalKeyboardKey.keyA) {
+                    _selectAll();
+                  } else if (event.logicalKey == LogicalKeyboardKey.keyE) {
+                    _showExportDialog();
+                  } else if (HardwareKeyboard.instance.isShiftPressed) {
+                    if (event.logicalKey == LogicalKeyboardKey.bracketLeft) {
+                      _foldAll();
+                    } else if (event.logicalKey ==
+                        LogicalKeyboardKey.bracketRight) {
+                      _unfoldAll();
                     }
                   }
-                },
-                child: Row(
-                  children: [
-                    // Line numbers (optional)
-                    if (_showLineNumbers) _buildLineNumbers(theme),
+                } else {
+                  // Handle Tab and Shift+Tab for indentation
+                  if (event.logicalKey == LogicalKeyboardKey.tab) {
+                    if (HardwareKeyboard.instance.isShiftPressed) {
+                      _dedentSelection();
+                    } else {
+                      _indentSelection();
+                    }
+                    return; // Prevent default tab behavior
+                  }
+                }
+              },
+              child: Row(
+                children: [
+                  // Line numbers (optional)
+                  if (_showLineNumbers) _buildLineNumbers(theme),
 
-                    // Text editor with syntax highlighting
-                    Expanded(
-                      child: _buildEditor(theme),
+                  // Text editor with syntax highlighting
+                  Expanded(
+                    child: _buildEditor(theme),
+                  ),
+
+                  // Minimap (optional)
+                  if (_showMinimap)
+                    MinimapWidget(
+                      text: _controller.text,
+                      scrollPosition: _scrollController.hasClients
+                          ? _scrollController.position.pixels
+                          : 0,
+                      maxScrollExtent: _scrollController.hasClients
+                          ? _scrollController.position.maxScrollExtent
+                          : 0,
+                      viewportHeight: _scrollController.hasClients
+                          ? _scrollController.position.viewportDimension
+                          : 0,
+                      onScrollToPosition: _scrollToPosition,
+                      isBloxFile: _isBloxFile,
+                      showLineNumbers: _showLineNumbers,
                     ),
-
-                    // Minimap (optional)
-                    if (_showMinimap)
-                      MinimapWidget(
-                        text: _controller.text,
-                        scrollPosition: _scrollController.hasClients
-                            ? _scrollController.position.pixels
-                            : 0,
-                        maxScrollExtent: _scrollController.hasClients
-                            ? _scrollController.position.maxScrollExtent
-                            : 0,
-                        viewportHeight: _scrollController.hasClients
-                            ? _scrollController.position.viewportDimension
-                            : 0,
-                        onScrollToPosition: _scrollToPosition,
-                        isBloxFile: _isBloxFile,
-                        showLineNumbers: _showLineNumbers,
-                      ),
-                  ],
-                ),
+                ],
               ),
             ),
           ),
@@ -1114,55 +1147,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         onReplaceAll: _performReplaceAll,
       ),
     );
-  }
-
-  void _showGoToLineDialog() {
-    final maxLines =
-        _controller.text.isEmpty ? 1 : _controller.text.split('\n').length;
-    showGoToLineDialog(
-      context: context,
-      controller: _controller,
-      onGoToLine: _goToLine,
-      maxLines: maxLines,
-    );
-  }
-
-  void _goToLine(int lineNumber) {
-    final lines = _controller.text.split('\n');
-    if (lineNumber < 1 || lineNumber > lines.length) return;
-
-    // Calculate the character position for the target line
-    var charPosition = 0;
-    for (var i = 0; i < lineNumber - 1; i++) {
-      charPosition += lines[i].length + 1; // +1 for newline character
-    }
-
-    // Move cursor to the beginning of the target line
-    _controller.selection = TextSelection.collapsed(offset: charPosition);
-
-    // Scroll to make the line visible
-    if (_scrollController.hasClients) {
-      const lineHeight = 21.0; // Same as in _buildLineNumbers
-      final viewportHeight = _scrollController.position.viewportDimension;
-      final targetScrollPosition = (lineNumber - 1) * lineHeight;
-
-      // Center the line in the viewport
-      final centeredPosition =
-          targetScrollPosition - (viewportHeight / 2) + (lineHeight / 2);
-      final clampedPosition = centeredPosition.clamp(
-        _scrollController.position.minScrollExtent,
-        _scrollController.position.maxScrollExtent,
-      );
-
-      _scrollController.animateTo(
-        clampedPosition,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-      );
-    }
-
-    // Focus the text field to ensure cursor is visible
-    _textFieldFocusNode.requestFocus();
   }
 
   void _performFind(

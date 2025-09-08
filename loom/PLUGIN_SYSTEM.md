@@ -119,17 +119,17 @@ Widget _buildSettingsPage(BuildContext context, PluginSettingsApi settings) {
 }
 ```
 
-## Example Plugin: Explorer
+## Example Plugin: Git Integration
 
-The Explorer plugin demonstrates the complete plugin architecture:
+The Git plugin demonstrates the complete plugin architecture for external plugins:
 
 ```dart
-class ExplorerPlugin implements Plugin {
+class GitPlugin implements Plugin {
   @override
-  String get id => 'loom.explorer';
+  String get id => 'loom.git';
 
   @override
-  String get name => 'Explorer';
+  String get name => 'Git Integration';
 
   @override
   Future<void> initialize(PluginContext context) async {
@@ -142,6 +142,8 @@ class ExplorerPlugin implements Plugin {
   // Implementation details...
 }
 ```
+
+This example shows how external plugins integrate with the system while core features like Explorer are registered directly in the main application.
 
 ## Plugin Development
 
@@ -177,20 +179,31 @@ class ExplorerPlugin implements Plugin {
 
 ## Integration with Main App
 
-Plugins are initialized through the PluginBootstrapper:
+Plugins are initialized through the PluginBootstrapper, which follows a **hybrid architecture**:
+
+### **Hybrid Registration Pattern**
+- **Core Features** (Explorer, Settings, Search, Export): Registered directly in `desktop_layout.dart` for immediate availability
+- **External Plugins** (Git, etc.): Registered through the plugin system for dynamic loading
 
 ```dart
 class PluginBootstrapper {
   static Future<void> initializePlugins(BuildContext context) async {
     final pluginManager = PluginManager();
 
-    // Register built-in plugins
-    await pluginManager.registerPlugin(ExplorerPlugin(), context);
+    // Register external plugins through plugin system
+    await pluginManager.registerPlugin(GitPlugin(), context);
 
-    // Register external plugins...
+    // Core features are registered directly in desktop_layout.dart
+    // to avoid duplication and ensure immediate availability
   }
 }
 ```
+
+### **Why Hybrid Architecture?**
+1. **Core features** are always available and don't need plugin lifecycle management
+2. **External plugins** can be loaded/unloaded dynamically
+3. **No duplication** - each feature registers only once
+4. **Clear separation** between built-in functionality and extensions
 
 ## Future Enhancements
 

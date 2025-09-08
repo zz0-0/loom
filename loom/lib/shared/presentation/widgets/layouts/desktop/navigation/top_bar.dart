@@ -2,9 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/search/presentation/widgets/command_palette_dialog.dart';
-import 'package:loom/features/settings/presentation/providers/top_bar_settings_provider.dart';
-import 'package:loom/features/settings/presentation/providers/window_controls_provider.dart';
+import 'package:loom/features/core/search/presentation/widgets/command_palette_dialog.dart';
+import 'package:loom/features/core/settings/presentation/providers/top_bar_settings_provider.dart';
+import 'package:loom/features/core/settings/presentation/providers/window_controls_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/top_bar_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/window_controls.dart';

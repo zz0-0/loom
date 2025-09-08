@@ -1,0 +1,445 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart'
+    as domain;
+import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
+import 'package:loom/features/core/explorer/presentation/widgets/create_project_dialog.dart';
+import 'package:loom/shared/presentation/theme/app_animations.dart';
+import 'package:loom/shared/presentation/theme/app_theme.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+
+/// Toolbar for the workspace explorer with view toggle and actions
+class WorkspaceToolbar extends ConsumerWidget {
+  const WorkspaceToolbar({
+    required this.workspace,
+    required this.viewMode,
+    required this.onViewModeChanged,
+    required this.onRefresh,
+    required this.onNewFile,
+    required this.onNewFolder,
+    super.key,
+  });
+
+  final domain.Workspace workspace;
+  final String viewMode;
+  final ValueChanged<String> onViewModeChanged;
+  final VoidCallback onRefresh;
+  final VoidCallback onNewFile;
+  final VoidCallback onNewFolder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final settings = ref.watch(workspaceSettingsProvider);
+
+    return Container(
+      padding: AppSpacing.paddingSm,
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: theme.dividerColor,
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          // Workspace name and view mode toggle
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  workspace.name.toUpperCase(),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.onSurfaceVariant,
+                    letterSpacing: 0.5,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              _ViewModeToggle(
+                currentMode: viewMode,
+                onModeChanged: onViewModeChanged,
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          // Action buttons
+          Row(
+            children: [
+              Text(
+                viewMode == 'filesystem' ? 'FILES' : 'COLLECTIONS',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurfaceVariant,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(LucideIcons.filePlus, size: 16),
+                onPressed: onNewFile,
+                splashRadius: 12,
+                tooltip: 'New File',
+              ).withHoverAnimation().withPressAnimation(),
+              IconButton(
+                icon: const Icon(LucideIcons.folderPlus, size: 16),
+                onPressed: onNewFolder,
+                splashRadius: 12,
+                tooltip: 'New Folder',
+              ).withHoverAnimation().withPressAnimation(),
+              IconButton(
+                icon: const Icon(LucideIcons.refreshCw, size: 16),
+                onPressed: onRefresh,
+                splashRadius: 12,
+                tooltip: 'Refresh',
+              ).withHoverAnimation().withPressAnimation(),
+              _SettingsButton(settings: settings),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Toggle between file system and collections view
+class _ViewModeToggle extends StatelessWidget {
+  const _ViewModeToggle({
+    required this.currentMode,
+    required this.onModeChanged,
+  });
+
+  final String currentMode;
+  final ValueChanged<String> onModeChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        borderRadius: AppRadius.radiusSm,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ToggleButton(
+            icon: LucideIcons.folder,
+            tooltip: 'File System',
+            isSelected: currentMode == 'filesystem',
+            onPressed: () => onModeChanged('filesystem'),
+          ),
+          _ToggleButton(
+            icon: LucideIcons.star,
+            tooltip: 'Collections',
+            isSelected: currentMode == 'collections',
+            onPressed: () => onModeChanged('collections'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ToggleButton extends StatelessWidget {
+  const _ToggleButton({
+    required this.icon,
+    required this.tooltip,
+    required this.isSelected,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String tooltip;
+  final bool isSelected;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return AnimatedContainer(
+      duration: AppAnimations.fast,
+      curve: AppAnimations.scaleCurve,
+      decoration: BoxDecoration(
+        color: isSelected
+            ? theme.colorScheme.primary.withOpacity(0.12)
+            : Colors.transparent,
+        borderRadius: AppRadius.radiusSm,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: AppRadius.radiusSm,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: AppRadius.radiusSm,
+          child: AnimatedContainer(
+            duration: AppAnimations.fast,
+            curve: AppAnimations.scaleCurve,
+            padding: const EdgeInsets.all(4),
+            child: AnimatedScale(
+              scale: isSelected ? 1.1 : 1.0,
+              duration: AppAnimations.fast,
+              curve: AppAnimations.scaleCurve,
+              child: Icon(
+                icon,
+                size: 14,
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ).withHoverAnimation();
+  }
+}
+
+/// Settings dropdown button
+class _SettingsButton extends ConsumerWidget {
+  const _SettingsButton({required this.settings});
+
+  final domain.WorkspaceSettings settings;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
+    return AnimatedContainer(
+      duration: AppAnimations.fast,
+      curve: AppAnimations.scaleCurve,
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: AppRadius.radiusSm,
+      ),
+      child: PopupMenuButton<String>(
+        icon: const Icon(LucideIcons.moreHorizontal, size: 16),
+        iconSize: 16,
+        splashRadius: 12,
+        tooltip: 'Project Options',
+        onSelected: (value) {
+          switch (value) {
+            case 'close_project':
+              ref.read(currentWorkspaceProvider.notifier).closeWorkspace();
+            case 'open_project':
+              _showOpenProjectDialog(context, ref);
+            case 'create_project':
+              _showCreateProjectDialog(context, ref);
+            case 'toggle_filter':
+              ref
+                  .read(workspaceSettingsProvider.notifier)
+                  .toggleFileExtensionFilter();
+            case 'toggle_hidden':
+              ref
+                  .read(workspaceSettingsProvider.notifier)
+                  .toggleShowHiddenFiles();
+          }
+        },
+        itemBuilder: (context) => [
+          const PopupMenuItem(
+            value: 'close_project',
+            child: Row(
+              children: [
+                Icon(
+                  LucideIcons.x,
+                  size: 16,
+                ),
+                SizedBox(width: 8),
+                Text('Close Project'),
+              ],
+            ),
+          ),
+          const PopupMenuItem(
+            value: 'open_project',
+            child: Row(
+              children: [
+                Icon(
+                  LucideIcons.folderOpen,
+                  size: 16,
+                ),
+                SizedBox(width: 8),
+                Text('Open Project'),
+              ],
+            ),
+          ),
+          const PopupMenuItem(
+            value: 'create_project',
+            child: Row(
+              children: [
+                Icon(
+                  LucideIcons.folderPlus,
+                  size: 16,
+                ),
+                SizedBox(width: 8),
+                Text('Create Project'),
+              ],
+            ),
+          ),
+          const PopupMenuDivider(),
+          PopupMenuItem(
+            value: 'toggle_filter',
+            child: Row(
+              children: [
+                AnimatedSwitcher(
+                  duration: AppAnimations.fast,
+                  child: Icon(
+                    settings.filterFileExtensions
+                        ? LucideIcons.check
+                        : LucideIcons.square,
+                    size: 16,
+                    color: theme.colorScheme.onSurfaceVariant,
+                    key: ValueKey(settings.filterFileExtensions),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Text('Filter File Extensions'),
+              ],
+            ),
+          ),
+          PopupMenuItem(
+            value: 'toggle_hidden',
+            child: Row(
+              children: [
+                AnimatedSwitcher(
+                  duration: AppAnimations.fast,
+                  child: Icon(
+                    settings.showHiddenFiles
+                        ? LucideIcons.check
+                        : LucideIcons.square,
+                    size: 16,
+                    color: theme.colorScheme.onSurfaceVariant,
+                    key: ValueKey(settings.showHiddenFiles),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Text('Show Hidden Files'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).withHoverAnimation().withPressAnimation();
+  }
+
+  Future<void> _showOpenProjectDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    try {
+      // Try to use the same logic as in explorer_panel for consistency
+      String? selectedDirectory;
+
+      try {
+        selectedDirectory = await FilePicker.platform.getDirectoryPath();
+      } catch (filePickerError) {
+        // FilePicker failed (common in containerized environments)
+        selectedDirectory = null;
+      }
+
+      if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
+        await ref
+            .read(currentWorkspaceProvider.notifier)
+            .openWorkspace(selectedDirectory);
+      }
+    } catch (e) {
+      // Fallback: Show a dialog for manual path entry if file picker fails
+      if (context.mounted) {
+        final result = await showDialog<String>(
+          context: context,
+          builder: (context) => _FallbackFolderDialog(),
+        );
+
+        if (result != null && result.isNotEmpty) {
+          try {
+            await ref
+                .read(currentWorkspaceProvider.notifier)
+                .openWorkspace(result);
+          } catch (openError) {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to open folder: $openError'),
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ),
+              );
+            }
+          }
+        }
+      }
+    }
+  }
+
+  void _showCreateProjectDialog(BuildContext context, WidgetRef ref) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => const CreateProjectDialog(),
+    );
+  }
+}
+
+/// Fallback dialog for manual folder path entry
+class _FallbackFolderDialog extends StatefulWidget {
+  @override
+  State<_FallbackFolderDialog> createState() => _FallbackFolderDialogState();
+}
+
+class _FallbackFolderDialogState extends State<_FallbackFolderDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Default to current workspace or common paths
+    _controller.text = '/workspaces';
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Open Folder'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Enter the path to the folder you want to open:'),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _controller,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Folder Path',
+              hintText: '/path/to/your/project',
+            ),
+            autofocus: true,
+          ).withFocusAnimation(),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ).withHoverAnimation().withPressAnimation(),
+        TextButton(
+          onPressed: () {
+            final path = _controller.text.trim();
+            if (path.isNotEmpty) {
+              Navigator.of(context).pop(path);
+            }
+          },
+          child: const Text('Open'),
+        ).withHoverAnimation().withPressAnimation(),
+      ],
+    ).withFadeInAnimation();
+  }
+}

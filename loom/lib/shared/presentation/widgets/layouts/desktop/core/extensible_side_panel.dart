@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/settings/presentation/providers/close_button_settings_provider.dart';
+import 'package:loom/features/core/settings/presentation/providers/close_button_settings_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 
 /// Extensible side panel that displays content for the selected sidebar item

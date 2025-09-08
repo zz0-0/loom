@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loom/features/settings/presentation/providers/window_controls_provider.dart';
+import 'package:loom/features/core/settings/presentation/providers/window_controls_provider.dart';
 import 'package:loom/shared/presentation/theme/app_animations.dart';
 import 'package:window_manager/window_manager.dart';
 

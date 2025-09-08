@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
-import 'package:loom/features/plugin_system/domain/plugin_bootstrapper.dart';
+import 'package:loom/features/core/plugin_system/domain/plugin_bootstrapper.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/desktop_layout.dart';
 import 'package:loom/shared/presentation/widgets/layouts/mobile/mobile_layout.dart';
 

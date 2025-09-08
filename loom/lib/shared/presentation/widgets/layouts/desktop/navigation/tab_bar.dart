@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/settings/presentation/providers/close_button_settings_provider.dart';
+import 'package:loom/features/core/settings/presentation/providers/close_button_settings_provider.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
 import 'package:loom/shared/presentation/theme/app_animations.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';

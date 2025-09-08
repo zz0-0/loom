@@ -257,7 +257,16 @@ class MobileFileSystemService implements FileSystemService {
 
 ### **Extensible Component System** ✅
 ```dart
-// Plugin Architecture
+// Hybrid Plugin Architecture
+// 1. Core features registered directly in desktop layout
+class DesktopLayout extends ConsumerWidget {
+  void _registerExplorerFeature() {
+    final explorerItem = ExplorerSidebarItem();
+    UIRegistry().registerSidebarItem(explorerItem);
+  }
+}
+
+// 2. External plugins registered through plugin system
 abstract class Plugin {
   String get id;
   String get name;
@@ -267,15 +276,21 @@ abstract class Plugin {
   void unregister(UIRegistry registry);
 }
 
-// Component Registration
-class ExplorerPlugin implements Plugin {
+// Component Registration for External Plugins
+class GitPlugin implements Plugin {
   @override
   void register(UIRegistry registry) {
-    registry.registerSidebarItem(ExplorerSidebarItem());
-    registry.registerContentProvider(FileContentProvider());
+    registry.registerSidebarItem(GitSidebarItem());
+    registry.registerContentProvider(GitContentProvider());
   }
 }
 ```
+
+**Benefits:**
+- ✅ **Hybrid Approach**: Core features always available, external plugins dynamically loaded
+- ✅ **No Duplication**: Each component registers only once
+- ✅ **Clear Separation**: Built-in vs. extension functionality
+- ✅ **Immediate Availability**: Core features load instantly
 
 ### **Shared Utilities Architecture** ✅
 ```dart

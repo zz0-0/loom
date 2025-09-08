@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/plugin_system/domain/plugin_bootstrapper.dart';
+import 'package:loom/features/core/plugin_system/domain/plugin_bootstrapper.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/panels/content_area.dart';
 import 'package:lucide_icons/lucide_icons.dart';
