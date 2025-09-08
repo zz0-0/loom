@@ -7,6 +7,7 @@ import 'package:loom/features/explorer/presentation/widgets/create_project_dialo
 import 'package:loom/features/explorer/presentation/widgets/file_tree_widget.dart';
 import 'package:loom/features/explorer/presentation/widgets/workspace_toolbar.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
+import 'package:loom/shared/presentation/widgets/dialogs/folder_browser_dialog.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -106,8 +107,26 @@ class ExplorerPanel extends ConsumerWidget {
     WidgetRef ref,
   ) async {
     try {
-      // Use file_picker to select directory
-      final selectedDirectory = await FilePicker.platform.getDirectoryPath();
+      // Try to use file_picker to select directory
+      String? selectedDirectory;
+
+      try {
+        selectedDirectory = await FilePicker.platform.getDirectoryPath();
+      } catch (filePickerError) {
+        // FilePicker failed (common in containerized environments or Linux without proper setup)
+        selectedDirectory = null;
+      }
+
+      // If FilePicker didn't work, show fallback dialog for manual path entry
+      if (selectedDirectory == null || selectedDirectory.isEmpty) {
+        if (!context.mounted) return;
+        selectedDirectory = await showDialog<String>(
+          context: context,
+          builder: (context) => const FolderBrowserDialog(
+            initialPath: '/workspaces',
+          ),
+        );
+      }
 
       if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
         await ref

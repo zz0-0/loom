@@ -1,15 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/file_status_bottom_bar_item.dart';
 
 /// Extensible bottom bar that displays registered items
-class BottomBar extends StatelessWidget {
+class BottomBar extends StatefulWidget {
   const BottomBar({super.key});
+
+  @override
+  State<BottomBar> createState() => _BottomBarState();
+}
+
+class _BottomBarState extends State<BottomBar> {
+  @override
+  void initState() {
+    super.initState();
+    _registerDefaultItems();
+  }
+
+  void _registerDefaultItems() {
+    final registry = BottomBarRegistry();
+
+    // Register default items
+    final defaultItems = [
+      StatusBottomBarItem(),
+      const FileStatusBottomBarItem(),
+      const CursorPositionBottomBarItem(),
+      const BloxDocumentInfoBottomBarItem(),
+      EncodingBottomBarItem(),
+      LineEndingBottomBarItem(),
+    ];
+    registry.registerItems(defaultItems);
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final registry = BottomBarRegistry();
+    final items = registry.items;
 
     return Container(
       height: AppTheme.bottomBarHeight,
@@ -28,7 +56,7 @@ class BottomBar extends StatelessWidget {
         child: Row(
           children: [
             // Left side items
-            ...registry.items
+            ...items
                 .where((item) => item.priority < 100)
                 .map((item) => item.build(context)),
 
@@ -36,7 +64,7 @@ class BottomBar extends StatelessWidget {
             const Spacer(),
 
             // Right side items
-            ...registry.items
+            ...items
                 .where((item) => item.priority >= 100)
                 .map((item) => item.build(context)),
           ],
@@ -74,27 +102,6 @@ class StatusBottomBarItem implements BottomBarItem {
             style: theme.textTheme.bodySmall,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class LanguageBottomBarItem implements BottomBarItem {
-  @override
-  String get id => 'language';
-
-  @override
-  int get priority => 100;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Text(
-        'Dart',
-        style: theme.textTheme.bodySmall,
       ),
     );
   }

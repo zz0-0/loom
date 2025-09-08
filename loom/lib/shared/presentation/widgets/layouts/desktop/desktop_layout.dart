@@ -11,7 +11,6 @@ import 'package:loom/shared/presentation/providers/directory_operations_provider
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:loom/shared/presentation/widgets/dialogs/folder_browser_dialog.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_content_area.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_side_panel.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_sidebar.dart';
@@ -51,7 +50,6 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
   /// Register default UI components
   void _registerDefaultComponents() {
-    final bottomBarRegistry = BottomBarRegistry();
     final menuRegistry = MenuRegistry();
 
     // Register file content provider
@@ -111,14 +109,6 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           SimpleMenuItem(label: 'About', onPressed: () {}),
         ],
       ),
-    ]);
-
-    // Register default bottom bar items
-    bottomBarRegistry.registerItems([
-      StatusBottomBarItem(),
-      LanguageBottomBarItem(),
-      EncodingBottomBarItem(),
-      LineEndingBottomBarItem(),
     ]);
 
     // Future features can register their own components here
@@ -186,7 +176,15 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   ) async {
     try {
       // Try to use file_picker to select directory
-      var selectedDirectory = await FilePicker.platform.getDirectoryPath();
+      String? selectedDirectory;
+
+      try {
+        selectedDirectory = await FilePicker.platform.getDirectoryPath();
+      } catch (filePickerError) {
+        // FilePicker failed (common in containerized environments)
+        // Removed print statement for production code
+        selectedDirectory = null;
+      }
 
       // If FilePicker didn't work or returned null, show the shared folder browser
       if (selectedDirectory == null || selectedDirectory.isEmpty) {

@@ -468,28 +468,65 @@ class _TabItemState extends State<_TabItem>
                   ),
                   decoration: BoxDecoration(
                     color: backgroundColor,
-                    border: widget.isActive
-                        ? Border(
-                            left: BorderSide(color: theme.dividerColor),
-                            right: BorderSide(color: theme.dividerColor),
-                            top: BorderSide(
-                              color: theme.colorScheme.primary,
-                              width: 2 * _activeAnimation.value,
-                            ),
-                          )
-                        : null,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(4 * _activeAnimation.value),
                       topRight: Radius.circular(4 * _activeAnimation.value),
                     ),
                   ),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: _buildTabChildren(theme),
-                    ),
+                  child: Stack(
+                    children: [
+                      // Top border indicator for active tab
+                      if (widget.isActive)
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            height: 2 * _activeAnimation.value,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary,
+                              borderRadius: BorderRadius.only(
+                                topLeft:
+                                    Radius.circular(4 * _activeAnimation.value),
+                                topRight:
+                                    Radius.circular(4 * _activeAnimation.value),
+                              ),
+                            ),
+                          ),
+                        ),
+                      // Side borders for active tab
+                      if (widget.isActive) ...[
+                        Positioned(
+                          top: 2 * _activeAnimation.value,
+                          bottom: 0,
+                          left: 0,
+                          child: Container(
+                            width: 1,
+                            color: theme.dividerColor,
+                          ),
+                        ),
+                        Positioned(
+                          top: 2 * _activeAnimation.value,
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: 1,
+                            color: theme.dividerColor,
+                          ),
+                        ),
+                      ],
+                      // Content
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: _buildTabChildren(theme),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

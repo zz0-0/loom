@@ -2,12 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/search/presentation/widgets/global_search_dialog.dart';
+import 'package:loom/features/search/presentation/widgets/command_palette_dialog.dart';
 import 'package:loom/features/settings/presentation/providers/top_bar_settings_provider.dart';
 import 'package:loom/features/settings/presentation/providers/window_controls_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/top_bar_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/window_controls.dart';
+import 'package:window_manager/window_manager.dart';
 
 /// Extensible top bar with registered items and window controls
 class TopBar extends ConsumerWidget {
@@ -20,20 +21,26 @@ class TopBar extends ConsumerWidget {
     final windowSettings = ref.watch(windowControlsSettingsProvider);
     final topBarSettings = ref.watch(topBarSettingsProvider);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: theme.dividerColor,
+    return GestureDetector(
+      onPanStart: (details) {
+        // Start window drag
+        windowManager.startDragging();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border(
+            bottom: BorderSide(
+              color: theme.dividerColor,
+            ),
           ),
         ),
-      ),
-      child: _buildTopBarContent(
-        context,
-        registry,
-        windowSettings,
-        topBarSettings,
+        child: _buildTopBarContent(
+          context,
+          registry,
+          windowSettings,
+          topBarSettings,
+        ),
       ),
     );
   }
@@ -297,7 +304,7 @@ class TopBar extends ConsumerWidget {
     final searchBarWidth = screenWidth < 800 ? 200.0 : 300.0;
 
     return InkWell(
-      onTap: () => _showGlobalSearchDialog(context),
+      onTap: () => _showCommandPalette(context),
       child: Container(
         width: searchBarWidth,
         height: 22,
@@ -320,7 +327,7 @@ class TopBar extends ConsumerWidget {
             const SizedBox(width: 6),
             Expanded(
               child: Text(
-                'Search...',
+                'Search files and commands...',
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 12,
                   color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
@@ -341,10 +348,10 @@ class TopBar extends ConsumerWidget {
     );
   }
 
-  void _showGlobalSearchDialog(BuildContext context) {
+  void _showCommandPalette(BuildContext context) {
     showDialog<void>(
       context: context,
-      builder: (context) => const GlobalSearchDialog(),
+      builder: (context) => const CommandPaletteDialog(),
     );
   }
 

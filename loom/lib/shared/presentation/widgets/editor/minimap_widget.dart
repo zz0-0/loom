@@ -15,6 +15,7 @@ class MinimapWidget extends ConsumerWidget {
     super.key,
     this.width = 120,
     this.maxLines = 1000,
+    this.showLineNumbers = false,
   });
 
   final String text;
@@ -25,6 +26,7 @@ class MinimapWidget extends ConsumerWidget {
   final bool isBloxFile;
   final double width;
   final int maxLines;
+  final bool showLineNumbers;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -59,6 +59,8 @@ class FileEditor extends ConsumerStatefulWidget {
 class _FileEditorState extends ConsumerState<FileEditor> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ScrollController _lineNumbersScrollController = ScrollController();
+  final ScrollController _syntaxScrollController = ScrollController();
   final FocusNode _keyboardFocusNode = FocusNode();
   final FocusNode _textFieldFocusNode = FocusNode();
 
@@ -92,6 +94,25 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     _controller.addListener(_onTextChanged);
     _initializeSyntaxHighlighter();
     _foldingManager = CodeFoldingManager('');
+
+    // Add scroll listener to sync other scroll controllers
+    _scrollController.addListener(_syncScrollControllers);
+  }
+
+  void _syncScrollControllers() {
+    if (_scrollController.hasClients) {
+      final offset = _scrollController.offset;
+
+      if (_lineNumbersScrollController.hasClients &&
+          _lineNumbersScrollController.offset != offset) {
+        _lineNumbersScrollController.jumpTo(offset);
+      }
+
+      if (_syntaxScrollController.hasClients &&
+          _syntaxScrollController.offset != offset) {
+        _syntaxScrollController.jumpTo(offset);
+      }
+    }
   }
 
   void _initializeServices() {
@@ -107,7 +128,10 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   @override
   void dispose() {
     _controller.dispose();
+    _scrollController.removeListener(_syncScrollControllers);
     _scrollController.dispose();
+    _lineNumbersScrollController.dispose();
+    _syntaxScrollController.dispose();
     _keyboardFocusNode.dispose();
     _textFieldFocusNode.dispose();
     _bloxHighlighter?.dispose();
@@ -295,10 +319,11 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       ClipboardService.copyToClipboard(selectedText);
 
       // Remove the selected text
-      _controller
-        ..text =
-            _controller.text.replaceRange(selection.start, selection.end, '')
-        ..selection = TextSelection.collapsed(offset: selection.start);
+      final newText =
+          _controller.text.replaceRange(selection.start, selection.end, '');
+      _controller.text = newText;
+      final newSelection = TextSelection.collapsed(offset: selection.start);
+      _controller.selection = newSelection;
 
       // Mark as dirty
       if (_currentFilePath != null) {
@@ -316,27 +341,29 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       if (selection.isValid && !selection.isCollapsed) {
         // Replace selected text
-        _controller
-          ..text = _controller.text.replaceRange(
-            selection.start,
-            selection.end,
-            clipboardText,
-          )
-          ..selection = TextSelection.collapsed(
-            offset: selection.start + clipboardText.length,
-          );
+        final newText = _controller.text.replaceRange(
+          selection.start,
+          selection.end,
+          clipboardText,
+        );
+        _controller.text = newText;
+        final newSelection = TextSelection.collapsed(
+          offset: selection.start + clipboardText.length,
+        );
+        _controller.selection = newSelection;
       } else {
         // Insert at cursor position
         final cursorPosition = selection.baseOffset;
-        _controller
-          ..text = _controller.text.replaceRange(
-            cursorPosition,
-            cursorPosition,
-            clipboardText,
-          )
-          ..selection = TextSelection.collapsed(
-            offset: cursorPosition + clipboardText.length,
-          );
+        final newText = _controller.text.replaceRange(
+          cursorPosition,
+          cursorPosition,
+          clipboardText,
+        );
+        _controller.text = newText;
+        final newSelection = TextSelection.collapsed(
+          offset: cursorPosition + clipboardText.length,
+        );
+        _controller.selection = newSelection;
       }
 
       // Mark as dirty
@@ -362,9 +389,10 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     if (selection.isCollapsed) {
       // No selection - just insert tab at cursor
       final cursorPosition = selection.baseOffset;
-      _controller
-        ..text = text.replaceRange(cursorPosition, cursorPosition, '\t')
-        ..selection = TextSelection.collapsed(offset: cursorPosition + 1);
+      final newText = text.replaceRange(cursorPosition, cursorPosition, '\t');
+      _controller.text = newText;
+      final newSelection = TextSelection.collapsed(offset: cursorPosition + 1);
+      _controller.selection = newSelection;
     } else {
       // Selection - indent all selected lines
       final start = selection.start;
@@ -383,14 +411,15 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       // Reconstruct the text
       final newSelectedText = indentedLines.join('\n');
-      _controller
-        ..text = beforeSelection + newSelectedText + afterSelection
+      final newText = beforeSelection + newSelectedText + afterSelection;
+      _controller.text = newText;
 
-        // Update selection to cover the indented text
-        ..selection = TextSelection(
-          baseOffset: start,
-          extentOffset: start + newSelectedText.length,
-        );
+      // Update selection to cover the indented text
+      final newSelection = TextSelection(
+        baseOffset: start,
+        extentOffset: start + newSelectedText.length,
+      );
+      _controller.selection = newSelection;
     }
 
     // Mark as dirty
@@ -427,18 +456,16 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         // Remove tab
         lines[lineIndex] = line.substring(1);
         _controller.text = lines.join('\n');
-
-        // Adjust cursor position
-        final newCursorPos = cursorPosition - 1;
-        _controller.selection = TextSelection.collapsed(offset: newCursorPos);
+        final newSelection =
+            TextSelection.collapsed(offset: cursorPosition - 1);
+        _controller.selection = newSelection;
       } else if (line.startsWith('    ')) {
         // Remove 4 spaces (common indent)
         lines[lineIndex] = line.substring(4);
         _controller.text = lines.join('\n');
-
-        // Adjust cursor position
-        final newCursorPos = cursorPosition - 4;
-        _controller.selection = TextSelection.collapsed(offset: newCursorPos);
+        final newSelection =
+            TextSelection.collapsed(offset: cursorPosition - 4);
+        _controller.selection = newSelection;
       }
     } else {
       // Selection - dedent all selected lines
@@ -468,14 +495,15 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       // Reconstruct the text
       final newSelectedText = dedentedLines.join('\n');
-      _controller
-        ..text = beforeSelection + newSelectedText + afterSelection
+      final newText = beforeSelection + newSelectedText + afterSelection;
+      _controller.text = newText;
 
-        // Update selection to cover the dedented text
-        ..selection = TextSelection(
-          baseOffset: start,
-          extentOffset: start + newSelectedText.length,
-        );
+      // Update selection to cover the dedented text
+      final newSelection = TextSelection(
+        baseOffset: start,
+        extentOffset: start + newSelectedText.length,
+      );
+      _controller.selection = newSelection;
     }
 
     // Mark as dirty
@@ -572,24 +600,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           ),
           child: Row(
             children: [
-              // File type indicator
-              if (_isBloxFile)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    'Blox',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-
               const Spacer(),
 
               // Line numbers toggle
@@ -770,6 +780,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                             : 0,
                         onScrollToPosition: _scrollToPosition,
                         isBloxFile: _isBloxFile,
+                        showLineNumbers: _showLineNumbers,
                       ),
                   ],
                 ),
@@ -868,9 +879,10 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         ),
       ),
       child: SingleChildScrollView(
-        controller: _scrollController,
+        controller: _lineNumbersScrollController,
+        physics: const NeverScrollableScrollPhysics(), // Sync with main content
         child: Padding(
-          padding: const EdgeInsets.only(top: 16, bottom: 8),
+          padding: const EdgeInsets.only(top: 16, bottom: 8, left: 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: lines.asMap().entries.map((entry) {
@@ -917,14 +929,18 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                       const SizedBox(width: 14),
 
                     // Line number
-                    Text(
-                      '$lineNumber',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color:
-                            theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
-                        fontFamily: 'monospace',
-                        fontSize: fontSize,
-                        height: lineHeight,
+                    SizedBox(
+                      width: 30, // Fixed width for line numbers
+                      child: Text(
+                        '$lineNumber',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant
+                              .withOpacity(0.6),
+                          fontFamily: 'monospace',
+                          fontSize: fontSize,
+                          height: lineHeight,
+                        ),
+                        textAlign: TextAlign.right,
                       ),
                     ),
                   ],
@@ -942,14 +958,17 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     _bloxHighlighter!.text = _controller.text;
     _bloxHighlighter!.updateTheme(theme);
 
-    return SingleChildScrollView(
-      controller: _scrollController,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16, bottom: 8),
-        child: Stack(
-          children: [
-            // Syntax highlighted display
-            SelectableText.rich(
+    return Stack(
+      children: [
+        // Syntax highlighted display (background)
+        SingleChildScrollView(
+          controller: _syntaxScrollController,
+          physics:
+              const NeverScrollableScrollPhysics(), // Let TextField handle scrolling
+          child: Padding(
+            padding:
+                const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+            child: SelectableText.rich(
               _bloxHighlighter!.getHighlightedText(),
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontFamily: 'monospace',
@@ -957,31 +976,40 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                 height: 1.5,
               ),
             ),
-            // Invisible TextField for input handling
-            TextField(
-              controller: _controller,
-              maxLines: null,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: 'monospace',
-                fontSize: 14,
-                height: 1.5,
-                color: Colors.transparent, // Make text invisible
-              ),
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: 8,
-                ),
-              ),
-              onChanged: (_) => _onTextChanged(),
-              focusNode: _textFieldFocusNode,
-              cursorColor: theme.colorScheme.primary,
-            ),
-          ],
+          ),
         ),
-      ),
+
+        // Editable TextField (foreground)
+        Positioned.fill(
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16, bottom: 8),
+              child: TextField(
+                controller: _controller,
+                maxLines: null,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontFamily: 'monospace',
+                  fontSize: 14,
+                  height: 1.5,
+                  color: Colors.transparent, // Make text invisible
+                ),
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(
+                    left: 16,
+                    right: 16,
+                  ),
+                ),
+                onChanged: (_) => _onTextChanged(),
+                focusNode: _textFieldFocusNode,
+                cursorColor: theme.colorScheme.primary,
+                showCursor: true,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -1186,17 +1214,16 @@ class _FileEditorState extends ConsumerState<FileEditor> {
             : selectedText.toLowerCase() == findText.toLowerCase();
 
         if (match) {
-          _controller
-            ..text = _controller.text.replaceRange(
-              selection.start,
-              selection.end,
-              replaceText,
-            )
-
-            // Move cursor after replacement
-            ..selection = TextSelection.collapsed(
-              offset: selection.start + replaceText.length,
-            );
+          final newText = _controller.text.replaceRange(
+            selection.start,
+            selection.end,
+            replaceText,
+          );
+          _controller.text = newText;
+          final newSelection = TextSelection.collapsed(
+            offset: selection.start + replaceText.length,
+          );
+          _controller.selection = newSelection;
         }
       }
 

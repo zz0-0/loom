@@ -332,8 +332,15 @@ class _SettingsButton extends ConsumerWidget {
     WidgetRef ref,
   ) async {
     try {
-      // Use the same logic as in explorer_panel for consistency
-      final selectedDirectory = await FilePicker.platform.getDirectoryPath();
+      // Try to use the same logic as in explorer_panel for consistency
+      String? selectedDirectory;
+
+      try {
+        selectedDirectory = await FilePicker.platform.getDirectoryPath();
+      } catch (filePickerError) {
+        // FilePicker failed (common in containerized environments)
+        selectedDirectory = null;
+      }
 
       if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
         await ref

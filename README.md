@@ -19,6 +19,7 @@ This project uses a development container to ensure a consistent and reproducibl
 - **VS Code Extensions**: Rust language support and Flutter extensions pre-configured
 - **PATH Setup**: All tools (flutter, rustc, cargo, dart) available on PATH
 - **Hot Reload**: Full Flutter development workflow with hot reload support
+- **Dev Container**: Pre-configured development environment with all dependencies
 
 ### 📦 **Dependency Management**
 - **flutter_rust_bridge**: Pre-configured for Dart-Rust interop
@@ -37,6 +38,13 @@ This project uses a development container to ensure a consistent and reproducibl
 3. Open in VS Code: `code .`
 4. When prompted, click "Reopen in Container" or use Command Palette: `Dev Containers: Reopen in Container`
 5. The environment will build automatically with all dependencies
+
+### 📋 **Recent Updates (September 2025)**
+- ✅ **Responsive Bottom Bar**: Dynamic file information display with cursor position and document status
+- ✅ **Enhanced Minimap**: Configurable line numbers display in code overview
+- ✅ **ScrollController Optimization**: Fixed multiple controller attachment issues for smooth scrolling
+- ✅ **File Type Display**: Moved file type information from toolbar to responsive bottom bar
+- ✅ **UI Component Enhancement**: Improved file status and document information display
 
 ### 📋 **Container Configuration**
 - **Base Image**: `ghcr.io/thephaseless/devcontainers/flutter:latest`

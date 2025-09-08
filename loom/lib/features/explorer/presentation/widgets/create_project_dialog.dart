@@ -264,17 +264,19 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
               : Platform.environment['HOME'] ?? '/workspaces',
         );
       } catch (filePickerError) {
-        // Enhanced fallback: Show the shared directory browser
-        if (mounted) {
-          result = await showDialog<String>(
-            context: context,
-            builder: (context) => FolderBrowserDialog(
-              initialPath: _locationController.text.isNotEmpty
-                  ? _locationController.text
-                  : '/workspaces',
-            ),
-          );
-        }
+        result = null;
+      }
+
+      // Enhanced fallback: Show the shared directory browser
+      if (result == null && mounted) {
+        result = await showDialog<String>(
+          context: context,
+          builder: (context) => FolderBrowserDialog(
+            initialPath: _locationController.text.isNotEmpty
+                ? _locationController.text
+                : '/workspaces',
+          ),
+        );
       }
 
       if (result != null && result.isNotEmpty) {
