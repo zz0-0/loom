@@ -32,6 +32,8 @@ class PluginManager {
   Future<void> _loadExternalPlugins() async {
     // TODO(user): Implement external plugin loading
     // This would scan a plugins directory and load .dart files
+    // For now, this is a placeholder that could be implemented later
+    // when the app supports dynamic plugin loading
   }
 
   /// Register a plugin

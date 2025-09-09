@@ -843,14 +843,14 @@ class AboutSettingsPage extends ConsumerWidget {
                     title: 'Version',
                     subtitle: '1.0.0',
                     onTap: () {
-                      // TODO(user): Show version info
+                      _showVersionInfo(context);
                     },
                   ),
                   _SettingsItem(
                     title: 'Licenses',
                     subtitle: 'View open source licenses',
                     onTap: () {
-                      // TODO(user): Show licenses
+                      _showLicenses(context);
                     },
                   ),
                 ],
@@ -861,12 +861,85 @@ class AboutSettingsPage extends ConsumerWidget {
       ),
     );
   }
+
+  void _showVersionInfo(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Loom'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Version: 1.0.0'),
+            SizedBox(height: 8),
+            Text('Build: 20241201'),
+            SizedBox(height: 16),
+            Text(
+              'Loom is a modern code editor built with Flutter, '
+              'designed for productivity and ease of use.',
+            ),
+            SizedBox(height: 16),
+            Text('© 2024 Loom Team'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLicenses(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Open Source Licenses'),
+        content: const SizedBox(
+          width: 400,
+          height: 300,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Loom uses the following open source libraries:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16),
+                Text('• Flutter - BSD License'),
+                Text('• Riverpod - MIT License'),
+                Text('• Adaptive Theme - MIT License'),
+                Text('• File Picker - MIT License'),
+                Text('• Shared Preferences - BSD License'),
+                SizedBox(height: 16),
+                Text(
+                  'For full license texts, please visit the respective '
+                  'project repositories on GitHub.',
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _AppearanceGeneralSettings extends StatelessWidget {
+class _AppearanceGeneralSettings extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final appearanceSettings = ref.watch(appearanceSettingsProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -882,9 +955,11 @@ class _AppearanceGeneralSettings extends StatelessWidget {
           title: 'Compact Mode',
           subtitle: 'Use smaller UI elements and reduced spacing',
           trailing: Switch(
-            value: false,
+            value: appearanceSettings.compactMode,
             onChanged: (value) {
-              // TODO(user): Implement compact mode
+              ref
+                  .read(appearanceSettingsProvider.notifier)
+                  .setCompactMode(value);
             },
           ),
         ),
@@ -892,7 +967,7 @@ class _AppearanceGeneralSettings extends StatelessWidget {
           title: 'Show Icons in Menu',
           subtitle: 'Display icons next to menu items',
           trailing: Switch(
-            value: true,
+            value: true, // TODO(user): Add to appearance settings
             onChanged: (value) {
               // TODO(user): Implement menu icons toggle
             },
@@ -930,7 +1005,7 @@ class _AppearanceGeneralSettings extends StatelessWidget {
           title: 'Sidebar Transparency',
           subtitle: 'Make sidebar background semi-transparent',
           trailing: Switch(
-            value: false,
+            value: false, // TODO(user): Add to appearance settings
             onChanged: (value) {
               // TODO(user): Implement sidebar transparency
             },

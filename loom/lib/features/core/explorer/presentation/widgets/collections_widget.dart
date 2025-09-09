@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/core/explorer/data/models/collection_template.dart';
 import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart'
     as domain;
 import 'package:loom/features/core/explorer/domain/services/smart_categorization_service.dart';
@@ -276,7 +275,7 @@ class _CreateCollectionDialogState extends State<_CreateCollectionDialog> {
                     ...templates.map(
                       (template) => _TemplateChip(
                         label: template.name,
-                        icon: template.iconData,
+                        icon: getIconDataFromString(template.icon),
                         isSelected: _selectedTemplateId == template.id,
                         onSelected: () {
                           setState(() => _selectedTemplateId = template.id);
@@ -408,7 +407,7 @@ class _CollectionItemState extends State<_CollectionItem> {
         SmartCategorizationService.getTopSuggestions(filePath, limit: 2);
 
     // Check if current collection matches the file well
-    final currentTemplate = CollectionTemplates.templates
+    final currentTemplate = domain.CollectionTemplates.templates
         .where((t) => t.name == widget.collectionName)
         .firstOrNull;
 
@@ -452,7 +451,7 @@ class _CollectionItemState extends State<_CollectionItem> {
             ...suggestions.map(
               (suggestion) => ListTile(
                 leading: Icon(
-                  suggestion.icon,
+                  getIconDataFromString(suggestion.icon),
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 title: Text(suggestion.displayName),
@@ -799,5 +798,33 @@ class _CollectionFileItem extends StatelessWidget {
       default:
         return LucideIcons.file;
     }
+  }
+}
+
+/// Utility to convert icon strings to IconData
+IconData getIconDataFromString(String? iconName) {
+  switch (iconName) {
+    case 'code':
+      return LucideIcons.code;
+    case 'book':
+      return LucideIcons.book;
+    case 'file-text':
+      return LucideIcons.fileText;
+    case 'image':
+      return LucideIcons.image;
+    case 'settings':
+      return LucideIcons.settings;
+    case 'users':
+      return LucideIcons.users;
+    case 'briefcase':
+      return LucideIcons.briefcase;
+    case 'heart':
+      return LucideIcons.heart;
+    case 'star':
+      return LucideIcons.star;
+    case 'folder':
+      return LucideIcons.folder;
+    default:
+      return LucideIcons.star;
   }
 }

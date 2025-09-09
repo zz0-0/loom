@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:loom/features/core/explorer/data/models/collection_template.dart';
+import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart';
 import 'package:path/path.dart' as path;
 
 /// Service for smart categorization of files into collections
@@ -304,7 +303,7 @@ class SmartCategorizationService {
   /// Check if a file matches a collection template's patterns
   static bool fileMatchesTemplate(
     String filePath,
-    CollectionTemplateModel template,
+    CollectionTemplate template,
   ) {
     if (template.filePatterns.isEmpty) return false;
 
@@ -352,14 +351,14 @@ class CollectionSuggestion {
   final String reason;
 
   /// Get the template associated with this suggestion
-  CollectionTemplateModel? get template =>
+  CollectionTemplate? get template =>
       CollectionTemplates.getTemplate(templateId);
 
   /// Get the display name for this suggestion
   String get displayName => template?.name ?? templateId;
 
   /// Get the icon for this suggestion
-  IconData get icon => template?.iconData ?? Icons.folder;
+  String? get icon => template?.icon;
 
   /// Get the color for this suggestion
   String? get color => template?.color;

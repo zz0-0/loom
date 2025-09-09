@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/core/explorer/data/models/collection_template.dart';
 import 'package:loom/features/core/explorer/data/repositories/settings_repository_impl.dart';
 import 'package:loom/features/core/explorer/data/repositories/workspace_repository_impl.dart';
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart';
+import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart'
+    as domain;
 import 'package:loom/features/core/explorer/domain/repositories/workspace_repository.dart';
 import 'package:loom/features/core/explorer/domain/usecases/workspace_usecases.dart';
 import 'package:loom/shared/data/providers.dart';
@@ -19,16 +19,28 @@ final workspaceSettingsRepositoryProvider =
   return WorkspaceSettingsRepositoryImpl();
 });
 
+/// Provider for create directory use case
+final createDirectoryUseCaseProvider = Provider<CreateDirectoryUseCase>((ref) {
+  final repository = ref.watch(workspaceRepositoryProvider);
+  return CreateDirectoryUseCase(repository);
+});
+
 /// Provider for create file use case
 final createFileUseCaseProvider = Provider<CreateFileUseCase>((ref) {
   final repository = ref.watch(workspaceRepositoryProvider);
   return CreateFileUseCase(repository);
 });
 
-/// Provider for create directory use case
-final createDirectoryUseCaseProvider = Provider<CreateDirectoryUseCase>((ref) {
+/// Provider for delete item use case
+final deleteItemUseCaseProvider = Provider<DeleteItemUseCase>((ref) {
   final repository = ref.watch(workspaceRepositoryProvider);
-  return CreateDirectoryUseCase(repository);
+  return DeleteItemUseCase(repository);
+});
+
+/// Provider for rename item use case
+final renameItemUseCaseProvider = Provider<RenameItemUseCase>((ref) {
+  final repository = ref.watch(workspaceRepositoryProvider);
+  return RenameItemUseCase(repository);
 });
 
 /// Provider for open workspace use case
@@ -47,8 +59,10 @@ final refreshFileTreeUseCaseProvider = Provider<RefreshFileTreeUseCase>((ref) {
 final explorerViewModeProvider = StateProvider<String>((ref) => 'filesystem');
 
 /// State notifier for workspace settings
-class WorkspaceSettingsNotifier extends StateNotifier<WorkspaceSettings> {
-  WorkspaceSettingsNotifier(this.repository) : super(const WorkspaceSettings());
+class WorkspaceSettingsNotifier
+    extends StateNotifier<domain.WorkspaceSettings> {
+  WorkspaceSettingsNotifier(this.repository)
+      : super(const domain.WorkspaceSettings());
 
   final WorkspaceSettingsRepository repository;
 
@@ -65,7 +79,7 @@ class WorkspaceSettingsNotifier extends StateNotifier<WorkspaceSettings> {
     await repository.saveSettings(state);
   }
 
-  void updateSettings(WorkspaceSettings newSettings) {
+  void updateSettings(domain.WorkspaceSettings newSettings) {
     state = newSettings;
   }
 
@@ -104,22 +118,31 @@ class WorkspaceSettingsNotifier extends StateNotifier<WorkspaceSettings> {
 
 /// Provider for workspace settings
 final workspaceSettingsProvider =
-    StateNotifierProvider<WorkspaceSettingsNotifier, WorkspaceSettings>((ref) {
+    StateNotifierProvider<WorkspaceSettingsNotifier, domain.WorkspaceSettings>(
+        (ref) {
   final repository = ref.watch(workspaceSettingsRepositoryProvider);
   return WorkspaceSettingsNotifier(repository);
 });
 
 /// State notifier for current workspace
-class WorkspaceNotifier extends StateNotifier<Workspace?> {
+class WorkspaceNotifier extends StateNotifier<domain.Workspace?> {
   WorkspaceNotifier(
     this.repository,
     this.settingsRepository,
     this.refreshFileTreeUseCase,
+    this.createFileUseCase,
+    this.createDirectoryUseCase,
+    this.deleteItemUseCase,
+    this.renameItemUseCase,
   ) : super(null);
 
   final WorkspaceRepository repository;
   final WorkspaceSettingsRepository settingsRepository;
   final RefreshFileTreeUseCase refreshFileTreeUseCase;
+  final CreateFileUseCase createFileUseCase;
+  final CreateDirectoryUseCase createDirectoryUseCase;
+  final DeleteItemUseCase deleteItemUseCase;
+  final RenameItemUseCase renameItemUseCase;
 
   Future<void> openWorkspace(String path) async {
     try {
@@ -236,12 +259,46 @@ class WorkspaceNotifier extends StateNotifier<Workspace?> {
     await createCollection(collectionName);
   }
 
-  List<FileTreeNode> _toggleExpansionRecursive(
-    List<FileTreeNode> nodes,
+  Future<void> createFile(String filePath, {String content = ''}) async {
+    if (state == null) return;
+
+    try {
+      await createFileUseCase.call(state!.rootPath, filePath, content: content);
+      await refreshFileTree();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteItem(String itemPath) async {
+    if (state == null) return;
+
+    try {
+      await deleteItemUseCase.call(state!.rootPath, itemPath);
+      await refreshFileTree();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> renameItem(String oldPath, String newPath) async {
+    if (state == null) return;
+
+    try {
+      await renameItemUseCase.call(state!.rootPath, oldPath, newPath);
+      await refreshFileTree();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  List<domain.FileTreeNode> _toggleExpansionRecursive(
+    List<domain.FileTreeNode> nodes,
     String targetPath,
   ) {
     return nodes.map((node) {
-      if (node.path == targetPath && node.type == FileTreeNodeType.directory) {
+      if (node.path == targetPath &&
+          node.type == domain.FileTreeNodeType.directory) {
         return node.copyWith(isExpanded: !node.isExpanded);
       } else if (node.children.isNotEmpty) {
         final updatedChildren =
@@ -259,20 +316,28 @@ class WorkspaceNotifier extends StateNotifier<Workspace?> {
 
 /// Provider for current workspace
 final currentWorkspaceProvider =
-    StateNotifierProvider<WorkspaceNotifier, Workspace?>((ref) {
+    StateNotifierProvider<WorkspaceNotifier, domain.Workspace?>((ref) {
   final repository = ref.watch(workspaceRepositoryProvider);
   final settingsRepository = ref.watch(workspaceSettingsRepositoryProvider);
   final refreshFileTreeUseCase = ref.watch(refreshFileTreeUseCaseProvider);
+  final createFileUseCase = ref.watch(createFileUseCaseProvider);
+  final createDirectoryUseCase = ref.watch(createDirectoryUseCaseProvider);
+  final deleteItemUseCase = ref.watch(deleteItemUseCaseProvider);
+  final renameItemUseCase = ref.watch(renameItemUseCaseProvider);
 
   return WorkspaceNotifier(
     repository,
     settingsRepository,
     refreshFileTreeUseCase,
+    createFileUseCase,
+    createDirectoryUseCase,
+    deleteItemUseCase,
+    renameItemUseCase,
   );
 });
 
 /// Provider for collection templates
 final collectionTemplatesProvider =
-    Provider<List<CollectionTemplateModel>>((ref) {
-  return CollectionTemplates.templates;
+    Provider<List<domain.CollectionTemplate>>((ref) {
+  return domain.CollectionTemplates.templates;
 });

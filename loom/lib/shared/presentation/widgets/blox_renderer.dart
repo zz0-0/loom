@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:loom/src/rust/api/blox_api.dart';
 
 /// Enhanced Blox renderer that handles inline elements, lists, and tables
@@ -487,7 +489,8 @@ class BloxRenderer {
               color: Theme.of(context).colorScheme.primary,
               decoration: TextDecoration.underline,
             ),
-            // TODO(user): Add link handling
+            recognizer: TapGestureRecognizer()
+              ..onTap = () => _handleLinkTap(context, url),
           ),
           strikethrough: (content) => TextSpan(
             text: content,
@@ -535,7 +538,8 @@ class BloxRenderer {
               color: Theme.of(context).colorScheme.secondary,
               fontSize: baseStyle.fontSize! * 0.8,
             ),
-            // TODO(user): Add footnote popup
+            recognizer: TapGestureRecognizer()
+              ..onTap = () => _handleFootnoteTap(context, id, text),
           ),
           custom: (elementType, attributes, content) => TextSpan(
             text: content,
@@ -564,6 +568,52 @@ class BloxRenderer {
     return baseStyle.copyWith(
       fontSize: fontSize,
       fontWeight: FontWeight.bold,
+    );
+  }
+
+  static void _handleLinkTap(BuildContext context, String url) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Open Link'),
+        content: Text('Open this link in your browser?\n\n$url'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // Copy URL to clipboard as fallback
+              Clipboard.setData(ClipboardData(text: url));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('URL copied to clipboard: $url'),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+            child: const Text('Copy URL'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static void _handleFootnoteTap(BuildContext context, String id, String text) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Footnote $id'),
+        content: Text(text),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
     );
   }
 }

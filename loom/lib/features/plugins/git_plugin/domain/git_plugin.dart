@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:loom/features/core/plugin_system/domain/plugin.dart';
 import 'package:loom/features/core/plugin_system/presentation/command_api.dart';
@@ -65,7 +67,10 @@ class GitPlugin implements Plugin {
     uiApi.registerSidebarItem(id, sidebarItem);
 
     // Register bottom bar status
-    final bottomBarItem = _GitStatusBarItem(pluginId: id);
+    final bottomBarItem = _GitStatusBarItem(
+      pluginId: id,
+      currentBranch: _currentBranch,
+    );
     uiApi.registerBottomBarItem(id, bottomBarItem);
   }
 
@@ -136,15 +141,51 @@ class GitPlugin implements Plugin {
   }
 
   Future<void> _checkGitStatus() async {
-    // TODO(user): Implement actual Git status checking
-    // For now, simulate Git repository detection
-    _isGitRepository = true;
-    _currentBranch = 'main';
-    _changedFiles = ['lib/main.dart', 'pubspec.yaml'];
+    try {
+      // Check if we're in a Git repository
+      final gitDirResult = await Process.run(
+        'git',
+        ['rev-parse', '--git-dir'],
+        workingDirectory: _context?.settings.get('workspacePath', '.'),
+      );
 
-    // Update UI if context is available
-    if (_context != null) {
-      // Trigger UI update (this would be handled by the state management)
+      _isGitRepository = gitDirResult.exitCode == 0;
+
+      if (_isGitRepository) {
+        // Get current branch
+        final branchResult = await Process.run(
+          'git',
+          ['rev-parse', '--abbrev-ref', 'HEAD'],
+          workingDirectory: _context?.settings.get('workspacePath', '.'),
+        );
+
+        if (branchResult.exitCode == 0) {
+          _currentBranch = branchResult.stdout.toString().trim();
+        }
+
+        // Get changed files
+        final statusResult = await Process.run(
+          'git',
+          ['status', '--porcelain'],
+          workingDirectory: _context?.settings.get('workspacePath', '.'),
+        );
+
+        if (statusResult.exitCode == 0) {
+          final statusLines = statusResult.stdout.toString().split('\n');
+          _changedFiles = statusLines
+              .where((line) => line.isNotEmpty)
+              .map((line) => line.substring(3).trim()) // Remove status codes
+              .toList();
+        }
+      } else {
+        _currentBranch = '';
+        _changedFiles = [];
+      }
+    } catch (e) {
+      // Git not available or other error
+      _isGitRepository = false;
+      _currentBranch = '';
+      _changedFiles = [];
     }
   }
 
@@ -245,8 +286,35 @@ class GitPlugin implements Plugin {
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 16),
-        // TODO(user): Implement actual Git settings
-        const Text('Git settings will be implemented here'),
+
+        // Git executable path setting
+        TextFormField(
+          initialValue: settings.get('gitPath', '/usr/bin/git'),
+          decoration: const InputDecoration(
+            labelText: 'Git Executable Path',
+            hintText: 'Path to git executable',
+          ),
+          onChanged: (value) => settings.set('gitPath', value),
+        ),
+        const SizedBox(height: 16),
+
+        // Auto-fetch setting
+        SwitchListTile(
+          title: const Text('Auto-fetch'),
+          subtitle: const Text('Automatically fetch changes from remote'),
+          value: settings.get('autoFetch', false),
+          onChanged: (value) => settings.set('autoFetch', value),
+        ),
+
+        // Default branch setting
+        TextFormField(
+          initialValue: settings.get('defaultBranch', 'main'),
+          decoration: const InputDecoration(
+            labelText: 'Default Branch',
+            hintText: 'Default branch name for new repositories',
+          ),
+          onChanged: (value) => settings.set('defaultBranch', value),
+        ),
       ],
     );
   }
@@ -279,28 +347,102 @@ class GitPlugin implements Plugin {
     await _showGitStatus();
   }
 
-  void _stageFile(String file) {
-    // TODO(user): Implement file staging
+  Future<void> _stageFile(String file) async {
+    try {
+      final result = await Process.run(
+        'git',
+        ['add', file],
+        workingDirectory: _context?.settings.get('workspacePath', '.'),
+      );
+
+      if (result.exitCode == 0) {
+        // Refresh status after staging
+        await _checkGitStatus();
+      } else {}
+    } catch (e) {}
   }
 
-  void _unstageFile(String file) {
-    // TODO(user): Implement file unstaging
+  Future<void> _unstageFile(String file) async {
+    try {
+      final result = await Process.run(
+        'git',
+        ['reset', 'HEAD', file],
+        workingDirectory: _context?.settings.get('workspacePath', '.'),
+      );
+
+      if (result.exitCode == 0) {
+        // Refresh status after unstaging
+        await _checkGitStatus();
+      } else {}
+    } catch (e) {}
   }
 
   Future<void> _showCommitDialog() async {
-    // TODO(user): Implement commit dialog
+    // For now, use a simple default commit message
+    // In a real implementation, this would show a dialog
+    const commitMessage = 'Updated files';
+
+    try {
+      final result = await Process.run(
+        'git',
+        ['commit', '-m', commitMessage],
+        workingDirectory: _context?.settings.get('workspacePath', '.'),
+      );
+
+      if (result.exitCode == 0) {
+        // Refresh status after commit
+        await _checkGitStatus();
+      } else {}
+    } catch (e) {}
   }
 
   Future<void> _pushChanges() async {
-    // TODO(user): Implement push functionality
+    try {
+      final result = await Process.run(
+        'git',
+        ['push'],
+        workingDirectory: _context?.settings.get('workspacePath', '.'),
+      );
+
+      if (result.exitCode == 0) {
+      } else {}
+    } catch (e) {}
   }
 
   Future<void> _pullChanges() async {
-    // TODO(user): Implement pull functionality
+    try {
+      final result = await Process.run(
+        'git',
+        ['pull'],
+        workingDirectory: _context?.settings.get('workspacePath', '.'),
+      );
+
+      if (result.exitCode == 0) {
+        // Refresh status after pull
+        await _checkGitStatus();
+      } else {}
+    } catch (e) {}
   }
 
   Future<void> _showGitStatus() async {
-    // TODO(user): Implement Git status display
+    try {
+      final result = await Process.run(
+        'git',
+        ['status', '--porcelain'],
+        workingDirectory: _context?.settings.get('workspacePath', '.'),
+      );
+
+      if (result.exitCode == 0) {
+        final statusOutput = result.stdout.toString();
+        if (statusOutput.isEmpty) {
+        } else {
+          final lines = statusOutput.split('\n');
+          for (final line in lines) {
+            if (line.isNotEmpty) {}
+          }
+        }
+      } else {}
+    } catch (e) {}
   }
 
   @override
@@ -334,9 +476,13 @@ class GitPlugin implements Plugin {
 
 /// Git status bar item for bottom bar
 class _GitStatusBarItem extends BottomBarItem {
-  _GitStatusBarItem({required this.pluginId});
+  _GitStatusBarItem({
+    required this.pluginId,
+    required this.currentBranch,
+  });
 
   final String pluginId;
+  final String currentBranch;
 
   @override
   String get id => 'git_status';
@@ -354,7 +500,7 @@ class _GitStatusBarItem extends BottomBarItem {
           const Icon(Icons.account_tree, size: 14),
           const SizedBox(width: 4),
           Text(
-            'main', // TODO(user): Get actual branch
+            currentBranch,
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ],

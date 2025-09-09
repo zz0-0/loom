@@ -27,12 +27,6 @@ class PluginBootstrapper {
     // Check if context is still mounted
     if (!context.mounted) return;
 
-    // TODO(user): Register built-in plugins here
-    // await _pluginManager.registerPlugin(ExplorerPlugin(), context);
-    // await _pluginManager.registerPlugin(SettingsPlugin(), context);
-    // await _pluginManager.registerPlugin(SearchPlugin(), context);
-    // await _pluginManager.registerPlugin(ExportPlugin(), context);
-
     // Register Git Plugin
     final gitPlugin = GitPlugin();
     await _pluginManager.registerPlugin(gitPlugin, context);

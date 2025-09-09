@@ -17,6 +17,19 @@ final autoSaveProvider =
   return AutoSaveNotifier(generalSettings.autoSave);
 });
 
+/// Provider for appearance settings
+final appearanceSettingsProvider =
+    StateNotifierProvider<AppearanceSettingsNotifier, AppearanceSettings>(
+        (ref) {
+  return AppearanceSettingsNotifier();
+});
+
+/// Provider for interface settings
+final interfaceSettingsProvider =
+    StateNotifierProvider<InterfaceSettingsNotifier, InterfaceSettings>((ref) {
+  return InterfaceSettingsNotifier();
+});
+
 /// General settings notifier
 class GeneralSettingsNotifier extends StateNotifier<GeneralSettings> {
   GeneralSettingsNotifier()
@@ -173,5 +186,43 @@ class AutoSaveNotifier extends StateNotifier<AutoSaveState> {
   void dispose() {
     _stopAutoSaveTimer();
     super.dispose();
+  }
+}
+
+/// Appearance settings notifier
+class AppearanceSettingsNotifier extends StateNotifier<AppearanceSettings> {
+  AppearanceSettingsNotifier() : super(const AppearanceSettings());
+
+  void setCompactMode(bool value) {
+    state = state.copyWith(compactMode: value);
+  }
+
+  void setFontSize(double value) {
+    state = state.copyWith(fontSize: value);
+  }
+
+  void setTheme(String value) {
+    state = state.copyWith(theme: value);
+  }
+}
+
+/// Interface settings notifier
+class InterfaceSettingsNotifier extends StateNotifier<InterfaceSettings> {
+  InterfaceSettingsNotifier() : super(const InterfaceSettings());
+
+  void setShowSidebar(bool value) {
+    state = state.copyWith(showSidebar: value);
+  }
+
+  void setShowBottomBar(bool value) {
+    state = state.copyWith(showBottomBar: value);
+  }
+
+  void setSidebarPosition(String value) {
+    state = state.copyWith(sidebarPosition: value);
+  }
+
+  void setCloseButtonPosition(String value) {
+    state = state.copyWith(closeButtonPosition: value);
   }
 }

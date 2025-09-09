@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/core/utils/platform_utils.dart';
 import 'package:loom/features/core/explorer/presentation/items/explorer_sidebar_item.dart';
+import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
 import 'package:loom/features/core/plugin_system/domain/plugin_bootstrapper.dart';
+import 'package:loom/features/core/search/presentation/widgets/global_search_dialog.dart';
 import 'package:loom/features/core/settings/presentation/widgets/settings_content.dart';
 import 'package:loom/features/core/settings/presentation/widgets/settings_sidebar_item.dart';
 import 'package:loom/shared/presentation/providers/directory_operations_provider.dart';
@@ -16,6 +18,7 @@ import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_sidebar.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/file_content_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
+import 'package:loom/shared/presentation/widgets/layouts/desktop/core/top_bar_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/bottom_bar.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/top_bar.dart';
@@ -67,8 +70,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           SimpleMenuItem(
             label: 'Open',
             icon: Icons.folder_open,
-            onPressedWithContext: (context) =>
-                _showOpenFolderDialog(context, ref),
+            onPressedWithContext: _showOpenFolderDialog,
           ),
           SimpleMenuItem(label: 'Save', icon: Icons.save, onPressed: () {}),
           SimpleMenuItem(label: 'Save As...', onPressed: () {}),
@@ -155,25 +157,70 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   }
 
   void _registerSearchFeature() {
-    // TODO(user): Register search feature when implemented
+    // Register search feature
+    final searchItem = _SearchTopBarItem(
+      onPressed: _showGlobalSearchDialog,
+    );
+
+    TopBarRegistry().registerItem(searchItem);
   }
 
   void _registerExportFeature() {
-    // TODO(user): Register export feature when implemented
+    // Register export feature
+    final exportItem = _ExportTopBarItem(
+      onPressed: _showExportDialog,
+    );
+
+    TopBarRegistry().registerItem(exportItem);
   }
 
   void _showGlobalSearchDialog(BuildContext context) {
-    // TODO(user): Implement global search dialog
+    // Implement global search dialog
+    showDialog<void>(
+      context: context,
+      builder: (context) => const GlobalSearchDialog(),
+    );
   }
 
   void _showExportDialog(BuildContext context) {
-    // TODO(user): Implement export dialog
+    final ref = ProviderScope.containerOf(context, listen: false);
+    // Implement export dialog
+    final uiState = ref.read(uiStateProvider);
+    if (uiState.openedFile != null) {
+      // For now, show a placeholder - in a real implementation,
+      // you'd read the file content and show the export dialog
+      showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Export'),
+          content: Text('Export functionality for ${uiState.openedFile}'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Export'),
+          content: const Text('Please open a file first to export it.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Close'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
-  Future<void> _showOpenFolderDialog(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
+  Future<void> _showOpenFolderDialog(BuildContext context) async {
+    final ref = ProviderScope.containerOf(context, listen: false);
     try {
       // Try to use file_picker to select directory
       String? selectedDirectory;
@@ -213,10 +260,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           return;
         }
 
-        // TODO(user): Implement workspace opening
-        // await ref
-        //     .read(currentWorkspaceProvider.notifier)
-        //     .openWorkspace(selectedDirectory);
+        // Open workspace
+        await ref
+            .read(currentWorkspaceProvider.notifier)
+            .openWorkspace(selectedDirectory);
       } else {
         // No directory selected
         if (!context.mounted) return;
@@ -323,4 +370,54 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       ),
     );
   }
+}
+
+/// Search top bar item
+class _SearchTopBarItem implements TopBarItem {
+  const _SearchTopBarItem({required this.onPressed});
+
+  final void Function(BuildContext) onPressed;
+
+  @override
+  String get id => 'search';
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.search, size: 18),
+      tooltip: 'Global Search (Ctrl+Shift+F)',
+      onPressed: () => onPressed(context),
+    );
+  }
+
+  @override
+  TopBarPosition get position => TopBarPosition.left;
+
+  @override
+  int get priority => 10;
+}
+
+/// Export top bar item
+class _ExportTopBarItem implements TopBarItem {
+  const _ExportTopBarItem({required this.onPressed});
+
+  final void Function(BuildContext) onPressed;
+
+  @override
+  String get id => 'export';
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.file_download, size: 18),
+      tooltip: 'Export File (Ctrl+E)',
+      onPressed: () => onPressed(context),
+    );
+  }
+
+  @override
+  TopBarPosition get position => TopBarPosition.left;
+
+  @override
+  int get priority => 20;
 }

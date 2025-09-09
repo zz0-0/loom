@@ -9,37 +9,42 @@ Loom is a sophisticated desktop application that combines the power of Flutter's
 ### 🎯 **Key Features**
 
 #### **Core Editing Capabilities**
-- **Multi-language Syntax Highlighting**: Support for Blox, Dart, JavaScript, Python, Rust, and more
-- **Advanced Text Editor**: Line numbers, syntax highlighting, find/replace with regex
-- **Multi-tab Interface**: Efficient document management with tabbed editing and drag-to-reorder functionality
-- **Keyboard Shortcuts**: Full shortcut support (Ctrl+Z/Y, Ctrl+C/V/X, Ctrl+A, Ctrl+S)
-- **Code Folding**: Expandable/collapsible code sections with visual indicators
-- **Undo/Redo System**: Complete edit history with keyboard and toolbar controls
-- **Responsive Bottom Bar**: Dynamic file information display with cursor position, file type, and document status
-- **Minimap**: Scrollable code overview with configurable line numbers display
+- **Multi-language Syntax Highlighting**: Support for Blox, Dart, JavaScript, Python, Rust, and more with enhanced highlighting
+- **Advanced Text Editor**: Line numbers, syntax highlighting, find/replace with regex, undo/redo, clipboard operations
+- **Multi-tab Interface**: Efficient document management with tabbed editing, drag-to-reorder, and keyboard navigation
+- **Keyboard Shortcuts**: Full shortcut support (Ctrl+Z/Y, Ctrl+C/V/X, Ctrl+A, Ctrl+S, Tab/Shift+Tab, Ctrl+Shift+F)
+- **Code Folding**: Expandable/collapsible code sections with visual indicators and multi-language support
+- **Advanced Editor Features**: Minimap with configurable line numbers, responsive bottom bar with file information
+- **Git Integration**: Complete Git functionality with status checking, staging, commit, push/pull operations
+- **Auto-save System**: Configurable auto-save with interval settings and last save time tracking
 
 #### **Blox Language Support**
-- **Native Parser**: High-performance Rust-based Blox document parsing
-- **Real-time Validation**: Instant syntax checking with error reporting
-- **Format Conversion**: Export to HTML, Markdown, JSON, and PDF
-- **Rich Content**: Support for structured blocks, metadata, and custom formatting
-- **Advanced Inline Elements**: Bold, italic, code, links, strikethrough, highlight, subscript, superscript, math expressions
-- **Complex Lists**: Ordered, unordered, task lists with nested support
-- **Table Rendering**: Markdown-style tables with headers and data rows
-- **Preview Mode**: Live preview of Blox documents with rich formatting
+- **Native Parser**: High-performance Rust-based Blox document parsing with flutter_rust_bridge integration
+- **Real-time Validation**: Instant syntax checking with error reporting and warnings display
+- **Format Conversion**: Export to HTML, Markdown, JSON, and PDF with customizable options
+- **Rich Content**: Support for structured blocks, metadata, and custom formatting with advanced inline elements
 - **Enhanced Editor**: Syntax highlighting with preview toggle for immediate visual feedback
 
 #### **Workspace Management**
-- **File Explorer**: Dual-view system with filesystem and collections
-- **Global Search**: Workspace-wide search with regex support
-- **File Operations**: Create, delete, rename with enhanced dialogs
-- **Directory Navigation**: Tree-based browser with filtering capabilities
+- **File Explorer**: Dual-view system with filesystem and collections, enhanced with search and context menus
+- **Global Search**: Workspace-wide search with regex support, case-sensitive matching, and file filtering
+- **File Operations**: Create, delete, rename with enhanced dialogs and proper error handling
+- **Directory Navigation**: Tree-based browser with filtering capabilities and indentation guides
+- **Smart Categorization**: Intelligent file analysis with collection suggestions and confidence scoring
+- **Collection Templates**: 9 predefined templates with automatic file pattern matching
+
+#### **Settings & Customization**
+- **Comprehensive Settings**: Appearance, interface, and general preferences with theme customization
+- **Theme System**: Light/dark mode with custom color schemes, font selection, and live preview
+- **Window Controls**: Placement and behavior customization with close button positioning
+- **UI Customization**: Compact mode, animations, sidebar transparency, and font size settings
+- **Keyboard Shortcuts**: Centralized shortcuts system with conflict detection and custom key bindings
 
 #### **Cross-Platform Experience**
-- **Desktop First**: Optimized for Windows, macOS, and Linux
-- **Adaptive UI**: Responsive design that scales across screen sizes
-- **Theme Support**: Light/dark mode with system preference detection
-- **Modern Design**: Material 3 design system with custom theming
+- **Desktop First**: Optimized for Windows, macOS, and Linux with native integrations
+- **Adaptive UI**: Responsive design that scales across screen sizes with platform-specific adaptations
+- **Modern Design**: Material 3 design system with custom theming and centralized animations
+- **Plugin Architecture**: Extensible plugin system with APIs for commands, UI components, and settings
 
 ## 🏗️ **Architecture**
 
@@ -199,35 +204,39 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ## 📊 **Project Status**
 
 ### **Current Implementation Status (Updated: September 2025)**
-- ✅ **Core Architecture**: Clean Architecture + MVVM with Riverpod state management
-- ✅ **Flutter + Rust Integration**: Complete bidirectional communication via flutter_rust_bridge
-- ✅ **Blox Language Support**: Full parser, encoder, decoder with advanced features
-- ✅ **Multi-Tab Editor**: Drag-to-reorder tabs with keyboard navigation
-- ✅ **File System Integration**: Native file dialogs, workspace management, file tree
-- ✅ **Syntax Highlighting**: Multi-language support + custom Blox highlighter
-- ✅ **Advanced Editor Features**: Minimap, code folding, undo/redo, clipboard operations
-- ✅ **Export System**: PDF, HTML, Markdown, JSON, Plain Text formats
-- ✅ **UI/UX Polish**: Material 3, adaptive themes, animations, responsive design
-- ✅ **Plugin Architecture**: Extensible plugin system with APIs for commands, UI, settings
-- ✅ **Cross-Platform**: Windows, macOS, Linux with platform-specific adaptations
-- ✅ **Settings System**: Comprehensive preferences with theme customization
-- ✅ **Collection Management**: Smart categorization with 9 predefined templates
+- ✅ **Core Architecture**: Clean Architecture + MVVM with Riverpod state management and recent fixes to presentation layer violations
+- ✅ **Flutter + Rust Integration**: Complete bidirectional communication via flutter_rust_bridge with enhanced Blox API
+- ✅ **Blox Language Support**: Full parser, encoder, decoder with advanced features and real-time validation
+- ✅ **Multi-Tab Editor**: Drag-to-reorder tabs with keyboard navigation and proper state management
+- ✅ **File System Integration**: Native file dialogs, workspace management, enhanced file tree with search and context menus
+- ✅ **Syntax Highlighting**: Multi-language support with enhanced Blox highlighting and theme integration
+- ✅ **Advanced Editor Features**: Minimap, code folding, undo/redo, clipboard operations, responsive bottom bar
+- ✅ **Git Integration**: Complete Git functionality with status, staging, commit, push/pull operations
+- ✅ **Settings System**: Comprehensive preferences with theme customization, auto-save, and keyboard shortcuts
+- ✅ **Collection Management**: Smart categorization with 9 predefined templates and drag-and-drop support
+- ✅ **Plugin Architecture**: Extensible plugin system with APIs for commands, UI, and settings
+- ✅ **Cross-Platform**: Windows, macOS, Linux with platform-specific adaptations and responsive design
+- ✅ **UI/UX Polish**: Material 3, centralized animations, enhanced micro-interactions, and accessibility improvements
 
 ### **Production Readiness Gaps**
 - ❌ **Testing Coverage**: Minimal (~10% coverage, basic test setup only)
 - ❌ **CI/CD Pipeline**: No automated testing or deployment
 - ❌ **Security**: Basic measures, no encryption or secure storage
 - ❌ **Performance Monitoring**: No metrics or profiling systems
-- ❌ **Advanced Features**: Multiple cursors, Git integration, collaboration missing
+- ❌ **Advanced Features**: Multiple cursors, collaboration features still pending
 
 ### **Recent Enhancements (September 2025)**
-- ✅ **Enhanced Minimap**: Configurable line numbers with syntax highlighting
-- ✅ **App Animations System**: Centralized micro-interactions framework
-- ✅ **Collection Templates**: 9 predefined templates with smart categorization
-- ✅ **Keyboard Shortcuts**: Centralized service with conflict detection
-- ✅ **Theme Customization**: Color picker, presets, font selection
-- ✅ **File Tree Enhancements**: Search, context menus, drag-and-drop
-- ✅ **Export Dialog**: Complete UI with format options and file selection
+- ✅ **Complete Git Integration**: Full Git command execution with Process.run, proper error handling, and user feedback
+- ✅ **Auto-save System**: Configurable auto-save with interval settings, last save time tracking, and state management
+- ✅ **Settings UI**: Version info and licenses dialogs with functional implementations
+- ✅ **Content Area Features**: Tab switching, Git clone functionality with repository URL input
+- ✅ **File Management**: Folder/file creation dialogs with validation and workspace integration
+- ✅ **State Management**: Enhanced Riverpod providers for appearance, interface, and general settings
+- ✅ **Compilation Success**: Zero compilation errors with comprehensive error resolution
+- ✅ **Smart Categorization**: Intelligent file analysis with collection suggestions and confidence scoring
+- ✅ **Keyboard Shortcuts System**: Centralized shortcuts with conflict detection and custom key bindings
+- ✅ **Theme Customization**: Color picker, presets, font selection with live preview
+- ✅ **Collection Templates**: 9 predefined templates with automatic file pattern matching
 
 ## 🎉 **Recent Enhancements (v1.0)**
 

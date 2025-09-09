@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:loom/features/core/search/domain/entities/search_entities.dart';
 import 'package:loom/features/core/search/presentation/providers/search_provider.dart';
+import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_animations.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 
@@ -376,9 +377,15 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
   ) {
     return InkWell(
       onTap: () {
-        // TODO(user): Navigate to file and line
-        // This would need integration with the tab/file opening system
+        // Navigate to file and line
+        final container = ProviderScope.containerOf(context, listen: false);
+        container.read(uiStateProvider.notifier).openFile(result.filePath);
+
+        // Close the search dialog
         Navigator.of(context).pop();
+
+        // TODO(user): Scroll to specific line (requires editor integration)
+        // This would need the editor widget to expose a scrollToLine method
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),

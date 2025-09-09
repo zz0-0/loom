@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/core/explorer/data/models/collection_template.dart';
 import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart'
     as domain;
 import 'package:loom/features/core/explorer/domain/services/smart_categorization_service.dart';
@@ -482,7 +481,7 @@ class _FileTreeItemState extends State<_FileTreeItem> {
               child: Row(
                 children: [
                   Icon(
-                    suggestion.icon,
+                    getIconDataFromString(suggestion.icon),
                     size: 16,
                     color: theme.colorScheme.primary,
                   ),
@@ -572,19 +571,11 @@ class _FileTreeItemState extends State<_FileTreeItem> {
           widget.onFileSelected(node.path);
         }
       case 'rename':
-        // TODO(user): Implement rename functionality
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Rename functionality coming soon')),
-          );
-        }
+        // Implement rename functionality
+        _showRenameDialog(context, node);
       case 'delete':
-        // TODO(user): Implement delete functionality
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Delete functionality coming soon')),
-          );
-        }
+        // Implement delete functionality
+        _showDeleteConfirmationDialog(context, node);
       default:
         // Handle collection suggestion actions
         if (action.startsWith('add_to_collection_')) {
@@ -601,7 +592,7 @@ class _FileTreeItemState extends State<_FileTreeItem> {
     String templateId,
   ) {
     // Get the template
-    final template = CollectionTemplates.getTemplate(templateId);
+    final template = domain.CollectionTemplates.getTemplate(templateId);
     if (template == null) return;
 
     // Create collection name from template
@@ -623,5 +614,162 @@ class _FileTreeItemState extends State<_FileTreeItem> {
         ),
       );
     }
+  }
+
+  void _showRenameDialog(BuildContext context, domain.FileTreeNode node) {
+    final controller = TextEditingController(text: path.basename(node.path));
+    final extension = path.extension(node.path);
+    final nameWithoutExtension = path.basenameWithoutExtension(node.path);
+
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Rename'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: 'Enter new name',
+            suffixText: extension.isNotEmpty ? extension : null,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final newName = controller.text.trim();
+              if (newName.isEmpty || newName == nameWithoutExtension) {
+                Navigator.of(context).pop();
+                return;
+              }
+
+              final newPath = path.join(
+                path.dirname(node.path),
+                extension.isNotEmpty ? '$newName$extension' : newName,
+              );
+
+              try {
+                await ProviderScope.containerOf(context)
+                    .read(currentWorkspaceProvider.notifier)
+                    .renameItem(node.path, newPath);
+
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Renamed to ${path.basename(newPath)}'),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to rename: $e'),
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                }
+              }
+            },
+            child: const Text('Rename'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(
+    BuildContext context,
+    domain.FileTreeNode node,
+  ) {
+    final isDirectory = node.type == domain.FileTreeNodeType.directory;
+    final itemType = isDirectory ? 'directory' : 'file';
+
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete $itemType'),
+        content: Text(
+          'Are you sure you want to delete "${path.basename(node.path)}"? '
+          '${isDirectory ? 'This will delete the directory and all its contents.' : ''} '
+          'This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: () async {
+              try {
+                await ProviderScope.containerOf(context)
+                    .read(currentWorkspaceProvider.notifier)
+                    .deleteItem(node.path);
+
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('$itemType deleted successfully'),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to delete $itemType: $e'),
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                }
+              }
+            },
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Utility to convert icon strings to IconData
+IconData getIconDataFromString(String? iconName) {
+  switch (iconName) {
+    case 'code':
+      return LucideIcons.code;
+    case 'book':
+      return LucideIcons.book;
+    case 'file-text':
+      return LucideIcons.fileText;
+    case 'image':
+      return LucideIcons.image;
+    case 'settings':
+      return LucideIcons.settings;
+    case 'users':
+      return LucideIcons.users;
+    case 'briefcase':
+      return LucideIcons.briefcase;
+    case 'heart':
+      return LucideIcons.heart;
+    case 'star':
+      return LucideIcons.star;
+    case 'folder':
+      return LucideIcons.folder;
+    default:
+      return LucideIcons.star;
   }
 }

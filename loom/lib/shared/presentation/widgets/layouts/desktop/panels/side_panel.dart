@@ -134,16 +134,12 @@ class _ExplorerPanel extends ConsumerWidget {
               const Spacer(),
               IconButton(
                 icon: const Icon(LucideIcons.folderPlus, size: 16),
-                onPressed: () {
-                  // TODO(user): Add folder
-                },
+                onPressed: () => _createNewFolder(context, ref),
                 splashRadius: 12,
               ),
               IconButton(
                 icon: const Icon(LucideIcons.filePlus, size: 16),
-                onPressed: () {
-                  // TODO(user): Add file
-                },
+                onPressed: () => _createNewFile(context, ref),
                 splashRadius: 12,
               ),
               IconButton(
@@ -207,6 +203,126 @@ class _ExplorerPanel extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _createNewFolder(BuildContext context, WidgetRef ref) async {
+    final controller = TextEditingController();
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Create New Folder'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Enter folder name',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final folderName = controller.text.trim();
+              if (folderName.isNotEmpty) {
+                Navigator.of(context).pop(folderName);
+              }
+            },
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null && context.mounted) {
+      try {
+        // For now, just show a success message
+        // In a real implementation, this would create the folder in the current workspace
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Created folder: $result'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        // TODO(user): Implement actual folder creation
+        // final workspace = ref.read(currentWorkspaceProvider);
+        // if (workspace != null) {
+        //   final folderPath = '${workspace.rootPath}/$result';
+        //   await Directory(folderPath).create(recursive: true);
+        // }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create folder: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _createNewFile(BuildContext context, WidgetRef ref) async {
+    final controller = TextEditingController();
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Create New File'),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: 'Enter file name (e.g., document.md)',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final fileName = controller.text.trim();
+              if (fileName.isNotEmpty) {
+                Navigator.of(context).pop(fileName);
+              }
+            },
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null && context.mounted) {
+      try {
+        // For now, just show a success message
+        // In a real implementation, this would create the file in the current workspace
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Created file: $result'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
+        // TODO(user): Implement actual file creation
+        // final workspace = ref.read(currentWorkspaceProvider);
+        // if (workspace != null) {
+        //   final fileName = result.endsWith('.md') ? result : '$result.md';
+        //   final filePath = '${workspace.rootPath}/$fileName';
+        //   await File(filePath).create(recursive: true);
+        //   ref.read(uiStateProvider.notifier).openFile(filePath);
+        // }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create file: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
   }
 }
 

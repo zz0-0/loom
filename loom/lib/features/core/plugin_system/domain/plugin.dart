@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 /// Typedef for plugin event listeners
@@ -128,12 +130,14 @@ class PluginSettings {
 
   /// Save settings (persistence would be implemented here)
   Future<void> save() async {
-    // TODO(user): Implement persistence
+    // TODO(user): Implement persistence using shared_preferences or similar
+    // For now, this is a placeholder that would save to local storage
   }
 
   /// Load settings (persistence would be implemented here)
   Future<void> load() async {
-    // TODO(user): Implement persistence
+    // TODO(user): Implement persistence using shared_preferences or similar
+    // For now, this is a placeholder that would load from local storage
   }
 
   /// Get all settings as a map
@@ -158,6 +162,7 @@ class PluginSettings {
 /// Event bus for plugin communication
 class PluginEventBus {
   final Map<String, List<PluginEventListener>> _listeners = {};
+  final Map<String, StreamController<dynamic>> _streamControllers = {};
 
   /// Subscribe to an event
   void subscribe(String event, PluginEventListener listener) {
@@ -177,12 +182,31 @@ class PluginEventBus {
         listener(data);
       }
     }
+
+    // Also publish to stream if it exists
+    final controller = _streamControllers[event];
+    if (controller != null && !controller.isClosed) {
+      controller.add(data);
+    }
   }
 
   /// Get a stream for an event (for reactive programming)
   Stream<T> stream<T>(String event) {
-    // TODO(user): Implement stream-based event system
-    return Stream.empty();
+    // Create a stream controller for this event if it doesn't exist
+    if (!_streamControllers.containsKey(event)) {
+      _streamControllers[event] = StreamController<T>.broadcast();
+    }
+
+    return _streamControllers[event]!.stream as Stream<T>;
+  }
+
+  /// Dispose of all stream controllers
+  void dispose() {
+    for (final controller in _streamControllers.values) {
+      controller.close();
+    }
+    _streamControllers.clear();
+    _listeners.clear();
   }
 }
 
