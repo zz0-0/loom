@@ -379,7 +379,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
       onTap: () {
         // Navigate to file and line
         final container = ProviderScope.containerOf(context, listen: false);
-        container.read(uiStateProvider.notifier).openFile(result.filePath);
+        container.read(fileOpeningServiceProvider).openFile(result.filePath);
 
         // Close the search dialog
         Navigator.of(context).pop();

@@ -117,6 +117,7 @@ class _SidebarButtonState extends State<_SidebarButton> {
       Icons.menu: Icons.menu,
       Icons.more_vert: Icons.more_vert,
       Icons.more_horiz: Icons.more_horiz,
+      Icons.account_tree: Icons.account_tree,
     };
 
     // Get filled version if available, otherwise return original
@@ -152,6 +153,7 @@ class _SidebarButtonState extends State<_SidebarButton> {
       Icons.menu: Icons.menu_outlined,
       Icons.more_vert: Icons.more_vert_outlined,
       Icons.more_horiz: Icons.more_horiz_outlined,
+      Icons.account_tree: Icons.account_tree_outlined,
     };
 
     // Get outlined version if available, otherwise return original

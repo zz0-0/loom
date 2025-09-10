@@ -6,6 +6,7 @@ import 'package:loom/core/utils/platform_utils.dart';
 import 'package:loom/features/core/explorer/presentation/items/explorer_sidebar_item.dart';
 import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
 import 'package:loom/features/core/plugin_system/domain/plugin_bootstrapper.dart';
+import 'package:loom/features/core/search/presentation/items/search_sidebar_item.dart';
 import 'package:loom/features/core/search/presentation/widgets/global_search_dialog.dart';
 import 'package:loom/features/core/settings/presentation/widgets/settings_content.dart';
 import 'package:loom/features/core/settings/presentation/widgets/settings_sidebar_item.dart';
@@ -18,7 +19,6 @@ import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/extensible_sidebar.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/file_content_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/top_bar_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/bottom_bar.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/navigation/top_bar.dart';
@@ -73,13 +73,21 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
             onPressedWithContext: _showOpenFolderDialog,
           ),
           SimpleMenuItem(label: 'Save', icon: Icons.save, onPressed: () {}),
-          SimpleMenuItem(label: 'Save As...', onPressed: () {}),
+          SimpleMenuItem(
+            label: 'Save As...',
+            icon: Icons.save_as,
+            onPressed: () {},
+          ),
           SimpleMenuItem(
             label: 'Export',
             icon: Icons.file_download,
-            onPressedWithContext: _showExportDialog,
+            onPressed: () {},
+          ), // Removed export menu item
+          SimpleMenuItem(
+            label: 'Exit',
+            icon: Icons.exit_to_app,
+            onPressed: () {},
           ),
-          SimpleMenuItem(label: 'Exit', onPressed: () {}),
         ],
       ),
       SimpleMenuItem(
@@ -129,7 +137,6 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       _registerExplorerFeature();
       _registerSettingsFeature();
       _registerSearchFeature();
-      _registerExportFeature();
     } catch (e) {
       // If feature registration fails, continue without them
       debugPrint('Feature registration failed: $e');
@@ -158,20 +165,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
   void _registerSearchFeature() {
     // Register search feature
-    final searchItem = _SearchTopBarItem(
-      onPressed: _showGlobalSearchDialog,
-    );
-
-    TopBarRegistry().registerItem(searchItem);
-  }
-
-  void _registerExportFeature() {
-    // Register export feature
-    final exportItem = _ExportTopBarItem(
-      onPressed: _showExportDialog,
-    );
-
-    TopBarRegistry().registerItem(exportItem);
+    final searchItem = SearchSidebarItem();
+    UIRegistry().registerSidebarItem(searchItem);
   }
 
   void _showGlobalSearchDialog(BuildContext context) {
@@ -180,43 +175,6 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       context: context,
       builder: (context) => const GlobalSearchDialog(),
     );
-  }
-
-  void _showExportDialog(BuildContext context) {
-    final ref = ProviderScope.containerOf(context, listen: false);
-    // Implement export dialog
-    final uiState = ref.read(uiStateProvider);
-    if (uiState.openedFile != null) {
-      // For now, show a placeholder - in a real implementation,
-      // you'd read the file content and show the export dialog
-      showDialog<void>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Export'),
-          content: Text('Export functionality for ${uiState.openedFile}'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
-            ),
-          ],
-        ),
-      );
-    } else {
-      showDialog<void>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Export'),
-          content: const Text('Please open a file first to export it.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close'),
-            ),
-          ],
-        ),
-      );
-    }
   }
 
   Future<void> _showOpenFolderDialog(BuildContext context) async {
@@ -299,12 +257,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
             _showGlobalSearchDialog(context);
             return KeyEventResult.handled;
           }
-          // Export shortcut (Ctrl+E)
-          if (HardwareKeyboard.instance.isControlPressed &&
-              event.logicalKey == LogicalKeyboardKey.keyE) {
-            _showExportDialog(context);
-            return KeyEventResult.handled;
-          }
+          // Export shortcut removed (Ctrl+E)
         }
         return KeyEventResult.ignored;
       },
@@ -372,52 +325,4 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   }
 }
 
-/// Search top bar item
-class _SearchTopBarItem implements TopBarItem {
-  const _SearchTopBarItem({required this.onPressed});
-
-  final void Function(BuildContext) onPressed;
-
-  @override
-  String get id => 'search';
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.search, size: 18),
-      tooltip: 'Global Search (Ctrl+Shift+F)',
-      onPressed: () => onPressed(context),
-    );
-  }
-
-  @override
-  TopBarPosition get position => TopBarPosition.left;
-
-  @override
-  int get priority => 10;
-}
-
-/// Export top bar item
-class _ExportTopBarItem implements TopBarItem {
-  const _ExportTopBarItem({required this.onPressed});
-
-  final void Function(BuildContext) onPressed;
-
-  @override
-  String get id => 'export';
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.file_download, size: 18),
-      tooltip: 'Export File (Ctrl+E)',
-      onPressed: () => onPressed(context),
-    );
-  }
-
-  @override
-  TopBarPosition get position => TopBarPosition.left;
-
-  @override
-  int get priority => 20;
-}
+/// Search top bar item - removed as search is now in sidebar

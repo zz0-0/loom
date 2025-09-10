@@ -235,8 +235,8 @@ class WorkspaceNotifier extends StateNotifier<domain.Workspace?> {
       state!.metadata?.collections ?? {},
     );
 
-    final collection = collections[collectionName] ?? [];
-    collection.remove(filePath);
+    final collection = collections[collectionName] ?? []
+      ..remove(filePath);
 
     if (collection.isEmpty) {
       collections.remove(collectionName);
@@ -264,6 +264,17 @@ class WorkspaceNotifier extends StateNotifier<domain.Workspace?> {
 
     try {
       await createFileUseCase.call(state!.rootPath, filePath, content: content);
+      await refreshFileTree();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> createDirectory(String directoryPath) async {
+    if (state == null) return;
+
+    try {
+      await createDirectoryUseCase.call(state!.rootPath, directoryPath);
       await refreshFileTree();
     } catch (e) {
       rethrow;

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/shared/presentation/providers/editor_state_provider.dart';
-import 'package:loom/shared/presentation/providers/tab_provider.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
 import 'package:path/path.dart' as path;
 
@@ -33,12 +32,7 @@ class FileStatusBottomBarItem implements BottomBarItem {
     }
 
     final filePath = editorState.filePath!;
-    final fileName = path.basename(filePath);
     final fileExtension = path.extension(filePath).toLowerCase();
-
-    // Get dirty state from tab provider
-    final tabState = ref.watch(tabProvider);
-    final isDirty = tabState.activeTab?.isDirty ?? false;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -49,50 +43,41 @@ class FileStatusBottomBarItem implements BottomBarItem {
           Icon(
             _getFileIcon(fileExtension),
             size: 14,
-            color: _getFileColor(fileExtension, theme),
+            // color: _getFileColor(fileExtension, theme),
           ),
           const SizedBox(width: 4),
 
           // File type badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: _getFileColor(fileExtension, theme).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: _getFileColor(fileExtension, theme).withOpacity(0.3),
-                width: 0.5,
-              ),
-            ),
-            child: Text(
-              _getFileTypeLabel(fileExtension),
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: _getFileColor(fileExtension, theme),
-              ),
+          Text(
+            fileExtension.isNotEmpty
+                ? fileExtension
+                : _getFileTypeLabel(fileExtension),
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+              // color: _getFileColor(fileExtension, theme),
             ),
           ),
 
           const SizedBox(width: 8),
 
           // File name
-          Text(
-            fileName,
-            style: theme.textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          // Text(
+          //   fileName,
+          //   style: theme.textTheme.bodySmall?.copyWith(
+          //     fontWeight: FontWeight.w500,
+          //   ),
+          // ),
 
           // Dirty indicator
-          if (isDirty) ...[
-            const SizedBox(width: 4),
-            Icon(
-              Icons.circle,
-              size: 6,
-              color: theme.colorScheme.primary,
-            ),
-          ],
+          // if (isDirty) ...[
+          //   const SizedBox(width: 4),
+          //   Icon(
+          //     Icons.circle,
+          //     size: 6,
+          //     color: theme.colorScheme.primary,
+          //   ),
+          // ],
         ],
       ),
     );

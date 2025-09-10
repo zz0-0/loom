@@ -42,11 +42,13 @@ class ContentArea extends ConsumerWidget {
                     filePath: openedFile!,
                     isActive: true,
                     onTap: () {
-                      ref.read(uiStateProvider.notifier).openFile(openedFile!);
+                      ref
+                          .read(fileOpeningServiceProvider)
+                          .openFile(openedFile!);
                     },
                     onClose: () {
                       // Close file
-                      ref.read(uiStateProvider.notifier).closeFile();
+                      ref.read(fileOpeningServiceProvider).closeFile();
                     },
                   ),
                 ],
@@ -300,7 +302,7 @@ class _WelcomeView extends StatelessWidget {
               .createFile(filePath);
 
           // Open the newly created file
-          ref.read(uiStateProvider.notifier).openFile(filePath);
+          await ref.read(fileOpeningServiceProvider).openFile(filePath);
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

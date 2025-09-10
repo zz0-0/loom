@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +7,7 @@ import 'package:loom/features/core/export/presentation/widgets/export_dialog.dar
 import 'package:loom/features/core/settings/presentation/providers/general_settings_provider.dart';
 import 'package:loom/shared/data/providers.dart';
 import 'package:loom/shared/domain/services/edit_history_service.dart';
+import 'package:loom/shared/presentation/providers/editor_state_provider.dart';
 import 'package:loom/shared/presentation/providers/tab_provider.dart';
 import 'package:loom/shared/presentation/theme/app_animations.dart';
 import 'package:loom/shared/presentation/widgets/blox_viewer.dart';
@@ -92,7 +95,12 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   void initState() {
     super.initState();
     _initializeServices();
-    _loadCurrentFile();
+    // Delay loading current file until after widget tree is built
+    Future.microtask(() {
+      if (mounted) {
+        _loadCurrentFile();
+      }
+    });
     _controller.addListener(_onTextChanged);
     _initializeSyntaxHighlighter();
     _foldingManager = CodeFoldingManager('');
@@ -105,13 +113,14 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     if (_scrollController.hasClients) {
       final offset = _scrollController.offset;
 
+      // Only sync if the offset has actually changed to prevent unnecessary rebuilds
       if (_lineNumbersScrollController.hasClients &&
-          _lineNumbersScrollController.offset != offset) {
+          (_lineNumbersScrollController.offset - offset).abs() > 0.1) {
         _lineNumbersScrollController.jumpTo(offset);
       }
 
       if (_syntaxScrollController.hasClients &&
-          _syntaxScrollController.offset != offset) {
+          (_syntaxScrollController.offset - offset).abs() > 0.1) {
         _syntaxScrollController.jumpTo(offset);
       }
     }
@@ -168,12 +177,29 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
         _currentFilePath = filePath;
         _isBloxFile = filePath.toLowerCase().endsWith('.blox');
-        _loadFileContent(filePath);
+
+        // Delay provider update until after widget tree is built
+        Future.microtask(() {
+          if (mounted) {
+            // Update editor state provider when file changes
+            ref.read(editorStateProvider.notifier).updateFilePath(filePath);
+
+            _loadFileContent(filePath);
+          }
+        });
       }
     } else {
       // Clear current file if no valid tab is selected
       _currentFilePath = null;
       _controller.clear();
+
+      // Clear editor state when no file is selected
+      Future.microtask(() {
+        if (mounted) {
+          ref.read(editorStateProvider.notifier).clear();
+        }
+      });
+
       setState(() {
         _isLoading = false;
         _error = null;
@@ -201,17 +227,28 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       // Initialize undo/redo history with loaded content
       _editHistoryService.addState(content);
 
+      // Update editor state with content
+      await Future.microtask(() {
+        if (mounted) {
+          ref.read(editorStateProvider.notifier).updateContent(content);
+        }
+      });
+
       // Parse Blox content if it's a .blox file
       if (_isBloxFile) {
         await _parseBloxContent(content);
       }
 
       // Mark tab as clean after successful load
-      if (_currentFilePath != null) {
-        ref
-            .read(tabProvider.notifier)
-            .updateTab(_currentFilePath!, isDirty: false);
-      }
+      await Future.microtask(() {
+        if (mounted) {
+          if (_currentFilePath != null) {
+            ref
+                .read(tabProvider.notifier)
+                .updateTab(_currentFilePath!, isDirty: false);
+          }
+        }
+      });
 
       // Initialize auto-save for this file
       _initializeAutoSaveForFile(filePath);
@@ -247,9 +284,24 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       final warnings = validateBloxSyntax(content: content);
       _syntaxWarnings = warnings;
 
+      // Update editor state with parsed document and warnings
+      await Future.microtask(() {
+        if (mounted) {
+          ref.read(editorStateProvider.notifier).updateParsedDocument(document);
+          ref.read(editorStateProvider.notifier).updateSyntaxWarnings(warnings);
+        }
+      });
+
       setState(() {});
     } catch (e) {
       _syntaxWarnings = ['Parse error: $e'];
+      await Future.microtask(() {
+        if (mounted) {
+          ref
+              .read(editorStateProvider.notifier)
+              .updateSyntaxWarnings(['Parse error: $e']);
+        }
+      });
       setState(() {});
     }
   }
@@ -267,9 +319,13 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       }
 
       // Mark tab as not dirty
-      ref
-          .read(tabProvider.notifier)
-          .updateTab(_currentFilePath!, isDirty: false);
+      await Future.microtask(() {
+        if (mounted) {
+          ref
+              .read(tabProvider.notifier)
+              .updateTab(_currentFilePath!, isDirty: false);
+        }
+      });
 
       // Mark changes as saved for auto-save
       _autoSaveService.markChangesSaved(_currentFilePath!);
@@ -292,9 +348,22 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     // Don't mark as dirty if we're currently loading a file
     if (_currentFilePath != null && !_isLoadingFile) {
       // Mark tab as dirty when content changes
-      ref
-          .read(tabProvider.notifier)
-          .updateTab(_currentFilePath!, isDirty: true);
+      Future.microtask(() {
+        if (mounted) {
+          ref
+              .read(tabProvider.notifier)
+              .updateTab(_currentFilePath!, isDirty: true);
+        }
+      });
+
+      // Update editor state with new content
+      Future.microtask(() {
+        if (mounted) {
+          ref
+              .read(editorStateProvider.notifier)
+              .updateContent(_controller.text);
+        }
+      });
 
       // Add current state to undo history
       _editHistoryService.addState(_controller.text);
@@ -318,9 +387,13 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       _controller.text = previousState;
       // Mark as dirty if the content changed
       if (_currentFilePath != null) {
-        ref
-            .read(tabProvider.notifier)
-            .updateTab(_currentFilePath!, isDirty: true);
+        Future.microtask(() {
+          if (mounted) {
+            ref
+                .read(tabProvider.notifier)
+                .updateTab(_currentFilePath!, isDirty: true);
+          }
+        });
       }
     }
   }
@@ -331,9 +404,13 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       _controller.text = nextState;
       // Mark as dirty if the content changed
       if (_currentFilePath != null) {
-        ref
-            .read(tabProvider.notifier)
-            .updateTab(_currentFilePath!, isDirty: true);
+        Future.microtask(() {
+          if (mounted) {
+            ref
+                .read(tabProvider.notifier)
+                .updateTab(_currentFilePath!, isDirty: true);
+          }
+        });
       }
     }
   }
@@ -363,9 +440,13 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       // Mark as dirty
       if (_currentFilePath != null) {
-        ref
-            .read(tabProvider.notifier)
-            .updateTab(_currentFilePath!, isDirty: true);
+        Future.microtask(() {
+          if (mounted) {
+            ref
+                .read(tabProvider.notifier)
+                .updateTab(_currentFilePath!, isDirty: true);
+          }
+        });
       }
     }
   }
@@ -404,9 +485,13 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       // Mark as dirty
       if (_currentFilePath != null) {
-        ref
-            .read(tabProvider.notifier)
-            .updateTab(_currentFilePath!, isDirty: true);
+        await Future.microtask(() {
+          if (mounted) {
+            ref
+                .read(tabProvider.notifier)
+                .updateTab(_currentFilePath!, isDirty: true);
+          }
+        });
       }
     }
   }
@@ -460,9 +545,13 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
     // Mark as dirty
     if (_currentFilePath != null) {
-      ref
-          .read(tabProvider.notifier)
-          .updateTab(_currentFilePath!, isDirty: true);
+      Future.microtask(() {
+        if (mounted) {
+          ref
+              .read(tabProvider.notifier)
+              .updateTab(_currentFilePath!, isDirty: true);
+        }
+      });
     }
   }
 
@@ -544,9 +633,13 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
     // Mark as dirty
     if (_currentFilePath != null) {
-      ref
-          .read(tabProvider.notifier)
-          .updateTab(_currentFilePath!, isDirty: true);
+      Future.microtask(() {
+        if (mounted) {
+          ref
+              .read(tabProvider.notifier)
+              .updateTab(_currentFilePath!, isDirty: true);
+        }
+      });
     }
   }
 
@@ -587,6 +680,19 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         _parseBloxContent(_controller.text);
       }
     });
+  }
+
+  double _calculateMinWidth() {
+    if (_controller.text.isEmpty) return 2000;
+
+    final lines = _controller.text.split('\n');
+    final longestLine = lines.reduce((a, b) => a.length > b.length ? a : b);
+
+    // Estimate width based on character count (rough estimate)
+    const charWidth = 8.0; // Approximate width per character in monospace
+    final estimatedWidth = longestLine.length * charWidth + 100; // Add padding
+
+    return max(2000, estimatedWidth); // Minimum width of 2000
   }
 
   @override
@@ -790,6 +896,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                 }
               },
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Line numbers (optional)
                   if (_showLineNumbers) _buildLineNumbers(theme),
@@ -801,20 +908,23 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
                   // Minimap (optional)
                   if (_showMinimap)
-                    MinimapWidget(
-                      text: _controller.text,
-                      scrollPosition: _scrollController.hasClients
-                          ? _scrollController.position.pixels
-                          : 0,
-                      maxScrollExtent: _scrollController.hasClients
-                          ? _scrollController.position.maxScrollExtent
-                          : 0,
-                      viewportHeight: _scrollController.hasClients
-                          ? _scrollController.position.viewportDimension
-                          : 0,
-                      onScrollToPosition: _scrollToPosition,
-                      isBloxFile: _isBloxFile,
-                      showLineNumbers: _showLineNumbers,
+                    SizedBox(
+                      width: 200, // Fixed width for minimap
+                      child: MinimapWidget(
+                        text: _controller.text,
+                        scrollPosition: _scrollController.hasClients
+                            ? _scrollController.position.pixels
+                            : 0,
+                        maxScrollExtent: _scrollController.hasClients
+                            ? _scrollController.position.maxScrollExtent
+                            : 0,
+                        viewportHeight: _scrollController.hasClients
+                            ? _scrollController.position.viewportDimension
+                            : 0,
+                        onScrollToPosition: _scrollToPosition,
+                        isBloxFile: _isBloxFile,
+                        showLineNumbers: _showLineNumbers,
+                      ),
                     ),
                 ],
               ),
@@ -893,9 +1003,39 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     }
   }
 
+  // Cache for line numbers to prevent unnecessary rebuilds
+  List<String>? _cachedLogicalLines;
+  int? _cachedTextHash;
+  List<FoldableRegion>? _cachedFoldableRegions;
+  int? _cachedFoldingHash;
+
   Widget _buildLineNumbers(ThemeData theme) {
-    final lines =
+    // Calculate current text hash
+    final currentTextHash = _controller.text.hashCode;
+    final currentLogicalLines =
         _controller.text.isEmpty ? [''] : _controller.text.split('\n');
+
+    // Calculate folding hash based on regions
+    final currentFoldingHash = _foldingManager.regions.fold(
+      0,
+      (hash, region) =>
+          hash ^ region.startLine ^ region.endLine ^ (region.isFolded ? 1 : 0),
+    );
+
+    // Only rebuild if text or folding has actually changed
+    if (_cachedLogicalLines == null ||
+        _cachedTextHash != currentTextHash ||
+        _cachedLogicalLines!.length != currentLogicalLines.length ||
+        _cachedFoldableRegions == null ||
+        _cachedFoldingHash != currentFoldingHash) {
+      _cachedLogicalLines = currentLogicalLines;
+      _cachedTextHash = currentTextHash;
+      _cachedFoldableRegions = List.from(_foldingManager.regions);
+      _cachedFoldingHash = currentFoldingHash;
+    }
+
+    final lines = _cachedLogicalLines!;
+    final foldableRegions = _cachedFoldableRegions!;
 
     const fontSize = 14.0;
     const lineHeight = 1.5;
@@ -921,8 +1061,8 @@ class _FileEditorState extends ConsumerState<FileEditor> {
             children: lines.asMap().entries.map((entry) {
               final lineNumber = entry.key + 1;
 
-              // Check if this line starts a foldable region
-              final foldableRegion = _foldingManager.regions.firstWhere(
+              // Check if this line starts a foldable region (using cached regions)
+              final foldableRegion = foldableRegions.firstWhere(
                 (region) => region.startLine == entry.key,
                 orElse: () => FoldableRegion(
                   startLine: -1,
@@ -996,17 +1136,21 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         // Syntax highlighted display (background)
         SingleChildScrollView(
           controller: _syntaxScrollController,
+          scrollDirection: Axis.horizontal, // Allow horizontal scrolling
           physics:
               const NeverScrollableScrollPhysics(), // Let TextField handle scrolling
           child: Padding(
             padding:
                 const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-            child: SelectableText.rich(
-              _bloxHighlighter!.getHighlightedText(),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: 'monospace',
-                fontSize: 14,
-                height: 1.5,
+            child: SizedBox(
+              width: _calculateMinWidth(), // Dynamic width based on content
+              child: SelectableText.rich(
+                _bloxHighlighter!.getHighlightedText(),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontFamily: 'monospace',
+                  fontSize: 14,
+                  height: 1.5,
+                ),
               ),
             ),
           ),
@@ -1014,30 +1158,37 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
         // Editable TextField (foreground)
         Positioned.fill(
-          child: SingleChildScrollView(
+          child: Scrollbar(
             controller: _scrollController,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16, bottom: 8),
-              child: TextField(
-                controller: _controller,
-                maxLines: null,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontFamily: 'monospace',
-                  fontSize: 14,
-                  height: 1.5,
-                  color: Colors.transparent, // Make text invisible
-                ),
-                decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal, // Allow horizontal scrolling
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16, bottom: 8),
+                child: SizedBox(
+                  width: _calculateMinWidth(), // Dynamic width based on content
+                  child: TextField(
+                    controller: _controller,
+                    maxLines: null, // Allow multiple logical lines
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                      height: 1.5,
+                      color: Colors.transparent, // Make text invisible
+                    ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.only(
+                        left: 16,
+                        right: 16,
+                      ),
+                    ),
+                    onChanged: (_) => _onTextChanged(),
+                    focusNode: _textFieldFocusNode,
+                    cursorColor: theme.colorScheme.primary,
+                    showCursor: true,
                   ),
                 ),
-                onChanged: (_) => _onTextChanged(),
-                focusNode: _textFieldFocusNode,
-                cursorColor: theme.colorScheme.primary,
-                showCursor: true,
               ),
             ),
           ),
@@ -1047,27 +1198,34 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   }
 
   Widget _buildPlainEditor(ThemeData theme) {
-    return SingleChildScrollView(
+    return Scrollbar(
       controller: _scrollController,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16, bottom: 8),
-        child: TextField(
-          controller: _controller,
-          maxLines: null,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontFamily: 'monospace',
-            fontSize: 14,
-          ),
-          decoration: const InputDecoration(
-            border: InputBorder.none,
-            contentPadding: EdgeInsets.only(
-              left: 16,
-              right: 16,
-              bottom: 8,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        scrollDirection: Axis.horizontal, // Allow horizontal scrolling
+        child: Padding(
+          padding: const EdgeInsets.only(top: 16, bottom: 8),
+          child: SizedBox(
+            width: _calculateMinWidth(), // Dynamic width based on content
+            child: TextField(
+              controller: _controller,
+              maxLines: null,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontFamily: 'monospace',
+                fontSize: 14,
+              ),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 8,
+                ),
+              ),
+              onChanged: (_) => _onTextChanged(),
+              focusNode: _textFieldFocusNode,
             ),
           ),
-          onChanged: (_) => _onTextChanged(),
-          focusNode: _textFieldFocusNode,
         ),
       ),
     );

@@ -133,19 +133,19 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
       return item.title.toLowerCase().contains(lowercaseQuery) ||
           item.subtitle.toLowerCase().contains(lowercaseQuery) ||
           item.category.toLowerCase().contains(lowercaseQuery);
-    }).toList();
+    }).toList()
 
-    // Sort by relevance (title matches first, then subtitle, then category)
-    filtered.sort((a, b) {
-      final aTitle = a.title.toLowerCase().contains(lowercaseQuery);
-      final bTitle = b.title.toLowerCase().contains(lowercaseQuery);
+      // Sort by relevance (title matches first, then subtitle, then category)
+      ..sort((a, b) {
+        final aTitle = a.title.toLowerCase().contains(lowercaseQuery);
+        final bTitle = b.title.toLowerCase().contains(lowercaseQuery);
 
-      if (aTitle && !bTitle) return -1;
-      if (!aTitle && bTitle) return 1;
+        if (aTitle && !bTitle) return -1;
+        if (!aTitle && bTitle) return 1;
 
-      // If both or neither match title, sort alphabetically
-      return a.title.compareTo(b.title);
-    });
+        // If both or neither match title, sort alphabetically
+        return a.title.compareTo(b.title);
+      });
 
     setState(() {
       _filteredItems = filtered;
@@ -221,7 +221,7 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
 
   void _openFile(String filePath) {
     final container = ProviderScope.containerOf(context, listen: false);
-    container.read(uiStateProvider.notifier).openFile(filePath);
+    container.read(fileOpeningServiceProvider).openFile(filePath);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Opened: ${path.basename(filePath)}')),
     );
@@ -564,20 +564,20 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
           .toLowerCase();
       return fileName.contains(lowercaseQuery) ||
           relativePath.contains(lowercaseQuery);
-    }).toList();
+    }).toList()
 
-    // Sort by relevance (filename matches first, then path matches)
-    filtered.sort((a, b) {
-      final aFileName = path.basename(a).toLowerCase();
-      final bFileName = path.basename(b).toLowerCase();
-      final aStartsWith = aFileName.startsWith(lowercaseQuery);
-      final bStartsWith = bFileName.startsWith(lowercaseQuery);
+      // Sort by relevance (filename matches first, then path matches)
+      ..sort((a, b) {
+        final aFileName = path.basename(a).toLowerCase();
+        final bFileName = path.basename(b).toLowerCase();
+        final aStartsWith = aFileName.startsWith(lowercaseQuery);
+        final bStartsWith = bFileName.startsWith(lowercaseQuery);
 
-      if (aStartsWith && !bStartsWith) return -1;
-      if (!aStartsWith && bStartsWith) return 1;
+        if (aStartsWith && !bStartsWith) return -1;
+        if (!aStartsWith && bStartsWith) return 1;
 
-      return aFileName.compareTo(bFileName);
-    });
+        return aFileName.compareTo(bFileName);
+      });
 
     setState(() {
       _filteredFiles = filtered;
@@ -589,7 +589,7 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
     if (_filteredFiles.isNotEmpty && _selectedIndex < _filteredFiles.length) {
       final filePath = _filteredFiles[_selectedIndex];
       final container = ProviderScope.containerOf(context, listen: false);
-      container.read(uiStateProvider.notifier).openFile(filePath);
+      container.read(fileOpeningServiceProvider).openFile(filePath);
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Opened: ${path.basename(filePath)}')),

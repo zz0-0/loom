@@ -13,8 +13,7 @@ class PluginUIApi {
   /// Register a sidebar item
   void registerSidebarItem(String pluginId, SidebarItem item) {
     // Register with the main UI registry
-    final uiRegistry = UIRegistry();
-    uiRegistry.registerSidebarItem(item);
+    UIRegistry().registerSidebarItem(item);
 
     // Track ownership in plugin registry
     _registry.registerComponent(pluginId, item.id);
@@ -23,8 +22,7 @@ class PluginUIApi {
   /// Register a content provider
   void registerContentProvider(String pluginId, ContentProvider provider) {
     // Register with the main UI registry
-    final uiRegistry = UIRegistry();
-    uiRegistry.registerContentProvider(provider);
+    UIRegistry().registerContentProvider(provider);
 
     // Track ownership in plugin registry
     _registry.registerComponent(pluginId, provider.id);
@@ -33,8 +31,7 @@ class PluginUIApi {
   /// Register a menu item
   void registerMenuItem(String pluginId, MenuItem item) {
     // Register with the main menu registry
-    final menuRegistry = MenuRegistry();
-    menuRegistry.registerMenu(item);
+    MenuRegistry().registerMenu(item);
 
     // Track ownership in plugin registry
     _registry.registerComponent(pluginId, item.label);
@@ -43,8 +40,7 @@ class PluginUIApi {
   /// Register a bottom bar item
   void registerBottomBarItem(String pluginId, BottomBarItem item) {
     // Register with the main bottom bar registry
-    final bottomBarRegistry = BottomBarRegistry();
-    bottomBarRegistry.registerItem(item);
+    BottomBarRegistry().registerItem(item);
 
     // Track ownership in plugin registry
     _registry.registerComponent(pluginId, item.id);
@@ -53,8 +49,7 @@ class PluginUIApi {
   /// Register a top bar item
   void registerTopBarItem(String pluginId, TopBarItem item) {
     // Register with the main top bar registry
-    final topBarRegistry = TopBarRegistry();
-    topBarRegistry.registerItem(item);
+    TopBarRegistry().registerItem(item);
 
     // Track ownership in plugin registry
     _registry.registerComponent(pluginId, item.id);

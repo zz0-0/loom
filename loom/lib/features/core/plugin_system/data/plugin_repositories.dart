@@ -135,8 +135,8 @@ class LocalPluginMetadataRepository implements PluginMetadataRepository {
     final prefs = await SharedPreferences.getInstance();
 
     // Remove from installed plugins list
-    final installedPlugins = prefs.getStringList(_installedPluginsKey) ?? [];
-    installedPlugins.remove(pluginId);
+    final installedPlugins = prefs.getStringList(_installedPluginsKey) ?? []
+      ..remove(pluginId);
     await prefs.setStringList(_installedPluginsKey, installedPlugins);
 
     // Remove metadata

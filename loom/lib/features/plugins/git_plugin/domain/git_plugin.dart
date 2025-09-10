@@ -75,10 +75,8 @@ class GitPlugin implements Plugin {
   }
 
   void _registerCommands() {
-    final commandRegistry = CommandRegistry();
-
     // Git commands
-    commandRegistry
+    CommandRegistry()
       ..registerCommand(
         id,
         Command(
@@ -359,7 +357,10 @@ class GitPlugin implements Plugin {
         // Refresh status after staging
         await _checkGitStatus();
       } else {}
-    } catch (e) {}
+    } catch (e) {
+      // Handle error
+      debugPrint('Failed to stage file: $e');
+    }
   }
 
   Future<void> _unstageFile(String file) async {
@@ -374,7 +375,10 @@ class GitPlugin implements Plugin {
         // Refresh status after unstaging
         await _checkGitStatus();
       } else {}
-    } catch (e) {}
+    } catch (e) {
+      // Handle error
+      debugPrint('Failed to unstage file: $e');
+    }
   }
 
   Future<void> _showCommitDialog() async {
@@ -393,7 +397,10 @@ class GitPlugin implements Plugin {
         // Refresh status after commit
         await _checkGitStatus();
       } else {}
-    } catch (e) {}
+    } catch (e) {
+      // Handle error
+      debugPrint('Failed to commit changes: $e');
+    }
   }
 
   Future<void> _pushChanges() async {
@@ -406,7 +413,10 @@ class GitPlugin implements Plugin {
 
       if (result.exitCode == 0) {
       } else {}
-    } catch (e) {}
+    } catch (e) {
+      // Handle error
+      debugPrint('Failed to push changes: $e');
+    }
   }
 
   Future<void> _pullChanges() async {
@@ -421,7 +431,10 @@ class GitPlugin implements Plugin {
         // Refresh status after pull
         await _checkGitStatus();
       } else {}
-    } catch (e) {}
+    } catch (e) {
+      // Handle error
+      debugPrint('Failed to pull changes: $e');
+    }
   }
 
   Future<void> _showGitStatus() async {
@@ -442,7 +455,10 @@ class GitPlugin implements Plugin {
           }
         }
       } else {}
-    } catch (e) {}
+    } catch (e) {
+      // Handle error
+      debugPrint('Failed to get git status: $e');
+    }
   }
 
   @override

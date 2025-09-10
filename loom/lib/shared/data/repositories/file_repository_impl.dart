@@ -59,7 +59,9 @@ class FileRepositoryImpl implements FileRepository {
   }
 
   Future<void> _collectFilesRecursively(
-      Directory dir, List<String> files,) async {
+    Directory dir,
+    List<String> files,
+  ) async {
     try {
       await for (final entity in dir.list()) {
         if (entity is File) {
@@ -79,6 +81,15 @@ class FileRepositoryImpl implements FileRepository {
       }
     } catch (e) {
       // Skip directories that can't be read
+    }
+  }
+
+  @override
+  Future<void> createFile(String path, [String content = '']) async {
+    final file = File(path);
+    await file.create(recursive: true);
+    if (content.isNotEmpty) {
+      await file.writeAsString(content);
     }
   }
 

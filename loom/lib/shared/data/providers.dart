@@ -8,6 +8,7 @@ import 'package:loom/shared/domain/repositories/shared_settings_repository.dart'
 import 'package:loom/shared/domain/services/code_folding_service.dart';
 import 'package:loom/shared/domain/services/edit_history_service.dart';
 import 'package:loom/shared/domain/services/file_content_service.dart';
+import 'package:loom/shared/domain/use_cases/file_operations_use_cases.dart';
 
 /// Shared settings repository provider
 /// This should be overridden by the appropriate feature implementation
@@ -37,4 +38,14 @@ final editHistoryServiceProvider = Provider<EditHistoryService>(
 /// Code folding service provider
 final codeFoldingServiceProvider = Provider<CodeFoldingService>(
   (ref) => CodeFoldingServiceImpl(),
+);
+
+/// Create file use case provider
+final createFileUseCaseProvider = Provider<CreateFileUseCase>(
+  (ref) => CreateFileUseCase(ref.watch(fileRepositoryProvider)),
+);
+
+/// Create directory use case provider
+final createDirectoryUseCaseProvider = Provider<CreateDirectoryUseCase>(
+  (ref) => CreateDirectoryUseCase(ref.watch(fileRepositoryProvider)),
 );

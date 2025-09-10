@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
 import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -195,7 +196,7 @@ class _ExplorerPanel extends ConsumerWidget {
                 icon: LucideIcons.file,
                 name: 'pubspec.yaml',
                 onTap: () {
-                  ref.read(uiStateProvider.notifier).openFile('pubspec.yaml');
+                  ref.read(fileOpeningServiceProvider).openFile('pubspec.yaml');
                 },
               ),
             ],
@@ -238,21 +239,27 @@ class _ExplorerPanel extends ConsumerWidget {
 
     if (result != null && context.mounted) {
       try {
-        // For now, just show a success message
-        // In a real implementation, this would create the folder in the current workspace
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Created folder: $result'),
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        final workspace = ref.read(currentWorkspaceProvider);
+        if (workspace != null) {
+          final folderPath = '${workspace.rootPath}/$result';
+          await ref
+              .read(currentWorkspaceProvider.notifier)
+              .createDirectory(folderPath);
 
-        // TODO(user): Implement actual folder creation
-        // final workspace = ref.read(currentWorkspaceProvider);
-        // if (workspace != null) {
-        //   final folderPath = '${workspace.rootPath}/$result';
-        //   await Directory(folderPath).create(recursive: true);
-        // }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Created folder: $result'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please open a workspace first'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -297,23 +304,30 @@ class _ExplorerPanel extends ConsumerWidget {
 
     if (result != null && context.mounted) {
       try {
-        // For now, just show a success message
-        // In a real implementation, this would create the file in the current workspace
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Created file: $result'),
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        final workspace = ref.read(currentWorkspaceProvider);
+        if (workspace != null) {
+          final filePath = '${workspace.rootPath}/$result';
+          await ref
+              .read(currentWorkspaceProvider.notifier)
+              .createFile(filePath);
 
-        // TODO(user): Implement actual file creation
-        // final workspace = ref.read(currentWorkspaceProvider);
-        // if (workspace != null) {
-        //   final fileName = result.endsWith('.md') ? result : '$result.md';
-        //   final filePath = '${workspace.rootPath}/$fileName';
-        //   await File(filePath).create(recursive: true);
-        //   ref.read(uiStateProvider.notifier).openFile(filePath);
-        // }
+          // Open the newly created file
+          ref.read(fileOpeningServiceProvider).openFile(filePath);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Created and opened: $result'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please open a workspace first'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

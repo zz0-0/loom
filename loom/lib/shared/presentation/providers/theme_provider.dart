@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/shared/data/providers.dart';
 import 'package:loom/shared/domain/repositories/shared_settings_repository.dart';
+import 'package:loom/shared/presentation/providers/editor_state_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 
 // Theme mode state notifier
@@ -168,8 +169,56 @@ class UIStateNotifier extends StateNotifier<UIState> {
   void closeFile() {
     state = state.copyWith(clearOpenedFile: true);
   }
+
+  void loadFileContent(String filePath, String content) {
+    // This method will be called to update both UI and editor state
+    state = state.copyWith(openedFile: filePath);
+  }
 }
 
 final uiStateProvider = StateNotifierProvider<UIStateNotifier, UIState>(
   (ref) => UIStateNotifier(),
 );
+
+// File opening service that coordinates between UI state and editor state
+class FileOpeningService {
+  const FileOpeningService(this._ref);
+  final Ref _ref;
+
+  Future<void> openFile(String filePath) async {
+    try {
+      // Update UI state first
+      _ref.read(uiStateProvider.notifier).openFile(filePath);
+
+      // Update editor state with file path immediately
+      _ref.read(editorStateProvider.notifier).updateFilePath(filePath);
+
+      // Load file content asynchronously
+      final fileRepository = _ref.read(fileRepositoryProvider);
+      final content = await fileRepository.readFile(filePath);
+
+      // Update editor state with content
+      _ref.read(editorStateProvider.notifier).updateContent(content);
+
+      // If it's a Blox file, try to parse it
+      if (filePath.toLowerCase().endsWith('.blox')) {
+        // TODO(user): Parse Blox document when parser is available
+        // final parsedDocument = await _ref.read(bloxParserProvider).parse(content);
+        // _ref.read(editorStateProvider.notifier).updateParsedDocument(parsedDocument);
+      }
+    } catch (e) {
+      // Handle error - could show snackbar or update error state
+      debugPrint('Failed to open file: $e');
+    }
+  }
+
+  void closeFile() {
+    _ref.read(uiStateProvider.notifier).closeFile();
+    _ref.read(editorStateProvider.notifier).clear();
+  }
+}
+
+// Provider for file opening service
+final fileOpeningServiceProvider = Provider<FileOpeningService>((ref) {
+  return FileOpeningService(ref);
+});

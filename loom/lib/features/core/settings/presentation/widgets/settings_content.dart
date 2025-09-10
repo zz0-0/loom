@@ -7,7 +7,6 @@ import 'package:loom/features/core/settings/presentation/providers/general_setti
 import 'package:loom/features/core/settings/presentation/providers/top_bar_settings_provider.dart';
 import 'package:loom/features/core/settings/presentation/providers/window_controls_provider.dart';
 import 'package:loom/features/core/settings/presentation/widgets/theme_customization_widgets.dart';
-import 'package:loom/shared/presentation/providers/theme_provider.dart';
 import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 import 'package:loom/shared/presentation/widgets/layouts/desktop/core/window_controls.dart';
@@ -100,7 +99,7 @@ class ThemeSettings extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final currentMode = ref.watch(themeModeProvider);
+    final currentMode = AdaptiveTheme.of(context).mode;
     final customTheme = ref.watch(customThemeProvider);
     final fontSettings = ref.watch(fontSettingsProvider);
 
@@ -128,7 +127,6 @@ class ThemeSettings extends ConsumerWidget {
                     icon: Icons.brightness_auto,
                     isSelected: currentMode == AdaptiveThemeMode.system,
                     onTap: () {
-                      ref.read(themeModeProvider.notifier).setSystem();
                       AdaptiveTheme.of(context).setSystem();
                     },
                   ),
@@ -140,7 +138,6 @@ class ThemeSettings extends ConsumerWidget {
                     icon: Icons.wb_sunny,
                     isSelected: currentMode == AdaptiveThemeMode.light,
                     onTap: () {
-                      ref.read(themeModeProvider.notifier).setLight();
                       AdaptiveTheme.of(context).setLight();
                     },
                   ),
@@ -152,7 +149,6 @@ class ThemeSettings extends ConsumerWidget {
                     icon: Icons.nightlight_round,
                     isSelected: currentMode == AdaptiveThemeMode.dark,
                     onTap: () {
-                      ref.read(themeModeProvider.notifier).setDark();
                       AdaptiveTheme.of(context).setDark();
                     },
                   ),

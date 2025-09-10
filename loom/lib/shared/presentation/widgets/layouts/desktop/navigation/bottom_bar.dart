@@ -12,32 +12,32 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
+  late final BottomBarRegistry _registry;
+
   @override
   void initState() {
     super.initState();
+    _registry = BottomBarRegistry();
     _registerDefaultItems();
   }
 
   void _registerDefaultItems() {
-    final registry = BottomBarRegistry();
-
     // Register default items
     final defaultItems = [
-      StatusBottomBarItem(),
+      // StatusBottomBarItem(),
       const FileStatusBottomBarItem(),
       const CursorPositionBottomBarItem(),
       const BloxDocumentInfoBottomBarItem(),
-      EncodingBottomBarItem(),
-      LineEndingBottomBarItem(),
+      // EncodingBottomBarItem(),
+      // LineEndingBottomBarItem(),
     ];
-    registry.registerItems(defaultItems);
+    _registry.registerItems(defaultItems);
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final registry = BottomBarRegistry();
-    final items = registry.items;
+    final items = _registry.items;
 
     return Container(
       height: AppTheme.bottomBarHeight,
@@ -74,77 +74,77 @@ class _BottomBarState extends State<BottomBar> {
   }
 }
 
-/// Default status items for the bottom bar
-class StatusBottomBarItem implements BottomBarItem {
-  @override
-  String get id => 'status';
+// /// Default status items for the bottom bar
+// class StatusBottomBarItem implements BottomBarItem {
+//   @override
+//   String get id => 'status';
 
-  @override
-  int get priority => 1;
+//   @override
+//   int get priority => 1;
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(
-            Icons.circle,
-            size: 8,
-            color: Colors.green,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            'Ready',
-            style: theme.textTheme.bodySmall,
-          ),
-        ],
-      ),
-    );
-  }
-}
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+//       child: Row(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           const Icon(
+//             Icons.circle,
+//             size: 8,
+//             color: Colors.green,
+//           ),
+//           const SizedBox(width: 6),
+//           Text(
+//             'Ready',
+//             style: theme.textTheme.bodySmall,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
-class EncodingBottomBarItem implements BottomBarItem {
-  @override
-  String get id => 'encoding';
+// class EncodingBottomBarItem implements BottomBarItem {
+//   @override
+//   String get id => 'encoding';
 
-  @override
-  int get priority => 101;
+//   @override
+//   int get priority => 101;
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Text(
-        'UTF-8',
-        style: theme.textTheme.bodySmall,
-      ),
-    );
-  }
-}
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+//       child: Text(
+//         'UTF-8',
+//         style: theme.textTheme.bodySmall,
+//       ),
+//     );
+//   }
+// }
 
-class LineEndingBottomBarItem implements BottomBarItem {
-  @override
-  String get id => 'line_ending';
+// class LineEndingBottomBarItem implements BottomBarItem {
+//   @override
+//   String get id => 'line_ending';
 
-  @override
-  int get priority => 102;
+//   @override
+//   int get priority => 102;
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Text(
-        'LF',
-        style: theme.textTheme.bodySmall,
-      ),
-    );
-  }
-}
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+//       child: Text(
+//         'LF',
+//         style: theme.textTheme.bodySmall,
+//       ),
+//     );
+//   }
+// }

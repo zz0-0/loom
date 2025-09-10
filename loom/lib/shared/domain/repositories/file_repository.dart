@@ -19,6 +19,9 @@ abstract class FileRepository {
   /// Lists all files recursively in the given directory path
   Future<List<String>> listFilesRecursively(String path);
 
+  /// Creates a file at the given path with optional content
+  Future<void> createFile(String path, [String content = '']);
+
   /// Creates a directory at the given path
   Future<void> createDirectory(String path);
 
