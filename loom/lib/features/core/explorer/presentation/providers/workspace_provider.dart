@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/common/data/providers.dart';
 import 'package:loom/features/core/explorer/data/repositories/settings_repository_impl.dart';
 import 'package:loom/features/core/explorer/data/repositories/workspace_repository_impl.dart';
 import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart'
     as domain;
 import 'package:loom/features/core/explorer/domain/repositories/workspace_repository.dart';
 import 'package:loom/features/core/explorer/domain/usecases/workspace_usecases.dart';
-import 'package:loom/shared/data/providers.dart';
 
 /// Provider for workspace repository
 final workspaceRepositoryProvider = Provider<WorkspaceRepository>((ref) {

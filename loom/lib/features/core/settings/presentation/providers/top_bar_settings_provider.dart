@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
+import 'package:loom/common/presentation/widgets/layouts/desktop/core/menu_system.dart';
 
 /// Provider for top bar settings
 class TopBarSettingsNotifier extends StateNotifier<TopBarSettings> {

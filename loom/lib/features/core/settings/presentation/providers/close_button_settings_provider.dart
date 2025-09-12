@@ -1,8 +1,9 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/common/presentation/widgets/layouts/desktop/core/window_controls.dart';
 import 'package:loom/features/core/settings/presentation/providers/window_controls_provider.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/window_controls.dart';
 
 /// Position of close buttons in UI elements
 enum CloseButtonPosition {

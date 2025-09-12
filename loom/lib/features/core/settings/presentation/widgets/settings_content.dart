@@ -1,15 +1,15 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/common/presentation/theme/app_theme.dart';
+import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
+import 'package:loom/common/presentation/widgets/layouts/desktop/core/window_controls.dart';
 import 'package:loom/features/core/settings/presentation/providers/close_button_settings_provider.dart';
 import 'package:loom/features/core/settings/presentation/providers/custom_theme_provider.dart';
 import 'package:loom/features/core/settings/presentation/providers/general_settings_provider.dart';
 import 'package:loom/features/core/settings/presentation/providers/top_bar_settings_provider.dart';
 import 'package:loom/features/core/settings/presentation/providers/window_controls_provider.dart';
 import 'package:loom/features/core/settings/presentation/widgets/theme_customization_widgets.dart';
-import 'package:loom/shared/presentation/theme/app_theme.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/window_controls.dart';
 
 /// Settings content provider that displays settings in the main content area
 class SettingsContentProvider implements ContentProvider {

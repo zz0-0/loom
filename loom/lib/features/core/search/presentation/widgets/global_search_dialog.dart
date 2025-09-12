@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:loom/common/presentation/providers/theme_provider.dart';
+import 'package:loom/common/presentation/theme/app_animations.dart';
+import 'package:loom/common/presentation/theme/app_theme.dart';
 import 'package:loom/features/core/search/domain/entities/search_entities.dart';
 import 'package:loom/features/core/search/presentation/providers/search_provider.dart';
-import 'package:loom/shared/presentation/providers/theme_provider.dart';
-import 'package:loom/shared/presentation/theme/app_animations.dart';
-import 'package:loom/shared/presentation/theme/app_theme.dart';
 
 /// Global search dialog
 class GlobalSearchDialog extends ConsumerStatefulWidget {

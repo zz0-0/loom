@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:loom/common/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
 import 'package:loom/features/core/plugin_system/domain/plugin.dart';
 import 'package:loom/features/core/plugin_system/presentation/command_api.dart';
 import 'package:loom/features/core/plugin_system/presentation/settings_api.dart';
 import 'package:loom/features/core/plugin_system/presentation/ui_api.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
 
 /// Git Plugin - Provides Git integration and version control features
 class GitPlugin implements Plugin {

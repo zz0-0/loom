@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:loom/common/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
+import 'package:loom/common/presentation/widgets/layouts/desktop/core/menu_system.dart';
+import 'package:loom/common/presentation/widgets/layouts/desktop/core/top_bar_registry.dart';
+import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 import 'package:loom/features/core/plugin_system/domain/plugin.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/menu_system.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/top_bar_registry.dart';
-import 'package:loom/shared/presentation/widgets/layouts/desktop/core/ui_registry.dart';
 
 /// UI API for plugins to register UI components
 class PluginUIApi {

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io' show Directory;
 
+import 'package:loom/common/domain/repositories/file_repository.dart';
 import 'package:loom/features/core/export/domain/entities/export_entities.dart';
 import 'package:loom/features/core/export/domain/repositories/export_repository.dart';
-import 'package:loom/shared/domain/repositories/file_repository.dart';
 import 'package:path/path.dart' as path;
 
 /// Implementation of export repository

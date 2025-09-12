@@ -1,11 +1,12 @@
 import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/common/presentation/theme/app_theme.dart';
+import 'package:loom/common/presentation/widgets/dialogs/folder_browser_dialog.dart';
 import 'package:loom/features/core/explorer/presentation/providers/project_creation_provider.dart';
 import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
-import 'package:loom/shared/presentation/theme/app_theme.dart';
-import 'package:loom/shared/presentation/widgets/dialogs/folder_browser_dialog.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 

@@ -4,13 +4,13 @@ library;
 
 import 'dart:convert';
 
+import 'package:loom/common/constants/project_constants.dart';
+import 'package:loom/common/domain/repositories/file_repository.dart';
+import 'package:loom/common/utils/file_utils.dart';
 import 'package:loom/features/core/explorer/data/models/workspace_data_models.dart';
 import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart'
     as domain;
 import 'package:loom/features/core/explorer/domain/repositories/workspace_repository.dart';
-import 'package:loom/shared/constants/project_constants.dart';
-import 'package:loom/shared/domain/repositories/file_repository.dart';
-import 'package:loom/shared/utils/file_utils.dart';
 import 'package:path/path.dart' as path;
 
 /// Implementation of WorkspaceRepository

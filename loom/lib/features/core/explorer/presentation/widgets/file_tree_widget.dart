@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/common/presentation/providers/tab_provider.dart';
+import 'package:loom/common/presentation/theme/app_animations.dart';
+import 'package:loom/common/presentation/theme/app_theme.dart';
 import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart'
     as domain;
 import 'package:loom/features/core/explorer/domain/services/smart_categorization_service.dart';
 import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
-import 'package:loom/shared/presentation/providers/tab_provider.dart';
-import 'package:loom/shared/presentation/theme/app_animations.dart';
-import 'package:loom/shared/presentation/theme/app_theme.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
