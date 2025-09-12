@@ -1,4 +1,4 @@
-import 'package:loom/common/domain/services/edit_history_service.dart';
+import 'package:loom/common/index.dart';
 
 /// Implementation of EditHistoryService
 class EditHistoryServiceImpl implements EditHistoryService {

@@ -2,7 +2,7 @@
 /// These are used by the data layer for external communication
 library;
 
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart';
+import 'package:loom/features/core/explorer/index.dart';
 
 /// Data model for WorkspaceSettings with JSON serialization
 class WorkspaceSettingsModel extends WorkspaceSettings {
@@ -42,6 +42,7 @@ class WorkspaceSettingsModel extends WorkspaceSettings {
     return validViews.contains(view) ? view : 'filesystem';
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'theme': theme,
@@ -89,6 +90,7 @@ class ProjectMetadataModel extends ProjectMetadata {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'version': version,
@@ -149,6 +151,7 @@ class FileSystemExplorerStateModel extends FileSystemExplorerState {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'expandedPaths': expandedPaths,
@@ -171,6 +174,7 @@ class SessionStateModel extends SessionState {
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'openTabs': openTabs,

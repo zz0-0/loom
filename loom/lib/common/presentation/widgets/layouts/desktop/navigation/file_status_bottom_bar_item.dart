@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/providers/editor_state_provider.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/bottom_bar_registry.dart';
+import 'package:loom/common/index.dart';
 import 'package:path/path.dart' as path;
 
 /// File status item for the bottom bar that shows current file information

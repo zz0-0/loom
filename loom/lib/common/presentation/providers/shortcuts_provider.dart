@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:loom/common/data/services/keyboard_shortcuts_service.dart';
+import 'package:loom/common/index.dart';
 
 /// Provider for the keyboard shortcuts service
 final shortcutsServiceProvider = Provider<KeyboardShortcutsService>((ref) {

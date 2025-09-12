@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/data/providers.dart';
-import 'package:loom/common/domain/repositories/file_repository.dart';
+import 'package:loom/common/index.dart';
 
 /// Provider for directory operations
 /// This encapsulates directory checking logic to avoid direct data access in presentation

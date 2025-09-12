@@ -1,9 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
-import 'package:loom/features/core/export/domain/entities/export_entities.dart';
-import 'package:loom/features/core/export/presentation/providers/export_provider.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/export/index.dart';
 
 /// Export dialog for configuring and executing exports
 class ExportDialog extends ConsumerStatefulWidget {

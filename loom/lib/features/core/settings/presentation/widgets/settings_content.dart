@@ -1,15 +1,8 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/window_controls.dart';
-import 'package:loom/features/core/settings/presentation/providers/close_button_settings_provider.dart';
-import 'package:loom/features/core/settings/presentation/providers/custom_theme_provider.dart';
-import 'package:loom/features/core/settings/presentation/providers/general_settings_provider.dart';
-import 'package:loom/features/core/settings/presentation/providers/top_bar_settings_provider.dart';
-import 'package:loom/features/core/settings/presentation/providers/window_controls_provider.dart';
-import 'package:loom/features/core/settings/presentation/widgets/theme_customization_widgets.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Settings content provider that displays settings in the main content area
 class SettingsContentProvider implements ContentProvider {
@@ -253,8 +246,8 @@ class ThemeSettings extends ConsumerWidget {
 }
 
 /// Window controls settings widget
-class WindowControlsSettings extends ConsumerWidget {
-  const WindowControlsSettings({super.key});
+class WindowControlsSettingsWidget extends ConsumerWidget {
+  const WindowControlsSettingsWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -345,8 +338,8 @@ class WindowControlsSettings extends ConsumerWidget {
 }
 
 /// Top bar settings widget
-class TopBarSettings extends ConsumerWidget {
-  const TopBarSettings({super.key});
+class TopBarSettingsWidget extends ConsumerWidget {
+  const TopBarSettingsWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -746,9 +739,9 @@ class InterfaceSettingsPage extends ConsumerWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  WindowControlsSettings(),
+                  WindowControlsSettingsWidget(),
                   SizedBox(height: 32),
-                  CloseButtonSettings(),
+                  CloseButtonSettingsWidget(),
                 ],
               ),
             ),
@@ -791,7 +784,7 @@ class GeneralSettingsPage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const TopBarSettings(),
+                  const TopBarSettingsWidget(),
                   const SizedBox(height: 24),
                   _GeneralSettings(),
                 ],
@@ -1041,8 +1034,8 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
 }
 
 /// Close button settings widget
-class CloseButtonSettings extends ConsumerWidget {
-  const CloseButtonSettings({super.key});
+class CloseButtonSettingsWidget extends ConsumerWidget {
+  const CloseButtonSettingsWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

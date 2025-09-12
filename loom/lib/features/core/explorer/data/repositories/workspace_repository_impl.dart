@@ -4,13 +4,8 @@ library;
 
 import 'dart:convert';
 
-import 'package:loom/common/constants/project_constants.dart';
-import 'package:loom/common/domain/repositories/file_repository.dart';
-import 'package:loom/common/utils/file_utils.dart';
-import 'package:loom/features/core/explorer/data/models/workspace_data_models.dart';
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart'
-    as domain;
-import 'package:loom/features/core/explorer/domain/repositories/workspace_repository.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
 import 'package:path/path.dart' as path;
 
 /// Implementation of WorkspaceRepository
@@ -19,7 +14,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   final FileRepository _fileRepository;
   @override
-  Future<domain.Workspace> openWorkspace(String workspacePath) async {
+  Future<Workspace> openWorkspace(String workspacePath) async {
     final directoryExists =
         await _fileRepository.directoryExists(workspacePath);
 
@@ -36,7 +31,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       expandedPaths: metadata.fileSystemExplorerState.expandedPaths.toSet(),
     );
 
-    return domain.Workspace(
+    return Workspace(
       name: workspaceName,
       rootPath: workspacePath,
       metadata: metadata,
@@ -45,7 +40,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<domain.Workspace> createWorkspace(String workspacePath) async {
+  Future<Workspace> createWorkspace(String workspacePath) async {
     final directoryExists =
         await _fileRepository.directoryExists(workspacePath);
 
@@ -54,7 +49,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     final workspaceName = path.basename(workspacePath);
-    const metadata = domain.ProjectMetadata();
+    const metadata = ProjectMetadata();
 
     // Save initial project metadata
     await saveProjectMetadata(workspacePath, metadata);
@@ -62,7 +57,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     // Build initial file tree
     final fileTree = await _buildFileTree(workspacePath);
 
-    return domain.Workspace(
+    return Workspace(
       name: workspaceName,
       rootPath: workspacePath,
       metadata: metadata,
@@ -71,9 +66,9 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<List<domain.FileTreeNode>> refreshFileTree(
-    domain.Workspace workspace,
-    domain.WorkspaceSettings settings,
+  Future<List<FileTreeNode>> refreshFileTree(
+    Workspace workspace,
+    WorkspaceSettings settings,
   ) async {
     return _buildFileTree(
       workspace.rootPath,
@@ -87,7 +82,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   @override
   Future<void> saveProjectMetadata(
     String workspacePath,
-    domain.ProjectMetadata metadata,
+    ProjectMetadata metadata,
   ) async {
     final projectDirPath =
         path.join(workspacePath, ProjectConstants.projectDirName);
@@ -131,7 +126,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<domain.ProjectMetadata> loadProjectMetadata(
+  Future<ProjectMetadata> loadProjectMetadata(
     String workspacePath,
   ) async {
     final projectDirPath =
@@ -141,7 +136,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     final projectFileExists = await _fileRepository.fileExists(projectFilePath);
     if (!projectFileExists) {
-      return const domain.ProjectMetadata();
+      return const ProjectMetadata();
     }
 
     final jsonString = await _fileRepository.readFile(projectFilePath);
@@ -239,7 +234,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
   }
 
-  Future<List<domain.FileTreeNode>> _buildFileTree(
+  Future<List<FileTreeNode>> _buildFileTree(
     String directoryPath, {
     bool filterExtensions = true,
     bool showHiddenFiles = false,

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/providers/tab_provider.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
+import 'package:loom/common/index.dart';
 
 /// Settings sidebar item that opens settings in the main content area
 class SettingsSidebarItem implements SidebarItem {

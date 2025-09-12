@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loom/common/presentation/theme/app_animations.dart';
+import 'package:loom/common/index.dart';
 
 /// Dialog for navigating to a specific line or block in the editor
 class GoToLineDialog extends StatefulWidget {

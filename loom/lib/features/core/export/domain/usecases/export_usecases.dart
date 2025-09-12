@@ -1,5 +1,4 @@
-import 'package:loom/features/core/export/domain/entities/export_entities.dart';
-import 'package:loom/features/core/export/domain/repositories/export_repository.dart';
+import 'package:loom/features/core/export/index.dart';
 
 /// Use case for exporting content
 class ExportContentUseCase {

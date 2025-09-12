@@ -2,12 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/menu_system.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/top_bar_registry.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/window_controls.dart';
-import 'package:loom/features/core/search/presentation/widgets/command_palette_dialog.dart';
-import 'package:loom/features/core/settings/presentation/providers/top_bar_settings_provider.dart';
-import 'package:loom/features/core/settings/presentation/providers/window_controls_provider.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/search/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 import 'package:window_manager/window_manager.dart';
 
 /// Extensible top bar with registered items and window controls

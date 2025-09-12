@@ -1,7 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/core/search/data/providers.dart';
-import 'package:loom/features/core/search/domain/entities/search_entities.dart';
-import 'package:loom/features/core/search/domain/usecases/search_usecases.dart';
+import 'package:loom/features/core/search/index.dart';
 
 // Use case providers
 final searchInWorkspaceUseCaseProvider =

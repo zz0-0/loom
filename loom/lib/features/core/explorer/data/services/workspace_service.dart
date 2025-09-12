@@ -2,9 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/constants/project_constants.dart';
-import 'package:loom/common/utils/file_utils.dart';
-import 'package:loom/features/core/explorer/data/models/workspace_settings.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
 import 'package:path/path.dart' as path;
 
 /// Service for managing workspace operations (file system, metadata, settings)
@@ -157,7 +156,7 @@ class WorkspaceService {
       showHiddenFiles: showHiddenFiles,
       expandedPaths: expandedPaths,
     );
-    return result as List<FileTreeNode>;
+    return result;
   }
 
   /// Create a new workspace

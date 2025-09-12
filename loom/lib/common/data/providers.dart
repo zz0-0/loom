@@ -1,14 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/data/repositories/file_repository_impl.dart';
-import 'package:loom/common/data/services/code_folding_service_impl.dart';
-import 'package:loom/common/data/services/edit_history_service_impl.dart';
-import 'package:loom/common/data/services/file_content_service_impl.dart';
-import 'package:loom/common/domain/repositories/file_repository.dart';
-import 'package:loom/common/domain/repositories/shared_settings_repository.dart';
-import 'package:loom/common/domain/services/code_folding_service.dart';
-import 'package:loom/common/domain/services/edit_history_service.dart';
-import 'package:loom/common/domain/services/file_content_service.dart';
-import 'package:loom/common/domain/use_cases/file_operations_use_cases.dart';
+import 'package:loom/common/index.dart';
 
 /// Shared settings repository provider
 /// This should be overridden by the appropriate feature implementation

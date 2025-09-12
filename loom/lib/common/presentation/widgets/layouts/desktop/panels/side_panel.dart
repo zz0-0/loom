@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/providers/theme_provider.dart';
-import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class SidePanel extends ConsumerWidget {

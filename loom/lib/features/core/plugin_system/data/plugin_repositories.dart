@@ -1,4 +1,4 @@
-import 'package:loom/features/core/plugin_system/domain/plugin.dart';
+import 'package:loom/features/core/plugin_system/index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Repository interface for plugin settings persistence

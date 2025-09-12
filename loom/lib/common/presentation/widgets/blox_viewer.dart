@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loom/common/presentation/widgets/blox_renderer.dart';
+import 'package:loom/common/index.dart';
 import 'package:loom/src/rust/api/blox_api.dart';
 
 /// A widget that displays Blox content using the enhanced BloxRenderer

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart';
+import 'package:loom/features/core/explorer/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 /// UI model for collection template with icon data

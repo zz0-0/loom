@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:loom/common/domain/repositories/file_repository.dart';
+import 'package:loom/common/index.dart';
 
 /// Implementation of FileRepository using dart:io
 class FileRepositoryImpl implements FileRepository {

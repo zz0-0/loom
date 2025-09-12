@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/providers/tab_provider.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart'
-    as domain;
-import 'package:loom/features/core/explorer/domain/services/smart_categorization_service.dart';
-import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -16,7 +12,7 @@ class CollectionsWidget extends ConsumerWidget {
     super.key,
   });
 
-  final domain.Workspace workspace;
+  final Workspace workspace;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -407,7 +403,7 @@ class _CollectionItemState extends State<_CollectionItem> {
         SmartCategorizationService.getTopSuggestions(filePath, limit: 2);
 
     // Check if current collection matches the file well
-    final currentTemplate = domain.CollectionTemplates.templates
+    final currentTemplate = CollectionTemplates.templates
         .where((t) => t.name == widget.collectionName)
         .firstOrNull;
 
@@ -798,33 +794,5 @@ class _CollectionFileItem extends StatelessWidget {
       default:
         return LucideIcons.file;
     }
-  }
-}
-
-/// Utility to convert icon strings to IconData
-IconData getIconDataFromString(String? iconName) {
-  switch (iconName) {
-    case 'code':
-      return LucideIcons.code;
-    case 'book':
-      return LucideIcons.book;
-    case 'file-text':
-      return LucideIcons.fileText;
-    case 'image':
-      return LucideIcons.image;
-    case 'settings':
-      return LucideIcons.settings;
-    case 'users':
-      return LucideIcons.users;
-    case 'briefcase':
-      return LucideIcons.briefcase;
-    case 'heart':
-      return LucideIcons.heart;
-    case 'star':
-      return LucideIcons.star;
-    case 'folder':
-      return LucideIcons.folder;
-    default:
-      return LucideIcons.star;
   }
 }

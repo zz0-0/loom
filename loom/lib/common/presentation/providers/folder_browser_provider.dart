@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/data/providers.dart';
-import 'package:loom/common/domain/repositories/file_repository.dart';
+import 'package:loom/common/index.dart';
 import 'package:path/path.dart' as path;
 
 /// Provider for folder browsing functionality

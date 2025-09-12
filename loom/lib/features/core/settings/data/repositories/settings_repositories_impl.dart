@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:loom/features/core/settings/domain/entities/settings_entities.dart';
-import 'package:loom/features/core/settings/domain/repositories/settings_repositories.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Implementation of appearance settings repository
 class AppearanceSettingsRepositoryImpl implements AppearanceSettingsRepository {

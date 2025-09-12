@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:loom/features/core/plugin_system/domain/plugin_manager.dart';
-import 'package:loom/features/plugins/git_plugin/domain/git_plugin.dart';
+import 'package:loom/features/core/plugin_system/index.dart';
+import 'package:loom/features/plugins/git_plugin/index.dart';
 
 /// Plugin registration for Git integration
 class GitPluginRegistration {

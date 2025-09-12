@@ -1,4 +1,4 @@
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart';
+import 'package:loom/features/core/explorer/index.dart';
 import 'package:path/path.dart' as path;
 
 /// Service for smart categorization of files into collections

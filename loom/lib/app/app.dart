@@ -1,9 +1,8 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
-import 'package:loom/common/presentation/widgets/layouts/adaptive/adaptive_main_layout.dart';
-import 'package:loom/features/core/plugin_system/domain/plugin_bootstrapper.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/plugin_system/index.dart';
 
 class LoomApp extends ConsumerWidget {
   const LoomApp({required this.pluginBootstrapper, super.key});

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/core/settings/domain/entities/settings_entities.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Provider for general settings
 final generalSettingsProvider =

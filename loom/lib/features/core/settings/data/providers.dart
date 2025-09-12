@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/core/settings/data/repositories/settings_repositories_impl.dart';
-import 'package:loom/features/core/settings/domain/repositories/settings_repositories.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Repository providers for dependency injection
 final appearanceSettingsRepositoryProvider =

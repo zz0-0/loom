@@ -2,10 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/providers/tab_provider.dart';
-import 'package:loom/common/presentation/theme/app_animations.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
-import 'package:loom/features/core/settings/presentation/providers/close_button_settings_provider.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Tab bar widget that displays and manages tabs in the main content area
 class ContentTabBar extends ConsumerStatefulWidget {

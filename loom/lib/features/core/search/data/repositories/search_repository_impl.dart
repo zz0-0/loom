@@ -1,8 +1,7 @@
 import 'dart:io' show Directory;
 
-import 'package:loom/common/domain/repositories/file_repository.dart';
-import 'package:loom/features/core/search/domain/entities/search_entities.dart';
-import 'package:loom/features/core/search/domain/repositories/search_repository.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/search/index.dart';
 import 'package:path/path.dart' as path;
 
 /// Implementation of SearchRepository

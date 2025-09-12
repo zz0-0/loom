@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
-import 'package:loom/features/core/explorer/presentation/widgets/explorer_panel.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
 
 /// Explorer sidebar item that integrates with the UI registry system
 class ExplorerSidebarItem implements SidebarItem {

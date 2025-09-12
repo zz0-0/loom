@@ -1,4 +1,4 @@
-import 'package:loom/features/core/settings/domain/entities/settings_entities.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Repository for managing appearance settings
 abstract class AppearanceSettingsRepository {

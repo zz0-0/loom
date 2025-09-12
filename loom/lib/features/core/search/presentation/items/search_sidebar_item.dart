@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
+import 'package:loom/common/index.dart';
 
 /// Search sidebar item that opens search in the side panel
 class SearchSidebarItem implements SidebarItem {

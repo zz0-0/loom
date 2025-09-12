@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/data/providers.dart';
-import 'package:loom/common/domain/repositories/file_repository.dart';
+import 'package:loom/common/index.dart';
 
 /// Provider for file content operations
 /// This encapsulates file reading/writing logic to avoid direct data access in presentation

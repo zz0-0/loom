@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_highlight/themes/vs2015.dart';
-import 'package:loom/common/presentation/widgets/editor/blox_syntax_highlighter.dart';
+import 'package:loom/common/index.dart';
 import 'package:path/path.dart' as path;
 
 /// A syntax-highlighted code editor widget

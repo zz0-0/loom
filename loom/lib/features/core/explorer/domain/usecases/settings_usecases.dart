@@ -1,8 +1,7 @@
 /// Use cases for workspace settings operations
 library;
 
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart';
-import 'package:loom/features/core/explorer/domain/repositories/workspace_repository.dart';
+import 'package:loom/features/core/explorer/index.dart';
 
 /// Use case for loading settings
 class LoadSettingsUseCase {

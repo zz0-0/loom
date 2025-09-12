@@ -1,4 +1,4 @@
-import 'package:loom/common/domain/services/file_content_service.dart';
+import 'package:loom/common/index.dart';
 
 /// Implementation of FileContentService
 class FileContentServiceImpl implements FileContentService {

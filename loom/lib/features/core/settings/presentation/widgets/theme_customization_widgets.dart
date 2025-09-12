@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
+import 'package:loom/common/index.dart';
 
 /// Color picker dialog for theme customization
 class ThemeColorPicker extends StatefulWidget {

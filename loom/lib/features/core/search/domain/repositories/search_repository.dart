@@ -1,4 +1,4 @@
-import 'package:loom/features/core/search/domain/entities/search_entities.dart';
+import 'package:loom/features/core/search/index.dart';
 
 /// Repository interface for search operations
 abstract class SearchRepository {

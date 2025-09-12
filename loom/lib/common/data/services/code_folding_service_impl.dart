@@ -1,4 +1,4 @@
-import 'package:loom/common/domain/services/code_folding_service.dart';
+import 'package:loom/common/index.dart';
 
 /// Implementation of CodeFoldingService
 class CodeFoldingServiceImpl implements CodeFoldingService {

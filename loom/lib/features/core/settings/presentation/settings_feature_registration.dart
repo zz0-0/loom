@@ -1,6 +1,5 @@
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
-import 'package:loom/features/core/settings/presentation/widgets/settings_content.dart';
-import 'package:loom/features/core/settings/presentation/widgets/settings_sidebar_item.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Settings feature registration
 /// This should be called during app initialization to register settings components

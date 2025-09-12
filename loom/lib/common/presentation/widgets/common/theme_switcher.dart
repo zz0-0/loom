@@ -1,7 +1,7 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/providers/theme_provider.dart';
+import 'package:loom/common/index.dart';
 
 /// Theme switcher widget that can be embedded in settings
 class ThemeSwitcher extends ConsumerWidget {

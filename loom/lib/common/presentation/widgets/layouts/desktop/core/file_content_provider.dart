@@ -3,19 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/data/providers.dart';
-import 'package:loom/common/data/services/auto_save_service.dart';
-import 'package:loom/common/domain/services/edit_history_service.dart';
-import 'package:loom/common/presentation/providers/editor_state_provider.dart';
-import 'package:loom/common/presentation/providers/tab_provider.dart';
-import 'package:loom/common/presentation/theme/app_animations.dart';
-import 'package:loom/common/presentation/widgets/blox_viewer.dart';
-import 'package:loom/common/presentation/widgets/editor/blox_syntax_highlighter.dart';
-import 'package:loom/common/presentation/widgets/editor/find_replace_dialog.dart';
-import 'package:loom/common/presentation/widgets/editor/minimap_widget.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
-import 'package:loom/features/core/export/presentation/widgets/export_dialog.dart';
-import 'package:loom/features/core/settings/presentation/providers/general_settings_provider.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/export/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 import 'package:loom/src/rust/api/blox_api.dart';
 
 /// Clipboard service for text operations
@@ -1006,7 +996,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   // Cache for line numbers to prevent unnecessary rebuilds
   List<String>? _cachedLogicalLines;
   int? _cachedTextHash;
-  List<FoldableRegion>? _cachedFoldableRegions;
+  List<UIFoldableRegion>? _cachedFoldableRegions;
   int? _cachedFoldingHash;
 
   Widget _buildLineNumbers(ThemeData theme) {
@@ -1064,11 +1054,11 @@ class _FileEditorState extends ConsumerState<FileEditor> {
               // Check if this line starts a foldable region (using cached regions)
               final foldableRegion = foldableRegions.firstWhere(
                 (region) => region.startLine == entry.key,
-                orElse: () => FoldableRegion(
+                orElse: () => UIFoldableRegion(
                   startLine: -1,
                   endLine: -1,
                   title: '',
-                  type: FoldableRegionType.codeBlock,
+                  type: UIFoldableRegionType.codeBlock,
                   level: 0,
                 ),
               );
@@ -1408,8 +1398,8 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 }
 
 /// Code folding region information
-class FoldableRegion {
-  FoldableRegion({
+class UIFoldableRegion {
+  UIFoldableRegion({
     required this.startLine,
     required this.endLine,
     required this.title,
@@ -1420,13 +1410,13 @@ class FoldableRegion {
   final int startLine;
   final int endLine;
   final String title;
-  final FoldableRegionType type;
+  final UIFoldableRegionType type;
   final int level; // Nesting level
   bool isFolded;
 }
 
 /// Types of foldable regions
-enum FoldableRegionType {
+enum UIFoldableRegionType {
   codeBlock, // ```code blocks```
   section, // # ## ### headers
   commentBlock, // /* */ or // blocks
@@ -1439,10 +1429,10 @@ class CodeFoldingManager {
   CodeFoldingManager(this._text) {
     _parseRegions();
   }
-  final List<FoldableRegion> _regions = [];
+  final List<UIFoldableRegion> _regions = [];
   final String _text;
 
-  List<FoldableRegion> get regions => _regions;
+  List<UIFoldableRegion> get regions => _regions;
 
   void _parseRegions() {
     final lines = _text.split('\n');
@@ -1466,11 +1456,11 @@ class CodeFoldingManager {
 
         if (endLine < lines.length) {
           _regions.add(
-            FoldableRegion(
+            UIFoldableRegion(
               startLine: startLine,
               endLine: endLine,
               title: title,
-              type: FoldableRegionType.codeBlock,
+              type: UIFoldableRegionType.codeBlock,
               level: 0,
             ),
           );
@@ -1503,11 +1493,11 @@ class CodeFoldingManager {
           if (endLine > i + 1) {
             // Only add if there's content after the header
             _regions.add(
-              FoldableRegion(
+              UIFoldableRegion(
                 startLine: i,
                 endLine: endLine - 1,
                 title: title,
-                type: FoldableRegionType.section,
+                type: UIFoldableRegionType.section,
                 level: level - 1, // 0-based level
               ),
             );
@@ -1540,11 +1530,11 @@ class CodeFoldingManager {
       // Check if this line is the start of a folded region
       final foldedRegion = _regions.firstWhere(
         (region) => region.startLine == i && region.isFolded,
-        orElse: () => FoldableRegion(
+        orElse: () => UIFoldableRegion(
           startLine: -1,
           endLine: -1,
           title: '',
-          type: FoldableRegionType.codeBlock,
+          type: UIFoldableRegionType.codeBlock,
           level: 0,
         ),
       );

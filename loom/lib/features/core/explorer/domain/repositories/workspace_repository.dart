@@ -2,7 +2,7 @@
 /// These define the contracts that data layer implementations must follow
 library;
 
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart';
+import 'package:loom/features/core/explorer/index.dart';
 
 /// Repository for workspace operations
 abstract class WorkspaceRepository {

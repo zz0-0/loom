@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loom/common/presentation/theme/app_animations.dart';
-import 'package:loom/features/core/settings/presentation/providers/window_controls_provider.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 import 'package:window_manager/window_manager.dart';
 
 /// Platform-aware window controls that follow system conventions

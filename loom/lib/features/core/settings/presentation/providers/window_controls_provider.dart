@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/window_controls.dart';
+import 'package:loom/common/index.dart';
 
 /// Order of window control buttons
 enum WindowControlsOrder {

@@ -2,26 +2,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/providers/directory_operations_provider.dart';
-import 'package:loom/common/presentation/providers/theme_provider.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
-import 'package:loom/common/presentation/widgets/dialogs/folder_browser_dialog.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/extensible_content_area.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/extensible_side_panel.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/extensible_sidebar.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/file_content_provider.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/menu_system.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/navigation/bottom_bar.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/navigation/top_bar.dart';
-import 'package:loom/common/utils/platform_utils.dart';
-import 'package:loom/features/core/explorer/presentation/items/explorer_sidebar_item.dart';
-import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
-import 'package:loom/features/core/plugin_system/domain/plugin_bootstrapper.dart';
-import 'package:loom/features/core/search/presentation/items/search_sidebar_item.dart';
-import 'package:loom/features/core/search/presentation/widgets/global_search_dialog.dart';
-import 'package:loom/features/core/settings/presentation/widgets/settings_content.dart';
-import 'package:loom/features/core/settings/presentation/widgets/settings_sidebar_item.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
+import 'package:loom/features/core/plugin_system/index.dart';
+import 'package:loom/features/core/search/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Extensible desktop layout with customizable UI components
 /// This serves as the main UI scaffold that features can register into

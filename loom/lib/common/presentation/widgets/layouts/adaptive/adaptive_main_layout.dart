@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/desktop_layout.dart';
-import 'package:loom/common/presentation/widgets/layouts/mobile/mobile_layout.dart';
-import 'package:loom/common/utils/platform_utils.dart';
-import 'package:loom/features/core/plugin_system/domain/plugin_bootstrapper.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/plugin_system/index.dart';
 
 /// Adaptive layout that chooses between desktop and mobile layouts
 /// based on platform and screen size

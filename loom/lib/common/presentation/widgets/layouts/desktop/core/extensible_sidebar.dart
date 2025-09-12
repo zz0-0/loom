@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/providers/theme_provider.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
+import 'package:loom/common/index.dart';
 
 /// Extensible sidebar that displays registered sidebar items
 class ExtensibleSidebar extends ConsumerWidget {

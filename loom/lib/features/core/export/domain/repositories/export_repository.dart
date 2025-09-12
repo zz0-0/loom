@@ -1,4 +1,4 @@
-import 'package:loom/features/core/export/domain/entities/export_entities.dart';
+import 'package:loom/features/core/export/index.dart';
 
 /// Repository interface for export operations
 abstract class ExportRepository {

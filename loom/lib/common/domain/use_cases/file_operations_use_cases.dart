@@ -1,4 +1,4 @@
-import 'package:loom/common/domain/repositories/file_repository.dart';
+import 'package:loom/common/index.dart';
 
 /// Use case for creating a file
 class CreateFileUseCase {

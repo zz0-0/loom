@@ -1,13 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
-import 'package:loom/common/presentation/widgets/dialogs/folder_browser_dialog.dart';
-import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
-import 'package:loom/features/core/explorer/presentation/widgets/collections_widget.dart';
-import 'package:loom/features/core/explorer/presentation/widgets/create_project_dialog.dart';
-import 'package:loom/features/core/explorer/presentation/widgets/file_tree_widget.dart';
-import 'package:loom/features/core/explorer/presentation/widgets/workspace_toolbar.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -202,7 +197,8 @@ class ExplorerPanel extends ConsumerWidget {
                   final filePath = path.join(workspace.rootPath, fileName);
 
                   // Use repository through use case for security validation
-                  final createFileUseCase = ref.read(createFileUseCaseProvider);
+                  final createFileUseCase =
+                      ref.read(workspaceCreateFileUseCaseProvider);
                   await createFileUseCase.call(workspace.rootPath, filePath);
 
                   // Refresh the file tree
@@ -287,7 +283,7 @@ class ExplorerPanel extends ConsumerWidget {
 
                   // Use repository through use case for security validation
                   final createDirectoryUseCase =
-                      ref.read(createDirectoryUseCaseProvider);
+                      ref.read(workspaceCreateDirectoryUseCaseProvider);
                   await createDirectoryUseCase.call(
                     workspace.rootPath,
                     folderPath,

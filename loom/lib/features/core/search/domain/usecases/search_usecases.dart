@@ -1,5 +1,4 @@
-import 'package:loom/features/core/search/domain/entities/search_entities.dart';
-import 'package:loom/features/core/search/domain/repositories/search_repository.dart';
+import 'package:loom/features/core/search/index.dart';
 
 /// Use case for performing workspace-wide search
 class SearchInWorkspaceUseCase {

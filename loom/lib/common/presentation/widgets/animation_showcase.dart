@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loom/common/presentation/theme/app_animations.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
+import 'package:loom/common/index.dart';
 
 /// Demo widget showcasing the enhanced UI animations and polish
 class AnimationShowcase extends StatelessWidget {

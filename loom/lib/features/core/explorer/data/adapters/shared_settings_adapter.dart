@@ -1,5 +1,5 @@
-import 'package:loom/common/domain/repositories/shared_settings_repository.dart';
-import 'package:loom/features/core/explorer/domain/repositories/workspace_repository.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
 
 /// Adapter to provide shared settings repository implementation
 /// This allows shared components to use explorer's settings without direct coupling

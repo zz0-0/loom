@@ -1,5 +1,4 @@
-import 'package:loom/features/core/settings/domain/entities/settings_entities.dart';
-import 'package:loom/features/core/settings/domain/repositories/settings_repositories.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Use case for loading appearance settings
 class LoadAppearanceSettingsUseCaseImpl

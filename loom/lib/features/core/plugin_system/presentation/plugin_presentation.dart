@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/features/core/plugin_system/data/plugin_repositories.dart';
-import 'package:loom/features/core/plugin_system/domain/plugin.dart';
+import 'package:loom/features/core/plugin_system/index.dart';
 
 // State management providers
 final pluginManagerProvider =

@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/data/providers.dart';
-import 'package:loom/common/domain/repositories/file_repository.dart';
-import 'package:loom/features/core/explorer/data/models/project_template.dart';
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
 import 'package:path/path.dart' as path;
 
 /// State for project creation process

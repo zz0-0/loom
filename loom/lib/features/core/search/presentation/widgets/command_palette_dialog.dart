@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/data/providers.dart';
-import 'package:loom/common/presentation/providers/theme_provider.dart';
-import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
-import 'package:loom/features/core/search/presentation/widgets/global_search_dialog.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
+import 'package:loom/features/core/search/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 

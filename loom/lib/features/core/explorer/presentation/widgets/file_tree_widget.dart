@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/providers/tab_provider.dart';
-import 'package:loom/common/presentation/theme/app_animations.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart'
-    as domain;
-import 'package:loom/features/core/explorer/domain/services/smart_categorization_service.dart';
-import 'package:loom/features/core/explorer/presentation/providers/workspace_provider.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -17,7 +12,7 @@ class FileTreeWidget extends ConsumerStatefulWidget {
     super.key,
   });
 
-  final domain.Workspace workspace;
+  final Workspace workspace;
 
   @override
   ConsumerState<FileTreeWidget> createState() => _FileTreeWidgetState();
@@ -26,7 +21,7 @@ class FileTreeWidget extends ConsumerStatefulWidget {
 class _FileTreeWidgetState extends ConsumerState<FileTreeWidget> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  List<domain.FileTreeNode> _filteredNodes = [];
+  List<FileTreeNode> _filteredNodes = [];
 
   @override
   void initState() {
@@ -68,20 +63,20 @@ class _FileTreeWidgetState extends ConsumerState<FileTreeWidget> {
     });
   }
 
-  List<domain.FileTreeNode> _filterNodes(List<domain.FileTreeNode> nodes) {
-    final filtered = <domain.FileTreeNode>[];
+  List<FileTreeNode> _filterNodes(List<FileTreeNode> nodes) {
+    final filtered = <FileTreeNode>[];
 
     for (final node in nodes) {
       final matchesSearch = node.name.toLowerCase().contains(_searchQuery) ||
           path.basename(node.path).toLowerCase().contains(_searchQuery);
 
-      if (node.type == domain.FileTreeNodeType.directory) {
+      if (node.type == FileTreeNodeType.directory) {
         // For directories, check if any children match
         final filteredChildren = _filterNodes(node.children);
 
         if (matchesSearch || filteredChildren.isNotEmpty) {
           filtered.add(
-            domain.FileTreeNode(
+            FileTreeNode(
               name: node.name,
               path: node.path,
               type: node.type,
@@ -200,7 +195,7 @@ class _FileTreeItem extends StatefulWidget {
     required this.onFileSelected,
   });
 
-  final domain.FileTreeNode node;
+  final FileTreeNode node;
   final int depth;
   final ValueChanged<String> onToggleExpansion;
   final ValueChanged<String> onFileSelected;
@@ -215,7 +210,7 @@ class _FileTreeItemState extends State<_FileTreeItem> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDirectory = widget.node.type == domain.FileTreeNodeType.directory;
+    final isDirectory = widget.node.type == FileTreeNodeType.directory;
     final hasChildren = widget.node.children.isNotEmpty;
 
     return Column(
@@ -376,8 +371,8 @@ class _FileTreeItemState extends State<_FileTreeItem> {
     );
   }
 
-  IconData _getIcon(domain.FileTreeNode node) {
-    if (node.type == domain.FileTreeNodeType.directory) {
+  IconData _getIcon(FileTreeNode node) {
+    if (node.type == FileTreeNodeType.directory) {
       return node.isExpanded ? LucideIcons.folderOpen : LucideIcons.folder;
     }
 
@@ -422,10 +417,10 @@ class _FileTreeItemState extends State<_FileTreeItem> {
   void _showContextMenu(
     BuildContext context,
     Offset position,
-    domain.FileTreeNode node,
+    FileTreeNode node,
   ) {
     final theme = Theme.of(context);
-    final isDirectory = node.type == domain.FileTreeNodeType.directory;
+    final isDirectory = node.type == FileTreeNodeType.directory;
 
     // Get collection suggestions for files
     final suggestions = isDirectory
@@ -557,17 +552,17 @@ class _FileTreeItemState extends State<_FileTreeItem> {
   void _handleContextMenuAction(
     BuildContext context,
     String action,
-    domain.FileTreeNode node,
+    FileTreeNode node,
   ) {
     switch (action) {
       case 'open':
-        if (node.type == domain.FileTreeNodeType.directory) {
+        if (node.type == FileTreeNodeType.directory) {
           widget.onToggleExpansion(node.path);
         } else {
           widget.onFileSelected(node.path);
         }
       case 'open_new_tab':
-        if (node.type != domain.FileTreeNodeType.directory) {
+        if (node.type != FileTreeNodeType.directory) {
           widget.onFileSelected(node.path);
         }
       case 'rename':
@@ -588,11 +583,11 @@ class _FileTreeItemState extends State<_FileTreeItem> {
 
   void _handleAddToCollection(
     BuildContext context,
-    domain.FileTreeNode node,
+    FileTreeNode node,
     String templateId,
   ) {
     // Get the template
-    final template = domain.CollectionTemplates.getTemplate(templateId);
+    final template = CollectionTemplates.getTemplate(templateId);
     if (template == null) return;
 
     // Create collection name from template
@@ -616,7 +611,7 @@ class _FileTreeItemState extends State<_FileTreeItem> {
     }
   }
 
-  void _showRenameDialog(BuildContext context, domain.FileTreeNode node) {
+  void _showRenameDialog(BuildContext context, FileTreeNode node) {
     final controller = TextEditingController(text: path.basename(node.path));
     final extension = path.extension(node.path);
     final nameWithoutExtension = path.basenameWithoutExtension(node.path);
@@ -687,9 +682,9 @@ class _FileTreeItemState extends State<_FileTreeItem> {
 
   void _showDeleteConfirmationDialog(
     BuildContext context,
-    domain.FileTreeNode node,
+    FileTreeNode node,
   ) {
-    final isDirectory = node.type == domain.FileTreeNodeType.directory;
+    final isDirectory = node.type == FileTreeNodeType.directory;
     final itemType = isDirectory ? 'directory' : 'file';
 
     showDialog<void>(
@@ -743,33 +738,5 @@ class _FileTreeItemState extends State<_FileTreeItem> {
         ],
       ),
     );
-  }
-}
-
-/// Utility to convert icon strings to IconData
-IconData getIconDataFromString(String? iconName) {
-  switch (iconName) {
-    case 'code':
-      return LucideIcons.code;
-    case 'book':
-      return LucideIcons.book;
-    case 'file-text':
-      return LucideIcons.fileText;
-    case 'image':
-      return LucideIcons.image;
-    case 'settings':
-      return LucideIcons.settings;
-    case 'users':
-      return LucideIcons.users;
-    case 'briefcase':
-      return LucideIcons.briefcase;
-    case 'heart':
-      return LucideIcons.heart;
-    case 'star':
-      return LucideIcons.star;
-    case 'folder':
-      return LucideIcons.folder;
-    default:
-      return LucideIcons.star;
   }
 }

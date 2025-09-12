@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/presentation/widgets/layouts/desktop/core/ui_registry.dart';
-import 'package:loom/features/core/settings/presentation/providers/close_button_settings_provider.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Extensible side panel that displays content for the selected sidebar item
 class ExtensibleSidePanel extends ConsumerWidget {

@@ -2,8 +2,7 @@
 /// These contain the business logic and orchestrate repository calls
 library;
 
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart';
-import 'package:loom/features/core/explorer/domain/repositories/workspace_repository.dart';
+import 'package:loom/features/core/explorer/index.dart';
 
 /// Use case for opening a workspace
 class OpenWorkspaceUseCase {
@@ -64,8 +63,8 @@ class LoadProjectMetadataUseCase {
 }
 
 /// Use case for creating a file
-class CreateFileUseCase {
-  const CreateFileUseCase(this.repository);
+class WorkspaceCreateFileUseCase {
+  const WorkspaceCreateFileUseCase(this.repository);
 
   final WorkspaceRepository repository;
 
@@ -79,8 +78,8 @@ class CreateFileUseCase {
 }
 
 /// Use case for creating a directory
-class CreateDirectoryUseCase {
-  const CreateDirectoryUseCase(this.repository);
+class WorkspaceCreateDirectoryUseCase {
+  const WorkspaceCreateDirectoryUseCase(this.repository);
 
   final WorkspaceRepository repository;
 

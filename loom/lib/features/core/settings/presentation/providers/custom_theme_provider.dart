@@ -2,10 +2,7 @@ import 'dart:convert';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:loom/common/data/providers.dart';
-import 'package:loom/common/domain/repositories/shared_settings_repository.dart';
-import 'package:loom/common/presentation/providers/theme_provider.dart';
-import 'package:loom/common/presentation/theme/app_theme.dart';
+import 'package:loom/common/index.dart';
 
 // Custom theme data class
 class CustomThemeData {

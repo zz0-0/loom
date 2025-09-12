@@ -4,9 +4,7 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:loom/features/core/explorer/data/models/workspace_data_models.dart';
-import 'package:loom/features/core/explorer/domain/entities/workspace_entities.dart';
-import 'package:loom/features/core/explorer/domain/repositories/workspace_repository.dart';
+import 'package:loom/features/core/explorer/index.dart';
 import 'package:path/path.dart' as path;
 
 /// Implementation of WorkspaceSettingsRepository

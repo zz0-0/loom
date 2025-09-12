@@ -23,6 +23,17 @@ class WorkspaceSettings {
     this.wordWrap = true,
   });
 
+  factory WorkspaceSettings.fromJson(Map<String, dynamic> json) {
+    return WorkspaceSettings(
+      theme: json['theme'] as String? ?? 'dark',
+      fontSize: json['fontSize'] as int? ?? 14,
+      defaultSidebarView: json['defaultSidebarView'] as String? ?? 'filesystem',
+      filterFileExtensions: json['filterFileExtensions'] as bool? ?? true,
+      showHiddenFiles: json['showHiddenFiles'] as bool? ?? false,
+      wordWrap: json['wordWrap'] as bool? ?? true,
+    );
+  }
+
   final String theme;
   final int fontSize;
   final String defaultSidebarView;
@@ -47,6 +58,17 @@ class WorkspaceSettings {
       wordWrap: wordWrap ?? this.wordWrap,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'theme': theme,
+      'fontSize': fontSize,
+      'defaultSidebarView': defaultSidebarView,
+      'filterFileExtensions': filterFileExtensions,
+      'showHiddenFiles': showHiddenFiles,
+      'wordWrap': wordWrap,
+    };
+  }
 }
 
 /// Project-specific metadata
@@ -59,6 +81,26 @@ class ProjectMetadata {
     this.session = const SessionState(),
     this.migrationHistory = const [],
   });
+
+  factory ProjectMetadata.fromJson(Map<String, dynamic> json) {
+    return ProjectMetadata(
+      version: json['version'] as String? ?? '1.0',
+      schemaVersion: json['schemaVersion'] as String? ?? '2023.1',
+      collections: (json['collections'] as Map<String, dynamic>?)?.map(
+            (key, value) => MapEntry(key, List<String>.from(value as List)),
+          ) ??
+          {},
+      fileSystemExplorerState: json['fileSystemExplorerState'] != null
+          ? FileSystemExplorerState.fromJson(
+              json['fileSystemExplorerState'] as Map<String, dynamic>,)
+          : const FileSystemExplorerState(),
+      session: json['session'] != null
+          ? SessionState.fromJson(json['session'] as Map<String, dynamic>)
+          : const SessionState(),
+      migrationHistory:
+          List<String>.from(json['migrationHistory'] as List? ?? []),
+    );
+  }
 
   final String version;
   final String schemaVersion;
@@ -85,6 +127,17 @@ class ProjectMetadata {
       migrationHistory: migrationHistory ?? this.migrationHistory,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'version': version,
+      'schemaVersion': schemaVersion,
+      'collections': collections,
+      'fileSystemExplorerState': fileSystemExplorerState.toJson(),
+      'session': session.toJson(),
+      'migrationHistory': migrationHistory,
+    };
+  }
 }
 
 class FileSystemExplorerState {
@@ -92,6 +145,16 @@ class FileSystemExplorerState {
     this.expandedPaths = const [],
     this.sortedPaths = const {},
   });
+
+  factory FileSystemExplorerState.fromJson(Map<String, dynamic> json) {
+    return FileSystemExplorerState(
+      expandedPaths: List<String>.from(json['expandedPaths'] as List? ?? []),
+      sortedPaths: (json['sortedPaths'] as Map<String, dynamic>?)?.map(
+            (key, value) => MapEntry(key, List<String>.from(value as List)),
+          ) ??
+          {},
+    );
+  }
 
   final List<String> expandedPaths;
   final Map<String, List<String>> sortedPaths; // Custom sort for folders
@@ -105,6 +168,13 @@ class FileSystemExplorerState {
       sortedPaths: sortedPaths ?? this.sortedPaths,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'expandedPaths': expandedPaths,
+      'sortedPaths': sortedPaths,
+    };
+  }
 }
 
 class SessionState {
@@ -112,6 +182,13 @@ class SessionState {
     this.openTabs = const [],
     this.lastActiveFile,
   });
+
+  factory SessionState.fromJson(Map<String, dynamic> json) {
+    return SessionState(
+      openTabs: List<String>.from(json['openTabs'] as List? ?? []),
+      lastActiveFile: json['lastActiveFile'] as String?,
+    );
+  }
 
   final List<String> openTabs;
   final String? lastActiveFile;
@@ -124,6 +201,13 @@ class SessionState {
       openTabs: openTabs ?? this.openTabs,
       lastActiveFile: lastActiveFile ?? this.lastActiveFile,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'openTabs': openTabs,
+      'lastActiveFile': lastActiveFile,
+    };
   }
 }
 

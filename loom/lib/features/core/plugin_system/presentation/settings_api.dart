@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loom/features/core/plugin_system/domain/plugin.dart';
+import 'package:loom/features/core/plugin_system/index.dart';
 
 /// Settings API for plugins
 class PluginSettingsApi {
