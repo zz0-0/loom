@@ -1,0 +1,193 @@
+import 'package:flutter/material.dart';
+import 'package:loom/common/index.dart';
+import 'package:loom/features/core/plugin_system/index.dart';
+import 'package:loom/features/plugins/git_plugin/index.dart';
+
+/// Handles UI components for the Git plugin
+class GitUIComponents {
+  GitUIComponents({
+    required this.pluginId,
+    required this.statusManager,
+    required this.operations,
+    required this.context,
+  });
+
+  final String pluginId;
+  final GitStatusManager statusManager;
+  final GitOperations operations;
+  final PluginContext context;
+
+  /// Register UI components with the plugin system
+  void registerComponents() {
+    final uiApi = PluginUIApi(context.registry);
+
+    // Register sidebar item for Git panel
+    final sidebarItem = PluginUIComponents.createSidebarItem(
+      pluginId: pluginId,
+      id: 'git',
+      icon: Icons.account_tree,
+      tooltip: 'Git',
+      buildPanel: _buildGitPanel,
+    );
+    uiApi.registerSidebarItem(pluginId, sidebarItem);
+
+    // Register bottom bar status
+    final bottomBarItem = _GitStatusBarItem(
+      pluginId: pluginId,
+      currentBranch: statusManager.currentBranch,
+    );
+    uiApi.registerBottomBarItem(pluginId, bottomBarItem);
+  }
+
+  Widget? _buildGitPanel(BuildContext context) {
+    if (!statusManager.isGitRepository) {
+      return const Center(
+        child: Text('Not a Git repository'),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Branch info
+          Row(
+            children: [
+              const Icon(Icons.account_tree, size: 16),
+              const SizedBox(width: 8),
+              Text(
+                statusManager.currentBranch,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Changed files
+          Text(
+            'Changed Files',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: ListView.builder(
+              itemCount: statusManager.changedFiles.length,
+              itemBuilder: (context, index) {
+                final file = statusManager.changedFiles[index];
+                return ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.insert_drive_file, size: 16),
+                  title: Text(
+                    file,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.add, size: 16),
+                        onPressed: () => _stageFile(file),
+                        tooltip: 'Stage file',
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.remove, size: 16),
+                        onPressed: () => _unstageFile(file),
+                        tooltip: 'Unstage file',
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Action buttons
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.check_circle, size: 16),
+                  label: const Text('Commit'),
+                  onPressed: _showCommitDialog,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.upload, size: 16),
+                  label: const Text('Push'),
+                  onPressed: _pushChanges,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _stageFile(String file) async {
+    final success = await operations.stageFile(file);
+    if (success) {
+      await statusManager.refreshStatus();
+    }
+  }
+
+  Future<void> _unstageFile(String file) async {
+    final success = await operations.unstageFile(file);
+    if (success) {
+      await statusManager.refreshStatus();
+    }
+  }
+
+  Future<void> _showCommitDialog() async {
+    // For now, use a simple default commit message
+    // In a real implementation, this would show a dialog
+    const commitMessage = 'Updated files';
+
+    final success = await operations.commitChanges(commitMessage);
+    if (success) {
+      await statusManager.refreshStatus();
+    }
+  }
+
+  Future<void> _pushChanges() async {
+    await operations.pushChanges();
+  }
+}
+
+/// Git status bar item for bottom bar
+class _GitStatusBarItem extends BottomBarItem {
+  _GitStatusBarItem({
+    required this.pluginId,
+    required this.currentBranch,
+  });
+
+  final String pluginId;
+  final String currentBranch;
+
+  @override
+  String get id => 'git_status';
+
+  @override
+  int get priority => 10;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.account_tree, size: 14),
+          const SizedBox(width: 4),
+          Text(
+            currentBranch,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+}

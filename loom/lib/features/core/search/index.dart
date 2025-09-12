@@ -1,9 +1,4 @@
-export 'data/providers.dart';
-export 'data/repositories/search_repository_impl.dart';
-export 'domain/entities/search_entities.dart';
-export 'domain/repositories/search_repository.dart';
-export 'domain/usecases/search_usecases.dart';
-export 'presentation/items/search_sidebar_item.dart';
-export 'presentation/providers/search_provider.dart';
-export 'presentation/widgets/command_palette_dialog.dart';
-export 'presentation/widgets/global_search_dialog.dart';
+export 'search_core/index.dart';
+export 'search_execution/index.dart';
+export 'search_history/index.dart';
+export 'search_ui/index.dart';

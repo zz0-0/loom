@@ -1,0 +1,48 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/features/core/settings/settings_interface/presentation/widgets/window_controls_settings_widget.dart';
+import 'package:loom/features/core/settings/settings_ui/presentation/widgets/close_button_settings_widget.dart';
+
+/// Interface settings page
+class InterfaceSettingsPage extends ConsumerWidget {
+  const InterfaceSettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Interface',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Configure window controls and layout options',
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 32),
+          const Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  WindowControlsSettingsWidget(),
+                  SizedBox(height: 32),
+                  CloseButtonSettingsWidget(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,7 +1,5 @@
-export 'data/providers.dart';
-export 'data/repositories/export_repository_impl.dart';
-export 'domain/entities/export_entities.dart';
-export 'domain/repositories/export_repository.dart';
-export 'domain/usecases/export_usecases.dart';
-export 'presentation/providers/export_provider.dart';
-export 'presentation/widgets/export_dialog.dart';
+// Export all export functionality organized by subfeatures
+export 'configuration/index.dart';
+export 'file_management/index.dart';
+export 'formatters/index.dart';
+export 'ui/index.dart';
