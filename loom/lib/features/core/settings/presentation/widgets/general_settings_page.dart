@@ -59,8 +59,10 @@ class _GeneralSettings extends ConsumerWidget {
           trailing: Switch(
             value: generalSettings.autoSave,
             onChanged: (value) {
-              ref.read(generalSettingsProvider.notifier).setAutoSave(value);
-              ref.read(autoSaveProvider.notifier).setEnabled(value);
+              ref
+                  .read(generalSettingsProvider.notifier)
+                  .setAutoSave(value: value);
+              ref.read(autoSaveProvider.notifier).isEnabled = value;
             },
           ),
         ),
@@ -87,9 +89,8 @@ class _GeneralSettings extends ConsumerWidget {
                         divisions: 29,
                         label: '${autoSaveState.intervalSeconds}s',
                         onChanged: (value) {
-                          ref
-                              .read(autoSaveProvider.notifier)
-                              .setInterval(value.toInt());
+                          ref.read(autoSaveProvider.notifier).interval =
+                              value.toInt();
                         },
                       ),
                     ),
@@ -123,7 +124,7 @@ class _GeneralSettings extends ConsumerWidget {
             onChanged: (value) {
               ref
                   .read(generalSettingsProvider.notifier)
-                  .setConfirmOnExit(value);
+                  .setConfirmOnExit(value: value);
             },
           ),
         ),
@@ -182,13 +183,11 @@ class _SettingsItem extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.trailing,
-    this.onTap,
   });
 
   final String title;
   final String subtitle;
   final Widget? trailing;
-  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +196,6 @@ class _SettingsItem extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

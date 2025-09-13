@@ -19,7 +19,8 @@ abstract class GeneralSettingsRepository {
 }
 
 /// Repository for application information
-// ignore: one_member_abstracts
+
 abstract class AppInfoRepository {
   Future<AppInfo> getAppInfo();
+  Future<String> getVersion();
 }

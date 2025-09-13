@@ -48,6 +48,27 @@ class AppearanceSettingsPage extends ConsumerWidget {
 }
 
 class _AppearanceGeneralSettings extends ConsumerWidget {
+  String _getFontSizeLabel(double fontSize) {
+    if (fontSize <= 12.0) return 'Small';
+    if (fontSize <= 14.0) return 'Medium';
+    if (fontSize <= 16.0) return 'Large';
+    return 'Extra Large';
+  }
+
+  double _getFontSizeValue(String label) {
+    switch (label) {
+      case 'Small':
+        return 12;
+      case 'Large':
+        return 16;
+      case 'Extra Large':
+        return 18;
+      case 'Medium':
+      default:
+        return 14;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -71,7 +92,7 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
             onChanged: (value) {
               ref
                   .read(appearanceSettingsProvider.notifier)
-                  .setCompactMode(value);
+                  .setCompactMode(value: value);
             },
           ),
         ),
@@ -79,9 +100,11 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
           title: 'Show Icons in Menu',
           subtitle: 'Display icons next to menu items',
           trailing: Switch(
-            value: true, // TODO(user): Add to appearance settings
+            value: appearanceSettings.showMenuIcons,
             onChanged: (value) {
-              // TODO(user): Implement menu icons toggle
+              ref
+                  .read(appearanceSettingsProvider.notifier)
+                  .setShowMenuIcons(value: value);
             },
           ),
         ),
@@ -89,25 +112,29 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
           title: 'Animation Speed',
           subtitle: 'Speed of UI animations and transitions',
           trailing: DropdownButton<String>(
-            value: 'Normal',
+            value: appearanceSettings.animationSpeed,
             onChanged: (value) {
-              // TODO(user): Implement animation speed
+              if (value != null) {
+                ref
+                    .read(appearanceSettingsProvider.notifier)
+                    .setAnimationSpeed(value);
+              }
             },
             items: const [
               DropdownMenuItem(
-                value: 'Slow',
+                value: 'slow',
                 child: Text('Slow'),
               ),
               DropdownMenuItem(
-                value: 'Normal',
+                value: 'normal',
                 child: Text('Normal'),
               ),
               DropdownMenuItem(
-                value: 'Fast',
+                value: 'fast',
                 child: Text('Fast'),
               ),
               DropdownMenuItem(
-                value: 'Disabled',
+                value: 'disabled',
                 child: Text('Disabled'),
               ),
             ],
@@ -117,9 +144,11 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
           title: 'Sidebar Transparency',
           subtitle: 'Make sidebar background semi-transparent',
           trailing: Switch(
-            value: false, // TODO(user): Add to appearance settings
+            value: appearanceSettings.sidebarTransparency,
             onChanged: (value) {
-              // TODO(user): Implement sidebar transparency
+              ref
+                  .read(appearanceSettingsProvider.notifier)
+                  .setSidebarTransparency(value: value);
             },
           ),
         ),
@@ -127,9 +156,14 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
           title: 'Font Size',
           subtitle: 'Overall application font size',
           trailing: DropdownButton<String>(
-            value: 'Medium',
+            value: _getFontSizeLabel(appearanceSettings.fontSize),
             onChanged: (value) {
-              // TODO(user): Implement font size
+              if (value != null) {
+                final fontSize = _getFontSizeValue(value);
+                ref
+                    .read(appearanceSettingsProvider.notifier)
+                    .setFontSize(fontSize);
+              }
             },
             items: const [
               DropdownMenuItem(
@@ -161,13 +195,11 @@ class _SettingsItem extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.trailing,
-    this.onTap,
   });
 
   final String title;
   final String subtitle;
   final Widget? trailing;
-  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +208,6 @@ class _SettingsItem extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

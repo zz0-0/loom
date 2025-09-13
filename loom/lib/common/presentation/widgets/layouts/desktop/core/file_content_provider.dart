@@ -130,8 +130,9 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   @override
   void dispose() {
     _controller.dispose();
-    _scrollController.removeListener(_syncScrollControllers);
-    _scrollController.dispose();
+    _scrollController
+      ..removeListener(_syncScrollControllers)
+      ..dispose();
     _lineNumbersScrollController.dispose();
     _syntaxScrollController.dispose();
     _keyboardFocusNode.dispose();
@@ -258,9 +259,9 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
     _autoSaveService.initializeAutoSave(
       filePath,
-      isEnabled,
       intervalSeconds,
       _saveFile,
+      isEnabled: isEnabled,
     );
   }
 

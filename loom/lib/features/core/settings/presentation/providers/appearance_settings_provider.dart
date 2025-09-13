@@ -12,7 +12,7 @@ final appearanceSettingsProvider =
 class AppearanceSettingsNotifier extends StateNotifier<AppearanceSettings> {
   AppearanceSettingsNotifier() : super(const AppearanceSettings());
 
-  void setCompactMode(bool value) {
+  void setCompactMode({required bool value}) {
     state = state.copyWith(compactMode: value);
   }
 
@@ -22,5 +22,17 @@ class AppearanceSettingsNotifier extends StateNotifier<AppearanceSettings> {
 
   void setTheme(String value) {
     state = state.copyWith(theme: value);
+  }
+
+  void setShowMenuIcons({required bool value}) {
+    state = state.copyWith(showMenuIcons: value);
+  }
+
+  void setAnimationSpeed(String value) {
+    state = state.copyWith(animationSpeed: value);
+  }
+
+  void setSidebarTransparency({required bool value}) {
+    state = state.copyWith(sidebarTransparency: value);
   }
 }

@@ -15,21 +15,33 @@ class AppearanceSettings {
     this.theme = 'system',
     this.fontSize = 14.0,
     this.compactMode = false,
+    this.showMenuIcons = true,
+    this.animationSpeed = 'normal',
+    this.sidebarTransparency = false,
   });
 
   final String theme;
   final double fontSize;
   final bool compactMode;
+  final bool showMenuIcons;
+  final String animationSpeed;
+  final bool sidebarTransparency;
 
   AppearanceSettings copyWith({
     String? theme,
     double? fontSize,
     bool? compactMode,
+    bool? showMenuIcons,
+    String? animationSpeed,
+    bool? sidebarTransparency,
   }) {
     return AppearanceSettings(
       theme: theme ?? this.theme,
       fontSize: fontSize ?? this.fontSize,
       compactMode: compactMode ?? this.compactMode,
+      showMenuIcons: showMenuIcons ?? this.showMenuIcons,
+      animationSpeed: animationSpeed ?? this.animationSpeed,
+      sidebarTransparency: sidebarTransparency ?? this.sidebarTransparency,
     );
   }
 }

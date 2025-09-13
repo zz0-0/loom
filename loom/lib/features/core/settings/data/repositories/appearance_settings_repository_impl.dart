@@ -1,40 +1,27 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:loom/features/core/settings/index.dart';
 
 /// Implementation of appearance settings repository
 class AppearanceSettingsRepositoryImpl implements AppearanceSettingsRepository {
+  AppearanceSettingsRepositoryImpl(
+    this._fileService,
+    this._serializationService,
+  );
+
+  final SettingsFileService _fileService;
+  final SettingsSerializationService _serializationService;
+
   static const String settingsFileName = 'appearance_settings.json';
 
   @override
   Future<AppearanceSettings> loadSettings() async {
-    try {
-      final file = File(settingsFileName);
-      // ignore: avoid_slow_async_io
-      if (!await file.exists()) {
-        return const AppearanceSettings();
-      }
-
-      final jsonString = await file.readAsString();
-      final jsonData = json.decode(jsonString) as Map<String, dynamic>;
-      return AppearanceSettings(
-        theme: jsonData['theme'] as String? ?? 'system',
-        fontSize: (jsonData['fontSize'] as num?)?.toDouble() ?? 14.0,
-        compactMode: jsonData['compactMode'] as bool? ?? false,
-      );
-    } catch (e) {
-      return const AppearanceSettings();
-    }
+    final jsonData = _fileService.readJsonFile(settingsFileName);
+    return _serializationService.deserializeAppearanceSettings(jsonData);
   }
 
   @override
   Future<void> saveSettings(AppearanceSettings settings) async {
-    final file = File(settingsFileName);
-    final jsonData = {
-      'theme': settings.theme,
-      'fontSize': settings.fontSize,
-      'compactMode': settings.compactMode,
-    };
-    await file.writeAsString(json.encode(jsonData));
+    final jsonData =
+        _serializationService.serializeAppearanceSettings(settings);
+    _fileService.writeJsonFile(settingsFileName, jsonData);
   }
 }

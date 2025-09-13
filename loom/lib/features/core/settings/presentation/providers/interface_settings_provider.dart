@@ -11,11 +11,11 @@ final interfaceSettingsProvider =
 class InterfaceSettingsNotifier extends StateNotifier<InterfaceSettings> {
   InterfaceSettingsNotifier() : super(const InterfaceSettings());
 
-  void setShowSidebar(bool value) {
+  void setShowSidebar({required bool value}) {
     state = state.copyWith(showSidebar: value);
   }
 
-  void setShowBottomBar(bool value) {
+  void setShowBottomBar({required bool value}) {
     state = state.copyWith(showBottomBar: value);
   }
 

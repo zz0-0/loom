@@ -1,8 +1,10 @@
 export 'data/providers.dart';
-export 'data/repositories/appearance_settings_repository_impl.dart';
 export 'data/repositories/app_info_repository_impl.dart';
+export 'data/repositories/appearance_settings_repository_impl.dart';
 export 'data/repositories/general_settings_repository_impl.dart';
 export 'data/repositories/interface_settings_repository_impl.dart';
+export 'data/services/settings_file_service.dart';
+export 'data/services/settings_serialization_service.dart';
 export 'domain/entities/settings_entities.dart';
 export 'domain/repositories/settings_repositories.dart';
 export 'domain/usecases/app_info_usecase.dart';

@@ -111,35 +111,6 @@ class FileStatusBottomBarItem implements BottomBarItem {
     }
   }
 
-  Color _getFileColor(String extension, ThemeData theme) {
-    switch (extension) {
-      case '.blox':
-        return theme.colorScheme.primary;
-      case '.md':
-      case '.markdown':
-        return Colors.blue;
-      case '.txt':
-        return theme.colorScheme.onSurfaceVariant;
-      case '.json':
-        return Colors.orange;
-      case '.yaml':
-      case '.yml':
-        return Colors.purple;
-      case '.dart':
-        return Colors.blue;
-      case '.js':
-      case '.ts':
-        return Colors.yellow;
-      case '.py':
-        return Colors.green;
-      case '.html':
-      case '.css':
-        return Colors.red;
-      default:
-        return theme.colorScheme.onSurfaceVariant;
-    }
-  }
-
   String _getFileTypeLabel(String extension) {
     switch (extension) {
       case '.blox':
@@ -163,8 +134,6 @@ class FileStatusBottomBarItem implements BottomBarItem {
       case '.py':
         return 'Python';
       case '.html':
-        return 'HTML';
-      case '.css':
         return 'CSS';
       default:
         return extension.substring(1).toUpperCase();
@@ -199,12 +168,15 @@ class CursorPositionBottomBarItem implements BottomBarItem {
       return const SizedBox.shrink();
     }
 
-    // TODO(user): Get actual cursor position from the text controller
+    // Get actual cursor position from the text controller when editor is implemented
     // For now, we'll show the stored cursor position
+    // TODO(user): Connect to TextEditingController.selection and update via editorStateNotifier.updateCursorPosition()
+    final cursorPosition = editorState.cursorPosition;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       child: Text(
-        editorState.cursorPosition.toString(),
+        'Ln ${cursorPosition.line}, Col ${cursorPosition.column}',
         style: theme.textTheme.bodySmall,
       ),
     );

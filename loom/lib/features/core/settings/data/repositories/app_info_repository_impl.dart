@@ -11,4 +11,9 @@ class AppInfoRepositoryImpl implements AppInfoRepository {
       description: 'A knowledge base application',
     );
   }
+
+  @override
+  Future<String> getVersion() async {
+    return '1.0.0';
+  }
 }

@@ -133,12 +133,10 @@ class _SettingsItem extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.onTap,
-    this.trailing,
   });
 
   final String title;
   final String subtitle;
-  final Widget? trailing;
   final VoidCallback? onTap;
 
   @override
@@ -177,7 +175,6 @@ class _SettingsItem extends StatelessWidget {
                   ],
                 ),
               ),
-              if (trailing != null) trailing!,
             ],
           ),
         ),

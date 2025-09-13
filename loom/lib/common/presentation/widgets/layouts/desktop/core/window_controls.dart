@@ -74,10 +74,7 @@ class WindowControls extends StatelessWidget {
       case WindowControlsOrder.reverse:
         orderedButtons = buttons.reversed.toList(); // Close, Maximize, Minimize
       case WindowControlsOrder.standard:
-      // ignore: no_default_cases
-      default:
         orderedButtons = buttons; // Minimize, Maximize, Close
-        break;
     }
 
     return Row(
@@ -133,8 +130,6 @@ class WindowControls extends StatelessWidget {
           buttons[1],
         ];
       case WindowControlsOrder.macOS:
-      // ignore: no_default_cases
-      default:
         // Close, Minimize, Maximize (default macOS order)
         orderedControls = [
           buttons[0],
@@ -143,7 +138,6 @@ class WindowControls extends StatelessWidget {
           spacers[1],
           buttons[2],
         ];
-        break;
     }
 
     return Row(
@@ -191,10 +185,7 @@ class WindowControls extends StatelessWidget {
       case WindowControlsOrder.reverse:
         orderedButtons = buttons.reversed.toList(); // Close, Maximize, Minimize
       case WindowControlsOrder.standard:
-      // ignore: no_default_cases
-      default:
         orderedButtons = buttons; // Minimize, Maximize, Close
-        break;
     }
 
     return Row(

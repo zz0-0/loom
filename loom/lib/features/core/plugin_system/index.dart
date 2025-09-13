@@ -1,6 +1,15 @@
 export 'data/repositories/plugin_repositories.dart';
 export 'domain/entities/plugin.dart';
+export 'domain/entities/plugin_base.dart';
+export 'domain/entities/plugin_context.dart';
+export 'domain/entities/plugin_event_bus.dart';
+export 'domain/entities/plugin_permissions.dart';
+export 'domain/entities/plugin_registry.dart';
+export 'domain/entities/plugin_settings.dart';
+export 'domain/entities/plugin_state.dart';
 export 'domain/services/plugin_bootstrapper.dart';
+export 'domain/services/plugin_event_manager.dart';
+export 'domain/services/plugin_lifecycle_manager.dart';
 export 'domain/services/plugin_manager.dart';
 export 'domain/usecases/plugin_usecases.dart';
 export 'presentation/apis/command_api.dart';

@@ -8,180 +8,80 @@ class PluginManager {
   PluginManager._internal();
   static final PluginManager _instance = PluginManager._internal();
 
-  final Map<String, Plugin> _loadedPlugins = {};
-  final Map<String, PluginState> _pluginStates = {};
-  final Map<String, PluginContext> _pluginContexts = {};
-  final PluginRegistry _registry = PluginRegistry();
+  final PluginLifecycleManager _lifecycleManager = PluginLifecycleManager();
+  final PluginEventManager _eventManager = PluginEventManager();
 
   /// Initialize the plugin system
   Future<void> initialize() async {
-    // Load built-in plugins
-    await _loadBuiltInPlugins();
-
-    // Load external plugins from plugin directory
-    await _loadExternalPlugins();
-  }
-
-  /// Load built-in plugins (compiled with the app)
-  Future<void> _loadBuiltInPlugins() async {
-    // For now, we'll register plugins manually
-    // In the future, this could scan for plugins in the build
-  }
-
-  /// Load external plugins from the filesystem
-  Future<void> _loadExternalPlugins() async {
-    // TODO(user): Implement external plugin loading
-    // This would scan a plugins directory and load .dart files
-    // For now, this is a placeholder that could be implemented later
-    // when the app supports dynamic plugin loading
+    await _lifecycleManager.initialize();
+    _updateEventManagerState();
   }
 
   /// Register a plugin
   Future<void> registerPlugin(Plugin plugin, BuildContext context) async {
-    if (_loadedPlugins.containsKey(plugin.id)) {
-      throw Exception('Plugin ${plugin.id} is already registered');
-    }
-
-    _loadedPlugins[plugin.id] = plugin;
-    _pluginStates[plugin.id] = PluginState.uninitialized;
-    _registry.registerPlugin(plugin);
-
-    // Create plugin context
-    final pluginContext = PluginContext(
-      registry: _registry,
-      settings: PluginSettings(plugin.id),
-      eventBus: PluginEventBus(),
-      permissions: PluginPermissions(),
-      theme: Theme.of(context),
-    );
-
-    _pluginContexts[plugin.id] = pluginContext;
-
-    // Initialize the plugin
-    await _initializePlugin(plugin.id);
-  }
-
-  /// Initialize a specific plugin
-  Future<void> _initializePlugin(String pluginId) async {
-    final plugin = _loadedPlugins[pluginId];
-    final context = _pluginContexts[pluginId];
-
-    if (plugin == null || context == null) {
-      throw Exception('Plugin $pluginId not found');
-    }
-
-    try {
-      _pluginStates[pluginId] = PluginState.initializing;
-      await plugin.initialize(context);
-      _pluginStates[pluginId] = PluginState.active;
-
-      // Call lifecycle hooks
-      plugin
-        ..onEditorLoad()
-        ..onActivate();
-    } catch (e) {
-      _pluginStates[pluginId] = PluginState.error;
-      throw Exception('Failed to initialize plugin $pluginId: $e');
-    }
+    await _lifecycleManager.registerPlugin(plugin, context);
+    _updateEventManagerState();
   }
 
   /// Unregister a plugin
   Future<void> unregisterPlugin(String pluginId) async {
-    final plugin = _loadedPlugins[pluginId];
-    if (plugin == null) return;
-
-    try {
-      // Deactivate first
-      await _deactivatePlugin(pluginId);
-
-      // Dispose the plugin
-      await plugin.dispose();
-
-      // Clean up
-      _loadedPlugins.remove(pluginId);
-      _pluginStates.remove(pluginId);
-      _pluginContexts.remove(pluginId);
-      _registry.unregisterPlugin(pluginId);
-    } catch (e) {
-      throw Exception('Failed to unregister plugin $pluginId: $e');
-    }
+    await _lifecycleManager.unregisterPlugin(pluginId);
+    _updateEventManagerState();
   }
 
   /// Activate a plugin
   Future<void> activatePlugin(String pluginId) async {
-    final plugin = _loadedPlugins[pluginId];
-    if (plugin == null) return;
-
-    if (_pluginStates[pluginId] == PluginState.active) return;
-
-    try {
-      await _initializePlugin(pluginId);
-    } catch (e) {
-      throw Exception('Failed to activate plugin $pluginId: $e');
-    }
-  }
-
-  /// Deactivate a plugin
-  Future<void> _deactivatePlugin(String pluginId) async {
-    final plugin = _loadedPlugins[pluginId];
-    if (plugin == null) return;
-
-    try {
-      _pluginStates[pluginId] = PluginState.deactivating;
-      plugin.onDeactivate();
-      _pluginStates[pluginId] = PluginState.inactive;
-    } catch (e) {
-      _pluginStates[pluginId] = PluginState.error;
-      throw Exception('Failed to deactivate plugin $pluginId: $e');
-    }
+    await _lifecycleManager.activatePlugin(pluginId);
+    _updateEventManagerState();
   }
 
   /// Get a plugin by ID
   Plugin? getPlugin(String pluginId) {
-    return _loadedPlugins[pluginId];
+    return _lifecycleManager.getPlugin(pluginId);
   }
 
   /// Get the state of a plugin
   PluginState getPluginState(String pluginId) {
-    return _pluginStates[pluginId] ?? PluginState.uninitialized;
+    return _lifecycleManager.getPluginState(pluginId);
   }
 
   /// Get the context of a plugin
   PluginContext? getPluginContext(String pluginId) {
-    return _pluginContexts[pluginId];
+    return _lifecycleManager.getPluginContext(pluginId);
   }
 
   /// Get all loaded plugins
-  Map<String, Plugin> get loadedPlugins => Map.unmodifiable(_loadedPlugins);
+  Map<String, Plugin> get loadedPlugins => _lifecycleManager.loadedPlugins;
 
   /// Get all plugin states
-  Map<String, PluginState> get pluginStates => Map.unmodifiable(_pluginStates);
+  Map<String, PluginState> get pluginStates => _lifecycleManager.pluginStates;
 
   /// Get the plugin registry
-  PluginRegistry get registry => _registry;
+  PluginRegistry get registry => _lifecycleManager.registry;
 
   /// Handle file open event for all plugins
   void onFileOpen(String path) {
-    for (final plugin in _loadedPlugins.values) {
-      if (_pluginStates[plugin.id] == PluginState.active) {
-        plugin.onFileOpen(path);
-      }
-    }
+    _eventManager.onFileOpen(path);
   }
 
   /// Handle workspace change event for all plugins
   void onWorkspaceChange(String workspacePath) {
-    for (final plugin in _loadedPlugins.values) {
-      if (_pluginStates[plugin.id] == PluginState.active) {
-        plugin.onWorkspaceChange(workspacePath);
-      }
-    }
+    _eventManager.onWorkspaceChange(workspacePath);
+  }
+
+  /// Update the event manager with current state
+  void _updateEventManagerState() {
+    _eventManager.updateState(
+      _lifecycleManager.loadedPlugins,
+      _lifecycleManager.pluginStates,
+    );
   }
 
   /// Dispose all plugins
   Future<void> dispose() async {
-    for (final pluginId in _loadedPlugins.keys.toList()) {
-      await unregisterPlugin(pluginId);
+    for (final pluginId in _lifecycleManager.loadedPlugins.keys.toList()) {
+      await _lifecycleManager.unregisterPlugin(pluginId);
     }
+    _updateEventManagerState();
   }
 }

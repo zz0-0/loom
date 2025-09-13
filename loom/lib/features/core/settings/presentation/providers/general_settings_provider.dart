@@ -14,7 +14,7 @@ final generalSettingsProvider =
 final autoSaveProvider =
     StateNotifierProvider<AutoSaveNotifier, AutoSaveState>((ref) {
   final generalSettings = ref.watch(generalSettingsProvider);
-  return AutoSaveNotifier(generalSettings.autoSave);
+  return AutoSaveNotifier(initialEnabled: generalSettings.autoSave);
 });
 
 /// General settings notifier
@@ -24,11 +24,11 @@ class GeneralSettingsNotifier extends StateNotifier<GeneralSettings> {
           const GeneralSettings(),
         );
 
-  void setAutoSave(bool value) {
+  void setAutoSave({required bool value}) {
     state = state.copyWith(autoSave: value);
   }
 
-  void setConfirmOnExit(bool value) {
+  void setConfirmOnExit({required bool value}) {
     state = state.copyWith(confirmOnExit: value);
   }
 
@@ -72,7 +72,7 @@ class AutoSaveState {
 
 /// Auto-save notifier that manages the auto-save timer and state
 class AutoSaveNotifier extends StateNotifier<AutoSaveState> {
-  AutoSaveNotifier(bool initialEnabled)
+  AutoSaveNotifier({required bool initialEnabled})
       : super(AutoSaveState(isEnabled: initialEnabled)) {
     _initialize();
   }
@@ -87,17 +87,19 @@ class AutoSaveNotifier extends StateNotifier<AutoSaveState> {
   }
 
   /// Set the save callback that will be called when auto-saving
+  // ignore: use_setters_to_change_properties
   void setSaveCallback(VoidCallback callback) {
     _onSaveCallback = callback;
   }
 
   /// Enable or disable auto-save
-  void setEnabled(bool enabled) {
-    if (enabled == state.isEnabled) return;
+  bool get isEnabled => state.isEnabled;
 
-    state = state.copyWith(isEnabled: enabled);
+  set isEnabled(bool value) {
+    if (value == state.isEnabled) return;
+    state = state.copyWith(isEnabled: value);
 
-    if (enabled) {
+    if (value) {
       _startAutoSaveTimer();
     } else {
       _stopAutoSaveTimer();
@@ -105,12 +107,11 @@ class AutoSaveNotifier extends StateNotifier<AutoSaveState> {
   }
 
   /// Set the auto-save interval in seconds
-  void setInterval(int seconds) {
-    state = state.copyWith(intervalSeconds: seconds);
-    if (state.isEnabled) {
-      _restartAutoSaveTimer();
-    }
+  set interval(int value) {
+    state = state.copyWith(intervalSeconds: value);
   }
+
+  int get interval => state.intervalSeconds;
 
   /// Mark that there are unsaved changes
   void markUnsavedChanges() {
@@ -156,11 +157,6 @@ class AutoSaveNotifier extends StateNotifier<AutoSaveState> {
   void _stopAutoSaveTimer() {
     _autoSaveTimer?.cancel();
     _autoSaveTimer = null;
-  }
-
-  void _restartAutoSaveTimer() {
-    _stopAutoSaveTimer();
-    _startAutoSaveTimer();
   }
 
   void _onAutoSaveTimer(Timer timer) {

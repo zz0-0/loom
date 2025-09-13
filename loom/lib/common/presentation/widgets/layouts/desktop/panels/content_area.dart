@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -304,19 +306,23 @@ class _WelcomeView extends StatelessWidget {
           // Open the newly created file
           await ref.read(fileOpeningServiceProvider).openFile(filePath);
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Created and opened: $fileName'),
-              duration: const Duration(seconds: 2),
-            ),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Created and opened: $fileName'),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
         } catch (e) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to create file: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to create file: $e'),
+                backgroundColor: Theme.of(context).colorScheme.error,
+              ),
+            );
+          }
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -384,33 +390,58 @@ class _WelcomeView extends StatelessWidget {
         final url = result['url']!;
         final targetDir = result['directory'];
 
-        // For now, show a message that Git clone is not fully implemented
-        // In a real implementation, this would run: git clone <url> [directory]
-        final message = targetDir != null
-            ? 'Cloning from: $url to $targetDir'
-            : 'Cloning from: $url';
+        // Show loading indicator
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            duration: const Duration(seconds: 2),
+          const SnackBar(
+            content: Text('Cloning repository...'),
+            duration: Duration(seconds: 1),
           ),
         );
 
-        // TODO(user): Implement actual Git clone using Process.run
-        // Example:
-        // final result = await Process.run('git', ['clone', url, targetDir ?? '']);
-        // if (result.exitCode == 0) {
-        //   // Open the cloned directory as workspace
-        //   final cloneDir = targetDir ?? url.split('/').last.replaceAll('.git', '');
-        //   await ref.read(currentWorkspaceProvider.notifier).openWorkspace(cloneDir);
-        // }
+        // Implement actual Git clone using Process.run
+        final cloneArgs = targetDir != null ? [url, targetDir] : [url];
+        final process = await Process.run('git', ['clone', ...cloneArgs]);
+
+        if (process.exitCode == 0) {
+          // Determine the cloned directory name
+          final cloneDir =
+              targetDir ?? url.split('/').last.replaceAll('.git', '');
+          final fullClonePath = targetDir ?? cloneDir;
+
+          // Open the cloned directory as workspace
+          await ref
+              .read(currentWorkspaceProvider.notifier)
+              .openWorkspace(fullClonePath);
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content:
+                    Text('Successfully cloned repository to: $fullClonePath'),
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to clone repository: ${process.stderr}'),
+                backgroundColor: Theme.of(context).colorScheme.error,
+                duration: const Duration(seconds: 5),
+              ),
+            );
+          }
+        }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to clone repository: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to clone repository: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
       }
     }
   }

@@ -1,0 +1,4 @@
+enum FileTreeNodeType {
+  file,
+  directory,
+}

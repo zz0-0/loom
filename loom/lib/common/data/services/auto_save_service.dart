@@ -14,10 +14,10 @@ class AutoSaveService {
   /// Initialize auto-save for a file
   void initializeAutoSave(
     String filePath,
-    bool isEnabled,
     int intervalSeconds,
-    VoidCallback saveCallback,
-  ) {
+    VoidCallback saveCallback, {
+    required bool isEnabled,
+  }) {
     // Clean up existing timer
     _cleanupFile(filePath);
 
@@ -40,7 +40,11 @@ class AutoSaveService {
   }
 
   /// Update auto-save settings for a file
-  void updateSettings(String filePath, bool isEnabled, int intervalSeconds) {
+  void updateSettings(
+    String filePath,
+    int intervalSeconds, {
+    required bool isEnabled,
+  }) {
     _cleanupFile(filePath);
 
     if (isEnabled) {
@@ -50,7 +54,7 @@ class AutoSaveService {
 
   /// Manually trigger auto-save for a file
   Future<void> saveNow(String filePath) async {
-    if (_hasUnsavedChanges[filePath] == true &&
+    if ((_hasUnsavedChanges[filePath] ?? false) &&
         _saveCallbacks[filePath] != null) {
       try {
         _saveCallbacks[filePath]!();
@@ -76,7 +80,7 @@ class AutoSaveService {
   }
 
   void _onAutoSaveTimer(String filePath) {
-    if (_hasUnsavedChanges[filePath] == true) {
+    if (_hasUnsavedChanges[filePath] ?? false) {
       saveNow(filePath);
     }
   }

@@ -29,7 +29,7 @@ class AutoSaveStatus {
 class AutoSaveStatusNotifier extends StateNotifier<AutoSaveStatus> {
   AutoSaveStatusNotifier() : super(const AutoSaveStatus());
 
-  void setActive(bool active) {
+  void setActive({required bool active}) {
     state = state.copyWith(isActive: active);
   }
 

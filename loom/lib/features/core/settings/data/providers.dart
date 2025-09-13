@@ -1,6 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/core/settings/index.dart';
 
+// Service providers
+final settingsFileServiceProvider = Provider<SettingsFileService>((ref) {
+  return const SettingsFileService();
+});
+
+final settingsSerializationServiceProvider =
+    Provider<SettingsSerializationService>((ref) {
+  return const SettingsSerializationService();
+});
+
 // Repository providers
 final appInfoRepositoryProvider = Provider<AppInfoRepository>((ref) {
   return AppInfoRepositoryImpl();
@@ -8,15 +18,21 @@ final appInfoRepositoryProvider = Provider<AppInfoRepository>((ref) {
 
 final appearanceSettingsRepositoryProvider =
     Provider<AppearanceSettingsRepository>((ref) {
-  return AppearanceSettingsRepositoryImpl();
+  final fileService = ref.watch(settingsFileServiceProvider);
+  final serializationService = ref.watch(settingsSerializationServiceProvider);
+  return AppearanceSettingsRepositoryImpl(fileService, serializationService);
 });
 
 final generalSettingsRepositoryProvider =
     Provider<GeneralSettingsRepository>((ref) {
-  return GeneralSettingsRepositoryImpl();
+  final fileService = ref.watch(settingsFileServiceProvider);
+  final serializationService = ref.watch(settingsSerializationServiceProvider);
+  return GeneralSettingsRepositoryImpl(fileService, serializationService);
 });
 
 final interfaceSettingsRepositoryProvider =
     Provider<InterfaceSettingsRepository>((ref) {
-  return InterfaceSettingsRepositoryImpl();
+  final fileService = ref.watch(settingsFileServiceProvider);
+  final serializationService = ref.watch(settingsSerializationServiceProvider);
+  return InterfaceSettingsRepositoryImpl(fileService, serializationService);
 });

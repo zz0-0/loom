@@ -1,6 +1,10 @@
 export 'data/providers.dart';
 export 'data/repositories/recent_searches_repository_impl.dart';
 export 'data/repositories/search_repository_impl.dart';
+export 'data/services/file_filter_service.dart';
+export 'data/services/replace_execution_service.dart';
+export 'data/services/search_execution_service.dart';
+export 'data/services/text_match_service.dart';
 export 'domain/entities/search_entities.dart';
 export 'domain/repositories/recent_searches_repository.dart';
 export 'domain/repositories/search_repository.dart';

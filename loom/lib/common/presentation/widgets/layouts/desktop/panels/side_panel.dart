@@ -246,27 +246,33 @@ class _ExplorerPanel extends ConsumerWidget {
               .read(currentWorkspaceProvider.notifier)
               .createDirectory(folderPath);
 
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Created folder: $result'),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please open a workspace first'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Created folder: $result'),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please open a workspace first'),
-              backgroundColor: Colors.orange,
+              content: Text('Failed to create folder: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to create folder: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
       }
     }
   }
@@ -312,29 +318,35 @@ class _ExplorerPanel extends ConsumerWidget {
               .createFile(filePath);
 
           // Open the newly created file
-          ref.read(fileOpeningServiceProvider).openFile(filePath);
+          await ref.read(fileOpeningServiceProvider).openFile(filePath);
 
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Created and opened: $result'),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please open a workspace first'),
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Created and opened: $result'),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please open a workspace first'),
-              backgroundColor: Colors.orange,
+              content: Text('Failed to create file: $e'),
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to create file: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
       }
     }
   }

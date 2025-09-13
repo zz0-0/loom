@@ -2,8 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/core/plugin_system/index.dart';
 
+// State management providers
+final pluginManagerProvider =
+    StateNotifierProvider<PluginManagerNotifier, PluginManagerState>((ref) {
+  final settingsRepo = ref.watch(pluginSettingsRepositoryProvider);
+  final metadataRepo = ref.watch(pluginMetadataRepositoryProvider);
+  final permissionsRepo = ref.watch(pluginPermissionsRepositoryProvider);
+
+  return PluginManagerNotifier(
+    settingsRepository: settingsRepo,
+    metadataRepository: metadataRepo,
+    permissionsRepository: permissionsRepo,
+  );
+});
+
+final pluginSettingsRepositoryProvider =
+    Provider<PluginSettingsRepository>((ref) {
+  return LocalPluginSettingsRepository();
+});
+
+final pluginMetadataRepositoryProvider =
+    Provider<PluginMetadataRepository>((ref) {
+  return LocalPluginMetadataRepository();
+});
+
+final pluginPermissionsRepositoryProvider =
+    Provider<PluginPermissionsRepository>((ref) {
+  return LocalPluginPermissionsRepository();
+});
+
 // Providers for plugin management
-final pluginManagerProvider = Provider<PluginManager>((ref) {
+final pluginManagerProviderOld = Provider<PluginManager>((ref) {
   return PluginManager();
 });
 
@@ -13,28 +42,28 @@ final pluginBootstrapperProvider = Provider<PluginBootstrapper>((ref) {
 
 // Use case providers
 final loadPluginsUseCaseProvider = Provider<LoadPluginsUseCase>((ref) {
-  final pluginManager = ref.watch(pluginManagerProvider);
+  final pluginManager = ref.watch(pluginManagerProviderOld);
   return LoadPluginsUseCase(pluginManager);
 });
 
 final registerPluginUseCaseProvider = Provider<RegisterPluginUseCase>((ref) {
-  final pluginManager = ref.watch(pluginManagerProvider);
+  final pluginManager = ref.watch(pluginManagerProviderOld);
   return RegisterPluginUseCase(pluginManager);
 });
 
 final unregisterPluginUseCaseProvider =
     Provider<UnregisterPluginUseCase>((ref) {
-  final pluginManager = ref.watch(pluginManagerProvider);
+  final pluginManager = ref.watch(pluginManagerProviderOld);
   return UnregisterPluginUseCase(pluginManager);
 });
 
 final getPluginUseCaseProvider = Provider<GetPluginUseCase>((ref) {
-  final pluginManager = ref.watch(pluginManagerProvider);
+  final pluginManager = ref.watch(pluginManagerProviderOld);
   return GetPluginUseCase(pluginManager);
 });
 
 final getAllPluginsUseCaseProvider = Provider<GetAllPluginsUseCase>((ref) {
-  final pluginManager = ref.watch(pluginManagerProvider);
+  final pluginManager = ref.watch(pluginManagerProviderOld);
   return GetAllPluginsUseCase(pluginManager);
 });
 
@@ -52,11 +81,10 @@ final pluginsProvider =
 });
 
 class PluginsNotifier extends StateNotifier<Map<String, Plugin>> {
-  final GetAllPluginsUseCase _getAllPluginsUseCase;
-
   PluginsNotifier(this._getAllPluginsUseCase) : super({}) {
     _loadPlugins();
   }
+  final GetAllPluginsUseCase _getAllPluginsUseCase;
 
   void _loadPlugins() {
     state = _getAllPluginsUseCase();
@@ -71,8 +99,6 @@ class PluginsNotifier extends StateNotifier<Map<String, Plugin>> {
   Future<void> unregisterPlugin(String pluginId) async {
     // This would need to be injected properly through ref
     // For now, just update state
-    final newState = Map<String, Plugin>.from(state);
-    newState.remove(pluginId);
-    state = newState;
+    state = Map<String, Plugin>.from(state)..remove(pluginId);
   }
 }

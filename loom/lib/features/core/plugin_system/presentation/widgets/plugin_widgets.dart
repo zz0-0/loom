@@ -17,12 +17,11 @@ class PluginListWidget extends ConsumerWidget {
 
 // Plugin item widget
 class PluginItemWidget extends StatelessWidget {
-  final Plugin plugin;
 
   const PluginItemWidget({
-    super.key,
-    required this.plugin,
+    required this.plugin, super.key,
   });
+  final Plugin plugin;
 
   @override
   Widget build(BuildContext context) {
