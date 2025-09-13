@@ -1,6 +1,10 @@
-// Export all plugin system functionality organized by subfeatures
-export 'plugin_apis/index.dart';
-export 'plugin_core/index.dart';
-export 'plugin_management/index.dart';
-export 'plugin_persistence/index.dart';
-export 'plugin_ui/index.dart';
+export 'data/repositories/plugin_repositories.dart';
+export 'domain/entities/plugin.dart';
+export 'domain/services/plugin_bootstrapper.dart';
+export 'domain/services/plugin_manager.dart';
+export 'domain/usecases/plugin_usecases.dart';
+export 'presentation/apis/command_api.dart';
+export 'presentation/apis/settings_api.dart';
+export 'presentation/apis/ui_api.dart';
+export 'presentation/plugin_presentation.dart';
+export 'presentation/widgets/plugin_widgets.dart';

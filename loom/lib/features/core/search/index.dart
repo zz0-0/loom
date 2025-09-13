@@ -1,4 +1,12 @@
-export 'search_core/index.dart';
-export 'search_execution/index.dart';
-export 'search_history/index.dart';
-export 'search_ui/index.dart';
+export 'data/providers.dart';
+export 'data/repositories/recent_searches_repository_impl.dart';
+export 'data/repositories/search_repository_impl.dart';
+export 'domain/entities/search_entities.dart';
+export 'domain/repositories/recent_searches_repository.dart';
+export 'domain/repositories/search_repository.dart';
+export 'domain/usecases/manage_recent_searches_usecase.dart';
+export 'domain/usecases/search_usecases.dart';
+export 'presentation/providers/search_provider.dart';
+export 'presentation/search_sidebar_item.dart';
+export 'presentation/widgets/command_palette_dialog.dart';
+export 'presentation/widgets/global_search_dialog.dart';

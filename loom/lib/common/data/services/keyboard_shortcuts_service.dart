@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:loom/common/data/services/keyboard_shortcut_models.dart';
+import 'package:loom/common/index.dart';
 
 /// Service for managing keyboard shortcuts
 class KeyboardShortcutsService {

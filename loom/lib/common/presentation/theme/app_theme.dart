@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:loom/common/presentation/theme/app_radius.dart';
+import 'package:loom/common/index.dart';
 
 class AppTheme {
   // Base color schemes

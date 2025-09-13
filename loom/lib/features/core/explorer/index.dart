@@ -1,5 +1,24 @@
-// Export all explorer functionality organized by subfeatures
-export 'collections_management/index.dart';
-export 'common/index.dart';
-export 'file_browser/index.dart';
-export 'workspace_management/index.dart';
+// Export all explorer functionality
+export 'data/adapters/shared_settings_adapter.dart';
+export 'data/models/collection_template.dart';
+export 'data/models/project_template.dart';
+export 'data/models/workspace_data_models.dart';
+export 'data/repositories/settings_repository_impl.dart';
+export 'data/repositories/workspace_repository_impl.dart';
+export 'data/services/smart_categorization_service.dart';
+export 'data/services/workspace_service.dart';
+export 'domain/entities/collection_suggestion.dart';
+export 'domain/entities/workspace_entities.dart';
+export 'domain/repositories/workspace_repository.dart';
+export 'domain/services/smart_categorization_service.dart';
+export 'domain/usecases/settings_usecases.dart';
+export 'domain/usecases/workspace_usecases.dart';
+export 'presentation/items/explorer_sidebar_item.dart';
+export 'presentation/providers/project_creation_provider.dart';
+export 'presentation/providers/workspace_provider.dart';
+export 'presentation/utils.dart';
+export 'presentation/widgets/collections_widget.dart';
+export 'presentation/widgets/create_project_dialog.dart';
+export 'presentation/widgets/explorer_panel.dart';
+export 'presentation/widgets/file_tree_widget.dart';
+export 'presentation/widgets/workspace_toolbar.dart';
