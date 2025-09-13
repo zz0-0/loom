@@ -90,6 +90,9 @@ class _GoToLineDialogState extends State<GoToLineDialog> {
             decoration: InputDecoration(
               labelText: 'Line number (1 - $maxLines)',
               hintText: 'Enter line number',
+              hintStyle: TextStyle(
+                color: theme.colorScheme.onSurface.withOpacity(0.4),
+              ),
               errorText: _errorText,
               border: const OutlineInputBorder(),
               prefixIcon: const Icon(Icons.format_list_numbered),

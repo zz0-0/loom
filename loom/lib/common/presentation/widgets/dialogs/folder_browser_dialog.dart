@@ -170,9 +170,13 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                         title: const Text('Enter Path'),
                         content: TextField(
                           controller: controller,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Directory Path',
                             hintText: '/home/user/projects',
+                            hintStyle: TextStyle(
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.4),
+                            ),
                           ),
                         ),
                         actions: [

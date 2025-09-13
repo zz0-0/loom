@@ -358,19 +358,24 @@ class _MobileSearchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(16),
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           TextField(
             decoration: InputDecoration(
               hintText: 'Search your knowledge base...',
-              prefixIcon: Icon(LucideIcons.search),
-              border: OutlineInputBorder(),
+              hintStyle: TextStyle(
+                color: theme.colorScheme.onSurface.withOpacity(0.4),
+              ),
+              prefixIcon: const Icon(LucideIcons.search),
+              border: const OutlineInputBorder(),
             ),
           ),
-          SizedBox(height: 16),
-          Expanded(
+          const SizedBox(height: 16),
+          const Expanded(
             child: Center(
               child: Text('Search results will appear here'),
             ),
@@ -399,19 +404,24 @@ class _MobileSearchModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
       padding: const EdgeInsets.all(16),
-      child: const Column(
+      child: Column(
         children: [
           TextField(
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Search everything...',
-              prefixIcon: Icon(LucideIcons.search),
+              hintStyle: TextStyle(
+                color: theme.colorScheme.onSurface.withOpacity(0.4),
+              ),
+              prefixIcon: const Icon(LucideIcons.search),
             ),
           ),
-          Expanded(
+          const Expanded(
             child: Center(
               child: Text('Mobile search interface'),
             ),

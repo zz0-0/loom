@@ -93,7 +93,7 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
                     TextFormField(
                       controller: _projectNameController,
                       decoration: InputDecoration(
-                        hintText: 'my-awesome-project',
+                        hintText: 'Enter project name',
                         hintStyle: TextStyle(
                           color: theme.colorScheme.onSurface.withOpacity(0.4),
                         ),

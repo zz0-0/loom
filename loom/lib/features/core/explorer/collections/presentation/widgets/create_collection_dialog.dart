@@ -59,6 +59,8 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return AlertDialog(
       title: const Text('Create Collection'),
       content: SizedBox(
@@ -68,9 +70,12 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
           children: [
             TextField(
               controller: _controller,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Collection name',
                 hintText: 'My Collection',
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+                ),
               ),
               autofocus: true,
             ),

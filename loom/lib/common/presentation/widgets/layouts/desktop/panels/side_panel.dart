@@ -208,6 +208,8 @@ class _ExplorerPanel extends ConsumerWidget {
 
   Future<void> _createNewFolder(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController();
+    final theme = Theme.of(context);
+
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -215,8 +217,11 @@ class _ExplorerPanel extends ConsumerWidget {
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: 'Enter folder name',
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.4),
+            ),
           ),
         ),
         actions: [
@@ -279,6 +284,8 @@ class _ExplorerPanel extends ConsumerWidget {
 
   Future<void> _createNewFile(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController();
+    final theme = Theme.of(context);
+
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -286,8 +293,11 @@ class _ExplorerPanel extends ConsumerWidget {
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: 'Enter file name (e.g., document.md)',
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.4),
+            ),
           ),
         ),
         actions: [

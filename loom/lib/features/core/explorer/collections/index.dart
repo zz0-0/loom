@@ -9,7 +9,6 @@ export 'data/models/workspace_model.dart';
 export 'data/models/workspace_settings_model.dart';
 export 'data/repositories/workspace_repository_impl.dart';
 export 'data/services/smart_categorization_service.dart';
-export 'data/services/workspace_service.dart';
 export 'domain/entities/collection_suggestion.dart';
 export 'domain/entities/collection_template.dart';
 export 'domain/entities/collection_templates.dart';

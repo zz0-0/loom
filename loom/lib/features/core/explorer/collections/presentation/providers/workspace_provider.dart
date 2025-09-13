@@ -142,8 +142,10 @@ class WorkspaceNotifier extends StateNotifier<Workspace?> {
     try {
       final workspace = await repository.openWorkspace(path);
 
-      // Load workspace settings
-      final settings = await settingsRepository.loadSettings();
+      // Load workspace settings with fallback to defaults
+      final settings = await settingsRepository.loadSettings().catchError(
+            (_) => const WorkspaceSettings(), // Fallback to default settings
+          );
       final fileTree = await refreshFileTreeUseCase.call(workspace, settings);
 
       state = workspace.copyWith(

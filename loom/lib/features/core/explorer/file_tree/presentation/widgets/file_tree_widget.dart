@@ -99,6 +99,8 @@ class _FileTreeWidgetState extends ConsumerState<FileTreeWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       children: [
         // Search field
@@ -107,20 +109,23 @@ class _FileTreeWidgetState extends ConsumerState<FileTreeWidget> {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: Theme.of(context).dividerColor,
+                color: theme.dividerColor,
               ),
             ),
           ),
           child: TextField(
             controller: _searchController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Search files...',
-              prefixIcon: Icon(Icons.search, size: 16),
+              hintStyle: TextStyle(
+                color: theme.colorScheme.onSurface.withOpacity(0.4),
+              ),
+              prefixIcon: const Icon(Icons.search, size: 16),
               border: InputBorder.none,
               contentPadding: AppSpacing.paddingVerticalSm,
               isDense: true,
             ),
-            style: Theme.of(context).textTheme.bodySmall,
+            style: theme.textTheme.bodySmall,
             onChanged: _onSearchChanged,
           ),
         ),

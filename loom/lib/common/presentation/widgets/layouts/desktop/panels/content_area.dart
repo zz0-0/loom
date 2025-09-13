@@ -262,6 +262,8 @@ class _WelcomeView extends StatelessWidget {
 
   Future<void> _createNewFile(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController();
+    final theme = Theme.of(context);
+
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -269,8 +271,11 @@ class _WelcomeView extends StatelessWidget {
         content: TextField(
           controller: controller,
           autofocus: true,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: 'Enter file name (e.g., document.md)',
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.4),
+            ),
             suffixText: '.md',
           ),
         ),
@@ -338,6 +343,7 @@ class _WelcomeView extends StatelessWidget {
   Future<void> _cloneRepository(BuildContext context, WidgetRef ref) async {
     final urlController = TextEditingController();
     final directoryController = TextEditingController();
+    final theme = Theme.of(context);
 
     final result = await showDialog<Map<String, String>>(
       context: context,
@@ -348,17 +354,24 @@ class _WelcomeView extends StatelessWidget {
           children: [
             TextField(
               controller: urlController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Repository URL',
-                hintText: 'https://github.com/user/repo.git',
+                hintText:
+                    'Enter Git repository URL (e.g., https://github.com/user/repo.git)',
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+                ),
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: directoryController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Target Directory (optional)',
                 hintText: 'Leave empty to use repository name',
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+                ),
               ),
             ),
           ],

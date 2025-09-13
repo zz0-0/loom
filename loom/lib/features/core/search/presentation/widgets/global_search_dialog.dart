@@ -72,6 +72,9 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
               focusNode: _searchFocusNode,
               decoration: InputDecoration(
                 hintText: 'Search for text...',
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+                ),
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -106,10 +109,13 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
             // Replace input
             TextField(
               controller: _replaceController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Replace with...',
-                prefixIcon: Icon(Icons.find_replace),
-                border: OutlineInputBorder(),
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+                ),
+                prefixIcon: const Icon(Icons.find_replace),
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 8),

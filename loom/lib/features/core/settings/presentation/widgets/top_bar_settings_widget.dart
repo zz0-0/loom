@@ -40,6 +40,9 @@ class TopBarSettingsWidget extends ConsumerWidget {
               decoration: InputDecoration(
                 labelText: 'Application Title',
                 hintText: 'Enter custom app title',
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withOpacity(0.4),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

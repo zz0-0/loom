@@ -21,6 +21,8 @@ class GitSettings {
   }
 
   Widget _buildSettingsPage(BuildContext context, PluginSettingsApi settings) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -33,9 +35,12 @@ class GitSettings {
         // Git executable path setting
         TextFormField(
           initialValue: settings.get('gitPath', '/usr/bin/git'),
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Git Executable Path',
             hintText: 'Path to git executable',
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.4),
+            ),
           ),
           onChanged: (value) => settings.set('gitPath', value),
         ),
@@ -52,9 +57,12 @@ class GitSettings {
         // Default branch setting
         TextFormField(
           initialValue: settings.get('defaultBranch', 'main'),
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Default Branch',
             hintText: 'Default branch name for new repositories',
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.4),
+            ),
           ),
           onChanged: (value) => settings.set('defaultBranch', value),
         ),

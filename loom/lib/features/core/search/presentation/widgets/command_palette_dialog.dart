@@ -290,11 +290,11 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
                   focusNode: _focusNode,
                   decoration: InputDecoration(
                     hintText: 'Type to search files and commands...',
+                    hintStyle: TextStyle(
+                      color: theme.colorScheme.onSurface.withOpacity(0.4),
+                    ),
                     prefixIcon: const Icon(LucideIcons.search, size: 20),
                     border: InputBorder.none,
-                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
                   ),
                   onChanged: _filterItems,
                 ),
@@ -682,11 +682,11 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
                   focusNode: _focusNode,
                   decoration: InputDecoration(
                     hintText: 'Type to search files...',
+                    hintStyle: TextStyle(
+                      color: theme.colorScheme.onSurface.withOpacity(0.4),
+                    ),
                     prefixIcon: const Icon(LucideIcons.search, size: 20),
                     border: const OutlineInputBorder(),
-                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
                   ),
                   onChanged: _filterFiles,
                 ),

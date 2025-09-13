@@ -273,9 +273,12 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
                 bottom: AppSpacing.sm,
               ),
               child: TextField(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Header text',
                   hintText: 'Document title',
+                  hintStyle: TextStyle(
+                    color: theme.colorScheme.onSurface.withOpacity(0.4),
+                  ),
                 ),
                 onChanged: (value) {
                   setState(() {

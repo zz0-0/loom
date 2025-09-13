@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
@@ -102,26 +101,15 @@ class ExplorerPanel extends ConsumerWidget {
     WidgetRef ref,
   ) async {
     try {
-      // Try to use file_picker to select directory
-      String? selectedDirectory;
+      // Skip FilePicker in containerized environments and go straight to fallback
+      if (!context.mounted) return;
 
-      try {
-        selectedDirectory = await FilePicker.platform.getDirectoryPath();
-      } catch (filePickerError) {
-        // FilePicker failed (common in containerized environments or Linux without proper setup)
-        selectedDirectory = null;
-      }
-
-      // If FilePicker didn't work, show fallback dialog for manual path entry
-      if (selectedDirectory == null || selectedDirectory.isEmpty) {
-        if (!context.mounted) return;
-        selectedDirectory = await showDialog<String>(
-          context: context,
-          builder: (context) => const FolderBrowserDialog(
-            initialPath: '/workspaces',
-          ),
-        );
-      }
+      final selectedDirectory = await showDialog<String>(
+        context: context,
+        builder: (context) => const FolderBrowserDialog(
+          initialPath: '/workspaces',
+        ),
+      );
 
       if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
         await ref
@@ -150,6 +138,7 @@ class ExplorerPanel extends ConsumerWidget {
   void _showNewFileDialog(BuildContext context, WidgetRef ref) {
     final controller = TextEditingController();
     final workspace = ref.read(currentWorkspaceProvider);
+    final theme = Theme.of(context);
 
     showDialog<void>(
       context: context,
@@ -157,9 +146,12 @@ class ExplorerPanel extends ConsumerWidget {
         title: const Text('New File'),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'File name',
-            hintText: 'example.blox',
+            hintText: 'Enter file name (e.g., example.blox)',
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.4),
+            ),
           ),
           autofocus: true,
         ),
@@ -170,9 +162,9 @@ class ExplorerPanel extends ConsumerWidget {
           ),
           TextButton(
             onPressed: () async {
-              if (controller.text.isNotEmpty && workspace != null) {
-                final fileName = controller.text.trim();
+              final fileName = controller.text.trim();
 
+              if (fileName.isNotEmpty && workspace != null) {
                 // Input validation
                 if (fileName.isEmpty || fileName.length > 255) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -235,6 +227,7 @@ class ExplorerPanel extends ConsumerWidget {
   void _showNewFolderDialog(BuildContext context, WidgetRef ref) {
     final controller = TextEditingController();
     final workspace = ref.read(currentWorkspaceProvider);
+    final theme = Theme.of(context);
 
     showDialog<void>(
       context: context,
@@ -242,9 +235,12 @@ class ExplorerPanel extends ConsumerWidget {
         title: const Text('New Folder'),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Folder name',
             hintText: 'new-folder',
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.4),
+            ),
           ),
           autofocus: true,
         ),

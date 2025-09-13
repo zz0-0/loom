@@ -435,6 +435,7 @@ class _FileTreeItemState extends State<FileTreeItem> {
     final controller = TextEditingController(text: path.basename(node.path));
     final extension = path.extension(node.path);
     final nameWithoutExtension = path.basenameWithoutExtension(node.path);
+    final theme = Theme.of(context);
 
     showDialog<void>(
       context: context,
@@ -445,6 +446,9 @@ class _FileTreeItemState extends State<FileTreeItem> {
           autofocus: true,
           decoration: InputDecoration(
             hintText: 'Enter new name',
+            hintStyle: TextStyle(
+              color: theme.colorScheme.onSurface.withOpacity(0.4),
+            ),
             suffixText: extension.isNotEmpty ? extension : null,
           ),
         ),

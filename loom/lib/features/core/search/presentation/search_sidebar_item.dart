@@ -28,6 +28,8 @@ class SearchPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: AppSpacing.paddingMd,
       child: Column(
@@ -44,6 +46,9 @@ class SearchPanel extends ConsumerWidget {
           TextField(
             decoration: InputDecoration(
               hintText: 'Search files and content...',
+              hintStyle: TextStyle(
+                color: theme.colorScheme.onSurface.withOpacity(0.4),
+              ),
               prefixIcon: const Icon(Icons.search, size: 20),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),

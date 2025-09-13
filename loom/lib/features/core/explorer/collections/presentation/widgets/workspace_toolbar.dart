@@ -403,6 +403,8 @@ class _FallbackFolderDialogState extends State<_FallbackFolderDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return AlertDialog(
       title: const Text('Open Folder'),
       content: Column(
@@ -412,10 +414,13 @@ class _FallbackFolderDialogState extends State<_FallbackFolderDialog> {
           const SizedBox(height: 16),
           TextField(
             controller: _controller,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
               labelText: 'Folder Path',
-              hintText: '/path/to/your/project',
+              hintText: 'Enter folder path (e.g., /workspaces/my-project)',
+              hintStyle: TextStyle(
+                color: theme.colorScheme.onSurface.withOpacity(0.4),
+              ),
             ),
             autofocus: true,
           ).withFocusAnimation(),
