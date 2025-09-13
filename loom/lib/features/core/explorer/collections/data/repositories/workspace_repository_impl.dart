@@ -23,7 +23,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     final workspaceName = path.basename(workspacePath);
-    final metadata = await loadProjectMetadata(workspacePath);
+    final metadata = await loadFolderMetadata(workspacePath);
 
     // Build file tree with expanded paths from metadata
     final fileTree = await _buildFileTree(
@@ -49,10 +49,10 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     final workspaceName = path.basename(workspacePath);
-    const metadata = ProjectMetadata();
+    const metadata = FolderMetadata();
 
-    // Save initial project metadata
-    await saveProjectMetadata(workspacePath, metadata);
+    // Save initial folder metadata
+    await saveFolderMetadata(workspacePath, metadata);
 
     // Build initial file tree
     final fileTree = await _buildFileTree(workspacePath);
@@ -80,32 +80,32 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<void> saveProjectMetadata(
+  Future<void> saveFolderMetadata(
     String workspacePath,
-    ProjectMetadata metadata,
+    FolderMetadata metadata,
   ) async {
-    final projectDirPath =
-        path.join(workspacePath, ProjectConstants.projectDirName);
-    final projectDirExists =
-        await _fileRepository.directoryExists(projectDirPath);
+    final folderDirPath =
+        path.join(workspacePath, FolderConstants.folderDirName);
+    final folderDirExists =
+        await _fileRepository.directoryExists(folderDirPath);
 
-    if (!projectDirExists) {
-      await _fileRepository.createDirectory(projectDirPath);
+    if (!folderDirExists) {
+      await _fileRepository.createDirectory(folderDirPath);
     }
 
-    final projectFilePath =
-        path.join(projectDirPath, ProjectConstants.projectFileName);
+    final folderFilePath =
+        path.join(folderDirPath, FolderConstants.folderFileName);
     final backupFilePath =
-        path.join(projectDirPath, ProjectConstants.projectBackupFileName);
+        path.join(folderDirPath, FolderConstants.folderBackupFileName);
 
-    // Create backup if project file exists
-    final projectFileExists = await _fileRepository.fileExists(projectFilePath);
-    if (projectFileExists) {
-      final content = await _fileRepository.readFile(projectFilePath);
+    // Create backup if folder file exists
+    final folderFileExists = await _fileRepository.fileExists(folderFilePath);
+    if (folderFileExists) {
+      final content = await _fileRepository.readFile(folderFilePath);
       await _fileRepository.writeFile(backupFilePath, content);
     }
 
-    final model = ProjectMetadataModel(
+    final model = FolderMetadataModel(
       version: metadata.version,
       schemaVersion: metadata.schemaVersion,
       collections: metadata.collections,
@@ -122,26 +122,26 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
     final jsonString =
         const JsonEncoder.withIndent('  ').convert(model.toJson());
-    await _fileRepository.writeFile(projectFilePath, jsonString);
+    await _fileRepository.writeFile(folderFilePath, jsonString);
   }
 
   @override
-  Future<ProjectMetadata> loadProjectMetadata(
+  Future<FolderMetadata> loadFolderMetadata(
     String workspacePath,
   ) async {
-    final projectDirPath =
-        path.join(workspacePath, ProjectConstants.projectDirName);
-    final projectFilePath =
-        path.join(projectDirPath, ProjectConstants.projectFileName);
+    final folderDirPath =
+        path.join(workspacePath, FolderConstants.folderDirName);
+    final folderFilePath =
+        path.join(folderDirPath, FolderConstants.folderFileName);
 
-    final projectFileExists = await _fileRepository.fileExists(projectFilePath);
-    if (!projectFileExists) {
-      return const ProjectMetadata();
+    final folderFileExists = await _fileRepository.fileExists(folderFilePath);
+    if (!folderFileExists) {
+      return const FolderMetadata();
     }
 
-    final jsonString = await _fileRepository.readFile(projectFilePath);
+    final jsonString = await _fileRepository.readFile(folderFilePath);
     final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
-    final model = ProjectMetadataModel.fromJson(jsonData);
+    final model = FolderMetadataModel.fromJson(jsonData);
     return model.toDomain();
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/collections/presentation/providers/create_project_dialog.dart';
 import 'package:loom/features/core/explorer/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
@@ -80,14 +81,16 @@ class ExplorerPanel extends ConsumerWidget {
                 icon: LucideIcons.folderOpen,
                 title: 'Open Folder',
                 subtitle: 'Open an existing workspace',
-                onTap: () => _showOpenFolderDialog(context, ref),
+                onTap: () => ref
+                    .read(currentFolderProvider.notifier)
+                    .openFolder(context),
               ),
               const SizedBox(height: 12),
               _WelcomeAction(
                 icon: LucideIcons.folderPlus,
-                title: 'Create Project',
+                title: 'Create Workspace',
                 subtitle: 'Create a new workspace',
-                onTap: () => _showCreateProjectDialog(context, ref),
+                onTap: () => _showCreateWorkspaceDialog(context, ref),
               ),
             ],
           ),
@@ -96,44 +99,44 @@ class ExplorerPanel extends ConsumerWidget {
     );
   }
 
-  Future<void> _showOpenFolderDialog(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
-    try {
-      // Skip FilePicker in containerized environments and go straight to fallback
-      if (!context.mounted) return;
+  // Future<void> _showOpenFolderDialog(
+  //   BuildContext context,
+  //   WidgetRef ref,
+  // ) async {
+  //   try {
+  //     // Skip FilePicker in containerized environments and go straight to fallback
+  //     if (!context.mounted) return;
 
-      final selectedDirectory = await showDialog<String>(
-        context: context,
-        builder: (context) => const FolderBrowserDialog(
-          initialPath: '/workspaces',
-        ),
-      );
+  //     final selectedDirectory = await showDialog<String>(
+  //       context: context,
+  //       builder: (context) => const FolderBrowserDialog(
+  //         initialPath: '/workspaces',
+  //       ),
+  //     );
 
-      if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
-        await ref
-            .read(currentWorkspaceProvider.notifier)
-            .openWorkspace(selectedDirectory);
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to open folder: $e'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
-      }
-    }
-  }
+  //     if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
+  //       await ref
+  //           .read(currentWorkspaceProvider.notifier)
+  //           .openWorkspace(selectedDirectory);
+  //     }
+  //   } catch (e) {
+  //     if (context.mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text('Failed to open folder: $e'),
+  //           backgroundColor: Theme.of(context).colorScheme.error,
+  //         ),
+  //       );
+  //     }
+  //   }
+  // }
 
-  void _showCreateProjectDialog(BuildContext context, WidgetRef ref) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => const CreateProjectDialog(),
-    );
-  }
+  // void _showCreateFolderDialog(BuildContext context, WidgetRef ref) {
+  //   showDialog<void>(
+  //     context: context,
+  //     builder: (context) => const CreateFolderDialog(),
+  //   );
+  // }
 
   void _showNewFileDialog(BuildContext context, WidgetRef ref) {
     final controller = TextEditingController();
@@ -221,6 +224,13 @@ class ExplorerPanel extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showCreateWorkspaceDialog(BuildContext context, WidgetRef ref) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => const CreateProjectDialog(),
     );
   }
 

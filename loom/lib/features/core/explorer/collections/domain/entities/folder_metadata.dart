@@ -1,9 +1,9 @@
 import 'package:loom/features/core/explorer/collections/domain/entities/file_system_explorer_state.dart';
 import 'package:loom/features/core/explorer/collections/domain/entities/session_state.dart';
 
-/// Project-specific metadata
-class ProjectMetadata {
-  const ProjectMetadata({
+/// Folder-specific metadata
+class FolderMetadata {
+  const FolderMetadata({
     this.version = '1.0',
     this.schemaVersion = '2023.1',
     this.collections = const {},
@@ -12,8 +12,8 @@ class ProjectMetadata {
     this.migrationHistory = const [],
   });
 
-  factory ProjectMetadata.fromJson(Map<String, dynamic> json) {
-    return ProjectMetadata(
+  factory FolderMetadata.fromJson(Map<String, dynamic> json) {
+    return FolderMetadata(
       version: json['version'] as String? ?? '1.0',
       schemaVersion: json['schemaVersion'] as String? ?? '2023.1',
       collections: (json['collections'] as Map<String, dynamic>?)?.map(
@@ -40,7 +40,7 @@ class ProjectMetadata {
   final SessionState session;
   final List<String> migrationHistory;
 
-  ProjectMetadata copyWith({
+  FolderMetadata copyWith({
     String? version,
     String? schemaVersion,
     Map<String, List<String>>? collections,
@@ -48,7 +48,7 @@ class ProjectMetadata {
     SessionState? session,
     List<String>? migrationHistory,
   }) {
-    return ProjectMetadata(
+    return FolderMetadata(
       version: version ?? this.version,
       schemaVersion: schemaVersion ?? this.schemaVersion,
       collections: collections ?? this.collections,

@@ -1,8 +1,8 @@
-import 'package:loom/features/core/explorer/collections/domain/entities/project_file.dart';
+import 'package:loom/features/core/explorer/collections/domain/entities/folder_file.dart';
 
-/// Project template domain entity
-class ProjectTemplate {
-  const ProjectTemplate({
+/// Folder template domain entity
+class FolderTemplate {
+  const FolderTemplate({
     required this.id,
     required this.name,
     required this.description,
@@ -16,11 +16,11 @@ class ProjectTemplate {
   /// Display name of the template
   final String name;
 
-  /// Description of what this project template provides
+  /// Description of what this folder template provides
   final String description;
 
   /// Files to create when using this template
-  final List<ProjectFile> files;
+  final List<FolderFile> files;
 
   /// Folders to create when using this template
   final List<String> folders;

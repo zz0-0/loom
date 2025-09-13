@@ -18,14 +18,14 @@ abstract class WorkspaceRepository {
     WorkspaceSettings settings,
   );
 
-  /// Save project metadata
-  Future<void> saveProjectMetadata(
+  /// Save folder metadata
+  Future<void> saveFolderMetadata(
     String workspacePath,
-    ProjectMetadata metadata,
+    FolderMetadata metadata,
   );
 
-  /// Load project metadata
-  Future<ProjectMetadata> loadProjectMetadata(String workspacePath);
+  /// Load folder metadata
+  Future<FolderMetadata> loadFolderMetadata(String workspacePath);
 
   /// Create new file
   Future<void> createFile(

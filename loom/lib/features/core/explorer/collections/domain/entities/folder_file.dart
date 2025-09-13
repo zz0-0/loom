@@ -1,6 +1,6 @@
-/// Project file to be created from template
-class ProjectFile {
-  const ProjectFile({
+/// Folder file to be created from template
+class FolderFile {
+  const FolderFile({
     required this.path,
     required this.content,
   });

@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
-import 'package:loom/features/core/explorer/index.dart';
+import 'package:loom/features/core/explorer/collections/presentation/providers/workspace_provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -22,7 +22,7 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
   final _projectNameController = TextEditingController();
   final _locationController = TextEditingController();
 
-  final String _selectedTemplate = 'empty';
+  bool _isCreating = false;
 
   @override
   void initState() {
@@ -41,13 +41,12 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isCreating = ref.watch(projectCreationStateProvider).isLoading;
 
     return Dialog(
       child: Container(
         width: 600,
         height: 480,
-        padding: AppSpacing.paddingXl,
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -68,7 +67,7 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
                 const Spacer(),
                 IconButton(
                   onPressed:
-                      isCreating ? null : () => Navigator.of(context).pop(),
+                      _isCreating ? null : () => Navigator.of(context).pop(),
                   icon: const Icon(LucideIcons.x),
                 ),
               ],
@@ -109,6 +108,7 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
                         }
                         return null;
                       },
+                      enabled: !_isCreating,
                     ),
                     const SizedBox(height: 12),
 
@@ -134,11 +134,12 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
                               }
                               return null;
                             },
+                            enabled: !_isCreating,
                           ),
                         ),
                         const SizedBox(width: 8),
                         OutlinedButton.icon(
-                          onPressed: isCreating ? null : _selectLocation,
+                          onPressed: _isCreating ? null : _selectLocation,
                           icon: const Icon(LucideIcons.folderOpen, size: 16),
                           label: const Text('Browse'),
                         ),
@@ -171,7 +172,7 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
                                 color: theme.colorScheme.primary,
                                 width: 2,
                               ),
-                              borderRadius: AppRadius.radiusLg,
+                              borderRadius: BorderRadius.circular(12),
                               color: theme.colorScheme.primary.withOpacity(0.1),
                             ),
                             child: Row(
@@ -227,20 +228,20 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
               children: [
                 TextButton(
                   onPressed:
-                      isCreating ? null : () => Navigator.of(context).pop(),
+                      _isCreating ? null : () => Navigator.of(context).pop(),
                   child: const Text('Cancel'),
                 ),
                 const SizedBox(width: 8),
                 FilledButton.icon(
-                  onPressed: isCreating ? null : _createProject,
-                  icon: isCreating
+                  onPressed: _isCreating ? null : _createProject,
+                  icon: _isCreating
                       ? const SizedBox(
                           width: 16,
                           height: 16,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(LucideIcons.folderPlus, size: 16),
-                  label: Text(isCreating ? 'Creating...' : 'Create Project'),
+                  label: Text(_isCreating ? 'Creating...' : 'Create Project'),
                 ),
               ],
             ),
@@ -296,34 +297,30 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
   Future<void> _createProject() async {
     if (!_formKey.currentState!.validate()) return;
 
+    setState(() => _isCreating = true);
+
     final projectName = _projectNameController.text.trim();
     final location = _locationController.text.trim();
     final fullPath = path.join(location, projectName);
 
     try {
-      await ref.read(projectCreationStateProvider.notifier).createProject(
-            name: projectName,
-            location: location,
-            templateId: _selectedTemplate,
-          );
+      // For now, just create the workspace directly
+      // TODO(user): Implement proper project creation with templates
+      await ref
+          .read(currentWorkspaceProvider.notifier)
+          .createWorkspace(fullPath);
 
       if (mounted) {
-        // Open the newly created project
-        await ref
-            .read(currentWorkspaceProvider.notifier)
-            .openWorkspace(fullPath);
-        if (mounted) {
-          Navigator.of(context).pop();
+        Navigator.of(context).pop();
 
-          // Show success message
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Project "$projectName" created successfully!'),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-              ),
-            );
-          }
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Project "$projectName" created successfully!'),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+          );
         }
       }
     } catch (e) {
@@ -334,6 +331,10 @@ class _CreateProjectDialogState extends ConsumerState<CreateProjectDialog> {
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isCreating = false);
       }
     }
   }

@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -55,7 +54,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           SimpleMenuItem(
             label: 'Open',
             icon: Icons.folder_open,
-            onPressedWithContext: _showOpenFolderDialog,
+            onPressed: () =>
+                ref.read(currentFolderProvider.notifier).openFolder(context),
           ),
           SimpleMenuItem(label: 'Save', icon: Icons.save, onPressed: () {}),
           SimpleMenuItem(
@@ -162,70 +162,70 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     );
   }
 
-  Future<void> _showOpenFolderDialog(BuildContext context) async {
-    final ref = ProviderScope.containerOf(context, listen: false);
-    try {
-      // Try to use file_picker to select directory
-      String? selectedDirectory;
+  // Future<void> _showOpenFolderDialog(BuildContext context) async {
+  //   final ref = ProviderScope.containerOf(context, listen: false);
+  //   try {
+  //     // Try to use file_picker to select directory
+  //     String? selectedDirectory;
 
-      try {
-        selectedDirectory = await FilePicker.platform.getDirectoryPath();
-      } catch (filePickerError) {
-        // FilePicker failed (common in containerized environments)
-        // Removed print statement for production code
-        selectedDirectory = null;
-      }
+  //     try {
+  //       selectedDirectory = await FilePicker.platform.getDirectoryPath();
+  //     } catch (filePickerError) {
+  //       // FilePicker failed (common in containerized environments)
+  //       // Removed print statement for production code
+  //       selectedDirectory = null;
+  //     }
 
-      // If FilePicker didn't work or returned null, show the shared folder browser
-      if (selectedDirectory == null || selectedDirectory.isEmpty) {
-        if (!context.mounted) return;
-        selectedDirectory = await showDialog<String>(
-          context: context,
-          builder: (context) => const FolderBrowserDialog(
-            initialPath: '/workspaces',
-          ),
-        );
-      }
+  //     // If FilePicker didn't work or returned null, show the shared folder browser
+  //     if (selectedDirectory == null || selectedDirectory.isEmpty) {
+  //       if (!context.mounted) return;
+  //       selectedDirectory = await showDialog<String>(
+  //         context: context,
+  //         builder: (context) => const FolderBrowserDialog(
+  //           initialPath: '/workspaces',
+  //         ),
+  //       );
+  //     }
 
-      if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
-        final directoryOps = ref.read(directoryOperationsProvider.notifier);
-        await directoryOps.validateDirectory(selectedDirectory);
-        final state = ref.read(directoryOperationsProvider);
+  //     if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
+  //       final directoryOps = ref.read(directoryOperationsProvider.notifier);
+  //       await directoryOps.validateDirectory(selectedDirectory);
+  //       final state = ref.read(directoryOperationsProvider);
 
-        if (state.error != null) {
-          if (!context.mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Cannot access directory: ${state.error}'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-          return;
-        }
+  //       if (state.error != null) {
+  //         if (!context.mounted) return;
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(
+  //             content: Text('Cannot access directory: ${state.error}'),
+  //             backgroundColor: Theme.of(context).colorScheme.error,
+  //           ),
+  //         );
+  //         return;
+  //       }
 
-        // Open workspace
-        await ref
-            .read(currentWorkspaceProvider.notifier)
-            .openWorkspace(selectedDirectory);
-      } else {
-        // No directory selected
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No directory selected'),
-          ),
-        );
-      }
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to open folder: $e'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
-    }
-  }
+  //       // Open workspace
+  //       await ref
+  //           .read(currentWorkspaceProvider.notifier)
+  //           .openWorkspace(selectedDirectory);
+  //     } else {
+  //       // No directory selected
+  //       if (!context.mounted) return;
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('No directory selected'),
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     if (!context.mounted) return;
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Failed to open folder: $e'),
+  //         backgroundColor: Theme.of(context).colorScheme.error,
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

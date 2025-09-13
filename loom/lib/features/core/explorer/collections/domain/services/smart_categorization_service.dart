@@ -216,7 +216,7 @@ class SmartSuggestionService {
       );
     }
 
-    if (directory.contains('work') || directory.contains('project')) {
+    if (directory.contains('work') || directory.contains('folder')) {
       suggestions.add(
         const CollectionSuggestion(
           templateId: 'work',

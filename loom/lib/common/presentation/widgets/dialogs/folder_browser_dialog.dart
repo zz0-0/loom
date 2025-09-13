@@ -172,7 +172,7 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                           controller: controller,
                           decoration: InputDecoration(
                             labelText: 'Directory Path',
-                            hintText: '/home/user/projects',
+                            hintText: '/home/user/folder',
                             hintStyle: TextStyle(
                               color:
                                   theme.colorScheme.onSurface.withOpacity(0.4),

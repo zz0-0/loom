@@ -200,7 +200,7 @@ class CollectionTemplates {
         '*.txt',
         '*.md',
         'work/**',
-        'projects/**',
+        'folders/**',
         'meetings/**',
         'reports/**',
         'presentations/**',
@@ -217,7 +217,7 @@ class CollectionTemplates {
     CollectionTemplate(
       id: 'archive',
       name: 'Archive',
-      description: 'Archived files and completed projects',
+      description: 'Archived files and completed folders',
       icon: 'folder',
       filePatterns: [
         'archive/**',

@@ -1,4 +1,4 @@
-export 'constants/project_constants.dart';
+export 'constants/folder_constants.dart';
 export 'data/providers/repository_providers.dart';
 export 'data/providers/service_providers.dart';
 export 'data/providers/use_case_providers.dart';

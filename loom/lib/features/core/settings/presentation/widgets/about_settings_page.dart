@@ -111,7 +111,7 @@ class AboutSettingsPage extends ConsumerWidget {
                 SizedBox(height: 16),
                 Text(
                   'For full license texts, please visit the respective '
-                  'project repositories on GitHub.',
+                  'folder repositories on GitHub.',
                 ),
               ],
             ),

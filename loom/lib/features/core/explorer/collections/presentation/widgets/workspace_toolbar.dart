@@ -1,7 +1,7 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/collections/presentation/providers/create_project_dialog.dart';
 import 'package:loom/features/core/explorer/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -218,15 +218,16 @@ class _SettingsButton extends ConsumerWidget {
         icon: const Icon(LucideIcons.moreHorizontal, size: 16),
         iconSize: 16,
         splashRadius: 12,
-        tooltip: 'Project Options',
+        tooltip: 'Folder Options',
         onSelected: (value) {
           switch (value) {
-            case 'close_project':
+            case 'close_folder':
               ref.read(currentWorkspaceProvider.notifier).closeWorkspace();
-            case 'open_project':
-              _showOpenProjectDialog(context, ref);
-            case 'create_project':
-              _showCreateProjectDialog(context, ref);
+            case 'open_folder':
+              // _showOpenFolderDialog(context, ref);
+              ref.read(currentFolderProvider.notifier).openFolder(context);
+            case 'create_folder':
+              _showCreateWorkspaceDialog(context, ref);
             case 'toggle_filter':
               ref
                   .read(workspaceSettingsProvider.notifier)
@@ -239,7 +240,7 @@ class _SettingsButton extends ConsumerWidget {
         },
         itemBuilder: (context) => [
           const PopupMenuItem(
-            value: 'close_project',
+            value: 'close_folder',
             child: Row(
               children: [
                 Icon(
@@ -247,12 +248,12 @@ class _SettingsButton extends ConsumerWidget {
                   size: 16,
                 ),
                 SizedBox(width: 8),
-                Text('Close Project'),
+                Text('Close Folder'),
               ],
             ),
           ),
           const PopupMenuItem(
-            value: 'open_project',
+            value: 'open_folder',
             child: Row(
               children: [
                 Icon(
@@ -260,12 +261,12 @@ class _SettingsButton extends ConsumerWidget {
                   size: 16,
                 ),
                 SizedBox(width: 8),
-                Text('Open Project'),
+                Text('Open Folder'),
               ],
             ),
           ),
           const PopupMenuItem(
-            value: 'create_project',
+            value: 'create_folder',
             child: Row(
               children: [
                 Icon(
@@ -273,7 +274,7 @@ class _SettingsButton extends ConsumerWidget {
                   size: 16,
                 ),
                 SizedBox(width: 8),
-                Text('Create Project'),
+                Text('Create Workspace'),
               ],
             ),
           ),
@@ -323,55 +324,62 @@ class _SettingsButton extends ConsumerWidget {
     ).withHoverAnimation().withPressAnimation();
   }
 
-  Future<void> _showOpenProjectDialog(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
-    try {
-      // Try to use the same logic as in explorer_panel for consistency
-      String? selectedDirectory;
+  // Future<void> _showOpenFolderDialog(
+  //   BuildContext context,
+  //   WidgetRef ref,
+  // ) async {
+  //   try {
+  //     // Try to use the same logic as in explorer_panel for consistency
+  //     String? selectedDirectory;
 
-      try {
-        selectedDirectory = await FilePicker.platform.getDirectoryPath();
-      } catch (filePickerError) {
-        // FilePicker failed (common in containerized environments)
-        selectedDirectory = null;
-      }
+  //     try {
+  //       selectedDirectory = await FilePicker.platform.getDirectoryPath();
+  //     } catch (filePickerError) {
+  //       // FilePicker failed (common in containerized environments)
+  //       selectedDirectory = null;
+  //     }
 
-      if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
-        await ref
-            .read(currentWorkspaceProvider.notifier)
-            .openWorkspace(selectedDirectory);
-      }
-    } catch (e) {
-      // Fallback: Show a dialog for manual path entry if file picker fails
-      if (context.mounted) {
-        final result = await showDialog<String>(
-          context: context,
-          builder: (context) => _FallbackFolderDialog(),
-        );
+  //     if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
+  //       await ref
+  //           .read(currentWorkspaceProvider.notifier)
+  //           .openWorkspace(selectedDirectory);
+  //     }
+  //   } catch (e) {
+  //     // Fallback: Show a dialog for manual path entry if file picker fails
+  //     if (context.mounted) {
+  //       final result = await showDialog<String>(
+  //         context: context,
+  //         builder: (context) => _FallbackFolderDialog(),
+  //       );
 
-        if (result != null && result.isNotEmpty) {
-          try {
-            await ref
-                .read(currentWorkspaceProvider.notifier)
-                .openWorkspace(result);
-          } catch (openError) {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Failed to open folder: $openError'),
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                ),
-              );
-            }
-          }
-        }
-      }
-    }
-  }
+  //       if (result != null && result.isNotEmpty) {
+  //         try {
+  //           await ref
+  //               .read(currentWorkspaceProvider.notifier)
+  //               .openWorkspace(result);
+  //         } catch (openError) {
+  //           if (context.mounted) {
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               SnackBar(
+  //                 content: Text('Failed to open folder: $openError'),
+  //                 backgroundColor: Theme.of(context).colorScheme.error,
+  //               ),
+  //             );
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
-  void _showCreateProjectDialog(BuildContext context, WidgetRef ref) {
+  // void _showCreateFolderDialog(BuildContext context, WidgetRef ref) {
+  //   showDialog<void>(
+  //     context: context,
+  //     builder: (context) => const CreateFolderDialog(),
+  //   );
+  // }
+
+  void _showCreateWorkspaceDialog(BuildContext context, WidgetRef ref) {
     showDialog<void>(
       context: context,
       builder: (context) => const CreateProjectDialog(),
@@ -417,7 +425,7 @@ class _FallbackFolderDialogState extends State<_FallbackFolderDialog> {
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
               labelText: 'Folder Path',
-              hintText: 'Enter folder path (e.g., /workspaces/my-project)',
+              hintText: 'Enter folder path (e.g., /workspaces/my-folder)',
               hintStyle: TextStyle(
                 color: theme.colorScheme.onSurface.withOpacity(0.4),
               ),

@@ -14,7 +14,7 @@ class WorkspaceModel extends Workspace {
       name: json['name'] as String,
       rootPath: json['rootPath'] as String,
       metadata: json['metadata'] != null
-          ? ProjectMetadataModel.fromJson(
+          ? FolderMetadataModel.fromJson(
               json['metadata'] as Map<String, dynamic>,
             )
           : null,
@@ -30,7 +30,7 @@ class WorkspaceModel extends Workspace {
     return {
       'name': name,
       'rootPath': rootPath,
-      'metadata': (metadata as ProjectMetadataModel?)?.toJson(),
+      'metadata': (metadata as FolderMetadataModel?)?.toJson(),
       'fileTree':
           fileTree.map((node) => (node as FileTreeNodeModel).toJson()).toList(),
     };

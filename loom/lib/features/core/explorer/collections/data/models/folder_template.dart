@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:loom/features/core/explorer/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-/// UI model for project template with icon
-class ProjectTemplateModel extends ProjectTemplate {
-  const ProjectTemplateModel({
+/// UI model for folder template with icon
+class FolderTemplateModel extends FolderTemplate {
+  const FolderTemplateModel({
     required super.id,
     required super.name,
     required super.description,
@@ -17,7 +17,7 @@ class ProjectTemplateModel extends ProjectTemplate {
   final IconData icon;
 
   /// Convert to domain entity
-  ProjectTemplate toDomain() => ProjectTemplate(
+  FolderTemplate toDomain() => FolderTemplate(
         id: id,
         name: name,
         description: description,
@@ -26,22 +26,22 @@ class ProjectTemplateModel extends ProjectTemplate {
       );
 }
 
-/// Available project templates
-class ProjectTemplates {
-  static const List<ProjectTemplateModel> templates = [
-    ProjectTemplateModel(
+/// Available folder templates
+class FolderTemplates {
+  static const List<FolderTemplateModel> templates = [
+    FolderTemplateModel(
       id: 'empty',
-      name: 'Empty Project',
+      name: 'Empty Folder',
       description: 'Start with a blank slate',
       icon: LucideIcons.file,
       files: [
-        ProjectFile(
+        FolderFile(
           path: 'welcome.blox',
           content: '''
 #document title="Welcome to Loom"
 
 #section title="Getting Started"
-This is your new Loom project! Loom uses the Blox format for structured documents.
+This is your new Loom folder! Loom uses the Blox format for structured documents.
 
 #section title="What is Blox?"
 Blox is a powerful markup language designed for modern knowledge management. It combines the simplicity of Markdown with structured data capabilities.
@@ -71,7 +71,7 @@ Happy writing with Loom! 🚀''',
   ];
 
   /// Get a template by its ID
-  static ProjectTemplateModel? getTemplate(String id) {
+  static FolderTemplateModel? getTemplate(String id) {
     try {
       return templates.firstWhere((template) => template.id == id);
     } catch (e) {
@@ -80,7 +80,7 @@ Happy writing with Loom! 🚀''',
   }
 
   /// Get templates as domain entities
-  static List<ProjectTemplate> getDomainTemplates() {
+  static List<FolderTemplate> getDomainTemplates() {
     return templates.map((t) => t.toDomain()).toList();
   }
 }

@@ -40,25 +40,25 @@ class RefreshFileTreeUseCase {
   }
 }
 
-/// Use case for saving project metadata
-class SaveProjectMetadataUseCase {
-  const SaveProjectMetadataUseCase(this.repository);
+/// Use case for saving folder metadata
+class SaveFolderMetadataUseCase {
+  const SaveFolderMetadataUseCase(this.repository);
 
   final WorkspaceRepository repository;
 
-  Future<void> call(String workspacePath, ProjectMetadata metadata) async {
-    return repository.saveProjectMetadata(workspacePath, metadata);
+  Future<void> call(String workspacePath, FolderMetadata metadata) async {
+    return repository.saveFolderMetadata(workspacePath, metadata);
   }
 }
 
-/// Use case for loading project metadata
-class LoadProjectMetadataUseCase {
-  const LoadProjectMetadataUseCase(this.repository);
+/// Use case for loading folder metadata
+class LoadFolderMetadataUseCase {
+  const LoadFolderMetadataUseCase(this.repository);
 
   final WorkspaceRepository repository;
 
-  Future<ProjectMetadata> call(String workspacePath) async {
-    return repository.loadProjectMetadata(workspacePath);
+  Future<FolderMetadata> call(String workspacePath) async {
+    return repository.loadFolderMetadata(workspacePath);
   }
 }
 

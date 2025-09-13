@@ -1,8 +1,8 @@
 import 'package:loom/features/core/explorer/index.dart';
 
-/// Data model for ProjectMetadata with JSON serialization
-class ProjectMetadataModel extends ProjectMetadata {
-  const ProjectMetadataModel({
+/// Data model for FolderMetadata with JSON serialization
+class FolderMetadataModel extends FolderMetadata {
+  const FolderMetadataModel({
     super.version = '1.0',
     super.schemaVersion = '2023.1',
     super.collections = const {},
@@ -11,8 +11,8 @@ class ProjectMetadataModel extends ProjectMetadata {
     super.migrationHistory = const [],
   });
 
-  factory ProjectMetadataModel.fromJson(Map<String, dynamic> json) {
-    return ProjectMetadataModel(
+  factory FolderMetadataModel.fromJson(Map<String, dynamic> json) {
+    return FolderMetadataModel(
       version: json['version'] as String? ?? '1.0',
       schemaVersion: json['schemaVersion'] as String? ?? '2023.1',
       collections: _validateCollections(
@@ -73,5 +73,5 @@ class ProjectMetadataModel extends ProjectMetadata {
     return validated;
   }
 
-  ProjectMetadata toDomain() => this;
+  FolderMetadata toDomain() => this;
 }
