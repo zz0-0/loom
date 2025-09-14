@@ -223,8 +223,8 @@ class FontFamilySelector extends StatelessWidget {
               borderRadius: AppRadius.radiusMd,
             ),
             contentPadding: EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 8,
+              horizontal: AppSpacing.smd,
+              vertical: AppSpacing.sm,
             ),
           ),
           items: availableFonts.map((font) {

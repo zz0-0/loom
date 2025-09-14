@@ -1,12 +1,14 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
-import 'package:loom/common/presentation/widgets/dialogs/folder_browser_dialog.dart';
 import 'package:loom/features/core/explorer/collections/domain/entities/folder.dart';
 import 'package:loom/features/core/explorer/collections/domain/repositories/folder_repository.dart';
 import 'package:loom/features/core/explorer/collections/domain/usecases/folder_use_cases.dart';
 import 'package:loom/features/core/explorer/collections/presentation/providers/workspace_provider.dart';
+import 'package:path/path.dart' as path;
 
 class FolderNotifier extends StateNotifier<Folder?> {
   FolderNotifier(
@@ -25,22 +27,48 @@ class FolderNotifier extends StateNotifier<Folder?> {
   final FolderRenameItemUseCase renameItemUseCase;
 
   Future<void> openFolder(BuildContext context) async {
-    String? selectedDirectory;
+    // String? selectedDirectory;
 
-    try {
-      selectedDirectory = await FilePicker.platform.getDirectoryPath();
-    } catch (filePickerError) {
-      // FilePicker failed (common in containerized environments)
-      selectedDirectory = null;
-    }
+    // try {
+    //   selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    // } catch (filePickerError) {
+    //   // FilePicker failed (common in containerized environments)
+    //   selectedDirectory = null;
+    // }
 
-    if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
+    // if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
+    //   try {
+    //     // Use workspace provider to open the folder so the explorer updates
+    //     final container = ProviderScope.containerOf(context, listen: false);
+    //     await container
+    //         .read(currentWorkspaceProvider.notifier)
+    //         .openWorkspace(selectedDirectory);
+    //   } catch (e) {
+    //     if (context.mounted) {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(
+    //           content: Text('Failed to open folder: $e'),
+    //           backgroundColor: Theme.of(context).colorScheme.error,
+    //         ),
+    //       );
+    //     }
+    //   }
+    // } else {
+    // Fallback: Show the shared directory browser like the old implementation
+
+    final path = await showDialog<String>(
+      context: context,
+      builder: (context) => const FolderBrowserDialog(
+        initialPath: '/workspaces',
+      ),
+    );
+    if (path != null && path.isNotEmpty && context.mounted) {
       try {
         // Use workspace provider to open the folder so the explorer updates
         final container = ProviderScope.containerOf(context, listen: false);
         await container
             .read(currentWorkspaceProvider.notifier)
-            .openWorkspace(selectedDirectory);
+            .openWorkspace(path);
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -51,75 +79,33 @@ class FolderNotifier extends StateNotifier<Folder?> {
           );
         }
       }
-    } else {
-      // Fallback: Show the shared directory browser like the old implementation
-      final path = await showDialog<String>(
-        context: context,
-        builder: (context) => FolderBrowserDialog(
-          initialPath: '/workspaces',
-        ),
-      );
-      if (path != null && path.isNotEmpty) {
-        try {
-          // Use workspace provider to open the folder so the explorer updates
-          final container = ProviderScope.containerOf(context, listen: false);
-          await container
-              .read(currentWorkspaceProvider.notifier)
-              .openWorkspace(path);
-        } catch (e) {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Failed to open folder: $e'),
-                backgroundColor: Theme.of(context).colorScheme.error,
-              ),
-            );
-          }
-        }
-      }
     }
+    // }
   }
 
   Future<void> createFolder(BuildContext context) async {
     // Get the current workspace to create folders in
-    final container = ProviderScope.containerOf(context, listen: false);
-    final workspace = container.read(currentWorkspaceProvider);
+    // final container = ProviderScope.containerOf(context, listen: false);
+    // final workspace = container.read(currentWorkspaceProvider);
 
-    if (workspace == null) {
-      // No workspace is open, show error
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please open a workspace first to create folders'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-      }
-      return;
-    }
+    // if (workspace == null) {
+    //   // No workspace is open, show error
+    //   if (context.mounted) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(
+    //         content: Text('Please open a workspace first to create folders'),
+    //         backgroundColor: Colors.orange,
+    //       ),
+    //     );
+    //   }
+    //   return;
+    // }
 
-    final path = await showDialog<String>(
+    // Show the enhanced create folder dialog
+    await showDialog<void>(
       context: context,
       builder: (context) => const CreateFolderDialog(),
     );
-
-    if (path != null && path.isNotEmpty) {
-      try {
-        // Use workspace's createDirectory method
-        await container
-            .read(currentWorkspaceProvider.notifier)
-            .createDirectory(path);
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to create folder: $e'),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        }
-      }
-    }
   }
 
   Future<void> createFile(BuildContext context) async {
@@ -288,21 +274,31 @@ class _FallbackFolderDialogState extends State<_FallbackFolderDialog> {
   }
 }
 
-class CreateFolderDialog extends StatefulWidget {
+class CreateFolderDialog extends ConsumerStatefulWidget {
   const CreateFolderDialog({super.key});
 
   @override
-  State<CreateFolderDialog> createState() => _CreateFolderDialogState();
+  ConsumerState<CreateFolderDialog> createState() => _CreateFolderDialogState();
 }
 
-class _CreateFolderDialogState extends State<CreateFolderDialog> {
+class _CreateFolderDialogState extends ConsumerState<CreateFolderDialog> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final bool _isCreating = false;
+  final _folderNameController = TextEditingController();
+  final _locationController = TextEditingController();
+
+  bool _isCreating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Default location to a projects folder
+    _locationController.text = Platform.environment['HOME'] ?? '/workspaces';
+  }
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _folderNameController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -312,9 +308,9 @@ class _CreateFolderDialogState extends State<CreateFolderDialog> {
 
     return Dialog(
       child: Container(
-        width: 400,
-        height: 250,
-        padding: const EdgeInsets.all(24),
+        width: 600,
+        height: 480,
+        padding: AppSpacing.paddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -349,6 +345,7 @@ class _CreateFolderDialogState extends State<CreateFolderDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Folder Name
                     Text(
                       'Folder Name',
                       style: theme.textTheme.titleSmall?.copyWith(
@@ -357,7 +354,7 @@ class _CreateFolderDialogState extends State<CreateFolderDialog> {
                     ),
                     const SizedBox(height: 8),
                     TextFormField(
-                      controller: _nameController,
+                      controller: _folderNameController,
                       decoration: InputDecoration(
                         hintText: 'Enter folder name',
                         hintStyle: TextStyle(
@@ -376,7 +373,112 @@ class _CreateFolderDialogState extends State<CreateFolderDialog> {
                         return null;
                       },
                       enabled: !_isCreating,
-                      autofocus: true,
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Location
+                    Text(
+                      'Location',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _locationController,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Please select a location';
+                              }
+                              return null;
+                            },
+                            enabled: !_isCreating,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        OutlinedButton.icon(
+                          onPressed: _isCreating ? null : _selectLocation,
+                          icon: const Icon(Icons.folder_open, size: 16),
+                          label: const Text('Browse'),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Folder Template (grid-like layout for single item)
+                    Text(
+                      'Folder Template',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 80, // Fixed height to prevent overflow
+                      child: GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 12,
+                        childAspectRatio: 3,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          Container(
+                            padding: AppSpacing.paddingMd,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: theme.colorScheme.primary,
+                                width: 2,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              color: theme.colorScheme.primary.withOpacity(0.1),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.folder,
+                                  size: 20,
+                                  color: theme.colorScheme.primary,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Empty Folder',
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Start with a blank slate',
+                                        style:
+                                            theme.textTheme.bodySmall?.copyWith(
+                                          color: theme
+                                              .colorScheme.onSurfaceVariant,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -413,12 +515,91 @@ class _CreateFolderDialogState extends State<CreateFolderDialog> {
     );
   }
 
-  void _createFolder() {
+  Future<void> _selectLocation() async {
+    try {
+      String? result;
+
+      // Try to use the system file picker first
+      try {
+        result = await FilePicker.platform.getDirectoryPath(
+          dialogTitle: 'Select Folder Location',
+          initialDirectory: _locationController.text.isNotEmpty
+              ? _locationController.text
+              : Platform.environment['HOME'] ?? '/workspaces',
+        );
+      } catch (filePickerError) {
+        result = null;
+      }
+
+      // Enhanced fallback: Show the shared directory browser
+      if (result == null && mounted) {
+        result = await showDialog<String>(
+          context: context,
+          builder: (context) => FolderBrowserDialog(
+            initialPath: _locationController.text.isNotEmpty
+                ? _locationController.text
+                : '/workspaces',
+          ),
+        );
+      }
+
+      if (result != null && result.isNotEmpty) {
+        _locationController.text = result;
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to select location: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _createFolder() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final name = _nameController.text.trim();
-    if (name.isNotEmpty) {
-      Navigator.of(context).pop(name);
+    setState(() => _isCreating = true);
+
+    final folderName = _folderNameController.text.trim();
+    final location = _locationController.text.trim();
+    final fullPath = path.join(location, folderName);
+
+    try {
+      // For now, just create the workspace directly
+      // TODO(user): Implement proper folder creation with templates
+      await ref
+          .read(currentWorkspaceProvider.notifier)
+          .createWorkspace(fullPath);
+
+      if (mounted) {
+        Navigator.of(context).pop();
+
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Folder "$folderName" created successfully!'),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create folder: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isCreating = false);
+      }
     }
   }
 }
@@ -452,7 +633,7 @@ class _EnhancedCreateFileDialogState extends State<EnhancedCreateFileDialog> {
       child: Container(
         width: 500,
         height: 400,
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.paddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -530,7 +711,7 @@ class _EnhancedCreateFileDialogState extends State<EnhancedCreateFileDialog> {
                             color: theme.colorScheme.onSurface.withOpacity(0.4),
                           ),
                           border: const OutlineInputBorder(),
-                          contentPadding: const EdgeInsets.all(12),
+                          contentPadding: AppSpacing.paddingMd,
                         ),
                       ),
                     ),
@@ -611,7 +792,7 @@ class _EnhancedRenameDialogState extends State<EnhancedRenameDialog> {
       child: Container(
         width: 400,
         height: 200,
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.paddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

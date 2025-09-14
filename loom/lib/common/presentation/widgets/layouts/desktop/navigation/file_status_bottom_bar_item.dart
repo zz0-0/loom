@@ -4,14 +4,14 @@ import 'package:loom/common/index.dart';
 import 'package:path/path.dart' as path;
 
 /// File status item for the bottom bar that shows current file information
-class FileStatusBottomBarItem implements BottomBarItem {
-  const FileStatusBottomBarItem();
+class FileTypeBottomBarItem implements BottomBarItem {
+  const FileTypeBottomBarItem();
 
   @override
-  String get id => 'file_status';
+  String get id => 'file_type';
 
   @override
-  int get priority => 2;
+  int get priority => 10;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,8 @@ class FileStatusBottomBarItem implements BottomBarItem {
     final fileExtension = path.extension(filePath).toLowerCase();
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.smd, vertical: AppSpacing.xs,),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -174,7 +175,8 @@ class CursorPositionBottomBarItem implements BottomBarItem {
     final cursorPosition = editorState.cursorPosition;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.smd, vertical: AppSpacing.xs,),
       child: Text(
         'Ln ${cursorPosition.line}, Col ${cursorPosition.column}',
         style: theme.textTheme.bodySmall,
@@ -214,7 +216,8 @@ class BloxDocumentInfoBottomBarItem implements BottomBarItem {
     final hasWarnings = editorState.syntaxWarnings.isNotEmpty;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.smd, vertical: AppSpacing.xs,),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

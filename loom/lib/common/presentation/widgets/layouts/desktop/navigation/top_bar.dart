@@ -140,7 +140,7 @@ class TopBar extends ConsumerWidget {
                 if (placement == WindowControlsPlacement.left &&
                     windowSettings.showControls)
                   Padding(
-                    padding: const EdgeInsets.only(left: 12),
+                    padding: AppSpacing.paddingLeftSm,
                     child: WindowControls(
                       placement: WindowControlsPlacement.left,
                       order: windowSettings.effectiveOrder,
@@ -156,7 +156,7 @@ class TopBar extends ConsumerWidget {
                 // App title (if enabled)
                 if (topBarSettings.showTitle)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: AppSpacing.paddingHorizontalMd,
                     child: Text(
                       topBarSettings.title,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -246,7 +246,7 @@ class TopBar extends ConsumerWidget {
                 // App title (if enabled)
                 if (topBarSettings.showTitle)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: AppSpacing.paddingHorizontalMd,
                     child: Text(
                       topBarSettings.title,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -305,7 +305,7 @@ class TopBar extends ConsumerWidget {
       child: Container(
         width: searchBarWidth,
         height: 22,
-        margin: const EdgeInsets.symmetric(horizontal: 16),
+        margin: AppSpacing.marginHorizontalMd,
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
           borderRadius: BorderRadius.circular(3),
@@ -339,6 +339,7 @@ class TopBar extends ConsumerWidget {
                 color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
               ),
             ),
+            const SizedBox(width: 6),
           ],
         ),
       ),

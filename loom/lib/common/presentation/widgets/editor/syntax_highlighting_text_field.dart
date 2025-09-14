@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loom/common/index.dart';
 
 /// A text field that supports rich text formatting and syntax highlighting
 class SyntaxHighlightingTextField extends StatefulWidget {
@@ -77,7 +78,8 @@ class _SyntaxHighlightingTextFieldState
         Positioned.fill(
           child: IgnorePointer(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.smd, vertical: AppSpacing.md,),
               child: SingleChildScrollView(
                 controller: _scrollController,
                 child: SelectableText.rich(

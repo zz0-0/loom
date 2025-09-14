@@ -396,7 +396,8 @@ class _TabItemState extends State<_TabItem>
               minWidth: 120,
               maxWidth: 200,
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.smd, vertical: AppSpacing.sm,),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(4),
@@ -432,7 +433,8 @@ class _TabItemState extends State<_TabItem>
                   : null,
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.smd, vertical: AppSpacing.sm,),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: _buildTabChildren(theme),
@@ -758,7 +760,7 @@ class _TabOverflowDropdown extends StatelessWidget {
                 Container(
                   width: 6,
                   height: 6,
-                  margin: const EdgeInsets.only(left: 8),
+                  margin: AppSpacing.marginLeftSm,
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary,
                     shape: BoxShape.circle,
@@ -775,7 +777,7 @@ class _TabOverflowDropdown extends StatelessWidget {
                   borderRadius: AppRadius.radiusSm,
                   child: Container(
                     padding: AppSpacing.paddingXs,
-                    margin: const EdgeInsets.only(left: 8),
+                    margin: AppSpacing.marginLeftSm,
                     child: Icon(
                       Icons.close,
                       size: 14,

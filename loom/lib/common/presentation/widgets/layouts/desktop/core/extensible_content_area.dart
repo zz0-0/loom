@@ -57,7 +57,7 @@ class ExtensibleContentArea extends ConsumerWidget {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: AppSpacing.paddingHorizontalMd,
                       child: Text(
                         _getContentTitle(displayContentId),
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -143,7 +143,7 @@ class ExtensibleContentArea extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.paddingMd,
               decoration: BoxDecoration(
                 color:
                     theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),

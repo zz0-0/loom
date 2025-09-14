@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:loom/common/presentation/theme/app_spacing.dart';
 
 /// A dialog for find and replace functionality
 class FindReplaceDialog extends StatefulWidget {
@@ -67,7 +68,7 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
     return Dialog(
       child: Container(
         width: 450,
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingLg,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

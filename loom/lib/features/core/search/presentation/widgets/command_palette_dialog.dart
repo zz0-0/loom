@@ -254,7 +254,7 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
           children: [
             // Search input
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.paddingMd,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -306,14 +306,14 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
               child: _isLoading
                   ? const Center(
                       child: Padding(
-                        padding: EdgeInsets.all(32),
+                        padding: AppSpacing.paddingLg,
                         child: CircularProgressIndicator(),
                       ),
                     )
                   : _filteredItems.isEmpty
                       ? Center(
                           child: Padding(
-                            padding: const EdgeInsets.all(32),
+                            padding: AppSpacing.paddingLg,
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -347,8 +347,8 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.smd,
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSelected
@@ -427,7 +427,7 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
 
             // Footer with help text
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: AppSpacing.paddingMd,
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
@@ -623,7 +623,7 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
           children: [
             // Header
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.paddingMd,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -653,7 +653,7 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
 
             // Search input
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.paddingMd,
               child: KeyboardListener(
                 focusNode: FocusNode(),
                 onKeyEvent: (event) {
@@ -741,8 +741,8 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.smd,
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSelected
@@ -798,7 +798,7 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
 
             // Footer
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: AppSpacing.paddingMd,
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(

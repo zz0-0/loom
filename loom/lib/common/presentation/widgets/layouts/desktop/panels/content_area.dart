@@ -106,7 +106,10 @@ class _FileTab extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.smd,
+              vertical: AppSpacing.sm,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -132,7 +135,7 @@ class _FileTab extends StatelessWidget {
                   onTap: onClose,
                   borderRadius: BorderRadius.circular(4),
                   child: Container(
-                    padding: const EdgeInsets.all(2),
+                    padding: AppSpacing.paddingSm,
                     child: Icon(
                       LucideIcons.x,
                       size: 12,
@@ -483,7 +486,7 @@ class _WelcomeAction extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           width: 160,
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingMd,
           decoration: BoxDecoration(
             border: Border.all(
               color: theme.colorScheme.outline.withOpacity(0.2),
@@ -530,7 +533,7 @@ class _EditorView extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -544,7 +547,7 @@ class _EditorView extends StatelessWidget {
           Expanded(
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.paddingMd,
               decoration: BoxDecoration(
                 color:
                     theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),

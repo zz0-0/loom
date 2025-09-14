@@ -160,7 +160,7 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
 
           // Drawer footer
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.paddingMd,
             child: Column(
               children: [
                 _DrawerItem(
@@ -323,7 +323,7 @@ class _MobileDocumentsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingMd,
       children: [
         Card(
           child: ListTile(
@@ -361,7 +361,7 @@ class _MobileSearchView extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingMd,
       child: Column(
         children: [
           TextField(
@@ -408,7 +408,7 @@ class _MobileSearchModal extends StatelessWidget {
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingMd,
       child: Column(
         children: [
           TextField(
@@ -438,7 +438,7 @@ class _MobileOptionsMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingMd,
       child: const Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -466,7 +466,7 @@ class _MobileCreateOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingMd,
       child: const Column(
         mainAxisSize: MainAxisSize.min,
         children: [

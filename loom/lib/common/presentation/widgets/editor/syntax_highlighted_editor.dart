@@ -161,7 +161,7 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
       child: SingleChildScrollView(
         controller: _lineNumberScrollController,
         child: Padding(
-          padding: const EdgeInsets.only(top: 16, bottom: 8),
+          padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: lines.asMap().entries.map((entry) {
@@ -169,7 +169,7 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
               return Container(
                 height: 24, // Match line height
                 alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(right: 8),
+                padding: AppSpacing.paddingRightSm,
                 child: Text(
                   '$lineNumber',
                   style: lineNumberStyle,
@@ -210,10 +210,10 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
                 controller: _scrollController,
                 child: Padding(
                   padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 16,
-                    bottom: 8,
+                    left: AppSpacing.md,
+                    right: AppSpacing.md,
+                    top: AppSpacing.md,
+                    bottom: AppSpacing.sm,
                   ),
                   child: HighlightView(
                     widget.controller.text,
@@ -296,10 +296,10 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
                 controller: _scrollController,
                 child: Padding(
                   padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 16,
-                    bottom: 8,
+                    left: AppSpacing.md,
+                    right: AppSpacing.md,
+                    top: AppSpacing.md,
+                    bottom: AppSpacing.sm,
                   ),
                   child: SelectableText.rich(
                     bloxController.getHighlightedText(),
@@ -323,10 +323,10 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
                 controller: _scrollController,
                 child: Padding(
                   padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 16,
-                    bottom: 8,
+                    left: AppSpacing.md,
+                    right: AppSpacing.md,
+                    top: AppSpacing.md,
+                    bottom: AppSpacing.sm,
                   ),
                   child: TextField(
                     controller: widget.controller,

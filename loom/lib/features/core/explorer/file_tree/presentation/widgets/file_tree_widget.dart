@@ -114,6 +114,7 @@ class _FileTreeWidgetState extends ConsumerState<FileTreeWidget> {
             ),
           ),
           child: TextField(
+            textAlignVertical: TextAlignVertical.center,
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Search files...',

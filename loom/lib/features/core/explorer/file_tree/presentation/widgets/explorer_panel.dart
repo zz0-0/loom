@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
-import 'package:loom/features/core/explorer/collections/presentation/providers/create_project_dialog.dart';
 import 'package:loom/features/core/explorer/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
@@ -88,9 +87,11 @@ class ExplorerPanel extends ConsumerWidget {
               const SizedBox(height: 12),
               _WelcomeAction(
                 icon: LucideIcons.folderPlus,
-                title: 'Create Workspace',
+                title: 'Create Folder',
                 subtitle: 'Create a new workspace',
-                onTap: () => _showCreateWorkspaceDialog(context, ref),
+                onTap: () => ref
+                    .read(currentFolderProvider.notifier)
+                    .createFolder(context),
               ),
             ],
           ),
@@ -227,12 +228,12 @@ class ExplorerPanel extends ConsumerWidget {
     );
   }
 
-  void _showCreateWorkspaceDialog(BuildContext context, WidgetRef ref) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => const CreateProjectDialog(),
-    );
-  }
+  // void _showCreateWorkspaceDialog(BuildContext context, WidgetRef ref) {
+  //   showDialog<void>(
+  //     context: context,
+  //     builder: (context) => const CreateProjectDialog(),
+  //   );
+  // }
 
   void _showNewFolderDialog(BuildContext context, WidgetRef ref) {
     final controller = TextEditingController();
@@ -351,7 +352,7 @@ class _WelcomeAction extends StatelessWidget {
         borderRadius: AppRadius.radiusLg,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(12),
+          padding: AppSpacing.paddingMd,
           decoration: BoxDecoration(
             border: Border.all(
               color: theme.colorScheme.outline.withOpacity(0.2),

@@ -169,7 +169,7 @@ class _SidebarButtonState extends State<_SidebarButton> {
         : _getOutlinedIcon(widget.icon);
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 1),
+      margin: AppSpacing.marginVerticalXs,
       child: Material(
         color: widget.isSelected
             ? theme.colorScheme.primary.withOpacity(0.12)
@@ -187,10 +187,9 @@ class _SidebarButtonState extends State<_SidebarButton> {
               });
             },
             borderRadius: BorderRadius.circular(8),
-            child: Container(
+            child: SizedBox(
               width: double.infinity,
               height: 48,
-              padding: const EdgeInsets.all(12),
               child: Icon(
                 displayIcon,
                 size: 20,

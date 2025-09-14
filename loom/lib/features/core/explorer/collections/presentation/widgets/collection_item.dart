@@ -153,8 +153,8 @@ class _CollectionItemState extends State<CollectionItem> {
                 title: Text(suggestion.displayName),
                 subtitle: Text(suggestion.reason),
                 trailing: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm, vertical: AppSpacing.xs,),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loom/common/index.dart';
 
 /// Interface for menu items
 abstract class MenuItem {
@@ -239,7 +240,8 @@ class _MenuBarItemState extends State<_MenuBarItem> {
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm, vertical: AppSpacing.xs,),
             child: Text(
               widget.menu.label,
               style: theme.textTheme.bodySmall?.copyWith(

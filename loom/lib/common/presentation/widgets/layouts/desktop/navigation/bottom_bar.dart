@@ -23,7 +23,7 @@ class _BottomBarState extends State<BottomBar> {
     // Register default items
     final defaultItems = [
       // StatusBottomBarItem(),
-      const FileStatusBottomBarItem(),
+      const FileTypeBottomBarItem(),
       const CursorPositionBottomBarItem(),
       const BloxDocumentInfoBottomBarItem(),
       // EncodingBottomBarItem(),
@@ -50,7 +50,7 @@ class _BottomBarState extends State<BottomBar> {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        padding: AppSpacing.paddingHorizontalSm,
         child: Row(
           children: [
             // Left side items

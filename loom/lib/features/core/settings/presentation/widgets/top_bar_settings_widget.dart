@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/common/index.dart';
 import 'package:loom/features/core/settings/index.dart';
 
 /// Top bar settings widget
@@ -35,7 +36,10 @@ class TopBarSettingsWidget extends ConsumerWidget {
         ),
         if (settings.showTitle) ...[
           Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+            padding: const EdgeInsets.only(
+                left: AppSpacing.md,
+                right: AppSpacing.md,
+                bottom: AppSpacing.smd,),
             child: TextField(
               decoration: InputDecoration(
                 labelText: 'Application Title',
@@ -47,8 +51,8 @@ class TopBarSettingsWidget extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
+                  horizontal: AppSpacing.smd,
+                  vertical: AppSpacing.sm,
                 ),
               ),
               controller: TextEditingController(text: settings.title),
@@ -97,8 +101,9 @@ class _SettingsItem extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          margin: const EdgeInsets.only(bottom: 4),
+          padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.smd, horizontal: AppSpacing.md,),
+          margin: AppSpacing.marginBottomSm,
           child: Row(
             children: [
               Expanded(

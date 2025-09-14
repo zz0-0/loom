@@ -1,6 +1,7 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/common/index.dart';
 import 'package:loom/features/core/settings/index.dart';
 
 /// Theme settings widget
@@ -186,7 +187,7 @@ class _ThemeCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingMd,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             color: isSelected
@@ -248,7 +249,7 @@ class _PresetThemeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           width: 120,
-          padding: const EdgeInsets.all(12),
+          padding: AppSpacing.paddingMd,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: isSelected

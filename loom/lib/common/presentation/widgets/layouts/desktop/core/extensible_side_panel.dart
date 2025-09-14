@@ -102,7 +102,7 @@ class _PanelHeader extends ConsumerWidget {
 
     return Container(
       height: 35,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: AppSpacing.paddingHorizontalSm,
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -134,7 +134,7 @@ class _PanelHeader extends ConsumerWidget {
       icon: const Icon(Icons.close, size: 16),
       onPressed: onClose,
       splashRadius: 16,
-      padding: const EdgeInsets.all(4),
+      padding: AppSpacing.paddingSm,
       constraints: const BoxConstraints(
         minWidth: 24,
         minHeight: 24,

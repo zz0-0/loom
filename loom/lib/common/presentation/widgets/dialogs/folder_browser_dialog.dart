@@ -41,7 +41,7 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
       child: Container(
         width: 600,
         height: 500,
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.paddingLg,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -67,7 +67,7 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
             ),
             const SizedBox(height: 16),
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: AppSpacing.paddingMd,
               decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
@@ -241,7 +241,8 @@ class _QuickAccessButton extends StatelessWidget {
       icon: Icon(icon, size: 16),
       label: Text(label),
       style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.smd, vertical: AppSpacing.sm,),
       ),
     );
   }

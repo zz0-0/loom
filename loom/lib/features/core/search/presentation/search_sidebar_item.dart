@@ -35,13 +35,13 @@ class SearchPanel extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Search',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: 16),
+          // Text(
+          //   'Search',
+          //   style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          //         fontWeight: FontWeight.w600,
+          //       ),
+          // ),
+          // const SizedBox(height: 16),
           // Search input field
           TextField(
             decoration: InputDecoration(
@@ -54,8 +54,8 @@ class SearchPanel extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
+                horizontal: AppSpacing.smd,
+                vertical: AppSpacing.sm,
               ),
             ),
             onSubmitted: (query) {

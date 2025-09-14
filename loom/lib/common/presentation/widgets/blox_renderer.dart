@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:loom/common/index.dart';
 import 'package:loom/src/rust/api/blox_api.dart';
 
 /// Enhanced Blox renderer that handles inline elements, lists, and tables
@@ -64,7 +65,7 @@ class BloxRenderer {
     TextStyle baseStyle,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: AppSpacing.paddingVerticalSm,
       child: RichText(
         text: _buildInlineTextSpan(context, block.inlineElements, baseStyle),
       ),
@@ -82,7 +83,7 @@ class BloxRenderer {
     final title = block.getAttribute('title') ?? '';
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: AppSpacing.paddingVerticalMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -114,8 +115,8 @@ class BloxRenderer {
     final lang = block.getAttribute('lang') ?? '';
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(16),
+      margin: AppSpacing.marginVerticalSm,
+      padding: AppSpacing.paddingMd,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
@@ -157,8 +158,8 @@ class BloxRenderer {
     final author = block.getAttribute('author');
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(16),
+      margin: AppSpacing.marginVerticalSm,
+      padding: AppSpacing.paddingMd,
       decoration: BoxDecoration(
         border: Border(
           left: BorderSide(
@@ -200,7 +201,7 @@ class BloxRenderer {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: AppSpacing.paddingVerticalSm,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: block.listItems
@@ -219,7 +220,7 @@ class BloxRenderer {
     final indent = indentLevel * 20.0;
 
     return Padding(
-      padding: EdgeInsets.only(left: indent, bottom: 4),
+      padding: EdgeInsets.only(left: indent, bottom: AppSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -287,7 +288,7 @@ class BloxRenderer {
     final caption = block.getAttribute('caption');
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: AppSpacing.paddingVerticalSm,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -354,7 +355,7 @@ class BloxRenderer {
             : baseStyle;
 
         return Padding(
-          padding: const EdgeInsets.all(8),
+          padding: AppSpacing.paddingSm,
           child: Text(
             cell.content,
             style: cellStyle,
@@ -376,9 +377,9 @@ class BloxRenderer {
     final height = block.getAttribute('height');
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: AppSpacing.paddingVerticalSm,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingMd,
         decoration: BoxDecoration(
           border: Border.all(color: theme.dividerColor),
           borderRadius: BorderRadius.circular(8),
@@ -422,8 +423,8 @@ class BloxRenderer {
     final theme = Theme.of(context);
 
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(16),
+      margin: AppSpacing.marginVerticalSm,
+      padding: AppSpacing.paddingMd,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),

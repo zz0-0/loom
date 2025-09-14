@@ -29,7 +29,7 @@ class SettingsQuickPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      padding: AppSpacing.paddingMd,
+      padding: AppSpacing.paddingSm,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

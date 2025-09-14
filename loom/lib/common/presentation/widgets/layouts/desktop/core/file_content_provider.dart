@@ -722,7 +722,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         // Toolbar
         Container(
           height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
             border: Border(
@@ -930,7 +929,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                 _showPreview))
           Container(
             height: 24,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: AppSpacing.paddingMd,
             decoration: BoxDecoration(
               color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
               border: Border(
@@ -1046,7 +1045,11 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         controller: _lineNumbersScrollController,
         physics: const NeverScrollableScrollPhysics(), // Sync with main content
         child: Padding(
-          padding: const EdgeInsets.only(top: 16, bottom: 8, left: 8),
+          padding: const EdgeInsets.only(
+            top: AppSpacing.md,
+            bottom: AppSpacing.sm,
+            left: AppSpacing.sm,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: lines.asMap().entries.map((entry) {
@@ -1067,7 +1070,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
               return Container(
                 height: actualLineHeight,
                 alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(right: 8),
+                padding: AppSpacing.paddingRightSm,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -1131,8 +1134,12 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           physics:
               const NeverScrollableScrollPhysics(), // Let TextField handle scrolling
           child: Padding(
-            padding:
-                const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+            padding: const EdgeInsets.only(
+              left: AppSpacing.md,
+              right: AppSpacing.md,
+              top: AppSpacing.md,
+              bottom: AppSpacing.sm,
+            ),
             child: SizedBox(
               width: _calculateMinWidth(), // Dynamic width based on content
               child: SelectableText.rich(
@@ -1155,7 +1162,10 @@ class _FileEditorState extends ConsumerState<FileEditor> {
               controller: _scrollController,
               scrollDirection: Axis.horizontal, // Allow horizontal scrolling
               child: Padding(
-                padding: const EdgeInsets.only(top: 16, bottom: 8),
+                padding: const EdgeInsets.only(
+                  top: AppSpacing.md,
+                  bottom: AppSpacing.sm,
+                ),
                 child: SizedBox(
                   width: _calculateMinWidth(), // Dynamic width based on content
                   child: TextField(
@@ -1169,10 +1179,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                     ),
                     decoration: const InputDecoration(
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                      ),
+                      contentPadding: AppSpacing.paddingHorizontalMd,
                     ),
                     onChanged: (_) => _onTextChanged(),
                     focusNode: _textFieldFocusNode,
@@ -1195,7 +1202,8 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         controller: _scrollController,
         scrollDirection: Axis.horizontal, // Allow horizontal scrolling
         child: Padding(
-          padding: const EdgeInsets.only(top: 16, bottom: 8),
+          padding:
+              const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
           child: SizedBox(
             width: _calculateMinWidth(), // Dynamic width based on content
             child: TextField(

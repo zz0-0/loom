@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/common/index.dart';
 import 'package:loom/features/core/settings/index.dart';
 
 /// Close button settings widget
@@ -181,7 +182,7 @@ class _QuickSetButton extends StatelessWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingMd,
           decoration: BoxDecoration(
             border: Border.all(
               color: theme.colorScheme.outline.withOpacity(0.2),
@@ -240,7 +241,7 @@ class _CloseButtonPositionSetting extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingMd,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
         borderRadius: BorderRadius.circular(8),

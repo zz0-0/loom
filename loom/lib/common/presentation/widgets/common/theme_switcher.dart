@@ -77,8 +77,8 @@ class _ThemeOption extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.all(12),
-          margin: const EdgeInsets.only(bottom: 4),
+          padding: AppSpacing.paddingMd,
+          margin: AppSpacing.marginBottomSm,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
             color: isSelected

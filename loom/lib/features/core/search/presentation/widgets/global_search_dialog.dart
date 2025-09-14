@@ -332,7 +332,8 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
       children: [
         // File header
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.sm, horizontal: AppSpacing.smd,),
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
             borderRadius: BorderRadius.circular(4),
@@ -390,7 +391,8 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
         // This would need the editor widget to expose a scrollToLine method
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+        padding: const EdgeInsets.symmetric(
+            vertical: AppSpacing.xs, horizontal: AppSpacing.smd,),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

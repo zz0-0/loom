@@ -31,7 +31,7 @@ class SidePanel extends ConsumerWidget {
           // Header
           Container(
             height: 35,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: AppSpacing.paddingSm,
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -122,7 +122,7 @@ class _ExplorerPanel extends ConsumerWidget {
       children: [
         // Toolbar
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: AppSpacing.paddingSm,
           child: Row(
             children: [
               Text(

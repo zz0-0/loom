@@ -115,8 +115,9 @@ class _SettingsItem extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          margin: const EdgeInsets.only(bottom: 4),
+          padding: const EdgeInsets.symmetric(
+              vertical: AppSpacing.smd, horizontal: AppSpacing.md,),
+          margin: AppSpacing.marginBottomSm,
           child: Row(
             children: [
               Expanded(

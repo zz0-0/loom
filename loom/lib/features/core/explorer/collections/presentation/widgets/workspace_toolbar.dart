@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
-import 'package:loom/features/core/explorer/collections/presentation/providers/create_project_dialog.dart';
 import 'package:loom/features/core/explorer/index.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -177,7 +176,7 @@ class _ToggleButton extends StatelessWidget {
           child: AnimatedContainer(
             duration: AppAnimations.fast,
             curve: AppAnimations.scaleCurve,
-            padding: const EdgeInsets.all(4),
+            padding: AppSpacing.paddingSm,
             child: AnimatedScale(
               scale: isSelected ? 1.1 : 1.0,
               duration: AppAnimations.fast,
@@ -227,7 +226,7 @@ class _SettingsButton extends ConsumerWidget {
               // _showOpenFolderDialog(context, ref);
               ref.read(currentFolderProvider.notifier).openFolder(context);
             case 'create_folder':
-              _showCreateWorkspaceDialog(context, ref);
+              ref.read(currentFolderProvider.notifier).createFolder(context);
             case 'toggle_filter':
               ref
                   .read(workspaceSettingsProvider.notifier)
@@ -274,7 +273,7 @@ class _SettingsButton extends ConsumerWidget {
                   size: 16,
                 ),
                 SizedBox(width: 8),
-                Text('Create Workspace'),
+                Text('Create Folder'),
               ],
             ),
           ),
@@ -379,12 +378,12 @@ class _SettingsButton extends ConsumerWidget {
   //   );
   // }
 
-  void _showCreateWorkspaceDialog(BuildContext context, WidgetRef ref) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => const CreateProjectDialog(),
-    );
-  }
+  // void _showCreateWorkspaceDialog(BuildContext context, WidgetRef ref) {
+  //   showDialog<void>(
+  //     context: context,
+  //     builder: (context) => const CreateProjectDialog(),
+  //   );
+  // }
 }
 
 /// Fallback dialog for manual folder path entry

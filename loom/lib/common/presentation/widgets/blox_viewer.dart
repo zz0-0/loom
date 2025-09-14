@@ -10,7 +10,7 @@ class BloxViewer extends StatelessWidget {
     this.baseStyle,
     this.isDark = false,
     this.scrollController,
-    this.padding = const EdgeInsets.all(16),
+    this.padding = AppSpacing.paddingMd,
   });
   final List<BloxBlock> blocks;
   final TextStyle? baseStyle;
@@ -113,7 +113,8 @@ class _BloxDocumentViewerState extends State<BloxDocumentViewer> {
           blocks: widget.blocks,
           scrollController: _scrollController,
           isDark: widget.isDark,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md, vertical: AppSpacing.sm,),
         ),
       ),
     );
@@ -141,7 +142,7 @@ class BloxPreview extends StatelessWidget {
     return ColoredBox(
       color: theme.colorScheme.surfaceContainerHighest,
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: AppSpacing.paddingMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -153,7 +154,7 @@ class BloxPreview extends StatelessWidget {
             ),
             if (hasMore)
               Padding(
-                padding: const EdgeInsets.only(top: 8),
+                padding: AppSpacing.paddingTopSm,
                 child: Text(
                   '... and ${blocks.length - maxBlocks} more blocks',
                   style: theme.textTheme.bodySmall?.copyWith(

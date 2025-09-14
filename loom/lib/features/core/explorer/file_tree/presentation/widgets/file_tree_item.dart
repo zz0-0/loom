@@ -88,8 +88,9 @@ class _FileTreeItemState extends State<FileTreeItem> {
                                   width: 1,
                                   color: theme.dividerColor.withOpacity(0.3),
                                   margin: EdgeInsets.only(
-                                    left: isLast ? 8 : 0,
-                                    right: isLast ? 8 : 16,
+                                    left: isLast ? AppSpacing.sm : 0,
+                                    right:
+                                        isLast ? AppSpacing.sm : AppSpacing.md,
                                   ),
                                 ),
                               );
