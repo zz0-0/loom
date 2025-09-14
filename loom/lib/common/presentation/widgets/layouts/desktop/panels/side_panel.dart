@@ -134,17 +134,17 @@ class _ExplorerPanel extends ConsumerWidget {
               ),
               const Spacer(),
               IconButton(
-                icon: const Icon(LucideIcons.folderPlus, size: 16),
+                icon: const Icon(LucideIcons.folderPlus, size: 14),
                 onPressed: () => _createNewFolder(context, ref),
                 splashRadius: 12,
               ),
               IconButton(
-                icon: const Icon(LucideIcons.filePlus, size: 16),
+                icon: const Icon(LucideIcons.filePlus, size: 14),
                 onPressed: () => _createNewFile(context, ref),
                 splashRadius: 12,
               ),
               IconButton(
-                icon: const Icon(LucideIcons.refreshCw, size: 16),
+                icon: const Icon(LucideIcons.refreshCw, size: 14),
                 onPressed: () {
                   // TODO(user): Refresh
                 },
@@ -391,10 +391,10 @@ class _FileTreeItem extends StatelessWidget {
             onTap: onTap,
             child: Container(
               padding: EdgeInsets.only(
-                left: 8.0 + (depth * 16.0),
-                right: 8,
-                top: 4,
-                bottom: 4,
+                left: 6.0 + (depth * 12.0),
+                right: 6,
+                top: 2,
+                bottom: 2,
               ),
               child: Row(
                 children: [
@@ -403,7 +403,7 @@ class _FileTreeItem extends StatelessWidget {
                       isExpanded
                           ? LucideIcons.chevronDown
                           : LucideIcons.chevronRight,
-                      size: 12,
+                      size: 10,
                       color: theme.colorScheme.onSurfaceVariant,
                     )
                   else
@@ -411,7 +411,7 @@ class _FileTreeItem extends StatelessWidget {
                   const SizedBox(width: 4),
                   Icon(
                     icon,
-                    size: 14,
+                    size: 12,
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(width: 6),

@@ -18,25 +18,25 @@ class AppearanceSettingsPage extends ConsumerWidget {
         children: [
           Text(
             'Appearance',
-            style: theme.textTheme.headlineMedium?.copyWith(
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             'Customize the visual appearance of Loom',
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: AppSpacing.lg),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const ThemeSettings(),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: AppSpacing.md),
                   _AppearanceGeneralSettings(),
                 ],
               ),
@@ -80,11 +80,11 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
       children: [
         Text(
           'Layout & Visual',
-          style: theme.textTheme.titleMedium?.copyWith(
+          style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.sm),
         _SettingsItem(
           title: 'Compact Mode',
           subtitle: 'Use smaller UI elements and reduced spacing',
@@ -209,10 +209,12 @@ class _SettingsItem extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         child: Container(
           padding: const EdgeInsets.symmetric(
-              vertical: AppSpacing.smd, horizontal: AppSpacing.md,),
+            vertical: AppSpacing.sm,
+            horizontal: AppSpacing.sm,
+          ),
           margin: const EdgeInsets.only(bottom: AppSpacing.xs),
           child: Row(
             children: [
@@ -222,16 +224,17 @@ class _SettingsItem extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: theme.textTheme.bodyMedium?.copyWith(
+                      style: theme.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     if (subtitle.isNotEmpty) ...[
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 1),
                       Text(
                         subtitle,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 11,
                         ),
                       ),
                     ],

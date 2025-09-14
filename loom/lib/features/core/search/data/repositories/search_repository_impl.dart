@@ -11,8 +11,14 @@ class SearchRepositoryImpl implements SearchRepository {
   final ReplaceExecutionService _replaceExecutionService;
 
   @override
-  Future<SearchResults> searchInWorkspace(SearchQuery query) async {
-    return _searchExecutionService.searchInWorkspace(query);
+  Future<SearchResults> searchInWorkspace(
+    SearchQuery query, {
+    String? workspacePath,
+  }) async {
+    return _searchExecutionService.searchInWorkspace(
+      query,
+      workspacePath: workspacePath,
+    );
   }
 
   @override
@@ -41,11 +47,13 @@ class SearchRepositoryImpl implements SearchRepository {
     SearchQuery query,
     String replaceText, {
     bool replaceAll = false,
+    String? workspacePath,
   }) async {
     return _replaceExecutionService.replaceInWorkspace(
       query,
       replaceText,
       replaceAll: replaceAll,
+      workspacePath: workspacePath,
     );
   }
 

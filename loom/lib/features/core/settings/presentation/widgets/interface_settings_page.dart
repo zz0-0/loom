@@ -18,7 +18,7 @@ class InterfaceSettingsPage extends ConsumerWidget {
         children: [
           Text(
             'Interface',
-            style: theme.textTheme.headlineMedium?.copyWith(
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),

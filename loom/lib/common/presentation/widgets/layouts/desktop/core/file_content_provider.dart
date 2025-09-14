@@ -38,7 +38,29 @@ class FileContentProvider implements ContentProvider {
 
   @override
   Widget build(BuildContext context) {
-    return const FileEditor();
+    // Get the current content ID from the context or provider
+    // Since this is called from ExtensibleContentArea, we need to get the content ID
+    final contentId = _getCurrentContentId(context);
+    return FileEditor(key: ValueKey(contentId));
+  }
+
+  String? _getCurrentContentId(BuildContext context) {
+    // Try to get the content ID from the widget tree or providers
+    // This is a bit of a hack, but we need the content ID to create unique keys
+    try {
+      final ref = ProviderScope.containerOf(context, listen: false);
+      final tabState = ref.read(tabProvider);
+      return tabState.activeTab?.id;
+    } catch (e) {
+      // Fallback - try to get from UI state
+      try {
+        final ref = ProviderScope.containerOf(context, listen: false);
+        final uiState = ref.read(uiStateProvider);
+        return uiState.openedFile;
+      } catch (e) {
+        return null;
+      }
+    }
   }
 }
 

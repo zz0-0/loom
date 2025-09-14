@@ -9,11 +9,13 @@ class ReplaceInWorkspaceUseCase {
     SearchQuery query,
     String replaceText, {
     bool replaceAll = false,
+    String? workspacePath,
   }) {
     return _repository.replaceInWorkspace(
       query,
       replaceText,
       replaceAll: replaceAll,
+      workspacePath: workspacePath,
     );
   }
 }

@@ -17,7 +17,7 @@ class AboutSettingsPage extends ConsumerWidget {
         children: [
           Text(
             'About',
-            style: theme.textTheme.headlineMedium?.copyWith(
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -151,7 +151,9 @@ class _SettingsItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.symmetric(
-              vertical: AppSpacing.smd, horizontal: AppSpacing.md,),
+            vertical: AppSpacing.smd,
+            horizontal: AppSpacing.md,
+          ),
           margin: const EdgeInsets.only(bottom: AppSpacing.xs),
           child: Row(
             children: [

@@ -3,7 +3,10 @@ import 'package:loom/features/core/search/index.dart';
 /// Repository interface for search operations
 abstract class SearchRepository {
   /// Perform a search across files in the workspace
-  Future<SearchResults> searchInWorkspace(SearchQuery query);
+  Future<SearchResults> searchInWorkspace(
+    SearchQuery query, {
+    String? workspacePath,
+  });
 
   /// Perform a search in currently open files
   Future<SearchResults> searchInOpenFiles(SearchQuery query);
@@ -16,6 +19,7 @@ abstract class SearchRepository {
     SearchQuery query,
     String replaceText, {
     bool replaceAll = false,
+    String? workspacePath,
   });
 
   /// Perform replace in a specific file

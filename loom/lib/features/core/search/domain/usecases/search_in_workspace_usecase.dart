@@ -5,7 +5,7 @@ class SearchInWorkspaceUseCase {
   const SearchInWorkspaceUseCase(this._repository);
   final SearchRepository _repository;
 
-  Future<SearchResults> execute(SearchQuery query) {
-    return _repository.searchInWorkspace(query);
+  Future<SearchResults> execute(SearchQuery query, {String? workspacePath}) {
+    return _repository.searchInWorkspace(query, workspacePath: workspacePath);
   }
 }

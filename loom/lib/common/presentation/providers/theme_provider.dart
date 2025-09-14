@@ -98,17 +98,20 @@ class UIState {
     this.isSidePanelVisible = false,
     this.selectedSidebarItem,
     this.openedFile,
+    this.sidePanelWidth = 320.0,
   });
   final bool isSidebarCollapsed;
   final bool isSidePanelVisible;
   final String? selectedSidebarItem;
   final String? openedFile;
+  final double sidePanelWidth;
 
   UIState copyWith({
     bool? isSidebarCollapsed,
     bool? isSidePanelVisible,
     String? selectedSidebarItem,
     String? openedFile,
+    double? sidePanelWidth,
     bool clearOpenedFile = false,
   }) {
     return UIState(
@@ -116,6 +119,7 @@ class UIState {
       isSidePanelVisible: isSidePanelVisible ?? this.isSidePanelVisible,
       selectedSidebarItem: selectedSidebarItem ?? this.selectedSidebarItem,
       openedFile: clearOpenedFile ? null : (openedFile ?? this.openedFile),
+      sidePanelWidth: sidePanelWidth ?? this.sidePanelWidth,
     );
   }
 }
@@ -165,6 +169,10 @@ class UIStateNotifier extends StateNotifier<UIState> {
 
   void closeFile() {
     state = state.copyWith(clearOpenedFile: true);
+  }
+
+  void updateSidePanelWidth(double width) {
+    state = state.copyWith(sidePanelWidth: width);
   }
 
   void loadFileContent(String filePath, String content) {

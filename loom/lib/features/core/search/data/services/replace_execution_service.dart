@@ -20,12 +20,13 @@ class ReplaceExecutionService {
     SearchQuery query,
     String replaceText, {
     bool replaceAll = false,
+    String? workspacePath,
   }) async {
     final stopwatch = Stopwatch()..start();
 
-    final workspacePath = Directory.current.path;
+    final searchPath = workspacePath ?? Directory.current.path;
     final allFiles =
-        await _fileFilterService.getFilteredFiles(workspacePath, query);
+        await _fileFilterService.getFilteredFiles(searchPath, query);
 
     final groups = <SearchResultsGroup>[];
     var totalMatches = 0;

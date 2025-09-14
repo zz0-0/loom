@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/features/core/explorer/collections/index.dart';
 import 'package:loom/features/core/search/index.dart';
 
 // Use case providers
@@ -70,12 +71,14 @@ class SearchNotifier extends StateNotifier<SearchState> {
     this._searchInWorkspaceUseCase,
     this._manageRecentSearchesUseCase,
     this._replaceInWorkspaceUseCase,
+    this._currentWorkspace,
   ) : super(const SearchState()) {
     _loadRecentSearches();
   }
   final SearchInWorkspaceUseCase _searchInWorkspaceUseCase;
   final ManageRecentSearchesUseCase _manageRecentSearchesUseCase;
   final ReplaceInWorkspaceUseCase _replaceInWorkspaceUseCase;
+  final Workspace? _currentWorkspace;
 
   Future<void> _loadRecentSearches() async {
     try {
@@ -93,7 +96,10 @@ class SearchNotifier extends StateNotifier<SearchState> {
     state = state.copyWith(isSearching: true);
 
     try {
-      final results = await _searchInWorkspaceUseCase.execute(query);
+      final results = await _searchInWorkspaceUseCase.execute(
+        query,
+        workspacePath: _currentWorkspace?.rootPath,
+      );
       state = state.copyWith(
         isSearching: false,
         results: results,
@@ -124,6 +130,7 @@ class SearchNotifier extends StateNotifier<SearchState> {
         query,
         replaceText,
         replaceAll: replaceAll,
+        workspacePath: _currentWorkspace?.rootPath,
       );
       state = state.copyWith(
         isSearching: false,
@@ -157,5 +164,11 @@ final searchProvider =
   final searchUseCase = ref.watch(searchInWorkspaceUseCaseProvider);
   final replaceUseCase = ref.watch(replaceInWorkspaceUseCaseProvider);
   final manageSearchesUseCase = ref.watch(manageRecentSearchesUseCaseProvider);
-  return SearchNotifier(searchUseCase, manageSearchesUseCase, replaceUseCase);
+  final currentWorkspace = ref.watch(currentWorkspaceProvider);
+  return SearchNotifier(
+    searchUseCase,
+    manageSearchesUseCase,
+    replaceUseCase,
+    currentWorkspace,
+  );
 });

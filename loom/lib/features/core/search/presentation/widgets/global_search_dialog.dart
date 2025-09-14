@@ -42,29 +42,36 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
 
     return Dialog(
       child: Container(
-        width: 800,
-        height: 600,
-        padding: AppSpacing.paddingMd,
+        width: 700,
+        height: 500,
+        padding: AppSpacing.paddingSm,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
             Row(
               children: [
-                Icon(Icons.search, color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
+                Icon(Icons.search, color: theme.colorScheme.primary, size: 20),
+                const SizedBox(width: 6),
                 Text(
                   'Global Search',
-                  style: theme.textTheme.headlineSmall,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: const Icon(Icons.close, size: 18),
                   onPressed: () => Navigator.of(context).pop(),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(
+                    minWidth: 24,
+                    minHeight: 24,
+                  ),
                 ).withHoverAnimation().withPressAnimation(),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.sm),
 
             // Search input
             TextField(
@@ -75,7 +82,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                 ),
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(Icons.search, size: 18),
                 suffixIcon: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -84,27 +91,42 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                         _caseSensitive
                             ? Icons.text_fields
                             : Icons.text_fields_outlined,
-                        size: 18,
+                        size: 16,
                       ),
                       onPressed: () =>
                           setState(() => _caseSensitive = !_caseSensitive),
                       tooltip: 'Case sensitive',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 24,
+                        minHeight: 24,
+                      ),
                     ).withHoverAnimation().withPressAnimation(),
                     IconButton(
                       icon: Icon(
                         _useRegex ? Icons.code : Icons.code_outlined,
-                        size: 18,
+                        size: 16,
                       ),
                       onPressed: () => setState(() => _useRegex = !_useRegex),
                       tooltip: 'Use regex',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 24,
+                        minHeight: 24,
+                      ),
                     ).withHoverAnimation().withPressAnimation(),
                   ],
                 ),
                 border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xs,
+                ),
+                isDense: true,
               ),
               onSubmitted: (_) => _performSearch(),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.xs),
 
             // Replace input
             TextField(
@@ -114,26 +136,37 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                 ),
-                prefixIcon: const Icon(Icons.find_replace),
+                prefixIcon: const Icon(Icons.find_replace, size: 18),
                 border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xs,
+                ),
+                isDense: true,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.xs),
 
             // Search options
             Wrap(
-              spacing: 16,
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
               children: [
                 FilterChip(
                   label: const Text('Include hidden files'),
                   selected: _includeHiddenFiles,
                   onSelected: (selected) =>
                       setState(() => _includeHiddenFiles = selected),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.xs,
+                  ),
                 ),
                 // File extension filters could be added here
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.sm),
 
             // Results
             Expanded(
@@ -150,17 +183,25 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                         : () => _performReplace(replaceAll: false),
                     icon: searchState.isSearching
                         ? const SizedBox(
-                            width: 16,
-                            height: 16,
+                            width: 14,
+                            height: 14,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Icon(Icons.find_replace),
+                        : const Icon(Icons.find_replace, size: 16),
                     label: Text(
                       searchState.isSearching ? 'Replacing...' : 'Replace',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.xs,
+                      ),
+                      minimumSize: const Size(0, 32),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.xs),
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: searchState.isSearching
@@ -168,21 +209,29 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                         : () => _performReplace(replaceAll: true),
                     icon: searchState.isSearching
                         ? const SizedBox(
-                            width: 16,
-                            height: 16,
+                            width: 14,
+                            height: 14,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Icon(Icons.find_replace),
+                        : const Icon(Icons.find_replace, size: 16),
                     label: Text(
                       searchState.isSearching
                           ? 'Replacing All...'
                           : 'Replace All',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.xs,
+                      ),
+                      minimumSize: const Size(0, 32),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.sm),
 
             // Recent searches
             if (searchState.recentSearches.isNotEmpty) ...[
@@ -333,7 +382,9 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
         // File header
         Container(
           padding: const EdgeInsets.symmetric(
-              vertical: AppSpacing.sm, horizontal: AppSpacing.smd,),
+            vertical: AppSpacing.xs,
+            horizontal: AppSpacing.sm,
+          ),
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
             borderRadius: BorderRadius.circular(4),
@@ -342,14 +393,14 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
             children: [
               Icon(
                 Icons.description,
-                size: 16,
+                size: 14,
                 color: theme.colorScheme.primary,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   group.fileName,
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  style: theme.textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -363,7 +414,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
             ],
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
 
         // Individual results
         ...group.results
@@ -392,7 +443,9 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.xs, horizontal: AppSpacing.smd,),
+          vertical: AppSpacing.xs,
+          horizontal: AppSpacing.sm,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -404,7 +457,6 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 2),
 
             // Line content with highlighted match
             RichText(
