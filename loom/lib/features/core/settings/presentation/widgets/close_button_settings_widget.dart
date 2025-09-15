@@ -17,7 +17,7 @@ class CloseButtonSettingsWidget extends ConsumerWidget {
       children: [
         Text(
           'Close Button Positions',
-          style: theme.textTheme.titleLarge?.copyWith(
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),

@@ -30,12 +30,16 @@ class AppearanceSettingsPage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
+          const Divider(),
+          const SizedBox(height: AppSpacing.lg),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const ThemeSettings(),
+                  const SizedBox(height: AppSpacing.md),
+                  const Divider(),
                   const SizedBox(height: AppSpacing.md),
                   _AppearanceGeneralSettings(),
                 ],
@@ -80,7 +84,7 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
       children: [
         Text(
           'Layout & Visual',
-          style: theme.textTheme.titleSmall?.copyWith(
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -209,13 +213,13 @@ class _SettingsItem extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.sm,
-            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.smd,
+            horizontal: AppSpacing.md,
           ),
-          margin: const EdgeInsets.only(bottom: AppSpacing.xs),
+          margin: AppSpacing.marginBottomSm,
           child: Row(
             children: [
               Expanded(
@@ -224,17 +228,16 @@ class _SettingsItem extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: theme.textTheme.bodySmall?.copyWith(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     if (subtitle.isNotEmpty) ...[
-                      const SizedBox(height: 1),
+                      const SizedBox(height: 2),
                       Text(
                         subtitle,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
-                          fontSize: 11,
                         ),
                       ),
                     ],

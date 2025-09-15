@@ -24,10 +24,12 @@ class AboutSettingsPage extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'Information about Loom',
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
+          const SizedBox(height: 32),
+          const Divider(),
           const SizedBox(height: 32),
           Expanded(
             child: SingleChildScrollView(

@@ -23,32 +23,37 @@ class ExtensibleSidePanel extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final selectedItem = registry.getSidebarItem(selectedItemId!);
-    final panelContent = selectedItem?.buildPanel(context);
+    return AnimatedBuilder(
+      animation: registry,
+      builder: (context, child) {
+        final selectedItem = registry.getSidebarItem(selectedItemId!);
+        final panelContent = selectedItem?.buildPanel(context);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          right: BorderSide(
-            color: theme.dividerColor,
+        return Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            border: Border(
+              right: BorderSide(
+                color: theme.dividerColor,
+              ),
+            ),
           ),
-        ),
-      ),
-      child: Column(
-        children: [
-          // Panel header
-          _PanelHeader(
-            title: selectedItem?.tooltip ?? selectedItemId!,
-            onClose: onClose,
-          ),
+          child: Column(
+            children: [
+              // Panel header
+              _PanelHeader(
+                title: selectedItem?.tooltip ?? selectedItemId!,
+                onClose: onClose,
+              ),
 
-          // Panel content
-          Expanded(
-            child: panelContent ?? _buildEmptyPanel(context),
+              // Panel content
+              Expanded(
+                child: panelContent ?? _buildEmptyPanel(context),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

@@ -25,10 +25,12 @@ class GeneralSettingsPage extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'General preferences and application behavior',
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
+          const SizedBox(height: 32),
+          const Divider(),
           const SizedBox(height: 32),
           Expanded(
             child: SingleChildScrollView(

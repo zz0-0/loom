@@ -262,14 +262,17 @@ class _ContentTabBarState extends ConsumerState<ContentTabBar> {
 
     for (var i = 0; i < visibleTabs.length; i++) {
       final tab = visibleTabs[i];
+      final tabIndexInFullList = tabState.tabs.indexOf(tab);
 
       // Add drag target before each tab (except the first)
       if (i > 0) {
         children.add(
           _TabDragTarget(
-            tabIndex: i,
+            tabIndex: tabIndexInFullList,
             onAccept: (draggedIndex) {
-              ref.read(tabProvider.notifier).reorderTabs(draggedIndex, i);
+              ref
+                  .read(tabProvider.notifier)
+                  .reorderTabs(draggedIndex, tabIndexInFullList);
             },
           ),
         );
@@ -303,16 +306,19 @@ class _ContentTabBarState extends ConsumerState<ContentTabBar> {
     }
 
     // Add drag target after the last tab
-    children.add(
-      _TabDragTarget(
-        tabIndex: visibleTabs.length,
-        onAccept: (draggedIndex) {
-          ref
-              .read(tabProvider.notifier)
-              .reorderTabs(draggedIndex, visibleTabs.length - 1);
-        },
-      ),
-    );
+    if (visibleTabs.isNotEmpty) {
+      final lastVisibleTabIndex = tabState.tabs.indexOf(visibleTabs.last);
+      children.add(
+        _TabDragTarget(
+          tabIndex: lastVisibleTabIndex + 1,
+          onAccept: (draggedIndex) {
+            ref
+                .read(tabProvider.notifier)
+                .reorderTabs(draggedIndex, lastVisibleTabIndex + 1);
+          },
+        ),
+      );
+    }
 
     return children;
   }
@@ -399,85 +405,95 @@ class _TabItemState extends State<_TabItem>
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: Draggable<int>(
-        data: widget.tab.id.hashCode,
-        onDragStarted: () {},
-        onDragEnd: (details) {},
-        feedback: Material(
-          elevation: 4,
-          borderRadius: BorderRadius.circular(4),
-          child: Container(
-            constraints: const BoxConstraints(
-              minWidth: 120,
-              maxWidth: 200,
-            ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.smd,
-              vertical: AppSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(
-                color: theme.colorScheme.primary,
-                width: 2,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: _buildTabChildren(theme, isFeedback: true),
-            ),
-          ),
-        ),
-        childWhenDragging: Opacity(
-          opacity: 0.5,
-          child: Container(
-            constraints: const BoxConstraints(
-              minWidth: 120,
-              maxWidth: 200,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              border: widget.isActive
-                  ? Border(
-                      left: BorderSide(color: theme.dividerColor),
-                      right: BorderSide(color: theme.dividerColor),
-                      top: BorderSide(
+      child: AnimatedBuilder(
+        animation: _activeAnimation,
+        builder: (context, child) {
+          final backgroundColor = Color.lerp(
+            _isHovered
+                ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.5)
+                : Colors.transparent,
+            theme.colorScheme.surface,
+            _activeAnimation.value,
+          )!;
+
+          final scale = _isHovered ? AppAnimations.scaleHover : 1.0;
+
+          return AnimatedScale(
+            scale: scale,
+            duration: AppAnimations.fast,
+            curve: AppAnimations.scaleCurve,
+            child: Draggable<int>(
+              data: widget.tab.id.hashCode,
+              onDragEnd: (details) {
+                // Ensure drag operation completes
+              },
+              feedback: Transform.translate(
+                offset: const Offset(0, -10),
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Container(
+                    constraints: const BoxConstraints(
+                      minWidth: 120,
+                      maxWidth: 200,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.smd,
+                      vertical: AppSpacing.sm,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
                         color: theme.colorScheme.primary,
                         width: 2,
                       ),
-                    )
-                  : null,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.smd,
-                vertical: AppSpacing.sm,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _buildTabChildren(theme, isFeedback: true),
+                    ),
+                  ),
+                ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: _buildTabChildren(theme),
+              childWhenDragging: Opacity(
+                opacity: 0.3,
+                child: Container(
+                  constraints: const BoxConstraints(
+                    minWidth: 120,
+                    maxWidth: 200,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    border: widget.isActive
+                        ? Border(
+                            left: BorderSide(color: theme.dividerColor),
+                            right: BorderSide(color: theme.dividerColor),
+                            top: BorderSide(
+                              color: theme.colorScheme.primary,
+                              width: 2,
+                            ),
+                          )
+                        : null,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.smd,
+                      vertical: AppSpacing.sm,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: _buildTabChildren(theme),
+                    ),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
-        child: AnimatedBuilder(
-          animation: _activeAnimation,
-          builder: (context, child) {
-            final backgroundColor = Color.lerp(
-              _isHovered
-                  ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.5)
-                  : Colors.transparent,
-              theme.colorScheme.surface,
-              _activeAnimation.value,
-            )!;
-
-            final scale = _isHovered ? AppAnimations.scaleHover : 1.0;
-
-            return AnimatedScale(
-              scale: scale,
-              duration: AppAnimations.fast,
-              curve: AppAnimations.scaleCurve,
               child: GestureDetector(
                 onTap: widget.onTap,
                 onSecondaryTapDown: (details) =>
@@ -551,30 +567,30 @@ class _TabItemState extends State<_TabItem>
                   ),
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
   /// Build tab children based on close button position
   List<Widget> _buildTabChildren(ThemeData theme, {bool isFeedback = false}) {
-    final closeButton =
-        widget.onClose != null && (_isHovered || widget.isActive)
-            ? InkWell(
-                onTap: widget.onClose,
-                borderRadius: AppRadius.radiusXl,
-                child: Container(
-                  padding: AppSpacing.paddingXs,
-                  child: Icon(
-                    Icons.close,
-                    size: 14,
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              )
-            : null;
+    final closeButton = widget.onClose != null &&
+            ((_isHovered || widget.isActive) || isFeedback)
+        ? InkWell(
+            onTap: widget.onClose,
+            borderRadius: AppRadius.radiusXl,
+            child: Container(
+              padding: AppSpacing.paddingXs,
+              child: Icon(
+                Icons.close,
+                size: 14,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          )
+        : null;
 
     final icon = widget.tab.icon != null
         ? Icon(
@@ -584,19 +600,31 @@ class _TabItemState extends State<_TabItem>
           )
         : null;
 
-    final title = Expanded(
-      child: Text(
-        widget.tab.title,
-        style: theme.textTheme.bodySmall?.copyWith(
-          fontWeight: widget.isActive ? FontWeight.w500 : FontWeight.w400,
-          color: widget.isActive
-              ? theme.colorScheme.onSurface
-              : theme.colorScheme.onSurfaceVariant,
-        ),
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-
+    final title = isFeedback
+        ? Flexible(
+            child: Text(
+              widget.tab.title,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: widget.isActive ? FontWeight.w500 : FontWeight.w400,
+                color: widget.isActive
+                    ? theme.colorScheme.onSurface
+                    : theme.colorScheme.onSurfaceVariant,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          )
+        : Expanded(
+            child: Text(
+              widget.tab.title,
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: widget.isActive ? FontWeight.w500 : FontWeight.w400,
+                color: widget.isActive
+                    ? theme.colorScheme.onSurface
+                    : theme.colorScheme.onSurfaceVariant,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
     final dirtyIndicator = widget.tab.isDirty
         ? Container(
             width: 6,
@@ -779,11 +807,11 @@ class _TabDragTarget extends StatelessWidget {
           builder: (context, candidateData, rejectedData) {
             final isHovered = candidateData.isNotEmpty;
             return Container(
-              width: isHovered ? 40 : 8,
+              width: isHovered ? 60 : 12,
               height: 35,
               decoration: BoxDecoration(
                 color: isHovered
-                    ? theme.colorScheme.primary.withOpacity(0.2)
+                    ? theme.colorScheme.primary.withOpacity(0.3)
                     : Colors.transparent,
                 border: isHovered
                     ? Border.all(
@@ -791,12 +819,13 @@ class _TabDragTarget extends StatelessWidget {
                         width: 2,
                       )
                     : null,
+                borderRadius: BorderRadius.circular(4),
               ),
               child: isHovered
                   ? Center(
                       child: Icon(
                         Icons.arrow_forward,
-                        size: 16,
+                        size: 20,
                         color: theme.colorScheme.primary,
                       ),
                     )

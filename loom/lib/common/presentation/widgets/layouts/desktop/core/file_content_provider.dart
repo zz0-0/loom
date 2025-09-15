@@ -1192,7 +1192,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
               width: _calculateMinWidth(), // Dynamic width based on content
               child: SelectableText.rich(
                 _bloxHighlighter!.getHighlightedText(),
-                style: theme.textTheme.bodyMedium?.copyWith(
+                style: const TextStyle(
                   fontFamily: 'monospace',
                   fontSize: 14,
                   height: 1.5,

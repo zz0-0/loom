@@ -11,7 +11,7 @@ class ThemeSettings extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final currentMode = AdaptiveTheme.of(context).mode;
+    final currentMode = ref.watch(themeModeProvider);
     final customTheme = ref.watch(customThemeProvider);
     final fontSettings = ref.watch(fontSettingsProvider);
 
@@ -26,6 +26,65 @@ class ThemeSettings extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
 
+        // Current theme info
+        _SettingsSection(
+          title: 'Current Theme',
+          subtitle: 'Your currently active theme',
+          children: [
+            Container(
+              padding: AppSpacing.paddingMd,
+              decoration: BoxDecoration(
+                color:
+                    theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: theme.colorScheme.outline.withOpacity(0.2),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    customTheme.name,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Color Scheme:',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      _ColorSwatch(
+                        color: customTheme.primaryColor,
+                        label: 'Primary',
+                      ),
+                      const SizedBox(width: 8),
+                      _ColorSwatch(
+                        color: customTheme.secondaryColor,
+                        label: 'Secondary',
+                      ),
+                      const SizedBox(width: 8),
+                      _ColorSwatch(
+                        color: customTheme.surfaceColor,
+                        label: 'Surface',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 24),
+
         // Theme mode selection (System/Light/Dark)
         _SettingsSection(
           title: 'Theme Mode',
@@ -39,7 +98,7 @@ class ThemeSettings extends ConsumerWidget {
                     icon: Icons.brightness_auto,
                     isSelected: currentMode == AdaptiveThemeMode.system,
                     onTap: () {
-                      AdaptiveTheme.of(context).setSystem();
+                      ref.read(themeModeProvider.notifier).setSystem();
                     },
                   ),
                 ),
@@ -50,7 +109,7 @@ class ThemeSettings extends ConsumerWidget {
                     icon: Icons.wb_sunny,
                     isSelected: currentMode == AdaptiveThemeMode.light,
                     onTap: () {
-                      AdaptiveTheme.of(context).setLight();
+                      ref.read(themeModeProvider.notifier).setLight();
                     },
                   ),
                 ),
@@ -61,7 +120,7 @@ class ThemeSettings extends ConsumerWidget {
                     icon: Icons.nightlight_round,
                     isSelected: currentMode == AdaptiveThemeMode.dark,
                     onTap: () {
-                      AdaptiveTheme.of(context).setDark();
+                      ref.read(themeModeProvider.notifier).setDark();
                     },
                   ),
                 ),
@@ -77,25 +136,34 @@ class ThemeSettings extends ConsumerWidget {
           title: 'Theme Presets',
           subtitle: 'Choose from pre-designed themes',
           children: [
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: BuiltInThemes.all.map((presetTheme) {
-                final isSelected = customTheme.name == presetTheme.name;
-                return _PresetThemeCard(
-                  theme: presetTheme,
-                  isSelected: isSelected,
-                  onTap: () {
-                    ref
-                        .read(customThemeProvider.notifier)
-                        .setTheme(presetTheme);
-                  },
-                );
-              }).toList(),
+            // Light themes
+            _ThemeGroup(
+              title: 'Light Themes',
+              themes: BuiltInThemes.all
+                  .where((theme) => !theme.name.toLowerCase().contains('dark'))
+                  .toList(),
+              currentTheme: customTheme,
+              onThemeSelected: (theme) {
+                ref.read(customThemeProvider.notifier).setTheme(theme);
+              },
+            ),
+            const SizedBox(height: 16),
+            // Dark themes
+            _ThemeGroup(
+              title: 'Dark Themes',
+              themes: BuiltInThemes.all
+                  .where((theme) => theme.name.toLowerCase().contains('dark'))
+                  .toList(),
+              currentTheme: customTheme,
+              onThemeSelected: (theme) {
+                ref.read(customThemeProvider.notifier).setTheme(theme);
+              },
             ),
           ],
         ),
 
+        const SizedBox(height: 24),
+        const Divider(),
         const SizedBox(height: 24),
 
         // Custom theme colors
@@ -135,6 +203,8 @@ class ThemeSettings extends ConsumerWidget {
           ],
         ),
 
+        const SizedBox(height: 24),
+        const Divider(),
         const SizedBox(height: 24),
 
         // Font settings
@@ -338,7 +408,7 @@ class _SettingsSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: theme.textTheme.titleMedium?.copyWith(
+          style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -351,6 +421,92 @@ class _SettingsSection extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         ...children,
+      ],
+    );
+  }
+}
+
+/// Theme group widget for organizing themes by category
+class _ThemeGroup extends StatelessWidget {
+  const _ThemeGroup({
+    required this.title,
+    required this.themes,
+    required this.currentTheme,
+    required this.onThemeSelected,
+  });
+
+  final String title;
+  final List<CustomThemeData> themes;
+  final CustomThemeData currentTheme;
+  final void Function(CustomThemeData) onThemeSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: theme.textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: themes.map((presetTheme) {
+            final isSelected = currentTheme.name == presetTheme.name;
+            return _PresetThemeCard(
+              theme: presetTheme,
+              isSelected: isSelected,
+              onTap: () => onThemeSelected(presetTheme),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+}
+
+/// Color swatch widget for theme preview
+class _ColorSwatch extends StatelessWidget {
+  const _ColorSwatch({
+    required this.color,
+    required this.label,
+  });
+
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      children: [
+        Container(
+          width: 40,
+          height: 24,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: theme.colorScheme.outline.withOpacity(0.3),
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontSize: 10,
+          ),
+        ),
       ],
     );
   }

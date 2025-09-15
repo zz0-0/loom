@@ -25,15 +25,18 @@ class GitPlugin implements Plugin {
   late GitUIComponents _uiComponents;
   late GitCommands _commands;
   late GitSettings _settings;
+  String _currentWorkspacePath = '';
 
   @override
   Future<void> initialize(PluginContext context) async {
     _context = context;
 
-    // Initialize services
-    final workspacePath = context.settings.get('workspacePath', '.');
-    _statusManager = GitStatusManager(workspacePath);
-    _operations = GitOperations(workspacePath);
+    // Don't initialize with a default workspace path
+    // Wait for workspace change notification
+    _statusManager =
+        GitStatusManager('.'); // Temporary, will be updated on workspace change
+    _operations =
+        GitOperations('.'); // Temporary, will be updated on workspace change
     _uiComponents = GitUIComponents(
       pluginId: id,
       statusManager: _statusManager,
@@ -56,8 +59,7 @@ class GitPlugin implements Plugin {
     // Register settings
     _settings.registerSettings();
 
-    // Check if current workspace is a Git repository
-    await _statusManager.checkGitStatus();
+    // Don't check git status initially - wait for workspace
   }
 
   @override
@@ -90,9 +92,29 @@ class GitPlugin implements Plugin {
   @override
   void onWorkspaceChange(String workspacePath) {
     // Handle workspace change events
-    // Could check if new workspace is a Git repository
-    _statusManager = GitStatusManager(workspacePath);
-    _operations = GitOperations(workspacePath);
-    _statusManager.checkGitStatus();
+    _currentWorkspacePath = workspacePath;
+    if (workspacePath.isNotEmpty) {
+      _statusManager = GitStatusManager(workspacePath);
+      _operations = GitOperations(workspacePath);
+      _statusManager.checkGitStatus();
+    } else {
+      // No workspace open - don't do git operations
+      _statusManager = GitStatusManager('.');
+      _operations = GitOperations('.');
+      // Don't check git status when no workspace
+    }
+
+    // Update UI components with new workspace path
+    if (_context != null) {
+      _uiComponents = GitUIComponents(
+        pluginId: id,
+        statusManager: _statusManager,
+        operations: _operations,
+        context: _context!,
+        currentWorkspacePath: _currentWorkspacePath,
+      );
+      // Re-register UI components to update the panel
+      _uiComponents.registerComponents();
+    }
   }
 }

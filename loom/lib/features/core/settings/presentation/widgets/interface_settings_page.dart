@@ -25,16 +25,20 @@ class InterfaceSettingsPage extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'Configure window controls and layout options',
-            style: theme.textTheme.bodyLarge?.copyWith(
+            style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
+          const SizedBox(height: 32),
+          const Divider(),
           const SizedBox(height: 32),
           const Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   WindowControlsSettingsWidget(),
+                  SizedBox(height: 32),
+                  Divider(),
                   SizedBox(height: 32),
                   CloseButtonSettingsWidget(),
                 ],

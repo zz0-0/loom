@@ -10,12 +10,14 @@ class GitUIComponents {
     required this.statusManager,
     required this.operations,
     required this.context,
+    this.currentWorkspacePath = '',
   });
 
   final String pluginId;
   final GitStatusManager statusManager;
   final GitOperations operations;
   final PluginContext context;
+  final String currentWorkspacePath;
 
   /// Register UI components with the plugin system
   void registerComponents() {
@@ -40,9 +42,59 @@ class GitUIComponents {
   }
 
   Widget? _buildGitPanel(BuildContext context) {
+    // Check if workspace is open
+    if (currentWorkspacePath.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.folder_open, size: 48, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text(
+              'No folder open',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Open a folder to use Git version control',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Check if it's a Git repository
     if (!statusManager.isGitRepository) {
-      return const Center(
-        child: Text('Not a Git repository'),
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.account_tree, size: 48, color: Colors.grey),
+            const SizedBox(height: 16),
+            Text(
+              'Not a Git repository',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Initialize Git repository in this folder?',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.add),
+              label: const Text('Initialize Git Repository'),
+              onPressed: _initializeGitRepository,
+            ),
+          ],
+        ),
       );
     }
 
@@ -154,6 +206,13 @@ class GitUIComponents {
 
   Future<void> _pushChanges() async {
     await operations.pushChanges();
+  }
+
+  Future<void> _initializeGitRepository() async {
+    final success = await operations.initializeRepository();
+    if (success) {
+      await statusManager.refreshStatus();
+    }
   }
 }
 

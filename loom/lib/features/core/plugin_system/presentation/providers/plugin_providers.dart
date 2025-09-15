@@ -2,19 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/core/plugin_system/index.dart';
 
-// State management providers
-final pluginManagerProvider =
-    StateNotifierProvider<PluginManagerNotifier, PluginManagerState>((ref) {
-  final settingsRepo = ref.watch(pluginSettingsRepositoryProvider);
-  final metadataRepo = ref.watch(pluginMetadataRepositoryProvider);
-  final permissionsRepo = ref.watch(pluginPermissionsRepositoryProvider);
-
-  return PluginManagerNotifier(
-    settingsRepository: settingsRepo,
-    metadataRepository: metadataRepo,
-    permissionsRepository: permissionsRepo,
-  );
-});
+export 'plugin_state_management.dart';
 
 final pluginSettingsRepositoryProvider =
     Provider<PluginSettingsRepository>((ref) {
@@ -102,3 +90,17 @@ class PluginsNotifier extends StateNotifier<Map<String, Plugin>> {
     state = Map<String, Plugin>.from(state)..remove(pluginId);
   }
 }
+
+// State management providers
+final pluginManagerProvider =
+    StateNotifierProvider<PluginManagerNotifier, PluginManagerState>((ref) {
+  final settingsRepo = ref.watch(pluginSettingsRepositoryProvider);
+  final metadataRepo = ref.watch(pluginMetadataRepositoryProvider);
+  final permissionsRepo = ref.watch(pluginPermissionsRepositoryProvider);
+
+  return PluginManagerNotifier(
+    settingsRepository: settingsRepo,
+    metadataRepository: metadataRepo,
+    permissionsRepository: permissionsRepo,
+  );
+});

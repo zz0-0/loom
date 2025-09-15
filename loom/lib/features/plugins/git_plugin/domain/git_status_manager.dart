@@ -17,6 +17,14 @@ class GitStatusManager {
 
   /// Check if current directory is a Git repository and update status
   Future<void> checkGitStatus() async {
+    // Don't check git status if working directory is current project directory
+    if (workingDirectory == '.') {
+      _isGitRepository = false;
+      _currentBranch = '';
+      _changedFiles = [];
+      return;
+    }
+
     try {
       // Check if we're in a Git repository
       final gitDirResult = await Process.run(

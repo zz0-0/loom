@@ -161,7 +161,8 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
       child: SingleChildScrollView(
         controller: _lineNumberScrollController,
         child: Padding(
-          padding: const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
+          padding:
+              const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: lines.asMap().entries.map((entry) {
@@ -303,17 +304,11 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
                   ),
                   child: SelectableText.rich(
                     bloxController.getHighlightedText(),
-                    style: widget.style?.copyWith(
-                          fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
-                        ) ??
-                        TextStyle(
-                          fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
-                          color: theme.colorScheme.onSurface,
-                        ),
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                      height: 1.5,
+                    ),
                   ),
                 ),
               ),

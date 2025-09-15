@@ -12,56 +12,59 @@ class ExtensibleSidebar extends ConsumerWidget {
     final uiState = ref.watch(uiStateProvider);
     final registry = UIRegistry();
 
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-        border: Border(
-          right: BorderSide(
-            color: theme.dividerColor,
+    return AnimatedBuilder(
+      animation: registry,
+      builder: (context, child) => Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+          border: Border(
+            right: BorderSide(
+              color: theme.dividerColor,
+            ),
           ),
         ),
-      ),
-      child: Column(
-        children: [
-          // Separate settings from other items
-          ...registry.sidebarItems.where((item) => item.id != 'settings').map(
-                (item) => _SidebarButton(
-                  icon: item.icon,
-                  tooltip: item.tooltip,
-                  isSelected: uiState.selectedSidebarItem == item.id,
-                  onPressed: () {
-                    if (item.onPressed != null) {
-                      item.onPressed!();
-                    } else {
-                      ref
-                          .read(uiStateProvider.notifier)
-                          .selectSidebarItem(item.id);
-                    }
-                  },
+        child: Column(
+          children: [
+            // Separate settings from other items
+            ...registry.sidebarItems.where((item) => item.id != 'settings').map(
+                  (item) => _SidebarButton(
+                    icon: item.icon,
+                    tooltip: item.tooltip,
+                    isSelected: uiState.selectedSidebarItem == item.id,
+                    onPressed: () {
+                      if (item.onPressed != null) {
+                        item.onPressed!();
+                      } else {
+                        ref
+                            .read(uiStateProvider.notifier)
+                            .selectSidebarItem(item.id);
+                      }
+                    },
+                  ),
                 ),
-              ),
 
-          // Spacer to push settings to bottom
-          const Spacer(),
+            // Spacer to push settings to bottom
+            const Spacer(),
 
-          // Settings at the bottom
-          ...registry.sidebarItems.where((item) => item.id == 'settings').map(
-                (item) => _SidebarButton(
-                  icon: item.icon,
-                  tooltip: item.tooltip,
-                  isSelected: uiState.selectedSidebarItem == item.id,
-                  onPressed: () {
-                    if (item.onPressed != null) {
-                      item.onPressed!();
-                    } else {
-                      ref
-                          .read(uiStateProvider.notifier)
-                          .selectSidebarItem(item.id);
-                    }
-                  },
+            // Settings at the bottom
+            ...registry.sidebarItems.where((item) => item.id == 'settings').map(
+                  (item) => _SidebarButton(
+                    icon: item.icon,
+                    tooltip: item.tooltip,
+                    isSelected: uiState.selectedSidebarItem == item.id,
+                    onPressed: () {
+                      if (item.onPressed != null) {
+                        item.onPressed!();
+                      } else {
+                        ref
+                            .read(uiStateProvider.notifier)
+                            .selectSidebarItem(item.id);
+                      }
+                    },
+                  ),
                 ),
-              ),
-        ],
+          ],
+        ),
       ),
     );
   }

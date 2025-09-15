@@ -11,11 +11,9 @@ class CustomThemeData {
     required this.primaryColor,
     required this.secondaryColor,
     required this.surfaceColor,
-    required this.backgroundColor,
     required this.onPrimaryColor,
     required this.onSecondaryColor,
     required this.onSurfaceColor,
-    required this.onBackgroundColor,
     required this.errorColor,
     required this.onErrorColor,
     this.fontFamily = 'Inter',
@@ -30,11 +28,9 @@ class CustomThemeData {
       primaryColor: Color(json['primaryColor'] as int),
       secondaryColor: Color(json['secondaryColor'] as int),
       surfaceColor: Color(json['surfaceColor'] as int),
-      backgroundColor: Color(json['backgroundColor'] as int),
       onPrimaryColor: Color(json['onPrimaryColor'] as int),
       onSecondaryColor: Color(json['onSecondaryColor'] as int),
       onSurfaceColor: Color(json['onSurfaceColor'] as int),
-      onBackgroundColor: Color(json['onBackgroundColor'] as int),
       errorColor: Color(json['errorColor'] as int),
       onErrorColor: Color(json['onErrorColor'] as int),
       fontFamily: json['fontFamily'] as String? ?? 'Inter',
@@ -47,11 +43,9 @@ class CustomThemeData {
   final Color primaryColor;
   final Color secondaryColor;
   final Color surfaceColor;
-  final Color backgroundColor;
   final Color onPrimaryColor;
   final Color onSecondaryColor;
   final Color onSurfaceColor;
-  final Color onBackgroundColor;
   final Color errorColor;
   final Color onErrorColor;
   final String fontFamily;
@@ -87,6 +81,8 @@ class CustomThemeData {
       colorScheme: colorScheme,
       brightness: brightness,
       fontFamily: fontFamily,
+      scaffoldBackgroundColor: colorScheme.surface,
+      canvasColor: colorScheme.surface,
       textTheme: _createTextTheme(brightness, fontFamily, fontSize),
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
@@ -99,9 +95,16 @@ class CustomThemeData {
           fontFamily: fontFamily,
         ),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: CardTheme(
         elevation: 1,
         shape: AppRadius.roundedRectangleMd,
+        color: colorScheme.surface,
+      ),
+      dialogTheme: DialogTheme(
+        backgroundColor: colorScheme.surface,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: colorScheme.surface,
       ),
     );
   }
@@ -115,66 +118,90 @@ class CustomThemeData {
         ? Typography.material2021().black
         : Typography.material2021().white;
 
+    // Get the appropriate colors for the brightness
+    final onSurfaceColor = brightness == Brightness.light
+        ? const Color(0xFF1C1B1F) // Dark text on light background
+        : const Color(0xFFE6E1E5); // Light text on dark background
+
+    final onSurfaceVariantColor = brightness == Brightness.light
+        ? const Color(0xFF49454F) // Dark variant text on light background
+        : const Color(0xFFCAC4D0); // Light variant text on dark background
+
     return baseTextTheme.copyWith(
       displayLarge: baseTextTheme.displayLarge?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 12,
+        color: onSurfaceColor,
       ),
       displayMedium: baseTextTheme.displayMedium?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 8,
+        color: onSurfaceColor,
       ),
       displaySmall: baseTextTheme.displaySmall?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 4,
+        color: onSurfaceColor,
       ),
       headlineLarge: baseTextTheme.headlineLarge?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 6,
+        color: onSurfaceColor,
       ),
       headlineMedium: baseTextTheme.headlineMedium?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 4,
+        color: onSurfaceColor,
       ),
       headlineSmall: baseTextTheme.headlineSmall?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 2,
+        color: onSurfaceColor,
       ),
       titleLarge: baseTextTheme.titleLarge?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 2,
+        color: onSurfaceColor,
       ),
       titleMedium: baseTextTheme.titleMedium?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize,
+        color: onSurfaceColor,
       ),
       titleSmall: baseTextTheme.titleSmall?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize - 2,
+        color: onSurfaceColor,
       ),
       bodyLarge: baseTextTheme.bodyLarge?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize,
+        color: onSurfaceColor,
       ),
       bodyMedium: baseTextTheme.bodyMedium?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize - 2,
+        color: onSurfaceColor,
       ),
       bodySmall: baseTextTheme.bodySmall?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize - 4,
+        color: onSurfaceColor,
       ),
       labelLarge: baseTextTheme.labelLarge?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize - 2,
+        color: onSurfaceColor,
       ),
       labelMedium: baseTextTheme.labelMedium?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize - 4,
+        color: onSurfaceVariantColor,
       ),
       labelSmall: baseTextTheme.labelSmall?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize - 6,
+        color: onSurfaceVariantColor,
       ),
     );
   }
@@ -186,11 +213,9 @@ class CustomThemeData {
       'primaryColor': primaryColor.value,
       'secondaryColor': secondaryColor.value,
       'surfaceColor': surfaceColor.value,
-      'backgroundColor': backgroundColor.value,
       'onPrimaryColor': onPrimaryColor.value,
       'onSecondaryColor': onSecondaryColor.value,
       'onSurfaceColor': onSurfaceColor.value,
-      'onBackgroundColor': onBackgroundColor.value,
       'errorColor': errorColor.value,
       'onErrorColor': onErrorColor.value,
       'fontFamily': fontFamily,
@@ -205,11 +230,9 @@ class CustomThemeData {
     Color? primaryColor,
     Color? secondaryColor,
     Color? surfaceColor,
-    Color? backgroundColor,
     Color? onPrimaryColor,
     Color? onSecondaryColor,
     Color? onSurfaceColor,
-    Color? onBackgroundColor,
     Color? errorColor,
     Color? onErrorColor,
     String? fontFamily,
@@ -221,11 +244,9 @@ class CustomThemeData {
       primaryColor: primaryColor ?? this.primaryColor,
       secondaryColor: secondaryColor ?? this.secondaryColor,
       surfaceColor: surfaceColor ?? this.surfaceColor,
-      backgroundColor: backgroundColor ?? this.backgroundColor,
       onPrimaryColor: onPrimaryColor ?? this.onPrimaryColor,
       onSecondaryColor: onSecondaryColor ?? this.onSecondaryColor,
       onSurfaceColor: onSurfaceColor ?? this.onSurfaceColor,
-      onBackgroundColor: onBackgroundColor ?? this.onBackgroundColor,
       errorColor: errorColor ?? this.errorColor,
       onErrorColor: onErrorColor ?? this.onErrorColor,
       fontFamily: fontFamily ?? this.fontFamily,
@@ -242,11 +263,9 @@ class BuiltInThemes {
     primaryColor: Color(0xFF0066CC),
     secondaryColor: Color(0xFF6366F1),
     surfaceColor: Color(0xFFFFFBFE),
-    backgroundColor: Color(0xFFFFFBFE),
     onPrimaryColor: Color(0xFFFFFFFF),
     onSecondaryColor: Color(0xFFFFFFFF),
     onSurfaceColor: Color(0xFF1C1B1F),
-    onBackgroundColor: Color(0xFF1C1B1F),
     errorColor: Color(0xFFBA1A1A),
     onErrorColor: Color(0xFFFFFFFF),
     isBuiltIn: true,
@@ -257,11 +276,9 @@ class BuiltInThemes {
     primaryColor: Color(0xFF99CCFF),
     secondaryColor: Color(0xFF9CA3FF),
     surfaceColor: Color(0xFF111111),
-    backgroundColor: Color(0xFF111111),
     onPrimaryColor: Color(0xFF001B3D),
     onSecondaryColor: Color(0xFF001B3D),
     onSurfaceColor: Color(0xFFE6E1E5),
-    onBackgroundColor: Color(0xFFE6E1E5),
     errorColor: Color(0xFFFFB4AB),
     onErrorColor: Color(0xFF690005),
     isBuiltIn: true,
@@ -272,11 +289,9 @@ class BuiltInThemes {
     primaryColor: Color(0xFF0077BE),
     secondaryColor: Color(0xFF00A8CC),
     surfaceColor: Color(0xFFF8F9FA),
-    backgroundColor: Color(0xFFF8F9FA),
     onPrimaryColor: Color(0xFFFFFFFF),
     onSecondaryColor: Color(0xFFFFFFFF),
     onSurfaceColor: Color(0xFF1C1B1F),
-    onBackgroundColor: Color(0xFF1C1B1F),
     errorColor: Color(0xFFBA1A1A),
     onErrorColor: Color(0xFFFFFFFF),
     isBuiltIn: true,
@@ -287,11 +302,9 @@ class BuiltInThemes {
     primaryColor: Color(0xFF2E7D32),
     secondaryColor: Color(0xFF4CAF50),
     surfaceColor: Color(0xFFF1F8E9),
-    backgroundColor: Color(0xFFF1F8E9),
     onPrimaryColor: Color(0xFFFFFFFF),
     onSecondaryColor: Color(0xFFFFFFFF),
     onSurfaceColor: Color(0xFF1C1B1F),
-    onBackgroundColor: Color(0xFF1C1B1F),
     errorColor: Color(0xFFBA1A1A),
     onErrorColor: Color(0xFFFFFFFF),
     isBuiltIn: true,
@@ -302,13 +315,50 @@ class BuiltInThemes {
     primaryColor: Color(0xFFFF6B35),
     secondaryColor: Color(0xFFF7931E),
     surfaceColor: Color(0xFFFFFBFE),
-    backgroundColor: Color(0xFFFFFBFE),
     onPrimaryColor: Color(0xFFFFFFFF),
     onSecondaryColor: Color(0xFFFFFFFF),
     onSurfaceColor: Color(0xFF1C1B1F),
-    onBackgroundColor: Color(0xFF1C1B1F),
     errorColor: Color(0xFFBA1A1A),
     onErrorColor: Color(0xFFFFFFFF),
+    isBuiltIn: true,
+  );
+
+  static const CustomThemeData oceanDark = CustomThemeData(
+    name: 'Ocean Dark',
+    primaryColor: Color(0xFF4FC3F7),
+    secondaryColor: Color(0xFF29B6F6),
+    surfaceColor: Color(0xFF0D1117),
+    onPrimaryColor: Color(0xFF001B3D),
+    onSecondaryColor: Color(0xFF001B3D),
+    onSurfaceColor: Color(0xFFE6E1E5),
+    errorColor: Color(0xFFEF5350),
+    onErrorColor: Color(0xFF690005),
+    isBuiltIn: true,
+  );
+
+  static const CustomThemeData forestDark = CustomThemeData(
+    name: 'Forest Dark',
+    primaryColor: Color(0xFF66BB6A),
+    secondaryColor: Color(0xFF81C784),
+    surfaceColor: Color(0xFF0D1117),
+    onPrimaryColor: Color(0xFF001B3D),
+    onSecondaryColor: Color(0xFF001B3D),
+    onSurfaceColor: Color(0xFFE6E1E5),
+    errorColor: Color(0xFFEF5350),
+    onErrorColor: Color(0xFF690005),
+    isBuiltIn: true,
+  );
+
+  static const CustomThemeData sunsetDark = CustomThemeData(
+    name: 'Sunset Dark',
+    primaryColor: Color(0xFFFF8A65),
+    secondaryColor: Color(0xFFFFAB91),
+    surfaceColor: Color(0xFF0D1117),
+    onPrimaryColor: Color(0xFF001B3D),
+    onSecondaryColor: Color(0xFF001B3D),
+    onSurfaceColor: Color(0xFFE6E1E5),
+    errorColor: Color(0xFFEF5350),
+    onErrorColor: Color(0xFF690005),
     isBuiltIn: true,
   );
 
@@ -316,15 +366,18 @@ class BuiltInThemes {
         defaultLight,
         defaultDark,
         ocean,
+        oceanDark,
         forest,
+        forestDark,
         sunset,
+        sunsetDark,
       ];
 }
 
 // Custom theme provider
 class CustomThemeNotifier extends StateNotifier<CustomThemeData> {
   CustomThemeNotifier(this._settingsRepository, [CustomThemeData? initialTheme])
-      : super(initialTheme ?? BuiltInThemes.defaultLight);
+      : super(initialTheme ?? BuiltInThemes.defaultDark);
 
   final SharedSettingsRepository _settingsRepository;
 
@@ -362,7 +415,7 @@ class CustomThemeNotifier extends StateNotifier<CustomThemeData> {
       }
     } catch (e) {
       // Use default theme if loading fails
-      state = BuiltInThemes.defaultLight;
+      state = BuiltInThemes.defaultDark;
       debugPrint('Failed to load custom theme: $e');
     }
   }

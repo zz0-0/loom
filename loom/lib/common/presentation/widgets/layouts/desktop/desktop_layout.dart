@@ -162,8 +162,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       // We can't directly import due to potential circular dependencies,
       // so we'll register the components directly
       _registerExplorerFeature();
-      _registerSettingsFeature();
       _registerSearchFeature();
+      _registerSettingsFeature();
     } catch (e) {
       // If feature registration fails, continue without them
       debugPrint('Feature registration failed: $e');

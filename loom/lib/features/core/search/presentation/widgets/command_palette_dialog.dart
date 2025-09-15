@@ -89,6 +89,10 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
       final workspacePath = workspace?.rootPath ?? '/workspaces';
       if (workspacePath == '/workspaces') {
         // No workspace opened, skip file listing
+        setState(() {
+          _filteredItems = staticItems;
+          _isLoading = false;
+        });
         return;
       }
       final files = await fileRepo.listFilesRecursively(workspacePath);

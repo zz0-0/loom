@@ -17,7 +17,7 @@ abstract class ContentProvider {
 }
 
 /// Registry for UI components that can be dynamically registered
-class UIRegistry {
+class UIRegistry extends ChangeNotifier {
   factory UIRegistry() => _instance;
   UIRegistry._internal();
   static final UIRegistry _instance = UIRegistry._internal();
@@ -30,6 +30,7 @@ class UIRegistry {
     _sidebarItems
       ..removeWhere((existing) => existing.id == item.id)
       ..add(item);
+    notifyListeners();
   }
 
   /// Register multiple sidebar items
@@ -44,6 +45,7 @@ class UIRegistry {
     _contentProviders
       ..removeWhere((existing) => existing.id == provider.id)
       ..add(provider);
+    notifyListeners();
   }
 
   /// Get all registered sidebar items

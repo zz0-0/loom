@@ -5,7 +5,10 @@ import 'package:loom/common/index.dart';
 
 // Theme mode state notifier
 class ThemeModeNotifier extends StateNotifier<AdaptiveThemeMode> {
-  ThemeModeNotifier(this._settingsRepository) : super(AdaptiveThemeMode.system);
+  ThemeModeNotifier(this._settingsRepository)
+      : super(AdaptiveThemeMode.system) {
+    _loadSavedTheme();
+  }
 
   final SharedSettingsRepository _settingsRepository;
 
@@ -65,7 +68,7 @@ class ThemeModeNotifier extends StateNotifier<AdaptiveThemeMode> {
     }
   }
 
-  Future<void> loadSavedTheme() async {
+  Future<void> _loadSavedTheme() async {
     try {
       final themeString = await _settingsRepository.getTheme();
       state = _stringToAdaptiveThemeMode(themeString);

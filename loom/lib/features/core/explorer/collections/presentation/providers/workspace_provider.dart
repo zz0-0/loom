@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/explorer/index.dart';
+import 'package:loom/features/core/plugin_system/index.dart';
 
 /// Provider for workspace repository
 final workspaceRepositoryProvider = Provider<WorkspaceRepository>((ref) {
@@ -128,6 +129,7 @@ class WorkspaceNotifier extends StateNotifier<Workspace?> {
     this.createDirectoryUseCase,
     this.deleteItemUseCase,
     this.renameItemUseCase,
+    this.pluginManager,
   ) : super(null);
 
   final WorkspaceRepository repository;
@@ -137,6 +139,7 @@ class WorkspaceNotifier extends StateNotifier<Workspace?> {
   final WorkspaceCreateDirectoryUseCase createDirectoryUseCase;
   final DeleteItemUseCase deleteItemUseCase;
   final RenameItemUseCase renameItemUseCase;
+  final PluginManagerNotifier pluginManager;
 
   Future<void> openWorkspace(String path) async {
     try {
@@ -152,6 +155,9 @@ class WorkspaceNotifier extends StateNotifier<Workspace?> {
         metadata: workspace.metadata?.copyWith(),
         fileTree: fileTree,
       );
+
+      // Notify plugins about workspace change
+      pluginManager.onWorkspaceChange(path);
     } catch (e) {
       rethrow;
     }
@@ -317,6 +323,8 @@ class WorkspaceNotifier extends StateNotifier<Workspace?> {
 
   void closeWorkspace() {
     state = null;
+    // Notify plugins that workspace is closed (empty path)
+    pluginManager.onWorkspaceChange('');
   }
 }
 
@@ -331,6 +339,7 @@ final currentWorkspaceProvider =
       ref.watch(workspaceCreateDirectoryUseCaseProvider);
   final deleteItemUseCase = ref.watch(deleteItemUseCaseProvider);
   final renameItemUseCase = ref.watch(renameItemUseCaseProvider);
+  final pluginManager = ref.watch(pluginManagerProvider.notifier);
 
   return WorkspaceNotifier(
     repository,
@@ -340,6 +349,7 @@ final currentWorkspaceProvider =
     createDirectoryUseCase,
     deleteItemUseCase,
     renameItemUseCase,
+    pluginManager,
   );
 });
 

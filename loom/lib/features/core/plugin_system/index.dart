@@ -16,4 +16,5 @@ export 'presentation/apis/command_api.dart';
 export 'presentation/apis/settings_api.dart';
 export 'presentation/apis/ui_api.dart';
 export 'presentation/plugin_presentation.dart';
+export 'presentation/providers/plugin_providers.dart';
 export 'presentation/widgets/plugin_widgets.dart';

@@ -215,7 +215,11 @@ class TabNotifier extends StateNotifier<TabState> {
 
     final tabs = List<ContentTab>.from(state.tabs);
     final tab = tabs.removeAt(oldIndex);
-    tabs.insert(newIndex, tab);
+
+    // Adjust newIndex if it was after the removed element
+    final adjustedNewIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
+
+    tabs.insert(adjustedNewIndex, tab);
 
     state = state.copyWith(tabs: tabs);
   }
