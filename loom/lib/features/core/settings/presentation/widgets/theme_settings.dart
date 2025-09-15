@@ -1,4 +1,3 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
@@ -11,7 +10,6 @@ class ThemeSettings extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final currentMode = ref.watch(themeModeProvider);
     final customTheme = ref.watch(customThemeProvider);
     final fontSettings = ref.watch(fontSettingsProvider);
 
@@ -85,63 +83,26 @@ class ThemeSettings extends ConsumerWidget {
 
         const SizedBox(height: 24),
 
-        // Theme mode selection (System/Light/Dark)
-        _SettingsSection(
-          title: 'Theme Mode',
-          subtitle: 'Choose your preferred theme mode',
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: _ThemeCard(
-                    title: 'System',
-                    icon: Icons.brightness_auto,
-                    isSelected: currentMode == AdaptiveThemeMode.system,
-                    onTap: () {
-                      ref.read(themeModeProvider.notifier).setSystem();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _ThemeCard(
-                    title: 'Light',
-                    icon: Icons.wb_sunny,
-                    isSelected: currentMode == AdaptiveThemeMode.light,
-                    onTap: () {
-                      ref.read(themeModeProvider.notifier).setLight();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _ThemeCard(
-                    title: 'Dark',
-                    icon: Icons.nightlight_round,
-                    isSelected: currentMode == AdaptiveThemeMode.dark,
-                    onTap: () {
-                      ref.read(themeModeProvider.notifier).setDark();
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 24),
-
         // Built-in theme presets
         _SettingsSection(
           title: 'Theme Presets',
-          subtitle: 'Choose from pre-designed themes',
+          subtitle:
+              'Choose from pre-designed themes. System themes automatically adapt to your system settings.',
           children: [
+            // System themes
+            _ThemeGroup(
+              title: 'System Themes',
+              themes: BuiltInThemes.systemThemes,
+              currentTheme: customTheme,
+              onThemeSelected: (theme) {
+                ref.read(customThemeProvider.notifier).setTheme(theme);
+              },
+            ),
+            const SizedBox(height: 16),
             // Light themes
             _ThemeGroup(
               title: 'Light Themes',
-              themes: BuiltInThemes.all
-                  .where((theme) => !theme.name.toLowerCase().contains('dark'))
-                  .toList(),
+              themes: BuiltInThemes.lightThemes,
               currentTheme: customTheme,
               onThemeSelected: (theme) {
                 ref.read(customThemeProvider.notifier).setTheme(theme);
@@ -151,9 +112,7 @@ class ThemeSettings extends ConsumerWidget {
             // Dark themes
             _ThemeGroup(
               title: 'Dark Themes',
-              themes: BuiltInThemes.all
-                  .where((theme) => theme.name.toLowerCase().contains('dark'))
-                  .toList(),
+              themes: BuiltInThemes.darkThemes,
               currentTheme: customTheme,
               onThemeSelected: (theme) {
                 ref.read(customThemeProvider.notifier).setTheme(theme);
@@ -234,68 +193,6 @@ class ThemeSettings extends ConsumerWidget {
   }
 }
 
-class _ThemeCard extends StatelessWidget {
-  const _ThemeCard({
-    required this.title,
-    required this.icon,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String title;
-  final IconData icon;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: AppSpacing.paddingMd,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: isSelected
-                ? theme.colorScheme.primary.withOpacity(0.1)
-                : theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-            border: Border.all(
-              color: isSelected
-                  ? theme.colorScheme.primary.withOpacity(0.3)
-                  : theme.colorScheme.outline.withOpacity(0.2),
-            ),
-          ),
-          child: Column(
-            children: [
-              Icon(
-                icon,
-                size: 32,
-                color: isSelected
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                title,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: isSelected ? FontWeight.w600 : null,
-                  color: isSelected
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurface,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 /// Preset theme card widget
 class _PresetThemeCard extends StatelessWidget {
   const _PresetThemeCard({
@@ -319,6 +216,7 @@ class _PresetThemeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           width: 120,
+          height: 100, // Fixed height to prevent size variations
           padding: AppSpacing.paddingMd,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
@@ -333,6 +231,7 @@ class _PresetThemeCard extends StatelessWidget {
             ),
           ),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Color preview
               Row(
@@ -344,6 +243,9 @@ class _PresetThemeCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: theme.primaryColor,
                       borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: themeData.colorScheme.outline.withOpacity(0.5),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -353,6 +255,9 @@ class _PresetThemeCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: theme.secondaryColor,
                       borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: themeData.colorScheme.outline.withOpacity(0.5),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -362,22 +267,30 @@ class _PresetThemeCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: theme.surfaceColor,
                       borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: themeData.colorScheme.outline.withOpacity(0.5),
+                      ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
-              Text(
-                theme.name,
-                style: themeData.textTheme.bodySmall?.copyWith(
-                  fontWeight: isSelected ? FontWeight.w600 : null,
-                  color: isSelected
-                      ? theme.primaryColor
-                      : themeData.colorScheme.onSurface,
+              Expanded(
+                child: Center(
+                  child: Text(
+                    theme.name,
+                    style: themeData.textTheme.bodySmall?.copyWith(
+                      fontWeight: isSelected ? FontWeight.w600 : null,
+                      color: isSelected
+                          ? theme.primaryColor
+                          : themeData.colorScheme.onSurface,
+                      fontSize: 11, // Slightly smaller to fit better
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -495,7 +408,7 @@ class _ColorSwatch extends StatelessWidget {
             color: color,
             borderRadius: BorderRadius.circular(4),
             border: Border.all(
-              color: theme.colorScheme.outline.withOpacity(0.3),
+              color: theme.colorScheme.outline.withOpacity(0.5),
             ),
           ),
         ),

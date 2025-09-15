@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
@@ -54,6 +53,19 @@ class CustomThemeData {
 
   // Create ColorScheme from custom theme data
   ColorScheme toColorScheme(Brightness brightness) {
+    // For system themes, adapt surface colors based on brightness
+    final actualSurfaceColor = _isSystemTheme()
+        ? (brightness == Brightness.light
+            ? const Color(0xFFFFFBFE)
+            : const Color(0xFF111111))
+        : surfaceColor;
+
+    final actualOnSurfaceColor = _isSystemTheme()
+        ? (brightness == Brightness.light
+            ? const Color(0xFF1C1B1F)
+            : const Color(0xFFE6E1E5))
+        : onSurfaceColor;
+
     return ColorScheme(
       brightness: brightness,
       primary: primaryColor,
@@ -62,19 +74,24 @@ class CustomThemeData {
       onSecondary: onSecondaryColor,
       error: errorColor,
       onError: onErrorColor,
-      surface: surfaceColor,
-      onSurface: onSurfaceColor,
+      surface: actualSurfaceColor,
+      onSurface: actualOnSurfaceColor,
       surfaceContainerHighest: brightness == Brightness.light
-          ? surfaceColor.withOpacity(0.8)
-          : surfaceColor.withOpacity(0.2),
+          ? actualSurfaceColor.withOpacity(0.8)
+          : actualSurfaceColor.withOpacity(0.2),
       outline: brightness == Brightness.light
-          ? onSurfaceColor.withOpacity(0.3)
-          : onSurfaceColor.withOpacity(0.5),
+          ? actualOnSurfaceColor.withOpacity(0.3)
+          : actualOnSurfaceColor.withOpacity(0.5),
     );
   }
 
   // Create ThemeData from custom theme data
-  ThemeData toThemeData(Brightness brightness) {
+  ThemeData toThemeData(Brightness? systemBrightness) {
+    // For system themes, use the system brightness; otherwise use the theme's implied brightness
+    final brightness = _isSystemTheme()
+        ? (systemBrightness ?? Brightness.dark)
+        : _getImpliedBrightness();
+
     final colorScheme = toColorScheme(brightness);
     return ThemeData(
       useMaterial3: true,
@@ -109,6 +126,16 @@ class CustomThemeData {
     );
   }
 
+  bool _isSystemTheme() {
+    return name.toLowerCase().startsWith('system');
+  }
+
+  Brightness _getImpliedBrightness() {
+    return name.toLowerCase().contains('dark')
+        ? Brightness.dark
+        : Brightness.light;
+  }
+
   TextTheme _createTextTheme(
     Brightness brightness,
     String fontFamily,
@@ -119,7 +146,8 @@ class CustomThemeData {
         : Typography.material2021().white;
 
     // Get the appropriate colors for the brightness
-    final onSurfaceColor = brightness == Brightness.light
+    // Use Material 3 standard colors that properly adapt to brightness
+    final textColor = brightness == Brightness.light
         ? const Color(0xFF1C1B1F) // Dark text on light background
         : const Color(0xFFE6E1E5); // Light text on dark background
 
@@ -131,67 +159,67 @@ class CustomThemeData {
       displayLarge: baseTextTheme.displayLarge?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 12,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       displayMedium: baseTextTheme.displayMedium?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 8,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       displaySmall: baseTextTheme.displaySmall?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 4,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       headlineLarge: baseTextTheme.headlineLarge?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 6,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       headlineMedium: baseTextTheme.headlineMedium?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 4,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       headlineSmall: baseTextTheme.headlineSmall?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 2,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       titleLarge: baseTextTheme.titleLarge?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize + 2,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       titleMedium: baseTextTheme.titleMedium?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       titleSmall: baseTextTheme.titleSmall?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize - 2,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       bodyLarge: baseTextTheme.bodyLarge?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       bodyMedium: baseTextTheme.bodyMedium?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize - 2,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       bodySmall: baseTextTheme.bodySmall?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize - 4,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       labelLarge: baseTextTheme.labelLarge?.copyWith(
         fontFamily: fontFamily,
         fontSize: fontSize - 2,
-        color: onSurfaceColor,
+        color: textColor,
       ),
       labelMedium: baseTextTheme.labelMedium?.copyWith(
         fontFamily: fontFamily,
@@ -362,6 +390,63 @@ class BuiltInThemes {
     isBuiltIn: true,
   );
 
+  // System themes that automatically adapt to system brightness
+  static const CustomThemeData systemDefault = CustomThemeData(
+    name: 'System Default',
+    primaryColor: Color(0xFF0066CC),
+    secondaryColor: Color(0xFF6366F1),
+    surfaceColor: Color(0xFFFFFFFF), // Will be overridden by system brightness
+    onPrimaryColor: Color(0xFFFFFFFF),
+    onSecondaryColor: Color(0xFFFFFFFF),
+    onSurfaceColor:
+        Color(0xFF000000), // Will be overridden by system brightness
+    errorColor: Color(0xFFBA1A1A),
+    onErrorColor: Color(0xFFFFFFFF),
+    isBuiltIn: true,
+  );
+
+  static const CustomThemeData systemOcean = CustomThemeData(
+    name: 'System Ocean',
+    primaryColor: Color(0xFF0077BE),
+    secondaryColor: Color(0xFF00A8CC),
+    surfaceColor: Color(0xFFFFFFFF), // Will be overridden by system brightness
+    onPrimaryColor: Color(0xFFFFFFFF),
+    onSecondaryColor: Color(0xFFFFFFFF),
+    onSurfaceColor:
+        Color(0xFF000000), // Will be overridden by system brightness
+    errorColor: Color(0xFFBA1A1A),
+    onErrorColor: Color(0xFFFFFFFF),
+    isBuiltIn: true,
+  );
+
+  static const CustomThemeData systemForest = CustomThemeData(
+    name: 'System Forest',
+    primaryColor: Color(0xFF4CAF50),
+    secondaryColor: Color(0xFF66BB6A),
+    surfaceColor: Color(0xFFFFFFFF), // Will be overridden by system brightness
+    onPrimaryColor: Color(0xFFFFFFFF),
+    onSecondaryColor: Color(0xFFFFFFFF),
+    onSurfaceColor:
+        Color(0xFF000000), // Will be overridden by system brightness
+    errorColor: Color(0xFFBA1A1A),
+    onErrorColor: Color(0xFFFFFFFF),
+    isBuiltIn: true,
+  );
+
+  static const CustomThemeData systemSunset = CustomThemeData(
+    name: 'System Sunset',
+    primaryColor: Color(0xFFFF5722),
+    secondaryColor: Color(0xFFFF8A65),
+    surfaceColor: Color(0xFFFFFFFF), // Will be overridden by system brightness
+    onPrimaryColor: Color(0xFFFFFFFF),
+    onSecondaryColor: Color(0xFFFFFFFF),
+    onSurfaceColor:
+        Color(0xFF000000), // Will be overridden by system brightness
+    errorColor: Color(0xFFBA1A1A),
+    onErrorColor: Color(0xFFFFFFFF),
+    isBuiltIn: true,
+  );
+
   static List<CustomThemeData> get all => [
         defaultLight,
         defaultDark,
@@ -371,13 +456,42 @@ class BuiltInThemes {
         forestDark,
         sunset,
         sunsetDark,
+        systemDefault,
+        systemOcean,
+        systemForest,
+        systemSunset,
       ];
+
+  static List<CustomThemeData> get lightThemes => [
+        defaultLight,
+        ocean,
+        forest,
+        sunset,
+      ];
+
+  static List<CustomThemeData> get darkThemes => [
+        defaultDark,
+        oceanDark,
+        forestDark,
+        sunsetDark,
+      ];
+
+  static List<CustomThemeData> get systemThemes => [
+        systemDefault,
+        systemOcean,
+        systemForest,
+        systemSunset,
+      ];
+
+  static bool isSystemTheme(CustomThemeData theme) {
+    return theme.name.toLowerCase().startsWith('system');
+  }
 }
 
 // Custom theme provider
 class CustomThemeNotifier extends StateNotifier<CustomThemeData> {
   CustomThemeNotifier(this._settingsRepository, [CustomThemeData? initialTheme])
-      : super(initialTheme ?? BuiltInThemes.defaultDark);
+      : super(initialTheme ?? BuiltInThemes.systemDefault);
 
   final SharedSettingsRepository _settingsRepository;
 
@@ -415,7 +529,7 @@ class CustomThemeNotifier extends StateNotifier<CustomThemeData> {
       }
     } catch (e) {
       // Use default theme if loading fails
-      state = BuiltInThemes.defaultDark;
+      state = BuiltInThemes.systemDefault;
       debugPrint('Failed to load custom theme: $e');
     }
   }
@@ -508,19 +622,18 @@ final fontSettingsProvider =
 final currentThemeProvider = Provider<ThemeData>((ref) {
   final customTheme = ref.watch(customThemeProvider);
   final fontSettings = ref.watch(fontSettingsProvider);
-  final themeMode = ref.watch(themeModeProvider);
 
-  final brightness = switch (themeMode) {
-    AdaptiveThemeMode.light => Brightness.light,
-    AdaptiveThemeMode.dark => Brightness.dark,
-    AdaptiveThemeMode.system =>
-      WidgetsBinding.instance.platformDispatcher.platformBrightness,
-  };
+  // Get system brightness for system themes
+  final systemBrightness =
+      WidgetsBinding.instance.platformDispatcher.platformBrightness;
+
+  // Check if this is a system theme
+  final isSystemTheme = BuiltInThemes.isSystemTheme(customTheme);
 
   return customTheme
       .copyWith(
         fontFamily: fontSettings.fontFamily,
         fontSize: fontSettings.fontSize,
       )
-      .toThemeData(brightness);
+      .toThemeData(isSystemTheme ? systemBrightness : null);
 });

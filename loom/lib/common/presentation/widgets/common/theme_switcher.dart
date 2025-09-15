@@ -1,7 +1,7 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Theme switcher widget that can be embedded in settings
 class ThemeSwitcher extends ConsumerWidget {
@@ -10,7 +10,7 @@ class ThemeSwitcher extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final currentMode = ref.watch(themeModeProvider);
+    final currentTheme = ref.watch(customThemeProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,29 +23,35 @@ class ThemeSwitcher extends ConsumerWidget {
         ),
         const SizedBox(height: 12),
 
-        // Theme options
+        // System theme options
         _ThemeOption(
-          title: 'Light',
-          subtitle: 'Use light theme',
-          icon: Icons.wb_sunny,
-          isSelected: currentMode == AdaptiveThemeMode.light,
-          onTap: () => ref.read(themeModeProvider.notifier).setLight(),
-        ),
-
-        _ThemeOption(
-          title: 'Dark',
-          subtitle: 'Use dark theme',
-          icon: Icons.nightlight_round,
-          isSelected: currentMode == AdaptiveThemeMode.dark,
-          onTap: () => ref.read(themeModeProvider.notifier).setDark(),
-        ),
-
-        _ThemeOption(
-          title: 'System',
-          subtitle: 'Follow system theme',
+          title: 'System Default',
+          subtitle: 'Adapts to system theme',
           icon: Icons.brightness_auto,
-          isSelected: currentMode == AdaptiveThemeMode.system,
-          onTap: () => ref.read(themeModeProvider.notifier).setSystem(),
+          isSelected: currentTheme.name == 'System Default',
+          onTap: () => ref
+              .read(customThemeProvider.notifier)
+              .setTheme(BuiltInThemes.systemDefault),
+        ),
+
+        _ThemeOption(
+          title: 'Default Light',
+          subtitle: 'Light theme',
+          icon: Icons.wb_sunny,
+          isSelected: currentTheme.name == 'Default Light',
+          onTap: () => ref
+              .read(customThemeProvider.notifier)
+              .setTheme(BuiltInThemes.defaultLight),
+        ),
+
+        _ThemeOption(
+          title: 'Default Dark',
+          subtitle: 'Dark theme',
+          icon: Icons.nightlight_round,
+          isSelected: currentTheme.name == 'Default Dark',
+          onTap: () => ref
+              .read(customThemeProvider.notifier)
+              .setTheme(BuiltInThemes.defaultDark),
         ),
       ],
     );

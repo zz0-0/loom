@@ -1,4 +1,3 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
@@ -14,20 +13,20 @@ class LoomApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final customTheme = ref.watch(customThemeProvider);
     final fontSettings = ref.watch(fontSettingsProvider);
-    final themeMode = ref.watch(themeModeProvider);
 
-    final brightness = switch (themeMode) {
-      AdaptiveThemeMode.light => Brightness.light,
-      AdaptiveThemeMode.dark => Brightness.dark,
-      AdaptiveThemeMode.system => MediaQuery.of(context).platformBrightness,
-    };
+    // Get system brightness for system themes - use platformDispatcher as fallback
+    final systemBrightness = MediaQuery.maybeOf(context)?.platformBrightness ??
+        WidgetsBinding.instance.platformDispatcher.platformBrightness;
+
+    // Check if this is a system theme
+    final isSystemTheme = BuiltInThemes.isSystemTheme(customTheme);
 
     final theme = customTheme
         .copyWith(
           fontFamily: fontSettings.fontFamily,
           fontSize: fontSettings.fontSize,
         )
-        .toThemeData(brightness);
+        .toThemeData(isSystemTheme ? systemBrightness : null);
 
     return MaterialApp(
       title: 'Loom - Knowledge Base',
