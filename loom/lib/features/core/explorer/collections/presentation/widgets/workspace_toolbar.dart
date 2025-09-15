@@ -63,41 +63,87 @@ class WorkspaceToolbar extends ConsumerWidget {
           const SizedBox(height: 8),
 
           // Action buttons
-          Row(
-            children: [
-              Text(
-                viewMode == 'filesystem' ? 'FILES' : 'COLLECTIONS',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.onSurfaceVariant,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(LucideIcons.filePlus, size: 16),
-                onPressed: onNewFile,
-                splashRadius: 12,
-                tooltip: 'New File',
-              ).withHoverAnimation().withPressAnimation(),
-              IconButton(
-                icon: const Icon(LucideIcons.folderPlus, size: 16),
-                onPressed: onNewFolder,
-                splashRadius: 12,
-                tooltip: 'New Folder',
-              ).withHoverAnimation().withPressAnimation(),
-              IconButton(
-                icon: const Icon(LucideIcons.refreshCw, size: 16),
-                onPressed: onRefresh,
-                splashRadius: 12,
-                tooltip: 'Refresh',
-              ).withHoverAnimation().withPressAnimation(),
-              _SettingsButton(settings: settings),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final actions = _getToolbarActions(settings);
+              final layout =
+                  _calculateToolbarLayout(actions, constraints.maxWidth);
+
+              return Row(
+                children: [
+                  Text(
+                    viewMode == 'filesystem' ? 'FILES' : 'COLLECTIONS',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurfaceVariant,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const Spacer(),
+                  // Visible actions
+                  ...layout.visibleActions
+                      .map((action) => action.build(context)),
+                  // Combined overflow menu with settings
+                  _CombinedOverflowMenu(
+                    overflowActions: layout.overflowActions,
+                    settings: settings,
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),
     );
+  }
+
+  List<_ToolbarAction> _getToolbarActions(WorkspaceSettings settings) {
+    return [
+      _ToolbarAction(
+        key: 'new_file',
+        icon: LucideIcons.filePlus,
+        tooltip: 'New File',
+        onPressed: onNewFile,
+      ),
+      _ToolbarAction(
+        key: 'new_folder',
+        icon: LucideIcons.folderPlus,
+        tooltip: 'New Folder',
+        onPressed: onNewFolder,
+      ),
+      _ToolbarAction(
+        key: 'refresh',
+        icon: LucideIcons.refreshCw,
+        tooltip: 'Refresh',
+        onPressed: onRefresh,
+      ),
+    ];
+  }
+
+  _ToolbarLayout _calculateToolbarLayout(
+    List<_ToolbarAction> actions,
+    double availableWidth,
+  ) {
+    const overflowMenuWidth = 40.0; // Space for overflow menu
+    const textLabelWidth =
+        60.0; // Approximate width for "FILES" or "COLLECTIONS" text
+    final effectiveWidth = availableWidth - textLabelWidth - overflowMenuWidth;
+
+    final visibleActions = <_ToolbarAction>[];
+    final overflowActions = <_ToolbarAction>[];
+    var usedWidth = 0.0;
+
+    for (final action in actions) {
+      final actionWidth = action.estimatedWidth;
+      if (usedWidth + actionWidth <= effectiveWidth || visibleActions.isEmpty) {
+        visibleActions.add(action);
+        usedWidth += actionWidth;
+      } else {
+        overflowActions.add(action);
+      }
+    }
+
+    return _ToolbarLayout(visibleActions, overflowActions);
   }
 }
 
@@ -196,48 +242,128 @@ class _ToggleButton extends StatelessWidget {
   }
 }
 
-/// Settings dropdown button
-class _SettingsButton extends ConsumerWidget {
-  const _SettingsButton({required this.settings});
+/// Toolbar action data class
+class _ToolbarAction {
+  const _ToolbarAction({
+    required this.key,
+    this.icon,
+    this.tooltip,
+    this.onPressed,
+    this.child,
+  }) : assert(
+          icon != null || child != null,
+          'Either icon or child must be provided',
+        );
 
+  final String key;
+  final IconData? icon;
+  final String? tooltip;
+  final VoidCallback? onPressed;
+  final Widget? child;
+
+  double get estimatedWidth {
+    if (child != null) {
+      // Settings button is typically wider
+      return 32;
+    }
+    // Icon buttons are typically 32-40 pixels wide
+    return 32;
+  }
+
+  Widget build(BuildContext context) {
+    if (child != null) {
+      return child!;
+    }
+
+    return IconButton(
+      icon: Icon(icon, size: 16),
+      onPressed: onPressed,
+      splashRadius: 12,
+      tooltip: tooltip,
+    ).withHoverAnimation().withPressAnimation();
+  }
+}
+
+/// Toolbar layout result
+class _ToolbarLayout {
+  const _ToolbarLayout(this.visibleActions, this.overflowActions);
+
+  final List<_ToolbarAction> visibleActions;
+  final List<_ToolbarAction> overflowActions;
+}
+
+/// Combined overflow menu with toolbar actions and settings
+class _CombinedOverflowMenu extends ConsumerWidget {
+  const _CombinedOverflowMenu({
+    required this.overflowActions,
+    required this.settings,
+  });
+
+  final List<_ToolbarAction> overflowActions;
   final WorkspaceSettings settings;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    return AnimatedContainer(
-      duration: AppAnimations.fast,
-      curve: AppAnimations.scaleCurve,
-      decoration: const BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: AppRadius.radiusSm,
-      ),
-      child: PopupMenuButton<String>(
-        icon: const Icon(LucideIcons.moreHorizontal, size: 16),
-        iconSize: 16,
-        splashRadius: 12,
-        tooltip: 'Folder Options',
-        onSelected: (value) {
-          switch (value) {
-            case 'close_folder':
-              ref.read(currentWorkspaceProvider.notifier).closeWorkspace();
-            case 'open_folder':
-              // _showOpenFolderDialog(context, ref);
-              ref.read(currentFolderProvider.notifier).openFolder(context);
-            case 'create_folder':
-              ref.read(currentFolderProvider.notifier).createFolder(context);
-            case 'toggle_filter':
-              ref
-                  .read(workspaceSettingsProvider.notifier)
-                  .toggleFileExtensionFilter();
-            case 'toggle_hidden':
-              ref
-                  .read(workspaceSettingsProvider.notifier)
-                  .toggleShowHiddenFiles();
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.more_vert, size: 16),
+      splashRadius: 12,
+      tooltip: 'More actions',
+      onSelected: (value) {
+        // Handle overflowed toolbar actions
+        final action = overflowActions.firstWhere(
+          (a) => a.key == value,
+          orElse: () =>
+              _ToolbarAction(key: '', icon: Icons.error, onPressed: () {}),
+        );
+        if (action.key.isNotEmpty && action.onPressed != null) {
+          action.onPressed!();
+          return;
+        }
+
+        // Handle settings actions
+        switch (value) {
+          case 'close_folder':
+            ref.read(currentWorkspaceProvider.notifier).closeWorkspace();
+          case 'open_folder':
+            ref.read(currentFolderProvider.notifier).openFolder(context);
+          case 'create_folder':
+            ref.read(currentFolderProvider.notifier).createFolder(context);
+          case 'toggle_filter':
+            ref
+                .read(workspaceSettingsProvider.notifier)
+                .toggleFileExtensionFilter();
+          case 'toggle_hidden':
+            ref
+                .read(workspaceSettingsProvider.notifier)
+                .toggleShowHiddenFiles();
+        }
+      },
+      itemBuilder: (context) {
+        final items = <PopupMenuEntry<String>>[];
+
+        // Add overflowed toolbar actions
+        if (overflowActions.isNotEmpty) {
+          for (final action in overflowActions) {
+            items.add(
+              PopupMenuItem<String>(
+                value: action.key,
+                child: Row(
+                  children: [
+                    if (action.icon != null) Icon(action.icon, size: 16),
+                    if (action.icon != null) const SizedBox(width: 8),
+                    Text(action.tooltip ?? action.key),
+                  ],
+                ),
+              ),
+            );
           }
-        },
-        itemBuilder: (context) => [
+          items.add(const PopupMenuDivider());
+        }
+
+        // Add settings options
+        items.addAll([
           const PopupMenuItem(
             value: 'close_folder',
             child: Row(
@@ -318,136 +444,10 @@ class _SettingsButton extends ConsumerWidget {
               ],
             ),
           ),
-        ],
-      ),
-    ).withHoverAnimation().withPressAnimation();
-  }
+        ]);
 
-  // Future<void> _showOpenFolderDialog(
-  //   BuildContext context,
-  //   WidgetRef ref,
-  // ) async {
-  //   try {
-  //     // Try to use the same logic as in explorer_panel for consistency
-  //     String? selectedDirectory;
-
-  //     try {
-  //       selectedDirectory = await FilePicker.platform.getDirectoryPath();
-  //     } catch (filePickerError) {
-  //       // FilePicker failed (common in containerized environments)
-  //       selectedDirectory = null;
-  //     }
-
-  //     if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
-  //       await ref
-  //           .read(currentWorkspaceProvider.notifier)
-  //           .openWorkspace(selectedDirectory);
-  //     }
-  //   } catch (e) {
-  //     // Fallback: Show a dialog for manual path entry if file picker fails
-  //     if (context.mounted) {
-  //       final result = await showDialog<String>(
-  //         context: context,
-  //         builder: (context) => _FallbackFolderDialog(),
-  //       );
-
-  //       if (result != null && result.isNotEmpty) {
-  //         try {
-  //           await ref
-  //               .read(currentWorkspaceProvider.notifier)
-  //               .openWorkspace(result);
-  //         } catch (openError) {
-  //           if (context.mounted) {
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               SnackBar(
-  //                 content: Text('Failed to open folder: $openError'),
-  //                 backgroundColor: Theme.of(context).colorScheme.error,
-  //               ),
-  //             );
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-
-  // void _showCreateFolderDialog(BuildContext context, WidgetRef ref) {
-  //   showDialog<void>(
-  //     context: context,
-  //     builder: (context) => const CreateFolderDialog(),
-  //   );
-  // }
-
-  // void _showCreateWorkspaceDialog(BuildContext context, WidgetRef ref) {
-  //   showDialog<void>(
-  //     context: context,
-  //     builder: (context) => const CreateProjectDialog(),
-  //   );
-  // }
-}
-
-/// Fallback dialog for manual folder path entry
-class _FallbackFolderDialog extends StatefulWidget {
-  @override
-  State<_FallbackFolderDialog> createState() => _FallbackFolderDialogState();
-}
-
-class _FallbackFolderDialogState extends State<_FallbackFolderDialog> {
-  final _controller = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    // Default to current workspace or common paths
-    _controller.text = '/workspaces';
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return AlertDialog(
-      title: const Text('Open Folder'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('Enter the path to the folder you want to open:'),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _controller,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: 'Folder Path',
-              hintText: 'Enter folder path (e.g., /workspaces/my-folder)',
-              hintStyle: TextStyle(
-                color: theme.colorScheme.onSurface.withOpacity(0.4),
-              ),
-            ),
-            autofocus: true,
-          ).withFocusAnimation(),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ).withHoverAnimation().withPressAnimation(),
-        TextButton(
-          onPressed: () {
-            final path = _controller.text.trim();
-            if (path.isNotEmpty) {
-              Navigator.of(context).pop(path);
-            }
-          },
-          child: const Text('Open'),
-        ).withHoverAnimation().withPressAnimation(),
-      ],
-    ).withFadeInAnimation();
+        return items;
+      },
+    );
   }
 }

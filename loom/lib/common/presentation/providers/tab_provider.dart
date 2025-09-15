@@ -194,6 +194,21 @@ class TabNotifier extends StateNotifier<TabState> {
     );
   }
 
+  /// Closes all tabs to the right of the specified tab
+  void closeTabsToRight(String tabId) {
+    final tabIndex = state.tabs.indexWhere((tab) => tab.id == tabId);
+    if (tabIndex == -1) return;
+
+    final tabsToKeep = state.tabs.sublist(0, tabIndex + 1);
+    final newActiveTabId = state.activeTabId;
+
+    // If active tab is being closed, keep the current tab active
+    state = state.copyWith(
+      tabs: tabsToKeep,
+      activeTabId: newActiveTabId,
+    );
+  }
+
   /// Reorders tabs
   void reorderTabs(int oldIndex, int newIndex) {
     if (oldIndex == newIndex) return;

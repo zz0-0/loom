@@ -289,6 +289,15 @@ class _ContentTabBarState extends ConsumerState<ContentTabBar> {
           onClose: tab.canClose
               ? () => ref.read(tabProvider.notifier).closeTab(tab.id)
               : null,
+          onCloseOtherTabs: tabState.hasMultipleTabs
+              ? () => ref.read(tabProvider.notifier).closeOtherTabs(tab.id)
+              : null,
+          onCloseTabsToRight: i < visibleTabs.length - 1
+              ? () => ref.read(tabProvider.notifier).closeTabsToRight(tab.id)
+              : null,
+          onCloseAllTabs: tabState.hasAnyTabs
+              ? () => ref.read(tabProvider.notifier).closeAllTabs()
+              : null,
         ),
       );
     }
@@ -324,6 +333,9 @@ class _TabItem extends StatefulWidget {
     required this.onTap,
     required this.closeButtonPosition,
     this.onClose,
+    this.onCloseOtherTabs,
+    this.onCloseTabsToRight,
+    this.onCloseAllTabs,
   });
 
   final ContentTab tab;
@@ -331,6 +343,9 @@ class _TabItem extends StatefulWidget {
   final VoidCallback onTap;
   final CloseButtonPosition closeButtonPosition;
   final VoidCallback? onClose;
+  final VoidCallback? onCloseOtherTabs;
+  final VoidCallback? onCloseTabsToRight;
+  final VoidCallback? onCloseAllTabs;
 
   @override
   State<_TabItem> createState() => _TabItemState();
@@ -397,7 +412,9 @@ class _TabItemState extends State<_TabItem>
               maxWidth: 200,
             ),
             padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.smd, vertical: AppSpacing.sm,),
+              horizontal: AppSpacing.smd,
+              vertical: AppSpacing.sm,
+            ),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(4),
@@ -434,7 +451,9 @@ class _TabItemState extends State<_TabItem>
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.smd, vertical: AppSpacing.sm,),
+                horizontal: AppSpacing.smd,
+                vertical: AppSpacing.sm,
+              ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: _buildTabChildren(theme),
@@ -461,6 +480,8 @@ class _TabItemState extends State<_TabItem>
               curve: AppAnimations.scaleCurve,
               child: GestureDetector(
                 onTap: widget.onTap,
+                onSecondaryTapDown: (details) =>
+                    _showTabContextMenu(context, details),
                 child: Container(
                   constraints: const BoxConstraints(
                     minWidth: 120,
@@ -630,6 +651,99 @@ class _TabItemState extends State<_TabItem>
       default:
         return Icons.description;
     }
+  }
+
+  void _showTabContextMenu(BuildContext context, TapDownDetails details) {
+    final theme = Theme.of(context);
+    final overlay =
+        Overlay.of(context).context.findRenderObject()! as RenderBox;
+    final position = RelativeRect.fromRect(
+      details.globalPosition & const Size(40, 40),
+      Offset.zero & overlay.size,
+    );
+
+    showMenu<String>(
+      context: context,
+      position: position,
+      items: [
+        if (widget.onClose != null)
+          PopupMenuItem<String>(
+            value: 'close',
+            child: Row(
+              children: [
+                Icon(
+                  Icons.close,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+                Text('Close', style: theme.textTheme.bodyMedium),
+              ],
+            ),
+          ),
+        if (widget.onCloseOtherTabs != null)
+          PopupMenuItem<String>(
+            value: 'close_others',
+            child: Row(
+              children: [
+                Icon(
+                  Icons.clear_all,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+                Text('Close Others', style: theme.textTheme.bodyMedium),
+              ],
+            ),
+          ),
+        if (widget.onCloseTabsToRight != null)
+          PopupMenuItem<String>(
+            value: 'close_right',
+            child: Row(
+              children: [
+                Icon(
+                  Icons.keyboard_arrow_right,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Close Tabs to the Right',
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        if (widget.onCloseAllTabs != null)
+          PopupMenuItem<String>(
+            value: 'close_all',
+            child: Row(
+              children: [
+                Icon(
+                  Icons.close,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+                Text('Close All', style: theme.textTheme.bodyMedium),
+              ],
+            ),
+          ),
+      ],
+    ).then((value) {
+      if (value == null) return;
+
+      switch (value) {
+        case 'close':
+          widget.onClose?.call();
+        case 'close_others':
+          widget.onCloseOtherTabs?.call();
+        case 'close_right':
+          widget.onCloseTabsToRight?.call();
+        case 'close_all':
+          widget.onCloseAllTabs?.call();
+      }
+    });
   }
 }
 

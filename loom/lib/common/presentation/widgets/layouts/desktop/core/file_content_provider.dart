@@ -708,6 +708,118 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     return max(2000, estimatedWidth); // Minimum width of 2000
   }
 
+  List<_EditorToolbarAction> _getToolbarActions() {
+    return [
+      _EditorToolbarAction(
+        key: 'line_numbers',
+        icon: _showLineNumbers
+            ? Icons.format_list_numbered
+            : Icons.format_list_numbered_outlined,
+        tooltip: 'Toggle line numbers',
+        onPressed: () => setState(() => _showLineNumbers = !_showLineNumbers),
+      ),
+      _EditorToolbarAction(
+        key: 'minimap',
+        icon: _showMinimap ? Icons.map : Icons.map_outlined,
+        tooltip: 'Toggle minimap',
+        onPressed: () => setState(() => _showMinimap = !_showMinimap),
+      ),
+      if (_isBloxFile)
+        _EditorToolbarAction(
+          key: 'preview',
+          icon: _showPreview ? Icons.visibility : Icons.visibility_outlined,
+          tooltip: _showPreview ? 'Show editor' : 'Show preview',
+          onPressed: () => setState(() => _showPreview = !_showPreview),
+        ),
+      if (_isBloxFile && _syntaxWarnings.isNotEmpty)
+        _EditorToolbarAction(
+          key: 'warnings',
+          icon: Icons.warning,
+          iconColor: Colors.orange,
+          tooltip: '${_syntaxWarnings.length} syntax warnings',
+          onPressed: () => _showSyntaxWarnings(context),
+        ),
+      _EditorToolbarAction(
+        key: 'undo',
+        icon: Icons.undo,
+        tooltip: 'Undo (Ctrl+Z)',
+        onPressed: _editHistoryService.canUndo ? _undo : null,
+      ),
+      _EditorToolbarAction(
+        key: 'redo',
+        icon: Icons.redo,
+        tooltip: 'Redo (Ctrl+Y)',
+        onPressed: _editHistoryService.canRedo ? _redo : null,
+      ),
+      _EditorToolbarAction(
+        key: 'cut',
+        icon: Icons.content_cut,
+        tooltip: 'Cut (Ctrl+X)',
+        onPressed:
+            _controller.selection.isValid && !_controller.selection.isCollapsed
+                ? _cutSelection
+                : null,
+      ),
+      _EditorToolbarAction(
+        key: 'copy',
+        icon: Icons.content_copy,
+        tooltip: 'Copy (Ctrl+C)',
+        onPressed:
+            _controller.selection.isValid && !_controller.selection.isCollapsed
+                ? _copySelection
+                : null,
+      ),
+      _EditorToolbarAction(
+        key: 'paste',
+        icon: Icons.content_paste,
+        tooltip: 'Paste (Ctrl+V)',
+        onPressed: _pasteFromClipboard,
+      ),
+      _EditorToolbarAction(
+        key: 'fold_all',
+        icon: Icons.unfold_less,
+        tooltip: 'Fold All (Ctrl+Shift+[)',
+        onPressed: _foldingManager.regions.isNotEmpty ? _foldAll : null,
+      ),
+      _EditorToolbarAction(
+        key: 'unfold_all',
+        icon: Icons.unfold_more,
+        tooltip: 'Unfold All (Ctrl+Shift+])',
+        onPressed: _foldingManager.regions.isNotEmpty ? _unfoldAll : null,
+      ),
+      _EditorToolbarAction(
+        key: 'export',
+        icon: Icons.file_download,
+        tooltip: 'Export (Ctrl+E)',
+        onPressed: _showExportDialog,
+      ),
+    ];
+  }
+
+  _EditorToolbarLayout _calculateToolbarLayout(
+    List<_EditorToolbarAction> actions,
+    double availableWidth,
+  ) {
+    const overflowMenuWidth = 40.0; // Space for overflow menu
+    final effectiveWidth = availableWidth - overflowMenuWidth;
+
+    final visibleActions = <_EditorToolbarAction>[];
+    final overflowActions = <_EditorToolbarAction>[];
+    var usedWidth = 0.0;
+
+    for (final action in actions) {
+      final actionWidth = action.estimatedWidth;
+      if (usedWidth + actionWidth <= effectiveWidth || visibleActions.isEmpty) {
+        visibleActions.add(action);
+        usedWidth += actionWidth;
+      } else {
+        overflowActions.add(action);
+      }
+    }
+
+    return _EditorToolbarLayout(visibleActions, overflowActions);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -752,110 +864,24 @@ class _FileEditorState extends ConsumerState<FileEditor> {
               ),
             ),
           ),
-          child: Row(
-            children: [
-              const Spacer(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final actions = _getToolbarActions();
+              final layout =
+                  _calculateToolbarLayout(actions, constraints.maxWidth);
 
-              // Line numbers toggle
-              IconButton(
-                icon: Icon(
-                  _showLineNumbers
-                      ? Icons.format_list_numbered
-                      : Icons.format_list_numbered_outlined,
-                ),
-                onPressed: () =>
-                    setState(() => _showLineNumbers = !_showLineNumbers),
-                tooltip: 'Toggle line numbers',
-              ).withHoverAnimation().withPressAnimation(),
-
-              // Minimap toggle
-              IconButton(
-                icon: Icon(
-                  _showMinimap ? Icons.map : Icons.map_outlined,
-                ),
-                onPressed: () => setState(() => _showMinimap = !_showMinimap),
-                tooltip: 'Toggle minimap',
-              ).withHoverAnimation().withPressAnimation(),
-
-              // Preview toggle for Blox files
-              if (_isBloxFile)
-                IconButton(
-                  icon: Icon(
-                    _showPreview ? Icons.visibility : Icons.visibility_outlined,
-                  ),
-                  onPressed: () => setState(() => _showPreview = !_showPreview),
-                  tooltip: _showPreview ? 'Show editor' : 'Show preview',
-                ).withHoverAnimation().withPressAnimation(),
-
-              // Syntax validation for Blox files
-              if (_isBloxFile && _syntaxWarnings.isNotEmpty)
-                IconButton(
-                  icon: const Icon(Icons.warning, color: Colors.orange),
-                  onPressed: () => _showSyntaxWarnings(context),
-                  tooltip: '${_syntaxWarnings.length} syntax warnings',
-                ).withHoverAnimation().withPressAnimation(),
-
-              IconButton(
-                icon: const Icon(Icons.undo),
-                onPressed: _editHistoryService.canUndo ? _undo : null,
-                tooltip: 'Undo (Ctrl+Z)',
-              ).withHoverAnimation().withPressAnimation(),
-
-              IconButton(
-                icon: const Icon(Icons.redo),
-                onPressed: _editHistoryService.canRedo ? _redo : null,
-                tooltip: 'Redo (Ctrl+Y)',
-              ).withHoverAnimation().withPressAnimation(),
-
-              const SizedBox(width: 8),
-
-              IconButton(
-                icon: const Icon(Icons.content_cut),
-                onPressed: _controller.selection.isValid &&
-                        !_controller.selection.isCollapsed
-                    ? _cutSelection
-                    : null,
-                tooltip: 'Cut (Ctrl+X)',
-              ).withHoverAnimation().withPressAnimation(),
-
-              IconButton(
-                icon: const Icon(Icons.content_copy),
-                onPressed: _controller.selection.isValid &&
-                        !_controller.selection.isCollapsed
-                    ? _copySelection
-                    : null,
-                tooltip: 'Copy (Ctrl+C)',
-              ).withHoverAnimation().withPressAnimation(),
-
-              IconButton(
-                icon: const Icon(Icons.content_paste),
-                onPressed: _pasteFromClipboard,
-                tooltip: 'Paste (Ctrl+V)',
-              ).withHoverAnimation().withPressAnimation(),
-
-              const SizedBox(width: 8),
-
-              IconButton(
-                icon: const Icon(Icons.unfold_less),
-                onPressed: _foldingManager.regions.isNotEmpty ? _foldAll : null,
-                tooltip: 'Fold All (Ctrl+Shift+[)',
-              ).withHoverAnimation().withPressAnimation(),
-
-              IconButton(
-                icon: const Icon(Icons.unfold_more),
-                onPressed:
-                    _foldingManager.regions.isNotEmpty ? _unfoldAll : null,
-                tooltip: 'Unfold All (Ctrl+Shift+])',
-              ).withHoverAnimation().withPressAnimation(),
-
-              const SizedBox(width: 8),
-
-              IconButton(
-                icon: const Icon(Icons.file_download),
-                onPressed: _showExportDialog,
-                tooltip: 'Export (Ctrl+E)',
-              ).withHoverAnimation().withPressAnimation(),
-            ],
+              return Row(
+                children: [
+                  const Spacer(),
+                  // Visible actions
+                  ...layout.visibleActions
+                      .map((action) => action.build(context)),
+                  // Overflow menu
+                  if (layout.overflowActions.isNotEmpty)
+                    _EditorOverflowMenu(actions: layout.overflowActions),
+                ],
+              );
+            },
           ),
         ),
 
@@ -1425,6 +1451,76 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         SnackBar(content: Text('Replaced $replacements occurrences')),
       );
     }
+  }
+}
+
+/// Editor toolbar action data class
+class _EditorToolbarAction {
+  const _EditorToolbarAction({
+    required this.key,
+    required this.icon,
+    this.iconColor,
+    this.tooltip,
+    this.onPressed,
+  });
+
+  final String key;
+  final IconData icon;
+  final Color? iconColor;
+  final String? tooltip;
+  final VoidCallback? onPressed;
+
+  double get estimatedWidth => 32; // Icon buttons are typically 32 pixels wide
+
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(icon, color: iconColor),
+      onPressed: onPressed,
+      splashRadius: 12,
+      tooltip: tooltip,
+    ).withHoverAnimation().withPressAnimation();
+  }
+}
+
+/// Editor toolbar layout result
+class _EditorToolbarLayout {
+  const _EditorToolbarLayout(this.visibleActions, this.overflowActions);
+
+  final List<_EditorToolbarAction> visibleActions;
+  final List<_EditorToolbarAction> overflowActions;
+}
+
+/// Overflow menu for editor toolbar actions
+class _EditorOverflowMenu extends StatelessWidget {
+  const _EditorOverflowMenu({required this.actions});
+
+  final List<_EditorToolbarAction> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    Theme.of(context);
+
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.more_vert, size: 16),
+      splashRadius: 12,
+      tooltip: 'More actions',
+      itemBuilder: (context) => actions.map((action) {
+        return PopupMenuItem<String>(
+          value: action.key,
+          child: Row(
+            children: [
+              Icon(action.icon, size: 16, color: action.iconColor),
+              const SizedBox(width: 8),
+              Text(action.tooltip ?? action.key),
+            ],
+          ),
+        );
+      }).toList(),
+      onSelected: (value) {
+        final action = actions.firstWhere((a) => a.key == value);
+        action.onPressed?.call();
+      },
+    );
   }
 }
 
