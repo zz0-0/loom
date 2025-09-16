@@ -2,6 +2,7 @@
 class WorkspaceSettings {
   const WorkspaceSettings({
     this.theme = 'dark',
+    this.fontFamily = 'Inter',
     this.fontSize = 14,
     this.defaultSidebarView = 'filesystem', // 'filesystem' or 'collections'
     this.filterFileExtensions = true,
@@ -12,6 +13,7 @@ class WorkspaceSettings {
   factory WorkspaceSettings.fromJson(Map<String, dynamic> json) {
     return WorkspaceSettings(
       theme: json['theme'] as String? ?? 'dark',
+      fontFamily: json['fontFamily'] as String? ?? 'Inter',
       fontSize: json['fontSize'] as int? ?? 14,
       defaultSidebarView: json['defaultSidebarView'] as String? ?? 'filesystem',
       filterFileExtensions: json['filterFileExtensions'] as bool? ?? true,
@@ -21,6 +23,7 @@ class WorkspaceSettings {
   }
 
   final String theme;
+  final String fontFamily;
   final int fontSize;
   final String defaultSidebarView;
   final bool filterFileExtensions;
@@ -29,6 +32,7 @@ class WorkspaceSettings {
 
   WorkspaceSettings copyWith({
     String? theme,
+    String? fontFamily,
     int? fontSize,
     String? defaultSidebarView,
     bool? filterFileExtensions,
@@ -37,6 +41,7 @@ class WorkspaceSettings {
   }) {
     return WorkspaceSettings(
       theme: theme ?? this.theme,
+      fontFamily: fontFamily ?? this.fontFamily,
       fontSize: fontSize ?? this.fontSize,
       defaultSidebarView: defaultSidebarView ?? this.defaultSidebarView,
       filterFileExtensions: filterFileExtensions ?? this.filterFileExtensions,
@@ -48,6 +53,7 @@ class WorkspaceSettings {
   Map<String, dynamic> toJson() {
     return {
       'theme': theme,
+      'fontFamily': fontFamily,
       'fontSize': fontSize,
       'defaultSidebarView': defaultSidebarView,
       'filterFileExtensions': filterFileExtensions,

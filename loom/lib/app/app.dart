@@ -11,22 +11,7 @@ class LoomApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final customTheme = ref.watch(customThemeProvider);
-    final fontSettings = ref.watch(fontSettingsProvider);
-
-    // Get system brightness for system themes - use platformDispatcher as fallback
-    final systemBrightness = MediaQuery.maybeOf(context)?.platformBrightness ??
-        WidgetsBinding.instance.platformDispatcher.platformBrightness;
-
-    // Check if this is a system theme
-    final isSystemTheme = BuiltInThemes.isSystemTheme(customTheme);
-
-    final theme = customTheme
-        .copyWith(
-          fontFamily: fontSettings.fontFamily,
-          fontSize: fontSettings.fontSize,
-        )
-        .toThemeData(isSystemTheme ? systemBrightness : null);
+    final theme = ref.watch(currentThemeProvider);
 
     return MaterialApp(
       title: 'Loom - Knowledge Base',

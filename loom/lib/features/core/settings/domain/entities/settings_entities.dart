@@ -13,15 +13,13 @@ enum SettingsCategory {
 class AppearanceSettings {
   const AppearanceSettings({
     this.theme = 'system',
-    this.fontSize = 14.0,
-    this.compactMode = false,
+    this.compactMode = true,
     this.showMenuIcons = true,
     this.animationSpeed = 'normal',
     this.sidebarTransparency = false,
   });
 
   final String theme;
-  final double fontSize;
   final bool compactMode;
   final bool showMenuIcons;
   final String animationSpeed;
@@ -29,7 +27,6 @@ class AppearanceSettings {
 
   AppearanceSettings copyWith({
     String? theme,
-    double? fontSize,
     bool? compactMode,
     bool? showMenuIcons,
     String? animationSpeed,
@@ -37,7 +34,6 @@ class AppearanceSettings {
   }) {
     return AppearanceSettings(
       theme: theme ?? this.theme,
-      fontSize: fontSize ?? this.fontSize,
       compactMode: compactMode ?? this.compactMode,
       showMenuIcons: showMenuIcons ?? this.showMenuIcons,
       animationSpeed: animationSpeed ?? this.animationSpeed,

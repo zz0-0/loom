@@ -766,6 +766,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   @override
   Widget build(BuildContext context) {
     final uiState = ref.watch(uiStateProvider);
+    final appearanceSettings = ref.watch(appearanceSettingsProvider);
+    final compactMode = appearanceSettings.compactMode;
 
     return Focus(
       autofocus: true,
@@ -787,7 +789,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           children: [
             // Top bar with registered items and window controls
             SizedBox(
-              height: AdaptiveConstants.topBarHeight(context),
+              height: AdaptiveConstants.topBarHeight(context,
+                  compactMode: compactMode),
               child: const TopBar(),
             ),
 
@@ -809,8 +812,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                   // Extensible side panel
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    width:
-                        uiState.isSidePanelVisible ? uiState.sidePanelWidth : 0,
+                    width: uiState.isSidePanelVisible
+                        ? AdaptiveConstants.sidePanelWidth(context,
+                            compactMode: compactMode)
+                        : 0,
                     child: uiState.isSidePanelVisible
                         ? ResizableSidePanel(
                             onWidthChanged: (width) {

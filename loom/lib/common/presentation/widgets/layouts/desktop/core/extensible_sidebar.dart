@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Extensible sidebar that displays registered sidebar items
 class ExtensibleSidebar extends ConsumerWidget {
@@ -10,13 +11,18 @@ class ExtensibleSidebar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final uiState = ref.watch(uiStateProvider);
+    final appearanceSettings = ref.watch(appearanceSettingsProvider);
+    final compactMode = appearanceSettings.compactMode;
+    final sidebarTransparency = appearanceSettings.sidebarTransparency;
     final registry = UIRegistry();
 
     return AnimatedBuilder(
       animation: registry,
       builder: (context, child) => Container(
         decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+          color: sidebarTransparency
+              ? theme.colorScheme.surfaceContainerHighest.withOpacity(0.1)
+              : theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
           border: Border(
             right: BorderSide(
               color: theme.dividerColor,
@@ -31,6 +37,7 @@ class ExtensibleSidebar extends ConsumerWidget {
                     icon: item.icon,
                     tooltip: item.tooltip,
                     isSelected: uiState.selectedSidebarItem == item.id,
+                    compactMode: compactMode,
                     onPressed: () {
                       if (item.onPressed != null) {
                         item.onPressed!();
@@ -52,6 +59,7 @@ class ExtensibleSidebar extends ConsumerWidget {
                     icon: item.icon,
                     tooltip: item.tooltip,
                     isSelected: uiState.selectedSidebarItem == item.id,
+                    compactMode: compactMode,
                     onPressed: () {
                       if (item.onPressed != null) {
                         item.onPressed!();
@@ -75,12 +83,14 @@ class _SidebarButton extends StatefulWidget {
     required this.icon,
     this.tooltip,
     this.isSelected = false,
+    this.compactMode = false,
     this.onPressed,
   });
 
   final IconData icon;
   final String? tooltip;
   final bool isSelected;
+  final bool compactMode;
   final VoidCallback? onPressed;
 
   @override
@@ -165,6 +175,11 @@ class _SidebarButtonState extends State<_SidebarButton> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final buttonSize = widget.compactMode ? 40.0 : 48.0;
+    final iconSize = widget.compactMode ? 18.0 : 20.0;
+    final margin = widget.compactMode
+        ? const EdgeInsets.symmetric(vertical: 2)
+        : AppSpacing.marginVerticalXs;
 
     // Use filled icon when selected or hovered, outlined when not
     final displayIcon = widget.isSelected || _isHovered
@@ -172,7 +187,7 @@ class _SidebarButtonState extends State<_SidebarButton> {
         : _getOutlinedIcon(widget.icon);
 
     return Container(
-      margin: AppSpacing.marginVerticalXs,
+      margin: margin,
       child: Material(
         color: widget.isSelected
             ? theme.colorScheme.primary.withOpacity(0.12)
@@ -192,10 +207,10 @@ class _SidebarButtonState extends State<_SidebarButton> {
             borderRadius: BorderRadius.circular(8),
             child: SizedBox(
               width: double.infinity,
-              height: 48,
+              height: buttonSize,
               child: Icon(
                 displayIcon,
-                size: 20,
+                size: iconSize,
                 color: widget.isSelected
                     ? theme.colorScheme.primary
                     : _isHovered

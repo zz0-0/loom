@@ -46,6 +46,7 @@ class WorkspaceSettingsRepositoryImpl implements WorkspaceSettingsRepository {
     final settingsFile = File(path.join(appDataDir, settingsFileName));
     final model = WorkspaceSettingsModel(
       theme: settings.theme,
+      fontFamily: settings.fontFamily,
       fontSize: settings.fontSize,
       defaultSidebarView: settings.defaultSidebarView,
       filterFileExtensions: settings.filterFileExtensions,

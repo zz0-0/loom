@@ -10,9 +10,12 @@ class AppearanceSettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final appearanceSettings = ref.watch(appearanceSettingsProvider);
+    final compactMode = appearanceSettings.compactMode;
 
     return Container(
-      padding: AppSpacing.paddingMd,
+      padding:
+          AdaptiveConstants.contentPadding(context, compactMode: compactMode),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -29,18 +32,18 @@ class AppearanceSettingsPage extends ConsumerWidget {
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          SizedBox(height: compactMode ? AppSpacing.md : AppSpacing.lg),
           const Divider(),
-          const SizedBox(height: AppSpacing.lg),
+          SizedBox(height: compactMode ? AppSpacing.md : AppSpacing.lg),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const ThemeSettings(),
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: compactMode ? AppSpacing.sm : AppSpacing.md),
                   const Divider(),
-                  const SizedBox(height: AppSpacing.md),
+                  SizedBox(height: compactMode ? AppSpacing.sm : AppSpacing.md),
                   _AppearanceGeneralSettings(),
                 ],
               ),
@@ -53,27 +56,6 @@ class AppearanceSettingsPage extends ConsumerWidget {
 }
 
 class _AppearanceGeneralSettings extends ConsumerWidget {
-  String _getFontSizeLabel(double fontSize) {
-    if (fontSize <= 12.0) return 'Small';
-    if (fontSize <= 14.0) return 'Medium';
-    if (fontSize <= 16.0) return 'Large';
-    return 'Extra Large';
-  }
-
-  double _getFontSizeValue(String label) {
-    switch (label) {
-      case 'Small':
-        return 12;
-      case 'Large':
-        return 16;
-      case 'Extra Large':
-        return 18;
-      case 'Medium':
-      default:
-        return 14;
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -157,39 +139,6 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
             },
           ),
         ),
-        _SettingsItem(
-          title: 'Font Size',
-          subtitle: 'Overall application font size',
-          trailing: DropdownButton<String>(
-            value: _getFontSizeLabel(appearanceSettings.fontSize),
-            onChanged: (value) {
-              if (value != null) {
-                final fontSize = _getFontSizeValue(value);
-                ref
-                    .read(appearanceSettingsProvider.notifier)
-                    .setFontSize(fontSize);
-              }
-            },
-            items: const [
-              DropdownMenuItem(
-                value: 'Small',
-                child: Text('Small'),
-              ),
-              DropdownMenuItem(
-                value: 'Medium',
-                child: Text('Medium'),
-              ),
-              DropdownMenuItem(
-                value: 'Large',
-                child: Text('Large'),
-              ),
-              DropdownMenuItem(
-                value: 'Extra Large',
-                child: Text('Extra Large'),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -215,10 +164,8 @@ class _SettingsItem extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.smd,
-            horizontal: AppSpacing.md,
-          ),
+          padding: AdaptiveConstants.itemSpacing(
+              context), // Settings page doesn't need compact spacing
           margin: AppSpacing.marginBottomSm,
           child: Row(
             children: [

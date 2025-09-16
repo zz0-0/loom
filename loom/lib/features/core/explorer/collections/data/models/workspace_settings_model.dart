@@ -4,6 +4,7 @@ import 'package:loom/features/core/explorer/index.dart';
 class WorkspaceSettingsModel extends WorkspaceSettings {
   const WorkspaceSettingsModel({
     super.theme = 'dark',
+    super.fontFamily = 'Inter',
     super.fontSize = 14,
     super.defaultSidebarView = 'filesystem',
     super.filterFileExtensions = true,
@@ -14,6 +15,7 @@ class WorkspaceSettingsModel extends WorkspaceSettings {
   factory WorkspaceSettingsModel.fromJson(Map<String, dynamic> json) {
     return WorkspaceSettingsModel(
       theme: _validateTheme(json['theme'] as String? ?? 'dark'),
+      fontFamily: json['fontFamily'] as String? ?? 'Inter',
       fontSize: _validateFontSize(json['fontSize'] as int? ?? 14),
       defaultSidebarView: _validateSidebarView(
         json['defaultSidebarView'] as String? ?? 'filesystem',
@@ -42,6 +44,7 @@ class WorkspaceSettingsModel extends WorkspaceSettings {
   Map<String, dynamic> toJson() {
     return {
       'theme': theme,
+      'fontFamily': fontFamily,
       'fontSize': fontSize,
       'defaultSidebarView': defaultSidebarView,
       'filterFileExtensions': filterFileExtensions,

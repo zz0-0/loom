@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Centralized micro-interactions and animations for the entire app
 /// Similar to AppSpacing and AppRadius, this provides consistent animations across the project
@@ -438,14 +440,47 @@ class _SuccessAnimationState extends State<SuccessAnimation>
 }
 
 /// Pre-built animation widgets for common interactions
-class AnimatedHover extends StatefulWidget {
+class AnimatedHover extends ConsumerWidget {
   const AnimatedHover({
     required this.child,
     super.key,
-    this.duration = AppAnimations.fast,
+    this.duration,
     this.curve = AppAnimations.scaleCurve,
     this.scale = AppAnimations.scaleHover,
     this.opacity = AppAnimations.opacityHover,
+    this.onTap,
+  });
+
+  final Widget child;
+  final Duration? duration;
+  final Curve curve;
+  final double scale;
+  final double opacity;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final animationDurations = ref.watch(animationDurationsProvider);
+    final effectiveDuration = duration ?? animationDurations.fast;
+
+    return _AnimatedHoverStateful(
+      child: child,
+      duration: effectiveDuration,
+      curve: curve,
+      scale: scale,
+      opacity: opacity,
+      onTap: onTap,
+    );
+  }
+}
+
+class _AnimatedHoverStateful extends StatefulWidget {
+  const _AnimatedHoverStateful({
+    required this.child,
+    required this.duration,
+    required this.curve,
+    required this.scale,
+    required this.opacity,
     this.onTap,
   });
 
@@ -457,10 +492,10 @@ class AnimatedHover extends StatefulWidget {
   final VoidCallback? onTap;
 
   @override
-  State<AnimatedHover> createState() => _AnimatedHoverState();
+  State<_AnimatedHoverStateful> createState() => __AnimatedHoverStatefulState();
 }
 
-class _AnimatedHoverState extends State<AnimatedHover> {
+class __AnimatedHoverStatefulState extends State<_AnimatedHoverStateful> {
   bool _isHovered = false;
 
   @override
@@ -486,13 +521,43 @@ class _AnimatedHoverState extends State<AnimatedHover> {
   }
 }
 
-class AnimatedPress extends StatefulWidget {
+class AnimatedPress extends ConsumerWidget {
   const AnimatedPress({
     required this.child,
     super.key,
-    this.duration = AppAnimations.fast,
+    this.duration,
     this.curve = AppAnimations.scaleCurve,
     this.scale = AppAnimations.scalePressed,
+    this.onPressed,
+  });
+
+  final Widget child;
+  final Duration? duration;
+  final Curve curve;
+  final double scale;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final animationDurations = ref.watch(animationDurationsProvider);
+    final effectiveDuration = duration ?? animationDurations.fast;
+
+    return _AnimatedPressStateful(
+      child: child,
+      duration: effectiveDuration,
+      curve: curve,
+      scale: scale,
+      onPressed: onPressed,
+    );
+  }
+}
+
+class _AnimatedPressStateful extends StatefulWidget {
+  const _AnimatedPressStateful({
+    required this.child,
+    required this.duration,
+    required this.curve,
+    required this.scale,
     this.onPressed,
   });
 
@@ -503,10 +568,10 @@ class AnimatedPress extends StatefulWidget {
   final VoidCallback? onPressed;
 
   @override
-  State<AnimatedPress> createState() => _AnimatedPressState();
+  State<_AnimatedPressStateful> createState() => __AnimatedPressStatefulState();
 }
 
-class _AnimatedPressState extends State<AnimatedPress> {
+class __AnimatedPressStatefulState extends State<_AnimatedPressStateful> {
   bool _isPressed = false;
 
   @override
@@ -526,14 +591,47 @@ class _AnimatedPressState extends State<AnimatedPress> {
   }
 }
 
-class AnimatedFocus extends StatefulWidget {
+class AnimatedFocus extends ConsumerWidget {
   const AnimatedFocus({
     required this.child,
     super.key,
-    this.duration = AppAnimations.fast,
+    this.duration,
     this.curve = AppAnimations.scaleCurve,
     this.scale = AppAnimations.scaleFocus,
     this.opacity = AppAnimations.opacityFocus,
+    this.focusNode,
+  });
+
+  final Widget child;
+  final Duration? duration;
+  final Curve curve;
+  final double scale;
+  final double opacity;
+  final FocusNode? focusNode;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final animationDurations = ref.watch(animationDurationsProvider);
+    final effectiveDuration = duration ?? animationDurations.fast;
+
+    return _AnimatedFocusStateful(
+      child: child,
+      duration: effectiveDuration,
+      curve: curve,
+      scale: scale,
+      opacity: opacity,
+      focusNode: focusNode,
+    );
+  }
+}
+
+class _AnimatedFocusStateful extends StatefulWidget {
+  const _AnimatedFocusStateful({
+    required this.child,
+    required this.duration,
+    required this.curve,
+    required this.scale,
+    required this.opacity,
     this.focusNode,
   });
 
@@ -545,10 +643,10 @@ class AnimatedFocus extends StatefulWidget {
   final FocusNode? focusNode;
 
   @override
-  State<AnimatedFocus> createState() => _AnimatedFocusState();
+  State<_AnimatedFocusStateful> createState() => __AnimatedFocusStatefulState();
 }
 
-class _AnimatedFocusState extends State<AnimatedFocus> {
+class __AnimatedFocusStatefulState extends State<_AnimatedFocusStateful> {
   late final FocusNode _focusNode;
   bool _isFocused = false;
 
@@ -592,33 +690,36 @@ class _AnimatedFocusState extends State<AnimatedFocus> {
   }
 }
 
-class AnimatedFadeIn extends StatelessWidget {
+class AnimatedFadeIn extends ConsumerWidget {
   const AnimatedFadeIn({
     required this.child,
     super.key,
-    this.duration = AppAnimations.normal,
+    this.duration,
     this.curve = AppAnimations.fadeCurve,
     this.delay = Duration.zero,
   });
 
   final Widget child;
-  final Duration duration;
+  final Duration? duration;
   final Curve curve;
   final Duration delay;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final animationDurations = ref.watch(animationDurationsProvider);
+    final effectiveDuration = duration ?? animationDurations.normal;
+
     return FutureBuilder<void>(
       future: Future.delayed(delay),
       builder: (context, snapshot) {
         return AnimatedOpacity(
           opacity: snapshot.connectionState == ConnectionState.done ? 1.0 : 0.0,
-          duration: duration,
+          duration: effectiveDuration,
           curve: curve,
           child: AnimatedScale(
             scale:
                 snapshot.connectionState == ConnectionState.done ? 1.0 : 0.95,
-            duration: duration,
+            duration: effectiveDuration,
             curve: curve,
             child: child,
           ),
@@ -628,11 +729,11 @@ class AnimatedFadeIn extends StatelessWidget {
   }
 }
 
-class AnimatedSlideIn extends StatelessWidget {
+class AnimatedSlideIn extends ConsumerWidget {
   const AnimatedSlideIn({
     required this.child,
     super.key,
-    this.duration = AppAnimations.normal,
+    this.duration,
     this.curve = AppAnimations.slideCurve,
     this.direction = AxisDirection.up,
     this.distance = 20.0,
@@ -640,14 +741,17 @@ class AnimatedSlideIn extends StatelessWidget {
   });
 
   final Widget child;
-  final Duration duration;
+  final Duration? duration;
   final Curve curve;
   final AxisDirection direction;
   final double distance;
   final Duration delay;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final animationDurations = ref.watch(animationDurationsProvider);
+    final effectiveDuration = duration ?? animationDurations.normal;
+
     final offset = switch (direction) {
       AxisDirection.up => Offset(0, distance),
       AxisDirection.down => Offset(0, -distance),
@@ -662,7 +766,7 @@ class AnimatedSlideIn extends StatelessWidget {
           offset: snapshot.connectionState == ConnectionState.done
               ? Offset.zero
               : offset,
-          duration: duration,
+          duration: effectiveDuration,
           curve: curve,
           child: child,
         );
@@ -739,7 +843,7 @@ class _AnimatedBounceState extends State<AnimatedBounce>
 extension AnimationExtensions on Widget {
   /// Adds hover animation
   Widget withHoverAnimation({
-    Duration duration = AppAnimations.fast,
+    Duration? duration,
     Curve curve = AppAnimations.scaleCurve,
     double scale = AppAnimations.scaleHover,
     double opacity = AppAnimations.opacityHover,
@@ -757,7 +861,7 @@ extension AnimationExtensions on Widget {
 
   /// Adds press animation
   Widget withPressAnimation({
-    Duration duration = AppAnimations.fast,
+    Duration? duration,
     Curve curve = AppAnimations.scaleCurve,
     double scale = AppAnimations.scalePressed,
     VoidCallback? onPressed,
@@ -773,7 +877,7 @@ extension AnimationExtensions on Widget {
 
   /// Adds focus animation
   Widget withFocusAnimation({
-    Duration duration = AppAnimations.fast,
+    Duration? duration,
     Curve curve = AppAnimations.scaleCurve,
     double scale = AppAnimations.scaleFocus,
     double opacity = AppAnimations.opacityFocus,
@@ -791,7 +895,7 @@ extension AnimationExtensions on Widget {
 
   /// Adds fade-in animation
   Widget withFadeInAnimation({
-    Duration duration = AppAnimations.normal,
+    Duration? duration,
     Curve curve = AppAnimations.fadeCurve,
     Duration delay = Duration.zero,
   }) {
@@ -805,7 +909,7 @@ extension AnimationExtensions on Widget {
 
   /// Adds slide-in animation
   Widget withSlideInAnimation({
-    Duration duration = AppAnimations.normal,
+    Duration? duration,
     Curve curve = AppAnimations.slideCurve,
     AxisDirection direction = AxisDirection.up,
     double distance = 20.0,

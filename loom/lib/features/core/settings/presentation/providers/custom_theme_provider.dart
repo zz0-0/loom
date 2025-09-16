@@ -571,7 +571,11 @@ class FontSettings {
 }
 
 class FontSettingsNotifier extends StateNotifier<FontSettings> {
-  FontSettingsNotifier() : super(const FontSettings());
+  FontSettingsNotifier(this._settingsRepository) : super(const FontSettings()) {
+    loadSavedSettings();
+  }
+
+  final SharedSettingsRepository _settingsRepository;
 
   Future<void> setFontFamily(String fontFamily) async {
     state = state.copyWith(fontFamily: fontFamily);
@@ -585,10 +589,11 @@ class FontSettingsNotifier extends StateNotifier<FontSettings> {
 
   Future<void> _saveSettings() async {
     try {
-      final settingsJson = jsonEncode(state.toJson());
-      // For now, we'll store font settings in a simple way
-      // In a real app, you'd want to extend the repository or use a different storage mechanism
-      debugPrint('Font settings saved: $settingsJson');
+      final fontSettings = {
+        'fontFamily': state.fontFamily,
+        'fontSize': state.fontSize.round(),
+      };
+      await _settingsRepository.setFontSettings(fontSettings);
     } catch (e) {
       debugPrint('Failed to save font settings: $e');
     }
@@ -596,9 +601,11 @@ class FontSettingsNotifier extends StateNotifier<FontSettings> {
 
   Future<void> loadSavedSettings() async {
     try {
-      // For now, we'll use default settings
-      // In a real app, you'd want to load from persistent storage
-      state = const FontSettings();
+      final fontSettings = await _settingsRepository.getFontSettings();
+      state = FontSettings(
+        fontFamily: fontSettings['fontFamily'] as String? ?? 'Inter',
+        fontSize: (fontSettings['fontSize'] as int?)?.toDouble() ?? 14.0,
+      );
     } catch (e) {
       // Use default settings if loading fails
       state = const FontSettings();
@@ -615,7 +622,7 @@ final customThemeProvider =
 
 final fontSettingsProvider =
     StateNotifierProvider<FontSettingsNotifier, FontSettings>(
-  (ref) => FontSettingsNotifier(),
+  (ref) => FontSettingsNotifier(ref.watch(sharedSettingsRepositoryProvider)),
 );
 
 // Combined theme provider that merges custom theme with font settings

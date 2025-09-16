@@ -6,25 +6,31 @@ class SettingsSerializationService {
 
   /// Deserialize appearance settings from JSON
   AppearanceSettings deserializeAppearanceSettings(
-      Map<String, dynamic>? jsonData,) {
+    Map<String, dynamic>? jsonData,
+  ) {
     if (jsonData == null) {
       return const AppearanceSettings();
     }
 
     return AppearanceSettings(
       theme: jsonData['theme'] as String? ?? 'system',
-      fontSize: (jsonData['fontSize'] as num?)?.toDouble() ?? 14.0,
-      compactMode: jsonData['compactMode'] as bool? ?? false,
+      compactMode: jsonData['compactMode'] as bool? ?? true,
+      showMenuIcons: jsonData['showMenuIcons'] as bool? ?? true,
+      animationSpeed: jsonData['animationSpeed'] as String? ?? 'normal',
+      sidebarTransparency: jsonData['sidebarTransparency'] as bool? ?? false,
     );
   }
 
   /// Serialize appearance settings to JSON
   Map<String, dynamic> serializeAppearanceSettings(
-      AppearanceSettings settings,) {
+    AppearanceSettings settings,
+  ) {
     return {
       'theme': settings.theme,
-      'fontSize': settings.fontSize,
       'compactMode': settings.compactMode,
+      'showMenuIcons': settings.showMenuIcons,
+      'animationSpeed': settings.animationSpeed,
+      'sidebarTransparency': settings.sidebarTransparency,
     };
   }
 
@@ -52,7 +58,8 @@ class SettingsSerializationService {
 
   /// Deserialize interface settings from JSON
   InterfaceSettings deserializeInterfaceSettings(
-      Map<String, dynamic>? jsonData,) {
+    Map<String, dynamic>? jsonData,
+  ) {
     if (jsonData == null) {
       return const InterfaceSettings();
     }

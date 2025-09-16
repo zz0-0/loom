@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:loom/common/index.dart';
 
 /// Platform detection and UI behavior utilities
 class PlatformUtils {
@@ -80,44 +81,53 @@ class Breakpoints {
 
 /// UI constants that adapt based on platform
 class AdaptiveConstants {
-  static double sidebarWidth(BuildContext context) {
+  static double sidebarWidth(BuildContext context, {bool compactMode = false}) {
     final paradigm = PlatformUtils.getUIParadigm(context);
-    switch (paradigm) {
-      case UIParadigm.desktopLike:
-        return 240;
-      case UIParadigm.compactDesktop:
-        return 200;
-      case UIParadigm.tabletLike:
-        return 280;
-      case UIParadigm.mobileLike:
-        return MediaQuery.of(context).size.width * 0.8;
-    }
+    final baseWidth = switch (paradigm) {
+      UIParadigm.desktopLike => compactMode ? 200.0 : 240.0,
+      UIParadigm.compactDesktop => 200.0,
+      UIParadigm.tabletLike => 280.0,
+      UIParadigm.mobileLike => MediaQuery.of(context).size.width * 0.8,
+    };
+    return baseWidth;
   }
 
-  static double sidePanelWidth(BuildContext context) {
+  static double sidePanelWidth(BuildContext context,
+      {bool compactMode = false}) {
     final paradigm = PlatformUtils.getUIParadigm(context);
-    switch (paradigm) {
-      case UIParadigm.desktopLike:
-        return 320;
-      case UIParadigm.compactDesktop:
-        return 280;
-      case UIParadigm.tabletLike:
-        return 300;
-      case UIParadigm.mobileLike:
-        return MediaQuery.of(context).size.width;
-    }
+    final baseWidth = switch (paradigm) {
+      UIParadigm.desktopLike => compactMode ? 280.0 : 320.0,
+      UIParadigm.compactDesktop => 280.0,
+      UIParadigm.tabletLike => 300.0,
+      UIParadigm.mobileLike => MediaQuery.of(context).size.width,
+    };
+    return baseWidth;
   }
 
-  static double topBarHeight(BuildContext context) {
+  static double topBarHeight(BuildContext context, {bool compactMode = false}) {
     final paradigm = PlatformUtils.getUIParadigm(context);
-    switch (paradigm) {
-      case UIParadigm.desktopLike:
-      case UIParadigm.compactDesktop:
-        return 35;
-      case UIParadigm.tabletLike:
-        return 48;
-      case UIParadigm.mobileLike:
-        return 56; // Standard AppBar height
-    }
+    final baseHeight = switch (paradigm) {
+      UIParadigm.desktopLike ||
+      UIParadigm.compactDesktop =>
+        compactMode ? 30.0 : 35.0,
+      UIParadigm.tabletLike => 48.0,
+      UIParadigm.mobileLike => 56.0, // Standard AppBar height
+    };
+    return baseHeight;
+  }
+
+  static EdgeInsetsGeometry contentPadding(BuildContext context,
+      {bool compactMode = false}) {
+    final multiplier = compactMode ? 0.75 : 1.0;
+    return EdgeInsets.all(AppSpacing.md * multiplier);
+  }
+
+  static EdgeInsetsGeometry itemSpacing(BuildContext context,
+      {bool compactMode = false}) {
+    final multiplier = compactMode ? 0.75 : 1.0;
+    return EdgeInsets.symmetric(
+      horizontal: AppSpacing.md * multiplier,
+      vertical: AppSpacing.sm * multiplier,
+    );
   }
 }

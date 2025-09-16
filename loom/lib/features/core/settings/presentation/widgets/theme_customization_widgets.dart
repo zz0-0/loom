@@ -193,13 +193,11 @@ class FontFamilySelector extends StatelessWidget {
     'Inter',
     'Roboto',
     'Open Sans',
-    'Lato',
-    'Poppins',
-    'Montserrat',
-    'Nunito',
-    'Ubuntu',
-    'Fira Sans',
-    'Source Sans Pro',
+    'serif',
+    'sans-serif',
+    'monospace',
+    'cursive',
+    'fantasy',
   ];
 
   @override
@@ -241,6 +239,23 @@ class FontFamilySelector extends StatelessWidget {
               onFontFamilyChanged(value);
             }
           },
+        ),
+        const SizedBox(height: 8),
+        // Preview text with current font
+        Container(
+          padding: AppSpacing.paddingSm,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+            borderRadius: AppRadius.radiusSm,
+          ),
+          child: Text(
+            'Preview: The quick brown fox jumps over the lazy dog',
+            style: TextStyle(
+              fontFamily: currentFontFamily,
+              fontSize: 14,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
         ),
       ],
     );

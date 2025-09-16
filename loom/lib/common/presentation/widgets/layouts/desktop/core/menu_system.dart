@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/features/core/settings/index.dart';
 
 /// Interface for menu items
 abstract class MenuItem {
@@ -97,7 +99,7 @@ class MenuRegistry {
 }
 
 /// Desktop-style menu widget
-class DesktopMenuBar extends StatelessWidget {
+class DesktopMenuBar extends ConsumerWidget {
   const DesktopMenuBar({
     required this.settings,
     super.key,
@@ -108,7 +110,7 @@ class DesktopMenuBar extends StatelessWidget {
   final VoidCallback? onMenuPressed;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final registry = MenuRegistry();
     final menus = registry.menus;
 
@@ -116,7 +118,8 @@ class DesktopMenuBar extends StatelessWidget {
       // Show hamburger menu
       return IconButton(
         icon: const Icon(Icons.menu, size: 16),
-        onPressed: onMenuPressed ?? () => _showHamburgerMenu(context, menus),
+        onPressed:
+            onMenuPressed ?? () => _showHamburgerMenu(context, ref, menus),
         splashRadius: 16,
       );
     } else {
@@ -128,7 +131,8 @@ class DesktopMenuBar extends StatelessWidget {
     }
   }
 
-  void _showHamburgerMenu(BuildContext context, List<MenuItem> menus) {
+  void _showHamburgerMenu(
+      BuildContext context, WidgetRef ref, List<MenuItem> menus) {
     final button = context.findRenderObject()! as RenderBox;
     final overlay =
         Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
@@ -146,26 +150,29 @@ class DesktopMenuBar extends StatelessWidget {
     showMenu(
       context: context,
       position: position,
-      items: _buildMenuItems(context, menus),
+      items: _buildMenuItems(context, ref, menus),
     );
   }
 
   List<PopupMenuEntry<VoidCallback?>> _buildMenuItems(
     BuildContext context,
+    WidgetRef ref,
     List<MenuItem> menus,
   ) {
+    final appearanceSettings = ref.watch(appearanceSettingsProvider);
+    final showIcons = appearanceSettings.showMenuIcons;
     final items = <PopupMenuEntry<VoidCallback?>>[];
 
     for (var i = 0; i < menus.length; i++) {
       final menu = menus[i];
 
-      if (menu.children != null && menu.children!.isNotEmpty) {
+      if (menu.children != null && menu.children!.isEmpty) {
         // Submenu
         items.add(
           PopupMenuItem<VoidCallback?>(
             child: Row(
               children: [
-                if (menu.icon != null) ...[
+                if (showIcons && menu.icon != null) ...[
                   Icon(menu.icon, size: 16),
                   const SizedBox(width: 8),
                 ],
@@ -185,7 +192,7 @@ class DesktopMenuBar extends StatelessWidget {
             },
             child: Row(
               children: [
-                if (menu.icon != null) ...[
+                if (showIcons && menu.icon != null) ...[
                   Icon(menu.icon, size: 16),
                   const SizedBox(width: 8),
                 ],
@@ -206,16 +213,32 @@ class DesktopMenuBar extends StatelessWidget {
   }
 }
 
-class _MenuBarItem extends StatefulWidget {
+class _MenuBarItem extends ConsumerWidget {
   const _MenuBarItem({required this.menu});
 
   final MenuItem menu;
 
   @override
-  State<_MenuBarItem> createState() => _MenuBarItemState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appearanceSettings = ref.watch(appearanceSettingsProvider);
+
+    return _MenuBarItemStateful(
+        menu: menu, appearanceSettings: appearanceSettings);
+  }
 }
 
-class _MenuBarItemState extends State<_MenuBarItem> {
+class _MenuBarItemStateful extends StatefulWidget {
+  const _MenuBarItemStateful(
+      {required this.menu, required this.appearanceSettings});
+
+  final MenuItem menu;
+  final AppearanceSettings appearanceSettings;
+
+  @override
+  State<_MenuBarItemStateful> createState() => _MenuBarItemStateState();
+}
+
+class _MenuBarItemStateState extends State<_MenuBarItemStateful> {
   bool _isHovered = false;
 
   @override
@@ -241,13 +264,25 @@ class _MenuBarItemState extends State<_MenuBarItem> {
           },
           child: Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sm, vertical: AppSpacing.xs,),
-            child: Text(
-              widget.menu.label,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
-              ),
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xs,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.appearanceSettings.showMenuIcons &&
+                    widget.menu.icon != null) ...[
+                  Icon(widget.menu.icon, size: 14),
+                  const SizedBox(width: 4),
+                ],
+                Text(
+                  widget.menu.label,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -285,7 +320,8 @@ class _MenuBarItemState extends State<_MenuBarItem> {
               },
               child: Row(
                 children: [
-                  if (item.icon != null) ...[
+                  if (widget.appearanceSettings.showMenuIcons &&
+                      item.icon != null) ...[
                     Icon(item.icon, size: 14),
                     const SizedBox(width: 6),
                   ],
