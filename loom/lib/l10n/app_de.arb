@@ -1,0 +1,119 @@
+{
+  "@@locale": "de",
+  "appTitle": "Loom - Wissensbasis",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "general": "Allgemein",
+  "@general": {
+    "description": "General settings section title"
+  },
+  "generalDescription": "Allgemeine Einstellungen und Anwendungsverhalten",
+  "@generalDescription": {
+    "description": "Description for general settings"
+  },
+  "autoSave": "Automatisches Speichern",
+  "@autoSave": {
+    "description": "Auto save setting label"
+  },
+  "autoSaveDescription": "Änderungen automatisch in regelmäßigen Abständen speichern",
+  "@autoSaveDescription": {
+    "description": "Description for auto save setting"
+  },
+  "confirmOnExit": "Beim Beenden Bestätigen",
+  "@confirmOnExit": {
+    "description": "Confirm on exit setting label"
+  },
+  "confirmOnExitDescription": "Bei Schließen mit ungespeicherten Änderungen nachfragen",
+  "@confirmOnExitDescription": {
+    "description": "Description for confirm on exit setting"
+  },
+  "language": "Sprache",
+  "@language": {
+    "description": "Language setting label"
+  },
+  "languageDescription": "Anwendungssprache",
+  "@languageDescription": {
+    "description": "Description for language setting"
+  },
+  "followSystemLanguage": "Systemsprache folgen",
+  "@followSystemLanguage": {
+    "description": "Option to follow system language"
+  },
+  "manualLanguageSelection": "Manuelle Sprachauswahl",
+  "@manualLanguageSelection": {
+    "description": "Option for manual language selection"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language name"
+  },
+  "spanish": "Español",
+  "@spanish": {
+    "description": "Spanish language name"
+  },
+  "french": "Français",
+  "@french": {
+    "description": "French language name"
+  },
+  "german": "Deutsch",
+  "@german": {
+    "description": "German language name"
+  },
+  "chinese": "Chinesisch",
+  "@chinese": {
+    "description": "Chinese language name"
+  },
+  "japanese": "Japanisch",
+  "@japanese": {
+    "description": "Japanese language name"
+  },
+  "korean": "Koreanisch",
+  "@korean": {
+    "description": "Korean language name"
+  },
+  "settings": "Einstellungen",
+  "@settings": {
+    "description": "Settings title"
+  },
+  "allSettings": "Alle Einstellungen",
+  "@allSettings": {
+    "description": "All settings subtitle"
+  },
+  "appearance": "Erscheinungsbild",
+  "@appearance": {
+    "description": "Appearance settings title"
+  },
+  "appearanceSubtitle": "Thema, Farben, Layout",
+  "@appearanceSubtitle": {
+    "description": "Appearance settings subtitle"
+  },
+  "interface": "Benutzeroberfläche",
+  "@interface": {
+    "description": "Interface settings title"
+  },
+  "interfaceSubtitle": "Fenstersteuerung, Layout",
+  "@interfaceSubtitle": {
+    "description": "Interface settings subtitle"
+  },
+  "general": "Allgemein",
+  "@general": {
+    "description": "General settings title"
+  },
+  "generalSubtitle": "Einstellungen, Verhalten",
+  "@generalSubtitle": {
+    "description": "General settings subtitle"
+  },
+  "about": "Über",
+  "@about": {
+    "description": "About settings title"
+  },
+  "aboutSubtitle": "Version, Lizenzen",
+  "@aboutSubtitle": {
+    "description": "About settings subtitle"
+  },
+  "appTitle": "Loom - Wissensbasis",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}

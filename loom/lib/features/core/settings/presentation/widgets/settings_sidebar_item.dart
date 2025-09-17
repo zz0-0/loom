@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 
@@ -28,6 +29,8 @@ class SettingsQuickPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Container(
       padding: AppSpacing.paddingSm,
       child: Column(
@@ -36,12 +39,12 @@ class SettingsQuickPanel extends ConsumerWidget {
           // Main settings option
           _SettingCategory(
             icon: Icons.settings,
-            title: 'Settings',
-            subtitle: 'All settings',
+            title: localizations.settings,
+            subtitle: localizations.allSettings,
             onTap: () {
               ref.read(tabProvider.notifier).openTab(
                     id: 'settings',
-                    title: 'Settings',
+                    title: localizations.settings,
                     contentType: 'settings',
                     icon: 'settings',
                   );
@@ -53,12 +56,12 @@ class SettingsQuickPanel extends ConsumerWidget {
           // Settings categories
           _SettingCategory(
             icon: Icons.palette,
-            title: 'Appearance',
-            subtitle: 'Theme, colors, layout',
+            title: localizations.appearance,
+            subtitle: localizations.appearanceSubtitle,
             onTap: () {
               ref.read(tabProvider.notifier).openTab(
                     id: 'settings:appearance',
-                    title: 'Appearance',
+                    title: localizations.appearance,
                     contentType: 'settings',
                     icon: 'settings',
                   );
@@ -67,12 +70,12 @@ class SettingsQuickPanel extends ConsumerWidget {
 
           _SettingCategory(
             icon: Icons.tune,
-            title: 'Interface',
-            subtitle: 'Window controls, layout',
+            title: localizations.interface,
+            subtitle: localizations.interfaceSubtitle,
             onTap: () {
               ref.read(tabProvider.notifier).openTab(
                     id: 'settings:interface',
-                    title: 'Interface',
+                    title: localizations.interface,
                     contentType: 'settings',
                     icon: 'settings',
                   );
@@ -81,12 +84,12 @@ class SettingsQuickPanel extends ConsumerWidget {
 
           _SettingCategory(
             icon: Icons.settings,
-            title: 'General',
-            subtitle: 'Preferences, behavior',
+            title: localizations.general,
+            subtitle: localizations.generalSubtitle,
             onTap: () {
               ref.read(tabProvider.notifier).openTab(
                     id: 'settings:general',
-                    title: 'General',
+                    title: localizations.general,
                     contentType: 'settings',
                     icon: 'settings',
                   );
@@ -95,12 +98,12 @@ class SettingsQuickPanel extends ConsumerWidget {
 
           _SettingCategory(
             icon: Icons.info_outline,
-            title: 'About',
-            subtitle: 'Version, licenses',
+            title: localizations.about,
+            subtitle: localizations.aboutSubtitle,
             onTap: () {
               ref.read(tabProvider.notifier).openTab(
                     id: 'settings:about',
-                    title: 'About',
+                    title: localizations.about,
                     contentType: 'settings',
                     icon: 'settings',
                   );

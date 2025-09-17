@@ -1,0 +1,111 @@
+{
+  "@@locale": "ko",
+  "appTitle": "Loom - 지식 기반",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "general": "일반",
+  "@general": {
+    "description": "General settings section title"
+  },
+  "generalDescription": "일반 설정 및 애플리케이션 동작",
+  "@generalDescription": {
+    "description": "Description for general settings"
+  },
+  "autoSave": "자동 저장",
+  "@autoSave": {
+    "description": "Auto save setting label"
+  },
+  "autoSaveDescription": "정기적으로 변경사항을 자동 저장",
+  "@autoSaveDescription": {
+    "description": "Description for auto save setting"
+  },
+  "confirmOnExit": "종료 시 확인",
+  "@confirmOnExit": {
+    "description": "Confirm on exit setting label"
+  },
+  "confirmOnExitDescription": "저장되지 않은 변경사항이 있을 때 종료 시 확인 요청",
+  "@confirmOnExitDescription": {
+    "description": "Description for confirm on exit setting"
+  },
+  "language": "언어",
+  "@language": {
+    "description": "Language setting label"
+  },
+  "languageDescription": "애플리케이션 언어",
+  "@languageDescription": {
+    "description": "Description for language setting"
+  },
+  "followSystemLanguage": "시스템 언어 따르기",
+  "@followSystemLanguage": {
+    "description": "Option to follow system language"
+  },
+  "manualLanguageSelection": "수동 언어 선택",
+  "@manualLanguageSelection": {
+    "description": "Option for manual language selection"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language name"
+  },
+  "spanish": "Español",
+  "@spanish": {
+    "description": "Spanish language name"
+  },
+  "french": "Français",
+  "@french": {
+    "description": "French language name"
+  },
+  "german": "Deutsch",
+  "@german": {
+    "description": "German language name"
+  },
+  "chinese": "中文",
+  "@chinese": {
+    "description": "Chinese language name"
+  },
+  "japanese": "日本語",
+  "@japanese": {
+    "description": "Japanese language name"
+  },
+  "korean": "한국어",
+  "@korean": {
+    "description": "Korean language name"
+  },
+  "settings": "설정",
+  "@settings": {
+    "description": "Settings title"
+  },
+  "allSettings": "모든 설정",
+  "@allSettings": {
+    "description": "All settings subtitle"
+  },
+  "appearance": "외관",
+  "@appearance": {
+    "description": "Appearance settings title"
+  },
+  "appearanceSubtitle": "테마, 색상, 레이아웃",
+  "@appearanceSubtitle": {
+    "description": "Appearance settings subtitle"
+  },
+  "interface": "인터페이스",
+  "@interface": {
+    "description": "Interface settings title"
+  },
+  "interfaceSubtitle": "창 컨트롤, 레이아웃",
+  "@interfaceSubtitle": {
+    "description": "Interface settings subtitle"
+  },
+  "generalSubtitle": "설정, 동작",
+  "@generalSubtitle": {
+    "description": "General settings subtitle"
+  },
+  "about": "정보",
+  "@about": {
+    "description": "About settings title"
+  },
+  "aboutSubtitle": "버전, 라이선스",
+  "@aboutSubtitle": {
+    "description": "About settings subtitle"
+  }
+}

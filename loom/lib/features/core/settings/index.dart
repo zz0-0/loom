@@ -16,6 +16,7 @@ export 'presentation/providers/close_button_settings_provider.dart';
 export 'presentation/providers/custom_theme_provider.dart';
 export 'presentation/providers/general_settings_provider.dart';
 export 'presentation/providers/interface_settings_provider.dart';
+export 'presentation/providers/locale_provider.dart';
 export 'presentation/providers/top_bar_settings_provider.dart';
 export 'presentation/providers/window_controls_provider.dart';
 export 'presentation/settings_feature_registration.dart';

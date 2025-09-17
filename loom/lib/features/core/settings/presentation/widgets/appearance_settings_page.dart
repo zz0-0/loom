@@ -165,7 +165,8 @@ class _SettingsItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: AdaptiveConstants.itemSpacing(
-              context), // Settings page doesn't need compact spacing
+            context,
+          ), // Settings page doesn't need compact spacing
           margin: AppSpacing.marginBottomSm,
           child: Row(
             children: [

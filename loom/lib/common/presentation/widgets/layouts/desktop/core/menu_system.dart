@@ -132,7 +132,10 @@ class DesktopMenuBar extends ConsumerWidget {
   }
 
   void _showHamburgerMenu(
-      BuildContext context, WidgetRef ref, List<MenuItem> menus) {
+    BuildContext context,
+    WidgetRef ref,
+    List<MenuItem> menus,
+  ) {
     final button = context.findRenderObject()! as RenderBox;
     final overlay =
         Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
@@ -223,13 +226,17 @@ class _MenuBarItem extends ConsumerWidget {
     final appearanceSettings = ref.watch(appearanceSettingsProvider);
 
     return _MenuBarItemStateful(
-        menu: menu, appearanceSettings: appearanceSettings);
+      menu: menu,
+      appearanceSettings: appearanceSettings,
+    );
   }
 }
 
 class _MenuBarItemStateful extends StatefulWidget {
-  const _MenuBarItemStateful(
-      {required this.menu, required this.appearanceSettings});
+  const _MenuBarItemStateful({
+    required this.menu,
+    required this.appearanceSettings,
+  });
 
   final MenuItem menu;
   final AppearanceSettings appearanceSettings;

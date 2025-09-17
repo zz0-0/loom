@@ -789,8 +789,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           children: [
             // Top bar with registered items and window controls
             SizedBox(
-              height: AdaptiveConstants.topBarHeight(context,
-                  compactMode: compactMode),
+              height: AdaptiveConstants.topBarHeight(
+                context,
+                compactMode: compactMode,
+              ),
               child: const TopBar(),
             ),
 
@@ -813,8 +815,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     width: uiState.isSidePanelVisible
-                        ? AdaptiveConstants.sidePanelWidth(context,
-                            compactMode: compactMode)
+                        ? AdaptiveConstants.sidePanelWidth(
+                            context,
+                            compactMode: compactMode,
+                          )
                         : 0,
                     child: uiState.isSidePanelVisible
                         ? ResizableSidePanel(

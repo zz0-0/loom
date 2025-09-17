@@ -76,21 +76,25 @@ class GeneralSettings {
   const GeneralSettings({
     this.autoSave = true,
     this.confirmOnExit = true,
+    this.followSystemLanguage = false, // Changed default to false
     this.language = 'en',
   });
 
   final bool autoSave;
   final bool confirmOnExit;
+  final bool followSystemLanguage;
   final String language;
 
   GeneralSettings copyWith({
     bool? autoSave,
     bool? confirmOnExit,
+    bool? followSystemLanguage,
     String? language,
   }) {
     return GeneralSettings(
       autoSave: autoSave ?? this.autoSave,
       confirmOnExit: confirmOnExit ?? this.confirmOnExit,
+      followSystemLanguage: followSystemLanguage ?? this.followSystemLanguage,
       language: language ?? this.language,
     );
   }

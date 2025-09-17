@@ -92,8 +92,10 @@ class AdaptiveConstants {
     return baseWidth;
   }
 
-  static double sidePanelWidth(BuildContext context,
-      {bool compactMode = false}) {
+  static double sidePanelWidth(
+    BuildContext context, {
+    bool compactMode = false,
+  }) {
     final paradigm = PlatformUtils.getUIParadigm(context);
     final baseWidth = switch (paradigm) {
       UIParadigm.desktopLike => compactMode ? 280.0 : 320.0,
@@ -116,14 +118,18 @@ class AdaptiveConstants {
     return baseHeight;
   }
 
-  static EdgeInsetsGeometry contentPadding(BuildContext context,
-      {bool compactMode = false}) {
+  static EdgeInsetsGeometry contentPadding(
+    BuildContext context, {
+    bool compactMode = false,
+  }) {
     final multiplier = compactMode ? 0.75 : 1.0;
     return EdgeInsets.all(AppSpacing.md * multiplier);
   }
 
-  static EdgeInsetsGeometry itemSpacing(BuildContext context,
-      {bool compactMode = false}) {
+  static EdgeInsetsGeometry itemSpacing(
+    BuildContext context, {
+    bool compactMode = false,
+  }) {
     final multiplier = compactMode ? 0.75 : 1.0;
     return EdgeInsets.symmetric(
       horizontal: AppSpacing.md * multiplier,

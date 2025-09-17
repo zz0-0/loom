@@ -11,7 +11,7 @@ class FileTypeBottomBarItem implements BottomBarItem {
   String get id => 'file_type';
 
   @override
-  int get priority => 10;
+  int get priority => 100;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,9 @@ class FileTypeBottomBarItem implements BottomBarItem {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.smd, vertical: AppSpacing.xs,),
+        horizontal: AppSpacing.smd,
+        vertical: AppSpacing.xs,
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -150,7 +152,7 @@ class CursorPositionBottomBarItem implements BottomBarItem {
   String get id => 'cursor_position';
 
   @override
-  int get priority => 50;
+  int get priority => 101;
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +178,9 @@ class CursorPositionBottomBarItem implements BottomBarItem {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.smd, vertical: AppSpacing.xs,),
+        horizontal: AppSpacing.smd,
+        vertical: AppSpacing.xs,
+      ),
       child: Text(
         'Ln ${cursorPosition.line}, Col ${cursorPosition.column}',
         style: theme.textTheme.bodySmall,
@@ -193,7 +197,7 @@ class BloxDocumentInfoBottomBarItem implements BottomBarItem {
   String get id => 'blox_info';
 
   @override
-  int get priority => 51;
+  int get priority => 102;
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +221,9 @@ class BloxDocumentInfoBottomBarItem implements BottomBarItem {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.smd, vertical: AppSpacing.xs,),
+        horizontal: AppSpacing.smd,
+        vertical: AppSpacing.xs,
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

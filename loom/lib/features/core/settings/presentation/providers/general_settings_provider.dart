@@ -32,6 +32,10 @@ class GeneralSettingsNotifier extends StateNotifier<GeneralSettings> {
     state = state.copyWith(confirmOnExit: value);
   }
 
+  void setFollowSystemLanguage({required bool value}) {
+    state = state.copyWith(followSystemLanguage: value);
+  }
+
   void setLanguage(String value) {
     state = state.copyWith(language: value);
   }

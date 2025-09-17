@@ -464,12 +464,12 @@ class AnimatedHover extends ConsumerWidget {
     final effectiveDuration = duration ?? animationDurations.fast;
 
     return _AnimatedHoverStateful(
-      child: child,
       duration: effectiveDuration,
       curve: curve,
       scale: scale,
       opacity: opacity,
       onTap: onTap,
+      child: child,
     );
   }
 }
@@ -543,11 +543,11 @@ class AnimatedPress extends ConsumerWidget {
     final effectiveDuration = duration ?? animationDurations.fast;
 
     return _AnimatedPressStateful(
-      child: child,
       duration: effectiveDuration,
       curve: curve,
       scale: scale,
       onPressed: onPressed,
+      child: child,
     );
   }
 }
@@ -615,12 +615,12 @@ class AnimatedFocus extends ConsumerWidget {
     final effectiveDuration = duration ?? animationDurations.fast;
 
     return _AnimatedFocusStateful(
-      child: child,
       duration: effectiveDuration,
       curve: curve,
       scale: scale,
       opacity: opacity,
       focusNode: focusNode,
+      child: child,
     );
   }
 }

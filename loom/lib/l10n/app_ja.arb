@@ -1,0 +1,111 @@
+{
+  "@@locale": "ja",
+  "appTitle": "Loom - 知識ベース",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "general": "一般",
+  "@general": {
+    "description": "General settings section title"
+  },
+  "generalDescription": "一般的な設定とアプリケーションの動作",
+  "@generalDescription": {
+    "description": "Description for general settings"
+  },
+  "autoSave": "自動保存",
+  "@autoSave": {
+    "description": "Auto save setting label"
+  },
+  "autoSaveDescription": "定期的に変更を自動保存",
+  "@autoSaveDescription": {
+    "description": "Description for auto save setting"
+  },
+  "confirmOnExit": "終了時に確認",
+  "@confirmOnExit": {
+    "description": "Confirm on exit setting label"
+  },
+  "confirmOnExitDescription": "保存されていない変更がある場合に終了時に確認を求める",
+  "@confirmOnExitDescription": {
+    "description": "Description for confirm on exit setting"
+  },
+  "language": "言語",
+  "@language": {
+    "description": "Language setting label"
+  },
+  "languageDescription": "アプリケーションの言語",
+  "@languageDescription": {
+    "description": "Description for language setting"
+  },
+  "followSystemLanguage": "システム言語に従う",
+  "@followSystemLanguage": {
+    "description": "Option to follow system language"
+  },
+  "manualLanguageSelection": "手動言語選択",
+  "@manualLanguageSelection": {
+    "description": "Option for manual language selection"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language name"
+  },
+  "spanish": "Español",
+  "@spanish": {
+    "description": "Spanish language name"
+  },
+  "french": "Français",
+  "@french": {
+    "description": "French language name"
+  },
+  "german": "Deutsch",
+  "@german": {
+    "description": "German language name"
+  },
+  "chinese": "中文",
+  "@chinese": {
+    "description": "Chinese language name"
+  },
+  "japanese": "日本語",
+  "@japanese": {
+    "description": "Japanese language name"
+  },
+  "korean": "한국어",
+  "@korean": {
+    "description": "Korean language name"
+  },
+  "settings": "設定",
+  "@settings": {
+    "description": "Settings title"
+  },
+  "allSettings": "すべての設定",
+  "@allSettings": {
+    "description": "All settings subtitle"
+  },
+  "appearance": "外観",
+  "@appearance": {
+    "description": "Appearance settings title"
+  },
+  "appearanceSubtitle": "テーマ、色、レイアウト",
+  "@appearanceSubtitle": {
+    "description": "Appearance settings subtitle"
+  },
+  "interface": "インターフェース",
+  "@interface": {
+    "description": "Interface settings title"
+  },
+  "interfaceSubtitle": "ウィンドウコントロール、レイアウト",
+  "@interfaceSubtitle": {
+    "description": "Interface settings subtitle"
+  },
+  "generalSubtitle": "設定、動作",
+  "@generalSubtitle": {
+    "description": "General settings subtitle"
+  },
+  "about": "について",
+  "@about": {
+    "description": "About settings title"
+  },
+  "aboutSubtitle": "バージョン、ライセンス",
+  "@aboutSubtitle": {
+    "description": "About settings subtitle"
+  }
+}
