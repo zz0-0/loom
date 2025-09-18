@@ -7,7 +7,6 @@ import 'package:loom/common/index.dart';
 import 'package:loom/features/core/explorer/collections/domain/entities/folder.dart';
 import 'package:loom/features/core/explorer/collections/domain/repositories/folder_repository.dart';
 import 'package:loom/features/core/explorer/collections/domain/usecases/folder_use_cases.dart';
-import 'package:loom/features/core/explorer/collections/presentation/providers/workspace_provider.dart';
 import 'package:path/path.dart' as path;
 
 class FolderNotifier extends StateNotifier<Folder?> {
@@ -27,35 +26,6 @@ class FolderNotifier extends StateNotifier<Folder?> {
   final FolderRenameItemUseCase renameItemUseCase;
 
   Future<void> openFolder(BuildContext context) async {
-    // String? selectedDirectory;
-
-    // try {
-    //   selectedDirectory = await FilePicker.platform.getDirectoryPath();
-    // } catch (filePickerError) {
-    //   // FilePicker failed (common in containerized environments)
-    //   selectedDirectory = null;
-    // }
-
-    // if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
-    //   try {
-    //     // Use workspace provider to open the folder so the explorer updates
-    //     final container = ProviderScope.containerOf(context, listen: false);
-    //     await container
-    //         .read(currentWorkspaceProvider.notifier)
-    //         .openWorkspace(selectedDirectory);
-    //   } catch (e) {
-    //     if (context.mounted) {
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(
-    //           content: Text('Failed to open folder: $e'),
-    //           backgroundColor: Theme.of(context).colorScheme.error,
-    //         ),
-    //       );
-    //     }
-    //   }
-    // } else {
-    // Fallback: Show the shared directory browser like the old implementation
-
     final path = await showDialog<String>(
       context: context,
       builder: (context) => const FolderBrowserDialog(
@@ -64,11 +34,8 @@ class FolderNotifier extends StateNotifier<Folder?> {
     );
     if (path != null && path.isNotEmpty && context.mounted) {
       try {
-        // Use workspace provider to open the folder so the explorer updates
-        final container = ProviderScope.containerOf(context, listen: false);
-        await container
-            .read(currentWorkspaceProvider.notifier)
-            .openWorkspace(path);
+        final folder = await repository.openFolder(path);
+        state = folder;
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -80,27 +47,9 @@ class FolderNotifier extends StateNotifier<Folder?> {
         }
       }
     }
-    // }
   }
 
   Future<void> createFolder(BuildContext context) async {
-    // Get the current workspace to create folders in
-    // final container = ProviderScope.containerOf(context, listen: false);
-    // final workspace = container.read(currentWorkspaceProvider);
-
-    // if (workspace == null) {
-    //   // No workspace is open, show error
-    //   if (context.mounted) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(
-    //         content: Text('Please open a workspace first to create folders'),
-    //         backgroundColor: Colors.orange,
-    //       ),
-    //     );
-    //   }
-    //   return;
-    // }
-
     // Show the enhanced create folder dialog
     await showDialog<void>(
       context: context,
@@ -119,7 +68,12 @@ class FolderNotifier extends StateNotifier<Folder?> {
       final content = result['content'] ?? '';
       if (name != null && name.isNotEmpty) {
         try {
-          await createFileUseCase.call(state!.rootPath, name, content: content);
+          final filePath = path.join(state!.rootPath, name);
+          await createFileUseCase.call(
+            state!.rootPath,
+            filePath,
+            content: content,
+          );
           await refreshFolderTree();
         } catch (e) {
           if (context.mounted) {
@@ -568,11 +522,11 @@ class _CreateFolderDialogState extends ConsumerState<CreateFolderDialog> {
     final fullPath = path.join(location, folderName);
 
     try {
-      // For now, just create the workspace directly
-      // TODO(user): Implement proper folder creation with templates
+      // Use folder repository to create the folder
       await ref
-          .read(currentWorkspaceProvider.notifier)
-          .createWorkspace(fullPath);
+          .read(currentFolderProvider.notifier)
+          .repository
+          .createFolder(fullPath);
 
       if (mounted) {
         Navigator.of(context).pop();
@@ -892,8 +846,8 @@ class _EnhancedRenameDialogState extends State<EnhancedRenameDialog> {
 }
 
 final folderRepositoryProvider = Provider<FolderRepository>((ref) {
-  // You may need to provide a real fileRepository here
-  return FolderRepositoryImpl(null);
+  final fileRepository = ref.watch(fileRepositoryProvider);
+  return FolderRepositoryImpl(fileRepository);
 });
 
 final folderCreateDirectoryUseCaseProvider =

@@ -4,18 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/common/presentation/widgets/layouts/desktop/panels/resizable_side_panel.dart';
 import 'package:loom/features/core/explorer/index.dart';
-import 'package:loom/features/core/plugin_system/index.dart';
 import 'package:loom/features/core/search/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/plugins/core/plugin_manager.dart';
+import 'package:loom/plugins/core/presentation/plugin_sidebar_item.dart';
 import 'package:path/path.dart' as path;
 import 'package:window_manager/window_manager.dart';
 
 /// Extensible desktop layout with customizable UI components
 /// This serves as the main UI scaffold that features can register into
 class DesktopLayout extends ConsumerStatefulWidget {
-  const DesktopLayout({required this.pluginBootstrapper, super.key});
-
-  final PluginBootstrapper pluginBootstrapper;
+  const DesktopLayout({super.key});
 
   @override
   ConsumerState<DesktopLayout> createState() => _DesktopLayoutState();
@@ -27,12 +26,20 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     super.initState();
     _initializePluginSystem();
     _registerDefaultComponents();
+
+    // Register plugin sidebar items after the UI is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _registerPluginSidebarItems();
+    });
   }
 
   /// Initialize the plugin system
   Future<void> _initializePluginSystem() async {
     try {
-      await widget.pluginBootstrapper.initializePlugins(context);
+      // Plugin system v2.0 is already initialized in main.dart
+      // We can handle any UI-specific plugin initialization here if needed
+      await PluginManager.instance
+          .handleUIEvent('layout_initialized', {'layout': 'desktop'});
     } catch (e) {
       debugPrint('Failed to initialize plugin system: $e');
     }
@@ -146,6 +153,11 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           ),
         ],
       ),
+      // Add Plugins menu
+      SimpleMenuItem(
+        label: 'Plugins',
+        children: _buildPluginMenuItems(context),
+      ),
     ]);
 
     // Future features can register their own components here
@@ -164,6 +176,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       _registerExplorerFeature();
       _registerSearchFeature();
       _registerSettingsFeature();
+      _registerPluginFeature();
     } catch (e) {
       // If feature registration fails, continue without them
       debugPrint('Feature registration failed: $e');
@@ -194,6 +207,33 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     // Register search feature
     final searchItem = SearchSidebarItem();
     UIRegistry().registerSidebarItem(searchItem);
+  }
+
+  void _registerPluginFeature() {
+    // Plugin sidebar items are now registered after UI is built
+    // in _registerPluginSidebarItems()
+  }
+
+  /// Register plugin sidebar items after UI is built
+  void _registerPluginSidebarItems() {
+    try {
+      final pluginManager = PluginManager.instance;
+      final activePlugins = pluginManager.getActivePlugins();
+
+      if (activePlugins.isNotEmpty) {
+        debugPrint('Registering ${activePlugins.length} plugin sidebar items');
+
+        for (final plugin in activePlugins) {
+          final sidebarItem = IndividualPluginSidebarItem(plugin);
+          UIRegistry().registerSidebarItem(sidebarItem);
+          debugPrint('Registered sidebar item for plugin: ${plugin.name}');
+        }
+      } else {
+        debugPrint('No active plugins found to register');
+      }
+    } catch (e) {
+      debugPrint('Failed to register plugin sidebar items: $e');
+    }
   }
 
   void _showGlobalSearchDialog(BuildContext context) {
@@ -763,6 +803,148 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     );
   }
 
+  /// Show plugin manager dialog
+  void _showPluginManager(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (context) => const PluginManagerDialog(),
+    );
+  }
+
+  /// Build plugin menu items dynamically
+  List<MenuItem> _buildPluginMenuItems(BuildContext context) {
+    final pluginManager = PluginManager.instance;
+    final activePlugins = pluginManager.getActivePlugins();
+    final menuItems = <MenuItem>[];
+
+    // Add plugin management items
+    menuItems.add(
+      SimpleMenuItem(
+        label: 'Plugin Manager',
+        icon: Icons.extension,
+        onPressedWithContext: _showPluginManager,
+      ),
+    );
+
+    menuItems.add(const SimpleMenuItem(label: '-')); // Separator
+
+    // Add menu items for each active plugin
+    for (final plugin in activePlugins) {
+      final pluginCommands = plugin.capabilities.commands;
+      if (pluginCommands.isNotEmpty) {
+        final commandItems = pluginCommands.map((command) {
+          return SimpleMenuItem(
+            label: _formatCommandLabel(command),
+            icon: _getCommandIcon(command),
+            onPressedWithContext: (context) => _executePluginCommand(
+              context,
+              plugin.id,
+              command,
+            ),
+          );
+        }).toList();
+
+        menuItems.add(
+          SimpleMenuItem(
+            label: plugin.name,
+            icon: Icons.extension,
+            children: commandItems,
+          ),
+        );
+      }
+    }
+
+    // If no plugins are loaded, show a message
+    if (activePlugins.isEmpty) {
+      menuItems.add(
+        SimpleMenuItem(
+          label: 'No plugins loaded',
+          icon: Icons.info,
+          onPressedWithContext: (context) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No plugins are currently loaded'),
+              ),
+            );
+          },
+        ),
+      );
+    }
+
+    return menuItems;
+  }
+
+  /// Format command name for display
+  String _formatCommandLabel(String command) {
+    // Convert command names like 'git.status' to 'Status'
+    final parts = command.split('.');
+    if (parts.length > 1) {
+      return parts.last.replaceAll('_', ' ').toUpperCase();
+    }
+    return command.replaceAll('_', ' ').toUpperCase();
+  }
+
+  /// Get appropriate icon for command
+  IconData _getCommandIcon(String command) {
+    if (command.contains('git')) {
+      return Icons.code;
+    } else if (command.contains('hello') || command.contains('greet')) {
+      return Icons.waving_hand;
+    } else if (command.contains('status')) {
+      return Icons.info;
+    } else if (command.contains('commit')) {
+      return Icons.save;
+    } else if (command.contains('push')) {
+      return Icons.upload;
+    } else if (command.contains('pull')) {
+      return Icons.download;
+    }
+    return Icons.play_arrow;
+  }
+
+  /// Execute a plugin command
+  Future<void> _executePluginCommand(
+    BuildContext context,
+    String pluginId,
+    String commandId,
+  ) async {
+    try {
+      final result = await PluginManager.instance.executeCommand(
+        pluginId,
+        commandId,
+        <String, dynamic>{},
+      );
+
+      if (result.success) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Command executed successfully'),
+            ),
+          );
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Command failed: ${result.error}'),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to execute command: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final uiState = ref.watch(uiStateProvider);
@@ -815,10 +997,16 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     width: uiState.isSidePanelVisible
-                        ? AdaptiveConstants.sidePanelWidth(
-                            context,
-                            compactMode: compactMode,
-                          )
+                        ? () {
+                            final width = AdaptiveConstants.sidePanelWidth(
+                              context,
+                              compactMode: compactMode,
+                            );
+                            debugPrint(
+                              'Side panel width: $width, visible: ${uiState.isSidePanelVisible}',
+                            );
+                            return width;
+                          }()
                         : 0,
                     child: uiState.isSidePanelVisible
                         ? ResizableSidePanel(
@@ -859,3 +1047,176 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 }
 
 /// Search top bar item - removed as search is now in sidebar
+
+/// Plugin Manager Dialog
+class PluginManagerDialog extends ConsumerWidget {
+  const PluginManagerDialog({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pluginManager = PluginManager.instance;
+    final installedPlugins = pluginManager.getInstalledPlugins();
+    final activePlugins = pluginManager.getActivePlugins();
+    final theme = Theme.of(context);
+
+    return AlertDialog(
+      title: const Text('Plugin Manager'),
+      content: SizedBox(
+        width: 600,
+        height: 400,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Statistics
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _StatItem(
+                      label: 'Installed',
+                      value: installedPlugins.length.toString(),
+                      icon: Icons.inventory,
+                    ),
+                    _StatItem(
+                      label: 'Active',
+                      value: activePlugins.length.toString(),
+                      icon: Icons.play_arrow,
+                    ),
+                    _StatItem(
+                      label: 'Inactive',
+                      value: (installedPlugins.length - activePlugins.length)
+                          .toString(),
+                      icon: Icons.stop,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Plugin list
+            Expanded(
+              child: ListView.builder(
+                itemCount: installedPlugins.length,
+                itemBuilder: (context, index) {
+                  final plugin = installedPlugins[index];
+                  final isActive = activePlugins.any((p) => p.id == plugin.id);
+                  final state = pluginManager.getPluginState(plugin.id);
+
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      leading: Icon(
+                        isActive
+                            ? Icons.check_circle
+                            : Icons.radio_button_unchecked,
+                        color: isActive ? Colors.green : Colors.grey,
+                      ),
+                      title: Text(plugin.name),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(plugin.description),
+                          Text(
+                            'Version: ${plugin.version} • State: ${state.name}',
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (plugin.capabilities.commands.isNotEmpty)
+                            Chip(
+                              label: Text(
+                                '${plugin.capabilities.commands.length} commands',
+                              ),
+                              backgroundColor:
+                                  theme.colorScheme.primaryContainer,
+                            ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon:
+                                Icon(isActive ? Icons.stop : Icons.play_arrow),
+                            onPressed: () async {
+                              try {
+                                if (isActive) {
+                                  await pluginManager.disablePlugin(plugin.id);
+                                } else {
+                                  await pluginManager.enablePlugin(plugin.id);
+                                }
+                                // Force rebuild
+                                (context as Element).markNeedsBuild();
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Failed to ${isActive ? 'disable' : 'enable'} plugin: $e',
+                                      ),
+                                      backgroundColor: theme.colorScheme.error,
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            tooltip:
+                                isActive ? 'Disable Plugin' : 'Enable Plugin',
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Close'),
+        ),
+      ],
+    );
+  }
+}
+
+/// Statistics item widget
+class _StatItem extends StatelessWidget {
+  const _StatItem({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  final String label;
+  final String value;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      children: [
+        Icon(icon, size: 32, color: theme.colorScheme.primary),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall,
+        ),
+      ],
+    );
+  }
+}

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
-import 'package:loom/features/core/plugin_system/index.dart';
 
 /// Adaptive layout that chooses between desktop and mobile layouts
 /// based on platform and screen size
 class AdaptiveMainLayout extends ConsumerWidget {
-  const AdaptiveMainLayout({required this.pluginBootstrapper, super.key});
-
-  final PluginBootstrapper pluginBootstrapper;
+  const AdaptiveMainLayout({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,10 +16,10 @@ class AdaptiveMainLayout extends ConsumerWidget {
 
         if (shouldUseMobileUI) {
           // Mobile/tablet UI: Bottom navigation, drawer, different interaction patterns
-          return MobileLayout(pluginBootstrapper: pluginBootstrapper);
+          return const MobileLayout();
         } else {
           // Desktop UI: VSCode-like panels, sidebar, etc.
-          return DesktopLayout(pluginBootstrapper: pluginBootstrapper);
+          return const DesktopLayout();
         }
       },
     );

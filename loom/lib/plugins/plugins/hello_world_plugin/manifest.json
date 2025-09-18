@@ -1,0 +1,38 @@
+{
+  "id": "hello-world-plugin",
+  "name": "Hello World Plugin",
+  "version": "1.0.0",
+  "description": "A simple example plugin that demonstrates the plugin system v2.0",
+  "author": "Loom Team",
+  "entryPoint": "lib/hello_world_plugin.dart",
+  "icon": "waving_hand",
+  "permissions": [
+    "ui.notification"
+  ],
+  "metadata": {
+    "category": "example",
+    "tags": ["demo", "tutorial", "hello-world"]
+  },
+  "dependencies": {
+    "plugins": [],
+    "packages": {}
+  },
+  "capabilities": {
+    "hooks": [
+      "app.startup",
+      "app.shutdown"
+    ],
+    "commands": [
+      "hello.greet",
+      "hello.custom"
+    ],
+    "fileExtensions": [
+      ".txt",
+      ".md"
+    ],
+    "customCapabilities": {
+      "supportsGreeting": true,
+      "maxGreetingLength": 100
+    }
+  }
+}

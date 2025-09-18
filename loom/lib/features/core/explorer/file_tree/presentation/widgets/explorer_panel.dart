@@ -79,7 +79,7 @@ class ExplorerPanel extends ConsumerWidget {
               _WelcomeAction(
                 icon: LucideIcons.folderOpen,
                 title: 'Open Folder',
-                subtitle: 'Open an existing workspace',
+                subtitle: 'Browse and explore files',
                 onTap: () => ref
                     .read(currentFolderProvider.notifier)
                     .openFolder(context),
@@ -88,7 +88,7 @@ class ExplorerPanel extends ConsumerWidget {
               _WelcomeAction(
                 icon: LucideIcons.folderPlus,
                 title: 'Create Folder',
-                subtitle: 'Create a new workspace',
+                subtitle: 'Create a new folder',
                 onTap: () => ref
                     .read(currentFolderProvider.notifier)
                     .createFolder(context),

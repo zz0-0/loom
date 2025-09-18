@@ -1,0 +1,57 @@
+{
+  "id": "git-plugin",
+  "name": "Git Integration Plugin",
+  "version": "2.0.0",
+  "description": "Complete Git version control integration with commit, push, pull, branch management, and status tracking",
+  "author": "Loom Team",
+  "entryPoint": "lib/git_plugin.dart",
+  "icon": "git",
+  "permissions": [
+    "filesystem.read",
+    "filesystem.write",
+    "system.command"
+  ],
+  "metadata": {
+    "category": "development",
+    "tags": ["git", "version-control", "scm", "collaboration"],
+    "homepage": "https://github.com/zz0-0/loom",
+    "repository": "https://github.com/zz0-0/loom"
+  },
+  "dependencies": {
+    "plugins": [],
+    "packages": {}
+  },
+  "capabilities": {
+    "hooks": [
+      "app.startup",
+      "app.shutdown",
+      "workspace.open",
+      "workspace.close",
+      "file.save"
+    ],
+    "commands": [
+      "git.init",
+      "git.status",
+      "git.add",
+      "git.commit",
+      "git.push",
+      "git.pull",
+      "git.log",
+      "git.branch",
+      "git.checkout",
+      "git.merge",
+      "git.stash",
+      "git.diff"
+    ],
+    "fileExtensions": [
+      ".gitignore",
+      ".gitattributes",
+      ".gitmodules"
+    ],
+    "customCapabilities": {
+      "supportsGitOperations": true,
+      "providesVersionControl": true,
+      "workspaceAware": true
+    }
+  }
+}

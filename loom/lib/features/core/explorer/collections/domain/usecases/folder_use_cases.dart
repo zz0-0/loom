@@ -5,7 +5,7 @@ class FolderCreateDirectoryUseCase {
   FolderCreateDirectoryUseCase(this.repository);
   final FolderRepository repository;
   Future<void> call(String rootPath, String directoryPath) async {
-    // TODO(user): Implement create directory logic
+    await repository.createDirectory(rootPath, directoryPath);
   }
 }
 
@@ -17,7 +17,7 @@ class FolderCreateFileUseCase {
     String filePath, {
     String content = '',
   }) async {
-    // TODO(user): Implement create file logic
+    await repository.createFile(rootPath, filePath, content: content);
   }
 }
 
@@ -25,7 +25,7 @@ class FolderDeleteItemUseCase {
   FolderDeleteItemUseCase(this.repository);
   final FolderRepository repository;
   Future<void> call(String rootPath, String itemPath) async {
-    // TODO(user): Implement delete item logic
+    await repository.deleteItem(rootPath, itemPath);
   }
 }
 
@@ -33,7 +33,7 @@ class FolderRenameItemUseCase {
   FolderRenameItemUseCase(this.repository);
   final FolderRepository repository;
   Future<void> call(String rootPath, String oldPath, String newPath) async {
-    // TODO(user): Implement rename item logic
+    await repository.renameItem(rootPath, oldPath, newPath);
   }
 }
 
@@ -41,7 +41,6 @@ class RefreshFolderTreeUseCase {
   RefreshFolderTreeUseCase(this.repository);
   final FolderRepository repository;
   Future<List<dynamic>> call(Folder folder) async {
-    // TODO(user): Implement refresh folder tree logic
-    return folder.fileTree;
+    return repository.refreshFileTree(folder.rootPath);
   }
 }

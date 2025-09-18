@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
-import 'package:loom/features/core/plugin_system/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/plugins/core/plugin_manager.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 /// Mobile-specific layout with completely different UX patterns
@@ -12,9 +12,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 /// - Full-screen content editing
 /// - Modal sheets for secondary content
 class MobileLayout extends ConsumerStatefulWidget {
-  const MobileLayout({required this.pluginBootstrapper, super.key});
-
-  final PluginBootstrapper pluginBootstrapper;
+  const MobileLayout({super.key});
 
   @override
   ConsumerState<MobileLayout> createState() => _MobileLayoutState();
@@ -33,7 +31,10 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
   /// Initialize the plugin system
   Future<void> _initializePluginSystem() async {
     try {
-      await widget.pluginBootstrapper.initializePlugins(context);
+      // Plugin system v2.0 is already initialized in main.dart
+      // We can handle any UI-specific plugin initialization here if needed
+      await PluginManager.instance
+          .handleUIEvent('layout_initialized', {'layout': 'mobile'});
     } catch (e) {
       debugPrint('Failed to initialize plugin system: $e');
     }
@@ -145,6 +146,11 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
                   onTap: _navigateToHistory,
                 ),
                 const Divider(),
+                _DrawerItem(
+                  icon: LucideIcons.puzzle,
+                  title: 'Plugins',
+                  onTap: _navigateToPlugins,
+                ),
                 _DrawerItem(
                   icon: LucideIcons.settings,
                   title: 'Settings',
@@ -271,6 +277,14 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
     );
   }
 
+  void _showPluginsModal(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => const _MobilePluginsModal(),
+    );
+  }
+
   // Navigation methods
   void _navigateToRecentFiles() {
     Navigator.pop(context);
@@ -285,6 +299,11 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
   void _navigateToHistory() {
     Navigator.pop(context);
     // Navigate to history
+  }
+
+  void _navigateToPlugins() {
+    Navigator.pop(context);
+    _showPluginsModal(context);
   }
 
   void _navigateToSettings() {
@@ -493,6 +512,176 @@ class _MobileCreateOptions extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _MobilePluginsModal extends StatelessWidget {
+  const _MobilePluginsModal();
+
+  @override
+  Widget build(BuildContext context) {
+    final pluginManager = PluginManager.instance;
+    final activePlugins = pluginManager.getActivePlugins();
+    final theme = Theme.of(context);
+
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.8,
+      padding: AppSpacing.paddingMd,
+      child: Column(
+        children: [
+          // Header
+          Row(
+            children: [
+              const Icon(LucideIcons.puzzle),
+              const SizedBox(width: 8),
+              Text(
+                'Plugins',
+                style: theme.textTheme.titleLarge,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(LucideIcons.x),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // Statistics
+          Card(
+            child: Padding(
+              padding: AppSpacing.paddingMd,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _PluginStatItem(
+                    label: 'Active',
+                    value: activePlugins.length.toString(),
+                    icon: LucideIcons.play,
+                  ),
+                  _PluginStatItem(
+                    label: 'Total',
+                    value:
+                        pluginManager.getInstalledPlugins().length.toString(),
+                    icon: LucideIcons.package,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Plugin list
+          Expanded(
+            child: ListView.builder(
+              itemCount: activePlugins.length,
+              itemBuilder: (context, index) {
+                final plugin = activePlugins[index];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListTile(
+                    leading: const Icon(LucideIcons.puzzle),
+                    title: Text(plugin.name),
+                    subtitle: Text(plugin.description),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (command) async {
+                        try {
+                          final result = await pluginManager.executeCommand(
+                            plugin.id,
+                            command,
+                            <String, dynamic>{},
+                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  result.success
+                                      ? 'Command executed successfully'
+                                      : 'Command failed: ${result.error}',
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Failed to execute command: $e'),
+                                backgroundColor: theme.colorScheme.error,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      itemBuilder: (context) => plugin.capabilities.commands
+                          .map(
+                            (command) => PopupMenuItem<String>(
+                              value: command,
+                              child: Text(_formatCommandName(command)),
+                            ),
+                          )
+                          .toList(),
+                      child: const Icon(LucideIcons.moreVertical),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // If no plugins
+          if (activePlugins.isEmpty)
+            const Expanded(
+              child: Center(
+                child: Text('No active plugins'),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _formatCommandName(String command) {
+    final parts = command.split('.');
+    if (parts.length > 1) {
+      return parts.last.replaceAll('_', ' ').toUpperCase();
+    }
+    return command.replaceAll('_', ' ').toUpperCase();
+  }
+}
+
+class _PluginStatItem extends StatelessWidget {
+  const _PluginStatItem({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
+
+  final String label;
+  final String value;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      children: [
+        Icon(icon, size: 24, color: theme.colorScheme.primary),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colorScheme.primary,
+          ),
+        ),
+        Text(
+          label,
+          style: theme.textTheme.bodySmall,
+        ),
+      ],
     );
   }
 }
