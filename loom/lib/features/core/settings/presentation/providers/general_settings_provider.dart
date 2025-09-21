@@ -37,7 +37,15 @@ class GeneralSettingsNotifier extends StateNotifier<GeneralSettings> {
   }
 
   void setLanguage(String value) {
-    state = state.copyWith(language: value);
+    debugPrint('🔧 GeneralSettingsNotifier: Setting language to "$value"');
+    // When user explicitly sets a language, switch off following system language
+    state = state.copyWith(
+      language: value,
+      followSystemLanguage: false,
+    );
+    debugPrint(
+      '✅ GeneralSettingsNotifier: Language updated to "${state.language}"',
+    );
   }
 }
 

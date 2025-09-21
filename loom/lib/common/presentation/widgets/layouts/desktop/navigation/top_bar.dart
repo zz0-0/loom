@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/search/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:window_manager/window_manager.dart';
 
 /// Extensible top bar with registered items and window controls
@@ -324,7 +325,7 @@ class TopBar extends ConsumerWidget {
             const SizedBox(width: 6),
             Expanded(
               child: Text(
-                'Search files and commands...',
+                AppLocalizations.of(context).searchFilesAndCommands,
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 12,
                   color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
@@ -333,7 +334,7 @@ class TopBar extends ConsumerWidget {
             ),
             const SizedBox(width: 6),
             Text(
-              '⌘K',
+              AppLocalizations.of(context).commandKeyShortcut,
               style: theme.textTheme.bodySmall?.copyWith(
                 fontSize: 10,
                 color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
@@ -362,7 +363,7 @@ class TopBar extends ConsumerWidget {
         Icons.menu,
         color: theme.colorScheme.onSurface,
       ),
-      tooltip: 'Menu',
+      tooltip: AppLocalizations.of(context).menu,
       itemBuilder: (BuildContext context) {
         return menuRegistry.menus
             .expand((menu) => _buildMenuItems(context, menu))

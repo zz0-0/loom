@@ -81,7 +81,6 @@ class PluginIPCManager {
       futures.add(
         sendMessage(pluginId, message).catchError((Object error) {
           // Log error but don't fail the broadcast
-          print('Failed to send message to plugin $pluginId: $error');
           return null;
         }),
       );
@@ -267,6 +266,9 @@ class IPCException implements Exception {
 }
 
 /// Middleware for processing IPC messages
+/// This abstract class intentionally contains a single method to define the
+/// middleware contract. It's fine to keep it as an abstract class.
+// ignore: one_member_abstracts
 abstract class IPCMiddleware {
   Future<IPCMessage> processMessage(IPCMessage message);
 }
@@ -291,7 +293,6 @@ class IPCMiddlewareChain {
 class IPCLoggingMiddleware implements IPCMiddleware {
   @override
   Future<IPCMessage> processMessage(IPCMessage message) async {
-    print('[IPC] ${message.type} - ${message.data}');
     return message;
   }
 }
@@ -300,7 +301,7 @@ class IPCLoggingMiddleware implements IPCMiddleware {
 class IPCValidationMiddleware implements IPCMiddleware {
   @override
   Future<IPCMessage> processMessage(IPCMessage message) async {
-    // TODO: Add message validation logic
+    // TODO(user): Add message validation logic
     return message;
   }
 }

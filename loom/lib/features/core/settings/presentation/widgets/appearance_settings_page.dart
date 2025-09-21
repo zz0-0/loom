@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Appearance settings page
 class AppearanceSettingsPage extends ConsumerWidget {
@@ -12,6 +13,7 @@ class AppearanceSettingsPage extends ConsumerWidget {
     final theme = Theme.of(context);
     final appearanceSettings = ref.watch(appearanceSettingsProvider);
     final compactMode = appearanceSettings.compactMode;
+    final localizations = AppLocalizations.of(context);
 
     return Container(
       padding:
@@ -20,14 +22,14 @@ class AppearanceSettingsPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Appearance',
+            localizations.appearance,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'Customize the visual appearance of Loom',
+            localizations.appearanceDescription,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -60,20 +62,21 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final appearanceSettings = ref.watch(appearanceSettingsProvider);
+    final localizations = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Layout & Visual',
+          localizations.layoutAndVisual,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
         _SettingsItem(
-          title: 'Compact Mode',
-          subtitle: 'Use smaller UI elements and reduced spacing',
+          title: localizations.compactMode,
+          subtitle: localizations.compactModeDescription,
           trailing: Switch(
             value: appearanceSettings.compactMode,
             onChanged: (value) {
@@ -84,8 +87,8 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
           ),
         ),
         _SettingsItem(
-          title: 'Show Icons in Menu',
-          subtitle: 'Display icons next to menu items',
+          title: localizations.showIconsInMenu,
+          subtitle: localizations.showIconsInMenuDescription,
           trailing: Switch(
             value: appearanceSettings.showMenuIcons,
             onChanged: (value) {
@@ -96,8 +99,8 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
           ),
         ),
         _SettingsItem(
-          title: 'Animation Speed',
-          subtitle: 'Speed of UI animations and transitions',
+          title: localizations.animationSpeed,
+          subtitle: localizations.animationSpeedDescription,
           trailing: DropdownButton<String>(
             value: appearanceSettings.animationSpeed,
             onChanged: (value) {
@@ -107,29 +110,29 @@ class _AppearanceGeneralSettings extends ConsumerWidget {
                     .setAnimationSpeed(value);
               }
             },
-            items: const [
+            items: [
               DropdownMenuItem(
                 value: 'slow',
-                child: Text('Slow'),
+                child: Text(localizations.slow),
               ),
               DropdownMenuItem(
                 value: 'normal',
-                child: Text('Normal'),
+                child: Text(localizations.normal),
               ),
               DropdownMenuItem(
                 value: 'fast',
-                child: Text('Fast'),
+                child: Text(localizations.fast),
               ),
               DropdownMenuItem(
                 value: 'disabled',
-                child: Text('Disabled'),
+                child: Text(localizations.disabled),
               ),
             ],
           ),
         ),
         _SettingsItem(
-          title: 'Sidebar Transparency',
-          subtitle: 'Make sidebar background semi-transparent',
+          title: localizations.sidebarTransparency,
+          subtitle: localizations.sidebarTransparencyDescription,
           trailing: Switch(
             value: appearanceSettings.sidebarTransparency,
             onChanged: (value) {

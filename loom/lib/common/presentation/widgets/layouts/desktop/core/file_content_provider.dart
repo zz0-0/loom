@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/export/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loom/src/rust/api/blox_api.dart';
 
 /// Clipboard service for text operations
@@ -345,13 +346,23 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('File saved successfully')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)
+                  .fileSavedSuccessfully,
+            ),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving file: $e')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)
+                  .errorSavingFile(e.toString()),
+            ),
+          ),
         );
       }
     }
@@ -1280,8 +1291,11 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
   Widget _buildBloxPreview(ThemeData theme) {
     if (_parsedDocument == null) {
-      return const Center(
-        child: Text('No content to preview'),
+      return Center(
+        child: Text(
+          AppLocalizations.of(context)
+              .noContentToPreview,
+        ),
       );
     }
 
@@ -1308,7 +1322,9 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Syntax Warnings'),
+        title: Text(
+          AppLocalizations.of(context).syntaxWarnings,
+        ),
         content: SizedBox(
           width: 400,
           height: 300,
@@ -1325,7 +1341,9 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(
+              AppLocalizations.of(context).close,
+            ),
           ),
         ],
       ),
@@ -1381,7 +1399,12 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       } else {
         // Show message if not found
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No matches found for "$searchText"')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)
+                  .noMatchesFound(searchText),
+            ),
+          ),
         );
       }
     }
@@ -1448,7 +1471,12 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       // Show result
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Replaced $replacements occurrences')),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)
+                .replacedOccurrences(replacements),
+          ),
+        ),
       );
     }
   }

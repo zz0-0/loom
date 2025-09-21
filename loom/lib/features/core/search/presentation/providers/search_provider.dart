@@ -149,7 +149,10 @@ class SearchNotifier extends StateNotifier<SearchState> {
   }
 
   void clearResults() {
-    state = state.copyWith();
+    // Reset results and loading flag to avoid stale loading states
+    state = state.copyWith(
+      isSearching: false,
+    );
   }
 
   Future<void> clearRecentSearches() async {

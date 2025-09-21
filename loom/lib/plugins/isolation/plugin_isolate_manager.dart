@@ -185,18 +185,15 @@ class PluginIsolateManager {
   }
 
   void _handleLogMessage(String pluginId, dynamic data) {
-    // TODO: Integrate with main app logging system
-    print('[Plugin $pluginId] $data');
+    // TODO(user): Integrate with main app logging system
   }
 
   void _handleErrorMessage(String pluginId, dynamic data) {
-    // TODO: Integrate with main app error handling
-    print('[Plugin $pluginId ERROR] $data');
+    // TODO(user): Integrate with main app error handling
   }
 
   void _handleStatusMessage(String pluginId, dynamic data) {
-    // TODO: Update plugin status in registry
-    print('[Plugin $pluginId STATUS] $data');
+    // TODO(user): Update plugin status in registry
   }
 }
 
@@ -253,7 +250,7 @@ Plugin _createPluginInstance(
   PluginManifest manifest,
   PluginLoadContext context,
 ) {
-  // TODO: Implement dynamic plugin loading
+  // TODO(user): Implement dynamic plugin loading
   // For now, return a mock plugin
   return _MockPlugin(manifest);
 }

@@ -1,111 +1,2127 @@
 {
   "@@locale": "ko",
-  "appTitle": "Loom - 지식 기반",
-  "@appTitle": {
-    "description": "The title of the application"
-  },
-  "general": "일반",
-  "@general": {
-    "description": "General settings section title"
-  },
-  "generalDescription": "일반 설정 및 애플리케이션 동작",
-  "@generalDescription": {
-    "description": "Description for general settings"
-  },
-  "autoSave": "자동 저장",
-  "@autoSave": {
-    "description": "Auto save setting label"
-  },
-  "autoSaveDescription": "정기적으로 변경사항을 자동 저장",
-  "@autoSaveDescription": {
-    "description": "Description for auto save setting"
-  },
-  "confirmOnExit": "종료 시 확인",
-  "@confirmOnExit": {
-    "description": "Confirm on exit setting label"
-  },
-  "confirmOnExitDescription": "저장되지 않은 변경사항이 있을 때 종료 시 확인 요청",
-  "@confirmOnExitDescription": {
-    "description": "Description for confirm on exit setting"
-  },
-  "language": "언어",
-  "@language": {
-    "description": "Language setting label"
-  },
-  "languageDescription": "애플리케이션 언어",
-  "@languageDescription": {
-    "description": "Description for language setting"
-  },
-  "followSystemLanguage": "시스템 언어 따르기",
-  "@followSystemLanguage": {
-    "description": "Option to follow system language"
-  },
-  "manualLanguageSelection": "수동 언어 선택",
-  "@manualLanguageSelection": {
-    "description": "Option for manual language selection"
-  },
-  "english": "English",
-  "@english": {
-    "description": "English language name"
-  },
-  "spanish": "Español",
-  "@spanish": {
-    "description": "Spanish language name"
-  },
-  "french": "Français",
-  "@french": {
-    "description": "French language name"
-  },
-  "german": "Deutsch",
-  "@german": {
-    "description": "German language name"
-  },
-  "chinese": "中文",
-  "@chinese": {
-    "description": "Chinese language name"
-  },
-  "japanese": "日本語",
-  "@japanese": {
-    "description": "Japanese language name"
-  },
-  "korean": "한국어",
-  "@korean": {
-    "description": "Korean language name"
-  },
-  "settings": "설정",
-  "@settings": {
-    "description": "Settings title"
-  },
-  "allSettings": "모든 설정",
-  "@allSettings": {
-    "description": "All settings subtitle"
-  },
-  "appearance": "외관",
-  "@appearance": {
-    "description": "Appearance settings title"
-  },
-  "appearanceSubtitle": "테마, 색상, 레이아웃",
-  "@appearanceSubtitle": {
-    "description": "Appearance settings subtitle"
-  },
-  "interface": "인터페이스",
-  "@interface": {
-    "description": "Interface settings title"
-  },
-  "interfaceSubtitle": "창 컨트롤, 레이아웃",
-  "@interfaceSubtitle": {
-    "description": "Interface settings subtitle"
-  },
-  "generalSubtitle": "설정, 동작",
-  "@generalSubtitle": {
-    "description": "General settings subtitle"
-  },
-  "about": "정보",
   "@about": {
     "description": "About settings title"
   },
-  "aboutSubtitle": "버전, 라이선스",
+  "@aboutDescription": {
+    "description": "Description for about page"
+  },
   "@aboutSubtitle": {
     "description": "About settings subtitle"
+  },
+  "failedToSelectLocation": "위치 선택에 실패했습니다: {error}",
+  "folderCreatedSuccess": "폴더 \"{folderName}\" 생성에 성공했습니다!",
+  "failedToDeleteItem": "항목 삭제에 실패했습니다: {error}",
+  "apply": "적용",
+  "preview": "미리보기",
+  "selectColorLabel": "색상 선택 {label}",
+  "fontFamilyLabel": "글꼴 패밀리",
+  "fontSizeLabel": "글꼴 크기",
+  "previewSampleText": "샘플 텍스트",
+  "appearanceDescription": "응용 프로그램의 모양과 느낌을 사용자 지정합니다",
+  "switchTheme": "테마 전환",
+  "layoutAndVisual": "레이아웃 및 시각",
+  "compactMode": "컴팩트 모드",
+  "compactModeDescription": "UI 요소를 작게 하여 간격을 줄입니다",
+  "showIconsInMenu": "메뉴에 아이콘 표시",
+  "showIconsInMenuDescription": "메뉴 항목 옆에 아이콘을 표시합니다",
+  "animationSpeed": "애니메이션 속도",
+  "animationSpeedDescription": "UI 애니메이션 및 전환 속도",
+  "slow": "느림",
+  "normal": "보통",
+  "fast": "빠름",
+  "disabled": "비활성",
+  "sidebarTransparency": "사이드바 투명도",
+  "sidebarTransparencyDescription": "사이드바 배경을 반투명하게 합니다",
+  "interfaceDescription": "창 컨트롤 및 레이아웃을 구성합니다",
+  "currentVersion": "버전 1.0.0",
+  "currentBuild": "빌드 20241201",
+  "theme": "테마",
+  "currentTheme": "현재 테마",
+  "currentThemeDescription": "현재 활성화된 테마",
+  "colorScheme": "색 구성표:",
+  "primary": "기본",
+  "secondary": "보조",
+  "surface": "표면",
+  "themePresets": "테마 프리셋",
+  "themePresetsDescription": "미리 디자인된 테마에서 선택하십시오. 시스템 테마는 자동으로 시스템 설정에 적응합니다.",
+  "systemThemes": "시스템 테마",
+  "lightThemes": "라이트 테마",
+  "darkThemes": "다크 테마",
+  "customizeColors": "색상 사용자 지정",
+  "customizeColorsDescription": "테마 색상을 개인 취향에 맞게 조정합니다",
+  "primaryColor": "기본 색상",
+  "secondaryColor": "보조 색상",
+  "surfaceColor": "표면 색상",
+  "typography": "타이포그래피",
+  "typographyDescription": "글꼴 및 텍스트 표시를 사용자 지정합니다",
+  "windowControls": "창 컨트롤",
+  "showWindowControls": "창 컨트롤 표시",
+  "showWindowControlsDescription": "최소화, 최대화, 닫기 버튼을 표시합니다",
+  "controlsPlacement": "컨트롤 배치",
+  "controlsPlacementDescription": "창 컨트롤 버튼의 위치",
+  "controlsOrder": "컨트롤 순서",
+  "controlsOrderDescription": "창 컨트롤 버튼의 순서",
+  "auto": "자동",
+  "left": "왼쪽",
+  "right": "오른쪽",
+  "minimizeMaximizeClose": "최소화, 최대화, 닫기",
+  "closeMinimizeMaximize": "닫기, 최소화, 최대화",
+  "closeMaximizeMinimize": "닫기, 최대화, 최소화",
+  "closeButtonPositions": "닫기 버튼 위치",
+  "closeButtonPositionsDescription": "탭 및 패널에 닫기 버튼을 배치할 위치를 설정합니다",
+  "quickSettings": "빠른 설정",
+  "quickSettingsDescription": "모든 닫기 버튼을 한 번에 설정합니다",
+  "autoDescription": "닫기 버튼의 기본 설정을 따릅니다",
+  "allLeft": "모두 왼쪽",
+  "allLeftDescription": "닫기 버튼 및 창 컨트롤을 왼쪽으로 배치",
+  "allRight": "모두 오른쪽",
+  "allRightDescription": "닫기 버튼 및 창 컨트롤을 오른쪽으로 배치",
+  "individualSettings": "개별 설정",
+  "individualSettingsDescription": "각 닫기 버튼의 위치를 미세 조정합니다",
+  "tabCloseButtons": "탭 닫기 버튼",
+  "tabCloseButtonsDescription": "탭 안의 닫기 버튼 위치",
+  "panelCloseButtons": "패널 닫기 버튼",
+  "panelCloseButtonsDescription": "패널 내 닫기 버튼 위치",
+  "currently": "현재",
+  "failedToRenameItem": "이름 변경에 실패했습니다: {error}",
+  "renameSuccess": "{name}(으)로 이름 변경됨",
+  "deleteSuccess": "{itemType}이(가) 성공적으로 삭제되었습니다",
+  "syntaxWarningsTooltip": "구문 경고 {count}개",
+  "@active": {
+    "description": "Active status label"
+  },
+  "@allSettings": {
+    "description": "All settings subtitle"
+  },
+  "@animatedCard": {
+    "description": "Title for animated card demo"
+  },
+  "@animatedCardDescription": {
+    "description": "Description text for animated card demo"
+  },
+  "@animationCombinations": {
+    "description": "Section title for animation combinations"
+  },
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "@appearance": {
+    "description": "Appearance settings title"
+  },
+  "@appearanceSubtitle": {
+    "description": "Appearance settings subtitle"
+  },
+  "@autoSave": {
+    "description": "Auto save setting label"
+  },
+  "@autoSaveDescription": {
+    "description": "Description for auto save setting"
+  },
+  "@autoSaveInterval": {
+    "description": "Label for auto-save interval setting"
+  },
+  "@build": {
+    "description": "Build label"
+  },
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "@chinese": {
+    "description": "Chinese language name"
+  },
+  "@choose": {
+    "description": "Choose file button text"
+  },
+  "@chooseTemplateOptional": {
+    "description": "Text for template selection section"
+  },
+  "@close": {
+    "description": "Close button text"
+  },
+  "@collectionName": {
+    "description": "Label for collection name input field"
+  },
+  "@collectionsViewForMobile": {
+    "description": "Placeholder text for mobile collections view"
+  },
+  "@commandExecutedSuccessfully": {
+    "description": "Success message when a plugin command executes successfully"
+  },
+  "@commandFailed": {
+    "description": "Error message when a plugin command fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToSelectLocation": {
+    "description": "Error when selecting folder location",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@folderCreatedSuccess": {
+    "description": "Success message when folder created",
+    "placeholders": {
+      "folderName": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToDeleteItem": {
+    "description": "Error when delete item fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToRenameItem": {
+    "description": "Error when rename fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@renameSuccess": {
+    "description": "Rename success message",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@deleteSuccess": {
+    "description": "Delete success message",
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "@syntaxWarningsTooltip": {
+    "description": "Syntax warnings count tooltip",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@commandKeyShortcut": {
+    "description": "Keyboard shortcut display"
+  },
+  "@commandsCount": {
+    "description": "Number of commands display",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@confirmExit": {
+    "description": "Exit confirmation dialog message"
+  },
+  "@confirmOnExit": {
+    "description": "Confirm on exit setting label"
+  },
+  "@confirmOnExitDescription": {
+    "description": "Description for confirm on exit setting"
+  },
+  "@contentCopiedToClipboard": {
+    "description": "Success message for copy operation"
+  },
+  "@contentCutToClipboard": {
+    "description": "Success message for cut operation"
+  },
+  "@contentPastedFromClipboard": {
+    "description": "Success message for paste operation"
+  },
+  "@copy": {
+    "description": "Copy menu item"
+  },
+  "@copyUrl": {
+    "description": "Button text for copying URL"
+  },
+  "@copyright": {
+    "description": "Copyright notice"
+  },
+  "@create": {
+    "description": "Create button text"
+  },
+  "@createCollection": {
+    "description": "Create collection dialog title"
+  },
+  "@createCollectionsToOrganize": {
+    "description": "Empty state description for collections"
+  },
+  "@createNewFile": {
+    "description": "Title for create new file dialog"
+  },
+  "@createNewFolder": {
+    "description": "Title for create new folder dialog"
+  },
+  "@createdAndOpenedFile": {
+    "description": "Success message when file is created and opened",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "@createdFolder": {
+    "description": "Success message when folder is created",
+    "placeholders": {
+      "folderName": {
+        "type": "String"
+      }
+    }
+  },
+  "@cut": {
+    "description": "Cut menu item"
+  },
+  "@daysAgo": {
+    "description": "Time format for days ago",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@debugPanelPlaceholder": {
+    "description": "Placeholder text for debug panel"
+  },
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "@deleteCollection": {
+    "description": "Delete collection dialog title",
+    "placeholders": {
+      "collectionName": {
+        "type": "String"
+      }
+    }
+  },
+  "@deleteCollectionConfirmation": {
+    "description": "Confirmation message for deleting a collection"
+  },
+  "@directoryPath": {
+    "description": "Label for directory path input field"
+  },
+  "@disablePlugin": {
+    "description": "Disable plugin tooltip"
+  },
+  "@documentTitle": {
+    "description": "Hint text for document title input"
+  },
+  "@documentation": {
+    "description": "Documentation menu item"
+  },
+  "@edit": {
+    "description": "Edit menu label"
+  },
+  "@empty": {
+    "description": "Label for empty template option"
+  },
+  "@enablePlugin": {
+    "description": "Enable plugin tooltip"
+  },
+  "@english": {
+    "description": "English language name"
+  },
+  "@enhancedUiAnimations": {
+    "description": "Header for enhanced UI animations section"
+  },
+  "@enterExportLocation": {
+    "description": "Export location input hint"
+  },
+  "@enterFileName": {
+    "description": "File name input hint"
+  },
+  "@enterLineNumber": {
+    "description": "Hint text for line number input field"
+  },
+  "@enterPath": {
+    "description": "Dialog title for entering a custom path"
+  },
+  "@enterSaveLocation": {
+    "description": "Save location input hint"
+  },
+  "@errorSavingFile": {
+    "description": "Error message when file save fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@exit": {
+    "description": "Exit menu item"
+  },
+  "@exitApplication": {
+    "description": "Exit confirmation dialog title"
+  },
+  "@export": {
+    "description": "Export menu item"
+  },
+  "@exportDocument": {
+    "description": "Export dialog title"
+  },
+  "@exportFile": {
+    "description": "Export file dialog title"
+  },
+  "@exportFormat": {
+    "description": "Export format section title"
+  },
+  "@exporting": {
+    "description": "Export button text during export process"
+  },
+  "@extensionsPanelPlaceholder": {
+    "description": "Placeholder text for extensions panel"
+  },
+  "@failedToCreateFile": {
+    "description": "Error message when file creation fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToCreateFolder": {
+    "description": "Error message when folder creation fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToDisablePlugin": {
+    "description": "Error message when plugin disable fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToEnablePlugin": {
+    "description": "Error message when plugin enable fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToExecuteCommand": {
+    "description": "Error message when command execution fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToExportFile": {
+    "description": "Error message when file export fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToSaveFile": {
+    "description": "Error message when file save fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@file": {
+    "description": "File menu label"
+  },
+  "@fileCreated": {
+    "description": "Success message when file is created",
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "@fileExplorerFeature": {
+    "description": "File explorer feature description"
+  },
+  "@fileExportedAs": {
+    "description": "Success message when file is exported",
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "@fileLabel": {
+    "description": "File information display",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "@fileName": {
+    "description": "File name input label"
+  },
+  "@fileSaved": {
+    "description": "Success message when file is saved",
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "@fileSavedAs": {
+    "description": "Success message when file is saved as",
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "@fileSavedSuccessfully": {
+    "description": "Success message when file is saved"
+  },
+  "@find": {
+    "description": "Find dialog title"
+  },
+  "@findAndReplace": {
+    "description": "Find and replace dialog title"
+  },
+  "@findLabel": {
+    "description": "Label for find text field"
+  },
+  "@findNext": {
+    "description": "Find next button text"
+  },
+  "@folderCreated": {
+    "description": "Success message when folder is created",
+    "placeholders": {
+      "folderName": {
+        "type": "String"
+      }
+    }
+  },
+  "@followSystemLanguage": {
+    "description": "Option to follow system language"
+  },
+  "@footnote": {
+    "description": "Dialog title for footnote",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "@formatHint": {
+    "description": "Format input hint"
+  },
+  "@french": {
+    "description": "French language name"
+  },
+  "@fullLicenseTexts": {
+    "description": "Text about where to find full license texts"
+  },
+  "@fullScreen": {
+    "description": "Full screen menu item"
+  },
+  "@general": {
+    "description": "General settings title"
+  },
+  "@generalDescription": {
+    "description": "Description for general settings"
+  },
+  "@generalSubtitle": {
+    "description": "General settings subtitle"
+  },
+  "@german": {
+    "description": "German language name"
+  },
+  "@globalSearchShortcut": {
+    "description": "Global search keyboard shortcut"
+  },
+  "@go": {
+    "description": "Go button text"
+  },
+  "@goToLine": {
+    "description": "Go to line dialog title"
+  },
+  "@headerText": {
+    "description": "Label for header text input"
+  },
+  "@help": {
+    "description": "Help menu label"
+  },
+  "@hideReplace": {
+    "description": "Tooltip for hiding replace field"
+  },
+  "@hoursAgo": {
+    "description": "Time format for hours ago",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoverAnimation": {
+    "description": "Label for hover animation demo"
+  },
+  "@imageAlt": {
+    "description": "Alt text for images",
+    "placeholders": {
+      "src": {
+        "type": "String"
+      }
+    }
+  },
+  "@inactive": {
+    "description": "Inactive plugins count label"
+  },
+  "@includeHeader": {
+    "description": "Option to include header in export"
+  },
+  "@includeHiddenFiles": {
+    "description": "Label for option to include hidden files in search"
+  },
+  "@includeLineNumbers": {
+    "description": "Option to include line numbers in export"
+  },
+  "@includeSyntaxHighlighting": {
+    "description": "Option to include syntax highlighting in export"
+  },
+  "@installed": {
+    "description": "Installed plugins count label"
+  },
+  "@interactiveButton": {
+    "description": "Label for interactive button demo"
+  },
+  "@interactiveElements": {
+    "description": "Section title for interactive elements"
+  },
+  "@interface": {
+    "description": "Interface settings title"
+  },
+  "@interfaceSubtitle": {
+    "description": "Interface settings subtitle"
+  },
+  "@invalidCharactersInFileName": {
+    "description": "Error message for invalid characters in file name"
+  },
+  "@invalidCharactersInFolderName": {
+    "description": "Error message for invalid characters in folder name"
+  },
+  "@invalidFileName": {
+    "description": "Error message for invalid file name"
+  },
+  "@invalidFolderName": {
+    "description": "Error message for invalid folder name"
+  },
+  "@invalidLineNumber": {
+    "description": "Error message for invalid line number format"
+  },
+  "@japanese": {
+    "description": "Japanese language name"
+  },
+  "@justNow": {
+    "description": "Text for when something was saved just now"
+  },
+  "@keepHere": {
+    "description": "Button text for keeping item in current position"
+  },
+  "@keyFeatures": {
+    "description": "Key features section header"
+  },
+  "@keyboardShortcuts": {
+    "description": "Keyboard shortcuts section header"
+  },
+  "@korean": {
+    "description": "Korean language name"
+  },
+  "@language": {
+    "description": "Language setting label"
+  },
+  "@languageDescription": {
+    "description": "Description for language setting"
+  },
+  "@lastSaved": {
+    "description": "Prefix for last saved time display"
+  },
+  "@licenses": {
+    "description": "Licenses label"
+  },
+  "@lineNumberExceedsMaximum": {
+    "description": "Error message for line number exceeding maximum",
+    "placeholders": {
+      "maxLines": {
+        "type": "int"
+      }
+    }
+  },
+  "@lineNumberLabel": {
+    "description": "Label for line number input field",
+    "placeholders": {
+      "maxLines": {
+        "type": "int"
+      }
+    }
+  },
+  "@lineNumberMustBeGreaterThanZero": {
+    "description": "Error message for line number less than 1"
+  },
+  "@loadingIndicators": {
+    "description": "Section title for loading indicators"
+  },
+  "@loom": {
+    "description": "Application name"
+  },
+  "@loomDescription": {
+    "description": "Application description"
+  },
+  "@loomDescriptionFull": {
+    "description": "Full description of Loom"
+  },
+  "@loomDocumentation": {
+    "description": "Documentation dialog title"
+  },
+  "@manualLanguageSelection": {
+    "description": "Option for manual language selection"
+  },
+  "@matchCase": {
+    "description": "Checkbox label for case sensitive search"
+  },
+  "@menu": {
+    "description": "Menu tooltip"
+  },
+  "@minutesAgo": {
+    "description": "Time format for minutes ago",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mobileSearchInterface": {
+    "description": "Placeholder text for mobile search interface"
+  },
+  "@myCollection": {
+    "description": "Hint text for collection name input"
+  },
+  "@newDocument": {
+    "description": "New document menu item"
+  },
+  "@newFile": {
+    "description": "New file dialog title"
+  },
+  "@newFolder": {
+    "description": "New folder menu item"
+  },
+  "@noActivePlugins": {
+    "description": "Message when no plugins are active"
+  },
+  "@noCollections": {
+    "description": "Empty state title when no collections exist"
+  },
+  "@noContentToCopy": {
+    "description": "Message when trying to copy empty content"
+  },
+  "@noContentToCut": {
+    "description": "Message when trying to cut empty content"
+  },
+  "@noContentToExport": {
+    "description": "Message when trying to export empty content"
+  },
+  "@noContentToPreview": {
+    "description": "Message when there is no content to preview"
+  },
+  "@noFileOpenToSave": {
+    "description": "Message when trying to save without open file"
+  },
+  "@noMatchesFound": {
+    "description": "Message when no search matches are found",
+    "placeholders": {
+      "searchText": {
+        "type": "String"
+      }
+    }
+  },
+  "@noPluginsCurrentlyLoaded": {
+    "description": "Message when no plugins are loaded"
+  },
+  "@noPluginsLoaded": {
+    "description": "Message when no plugins are loaded"
+  },
+  "@noTextInClipboard": {
+    "description": "Message when clipboard is empty"
+  },
+  "@nothingToRedo": {
+    "description": "Message when redo is not available"
+  },
+  "@nothingToUndo": {
+    "description": "Message when undo is not available"
+  },
+  "@openFolder": {
+    "description": "Open folder menu item"
+  },
+  "@openFolderFirst": {
+    "description": "Message when trying to create file without workspace"
+  },
+  "@openLink": {
+    "description": "Dialog title for opening a link"
+  },
+  "@openLinkConfirmation": {
+    "description": "Confirmation message for opening a link",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "@openSourceLicenses": {
+    "description": "Open source licenses dialog title"
+  },
+  "@openedFile": {
+    "description": "Success message when a file is opened",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "@options": {
+    "description": "Options section title"
+  },
+  "@paste": {
+    "description": "Paste menu item"
+  },
+  "@pathHint": {
+    "description": "Hint text for path input field"
+  },
+  "@pleaseEnterLineNumber": {
+    "description": "Error message for empty line number input"
+  },
+  "@pleaseOpenWorkspaceFirst": {
+    "description": "Message prompting user to open a workspace"
+  },
+  "@pluginManager": {
+    "description": "Plugin manager menu item"
+  },
+  "@plugins": {
+    "description": "Plugins menu label"
+  },
+  "@pressAnimation": {
+    "description": "Label for press animation demo"
+  },
+  "@pulseAnimation": {
+    "description": "Label for pulse animation demo"
+  },
+  "@redo": {
+    "description": "Redo menu item"
+  },
+  "@redoShortcut": {
+    "description": "Redo keyboard shortcut"
+  },
+  "@replace": {
+    "description": "Replace button text"
+  },
+  "@replaceAll": {
+    "description": "Replace all button text"
+  },
+  "@replaceWith": {
+    "description": "Label for replace text field"
+  },
+  "@replacedOccurrences": {
+    "description": "Message showing number of replacements made",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@richTextEditorFeature": {
+    "description": "Rich text editor feature description"
+  },
+  "@save": {
+    "description": "Save menu item"
+  },
+  "@saveAs": {
+    "description": "Save as menu item"
+  },
+  "@saveExport": {
+    "description": "File picker dialog title for saving export"
+  },
+  "@saveLocation": {
+    "description": "Save location section title"
+  },
+  "@saveShortcut": {
+    "description": "Save keyboard shortcut"
+  },
+  "@scanDocument": {
+    "description": "Scan document menu item"
+  },
+  "@searchEverything": {
+    "description": "Hint text for global search"
+  },
+  "@searchFeature": {
+    "description": "Search feature description"
+  },
+  "@searchFilesAndCommands": {
+    "description": "Search bar placeholder text"
+  },
+  "@searchPanelPlaceholder": {
+    "description": "Placeholder text for search panel"
+  },
+  "@searchResultsWillAppearHere": {
+    "description": "Placeholder text for search results"
+  },
+  "@searchYourKnowledgeBase": {
+    "description": "Hint text for knowledge base search"
+  },
+  "@select": {
+    "description": "Select button text"
+  },
+  "@selectPanelFromSidebar": {
+    "description": "Message prompting user to select a panel from sidebar"
+  },
+  "@selectSidebarItemFirst": {
+    "description": "Message when trying to show panel without selection"
+  },
+  "@settings": {
+    "description": "Settings title"
+  },
+  "@settingsFeature": {
+    "description": "Settings feature description"
+  },
+  "@settingsPanelComingSoon": {
+    "description": "Message indicating settings panel is not yet available"
+  },
+  "@settingsPanelPlaceholder": {
+    "description": "Placeholder text for settings panel"
+  },
+  "@share": {
+    "description": "Share menu item"
+  },
+  "@shimmerEffects": {
+    "description": "Section title for shimmer effects"
+  },
+  "@showReplace": {
+    "description": "Tooltip for showing replace field"
+  },
+  "@skeletonLoader": {
+    "description": "Label for skeleton loader"
+  },
+  "@smartSuggestion": {
+    "description": "Title for smart suggestion in collection item"
+  },
+  "@smoothLoading": {
+    "description": "Label for smooth loading indicator"
+  },
+  "@sourceControlPanelPlaceholder": {
+    "description": "Placeholder text for source control panel"
+  },
+  "@spanish": {
+    "description": "Spanish language name"
+  },
+  "@successAnimations": {
+    "description": "Section title for success animations"
+  },
+  "@syntaxWarnings": {
+    "description": "Title for syntax warnings dialog"
+  },
+  "@taskCompleted": {
+    "description": "Success message for completed task"
+  },
+  "@togglePanel": {
+    "description": "Toggle panel menu item"
+  },
+  "@toggleSidebar": {
+    "description": "Toggle sidebar menu item"
+  },
+  "@total": {
+    "description": "Total count label"
+  },
+  "@totalLines": {
+    "description": "Display text for total number of lines",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@uiPolishShowcase": {
+    "description": "Title for the UI polish showcase demo"
+  },
+  "@undo": {
+    "description": "Undo menu item"
+  },
+  "@undoShortcut": {
+    "description": "Undo keyboard shortcut"
+  },
+  "@urlCopiedToClipboard": {
+    "description": "Success message when URL is copied to clipboard",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "@useFileOpenToOpenFolder": {
+    "description": "Message prompting user to use File > Open menu to open a folder"
+  },
+  "@useRegex": {
+    "description": "Checkbox label for regex search"
+  },
+  "@useWelcomeScreenToCreateFile": {
+    "description": "Message prompting user to use welcome screen to create a new file"
+  },
+  "@usesFollowingLibraries": {
+    "description": "Text introducing the list of libraries"
+  },
+  "@version": {
+    "description": "Version label"
+  },
+  "@versionState": {
+    "description": "Plugin version and state display",
+    "placeholders": {
+      "state": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "@view": {
+    "description": "View menu label"
+  },
+  "@viewOpenSourceLicenses": {
+    "description": "Description for licenses section"
+  },
+  "@welcomeToLoom": {
+    "description": "Welcome message in documentation"
+  },
+  "about": "정보",
+  "aboutDescription": "Loom에 대한 정보",
+  "aboutSubtitle": "버전, 라이선스",
+  "active": "활성",
+  "allSettings": "모든 설정",
+  "animatedCard": "애니메이션 카드",
+  "animatedCardDescription": "이 카드는 페이드인과 슬라이드인 애니메이션이 결합된 것을 보여줍니다.",
+  "animationCombinations": "애니메이션 조합",
+  "appTitle": "Loom - 지식 기반",
+  "appearance": "외관",
+  "appearanceSubtitle": "테마, 색상, 레이아웃",
+  "autoSave": "자동 저장",
+  "autoSaveDescription": "정기적으로 변경사항을 자동으로 저장",
+  "autoSaveInterval": "자동 저장 간격",
+  "build": "빌드",
+  "cancel": "취소",
+  "chinese": "중국어",
+  "choose": "선택...",
+  "chooseTemplateOptional": "템플릿 선택 (선택사항)",
+  "close": "닫기",
+  "collectionName": "컬렉션 이름",
+  "collectionsViewForMobile": "모바일용 컬렉션 보기",
+  "commandExecutedSuccessfully": "명령이 성공적으로 실행되었습니다",
+  "commandFailed": "명령 실패: {error}",
+  "commandKeyShortcut": "명령: ⌘K",
+  "commandsCount": "{count}개 명령",
+  "confirmExit": "Loom을 종료하시겠습니까?",
+  "confirmOnExit": "종료 시 확인",
+  "confirmOnExitDescription": "저장되지 않은 변경사항이 있을 때 닫기 전에 확인 요청",
+  "contentCopiedToClipboard": "콘텐츠가 클립보드에 복사되었습니다",
+  "contentCutToClipboard": "콘텐츠가 잘려서 클립보드에 복사되었습니다",
+  "contentPastedFromClipboard": "클립보드에서 콘텐츠가 붙여넣기되었습니다",
+  "copy": "복사",
+  "copyUrl": "URL 복사",
+  "copyright": "© 2024 Loom 팀",
+  "create": "생성",
+  "createCollection": "컬렉션 생성",
+  "createCollectionsToOrganize": "파일을 정리하기 위해 컬렉션을 생성하세요",
+  "createNewFile": "새 파일 생성",
+  "createNewFolder": "새 폴더 생성",
+  "createdAndOpenedFile": "생성 및 열림: {fileName}",
+  "createdFolder": "폴더 생성됨: {folderName}",
+  "cut": "잘라내기",
+  "daysAgo": "{count}일 전",
+  "debugPanelPlaceholder": "디버그 패널\n(구현 예정)",
+  "delete": "삭제",
+  "deleteCollection": "\"{collectionName}\" 삭제",
+  "deleteCollectionConfirmation": "이 컬렉션을 삭제하시겠습니까? 실제 파일은 삭제되지 않습니다.",
+  "directoryPath": "디렉토리 경로",
+  "disablePlugin": "플러그인 비활성화",
+  "documentTitle": "문서 제목",
+  "documentation": "문서",
+  "edit": "편집",
+  "empty": "비어있음",
+  "enablePlugin": "플러그인 활성화",
+  "english": "영어",
+  "enhancedUiAnimations": "향상된 UI 애니메이션",
+  "enterExportLocation": "내보내기 위치 입력",
+  "enterFileName": "파일 이름 입력 (예: example.blox)",
+  "enterLineNumber": "줄 번호 입력",
+  "enterPath": "경로 입력",
+  "enterSaveLocation": "저장 위치 입력",
+  "errorSavingFile": "파일 저장 오류: {error}",
+  "exit": "종료",
+  "exitApplication": "응용 프로그램 종료",
+  "export": "내보내기",
+  "exportDocument": "문서 내보내기",
+  "exportFile": "파일 내보내기",
+  "exportFormat": "내보내기 형식",
+  "exporting": "내보내는 중...",
+  "extensionsPanelPlaceholder": "확장 패널\n(구현 예정)",
+  "failedToCreateFile": "파일 생성 실패: {error}",
+  "failedToCreateFolder": "폴더 생성 실패: {error}",
+  "failedToDisablePlugin": "플러그인 비활성화 실패: {error}",
+  "failedToEnablePlugin": "플러그인 활성화 실패: {error}",
+  "failedToExecuteCommand": "명령 실행 실패: {error}",
+  "failedToExportFile": "파일 내보내기 실패: {error}",
+  "failedToSaveFile": "파일 저장 실패: {error}",
+  "file": "파일",
+  "fileCreated": "파일 \"{filename}\" 생성됨",
+  "fileExplorerFeature": "• 파일 탐색기: 파일을 찾아보고 관리",
+  "fileExportedAs": "파일이 \"{filename}\"으로 내보내짐",
+  "fileLabel": "파일: {fileName}",
+  "fileName": "파일 이름",
+  "fileSaved": "파일 \"{filename}\" 저장됨",
+  "fileSavedAs": "파일이 \"{filename}\"으로 저장됨",
+  "fileSavedSuccessfully": "파일이 성공적으로 저장되었습니다",
+  "find": "찾기",
+  "findAndReplace": "찾기 및 바꾸기",
+  "findLabel": "찾기",
+  "findNext": "다음 찾기",
+  "folderCreated": "폴더 \"{folderName}\" 생성됨",
+  "followSystemLanguage": "시스템 언어 따르기",
+  "footnote": "각주 {id}",
+  "formatHint": "txt, md, html, 등",
+  "french": "프랑스어",
+  "fullLicenseTexts": "전체 라이선스 텍스트는 GitHub의 각 폴더 저장소를 방문하세요.",
+  "fullScreen": "전체 화면",
+  "general": "일반",
+  "generalDescription": "일반 설정 및 응용 프로그램 동작",
+  "generalSubtitle": "설정, 동작",
+  "german": "독일어",
+  "globalSearchShortcut": "• Ctrl+Shift+F: 전역 검색",
+  "go": "이동",
+  "goToLine": "줄로 이동",
+  "headerText": "헤더 텍스트",
+  "help": "도움말",
+  "hideReplace": "바꾸기 숨기기",
+  "hoursAgo": "{count}시간 전",
+  "hoverAnimation": "호버 애니메이션",
+  "imageAlt": "이미지: {src}",
+  "inactive": "비활성",
+  "includeHeader": "헤더 포함",
+  "includeHiddenFiles": "숨겨진 파일 포함",
+  "includeLineNumbers": "줄 번호 포함",
+  "includeSyntaxHighlighting": "구문 강조 포함",
+  "installed": "설치됨",
+  "interactiveButton": "대화형 버튼",
+  "interactiveElements": "대화형 요소",
+  "interface": "인터페이스",
+  "interfaceSubtitle": "창 컨트롤, 레이아웃",
+  "invalidCharactersInFileName": "파일 이름에 잘못된 문자가 있습니다",
+  "invalidCharactersInFolderName": "폴더 이름에 잘못된 문자가 있습니다",
+  "invalidFileName": "잘못된 파일 이름",
+  "invalidFolderName": "잘못된 폴더 이름",
+  "invalidLineNumber": "잘못된 줄 번호",
+  "japanese": "일본어",
+  "justNow": "방금",
+  "keepHere": "여기에 유지",
+  "keyFeatures": "주요 기능:",
+  "keyboardShortcuts": "키보드 단축키:",
+  "korean": "한국어",
+  "language": "언어",
+  "languageDescription": "응용 프로그램 언어",
+  "lastSaved": "마지막 저장: ",
+  "licenses": "라이선스",
+  "lineNumberExceedsMaximum": "줄 번호가 최대값 ({maxLines})을 초과합니다",
+  "lineNumberLabel": "줄 번호 (1 - {maxLines})",
+  "lineNumberMustBeGreaterThanZero": "줄 번호는 0보다 커야 합니다",
+  "loadingIndicators": "로딩 표시기",
+  "loom": "룸",
+  "loomDescription": "Loom은 생산성과 사용 편의성을 위해 설계된 Flutter로 구축된 현대적인 코드 편집기입니다.",
+  "loomDescriptionFull": "Loom은 문서 정리 및 편집을 위한 지식 기반 응용 프로그램입니다.",
+  "loomDocumentation": "Loom 문서",
+  "manualLanguageSelection": "수동 언어 선택",
+  "matchCase": "대소문자 구분",
+  "menu": "메뉴",
+  "minutesAgo": "{count}분 전",
+  "mobileSearchInterface": "모바일 검색 인터페이스",
+  "myCollection": "내 컬렉션",
+  "newDocument": "새 문서",
+  "newFile": "새 파일",
+  "newFolder": "새 폴더",
+  "noActivePlugins": "활성 플러그인 없음",
+  "noCollections": "컬렉션 없음",
+  "noContentToCopy": "복사할 콘텐츠 없음",
+  "noContentToCut": "잘라낼 콘텐츠 없음",
+  "noContentToExport": "내보낼 콘텐츠 없음",
+  "noContentToPreview": "미리 볼 콘텐츠 없음",
+  "noFileOpenToSave": "현재 저장할 파일이 열려 있지 않습니다",
+  "noMatchesFound": "\"{searchText}\"에 대한 일치 항목을 찾을 수 없습니다",
+  "noPluginsCurrentlyLoaded": "현재 로드된 플러그인이 없습니다",
+  "noPluginsLoaded": "로드된 플러그인 없음",
+  "noTextInClipboard": "클립보드에 붙여넣을 텍스트가 없습니다",
+  "nothingToRedo": "다시 실행할 항목 없음",
+  "nothingToUndo": "실행 취소할 항목 없음",
+  "openFolder": "폴더 열기",
+  "openFolderFirst": "새 파일을 생성하려면 먼저 폴더를 여세요",
+  "openLink": "링크 열기",
+  "openLinkConfirmation": "브라우저에서 이 링크를 여시겠습니까?\n\n{url}",
+  "openSourceLicenses": "오픈 소스 라이선스",
+  "openedFile": "열림: {fileName}",
+  "options": "옵션",
+  "paste": "붙여넣기",
+  "pathHint": "/home/user/폴더",
+  "pleaseEnterLineNumber": "줄 번호를 입력하세요",
+  "pleaseOpenWorkspaceFirst": "먼저 작업 공간을 여세요",
+  "pluginManager": "플러그인 관리자",
+  "plugins": "플러그인",
+  "pressAnimation": "누르기 애니메이션",
+  "pulseAnimation": "펄스 애니메이션",
+  "redo": "다시 실행",
+  "redoShortcut": "• Ctrl+Y: 다시 실행",
+  "replace": "바꾸기",
+  "replaceAll": "모두 바꾸기",
+  "replaceWith": "다음으로 바꾸기",
+  "replacedOccurrences": "{count}개 항목 교체함",
+  "richTextEditorFeature": "• 리치 텍스트 편집기: 구문 강조로 문서 편집",
+  "save": "저장",
+  "saveAs": "다른 이름으로 저장",
+  "saveExport": "내보내기 저장",
+  "saveLocation": "저장 위치",
+  "saveShortcut": "• Ctrl+S: 파일 저장",
+  "scanDocument": "문서 스캔",
+  "searchEverything": "모두 검색...",
+  "searchFeature": "• 검색: 파일과 콘텐츠를 빠르게 찾기",
+  "searchFilesAndCommands": "파일과 명령 검색...",
+  "searchPanelPlaceholder": "검색 패널\n(구현 예정)",
+  "searchResultsWillAppearHere": "검색 결과가 여기에 표시됩니다",
+  "searchYourKnowledgeBase": "지식 기반 검색...",
+  "select": "선택",
+  "selectPanelFromSidebar": "사이드바에서 패널 선택",
+  "selectSidebarItemFirst": "먼저 사이드바에서 항목을 선택하세요",
+  "settings": "설정",
+  "settingsFeature": "• 설정: 경험을 사용자 정의",
+  "settingsPanelComingSoon": "설정 패널 곧 제공 예정",
+  "settingsPanelPlaceholder": "설정 패널\n(구현 예정)",
+  "share": "공유",
+  "shimmerEffects": "쉬머 효과",
+  "showReplace": "바꾸기 표시",
+  "skeletonLoader": "스켈레톤 로더",
+  "smartSuggestion": "스마트 제안",
+  "smoothLoading": "부드러운 로딩",
+  "sourceControlPanelPlaceholder": "소스 컨트롤 패널\n(구현 예정)",
+  "spanish": "스페인어",
+  "successAnimations": "성공 애니메이션",
+  "syntaxWarnings": "구문 경고",
+  "taskCompleted": "작업 완료!",
+  "togglePanel": "패널 토글",
+  "toggleSidebar": "사이드바 토글",
+  "total": "총계",
+  "totalLines": "총 줄 수: {count}",
+  "uiPolishShowcase": "UI 폴리시 쇼케이스",
+  "undo": "실행 취소",
+  "undoShortcut": "• Ctrl+Z: 실행 취소",
+  "urlCopiedToClipboard": "URL이 클립보드에 복사됨: {url}",
+  "useFileOpenToOpenFolder": "폴더를 열려면 파일 > 열기를 사용하세요",
+  "useRegex": "정규식 사용",
+  "useWelcomeScreenToCreateFile": "새 파일을 생성하려면 환영 화면을 사용하세요",
+  "usesFollowingLibraries": "Loom은 다음 오픈 소스 라이브러리를 사용합니다:",
+  "version": "버전",
+  "versionState": "버전: {version} • 상태: {state}",
+  "view": "보기",
+  "viewOpenSourceLicenses": "오픈 소스 라이선스 보기",
+  "welcomeToLoom": "Loom에 오신 것을 환영합니다!",
+  "settingsTooltip": "설정",
+  "@settingsTooltip": {
+    "description": "Tooltip for the settings sidebar button"
+  },
+  "explorerTooltip": "탐색기",
+  "@explorerTooltip": {
+    "description": "Tooltip for the explorer sidebar button"
+  },
+  "searchTooltip": "검색",
+  "@searchTooltip": {
+    "description": "Tooltip for the search sidebar button"
+  },
+  "flutterLicense": "Flutter - BSD 라이선스",
+  "@flutterLicense": {
+    "description": "License information for Flutter"
+  },
+  "riverpodLicense": "Riverpod - MIT 라이선스",
+  "@riverpodLicense": {
+    "description": "License information for Riverpod"
+  },
+  "adaptiveThemeLicense": "Adaptive Theme - MIT 라이선스",
+  "@adaptiveThemeLicense": {
+    "description": "License information for Adaptive Theme"
+  },
+  "filePickerLicense": "File Picker - MIT 라이선스",
+  "@filePickerLicense": {
+    "description": "License information for File Picker"
+  },
+  "sharedPreferencesLicense": "Shared Preferences - BSD 라이선스",
+  "@sharedPreferencesLicense": {
+    "description": "License information for Shared Preferences"
+  },
+  "@pdf": {
+    "description": "PDF export format name"
+  },
+  "@html": {
+    "description": "HTML export format name"
+  },
+  "@markdown": {
+    "description": "Markdown export format name"
+  },
+  "@plainText": {
+    "description": "Plain text export format name"
+  },
+  "pdf": "PDF 문서",
+  "html": "HTML 문서",
+  "markdown": "마크다운",
+  "plainText": "일반 텍스트",
+  "@loomAppTitle": {
+    "description": "Application name in mobile app bar"
+  },
+  "loomAppTitle": "룸",
+  "@loomKnowledgeBase": {
+    "description": "Knowledge base title in mobile drawer header"
+  },
+  "loomKnowledgeBase": "Loom 지식 베이스",
+  "@yourWorkspace": {
+    "description": "Workspace subtitle in mobile drawer header"
+  },
+  "yourWorkspace": "작업 공간",
+  "@recentFiles": {
+    "description": "Recent files drawer item"
+  },
+  "recentFiles": "최근 파일",
+  "@favorites": {
+    "description": "Favorites drawer item"
+  },
+  "favorites": "즐겨찾기",
+  "@history": {
+    "description": "History drawer item"
+  },
+  "history": "기록",
+  "@helpAndSupport": {
+    "description": "Help and support drawer item"
+  },
+  "helpAndSupport": "도움말 및 지원",
+  "@darkMode": {
+    "description": "Dark mode toggle label"
+  },
+  "darkMode": "Dunkler Modus",
+  "@documents": {
+    "description": "Documents bottom navigation label"
+  },
+  "documents": "Dokumente",
+  "@search": {
+    "description": "Search bottom navigation label"
+  },
+  "search": "Suche",
+  "@editor": {
+    "description": "Editor bottom navigation label"
+  },
+  "editor": "편집기",
+  "@collections": {
+    "description": "Collections bottom navigation label"
+  },
+  "collections": "Sammlungen",
+  "@welcomeToYourKnowledgeBase": {
+    "description": "Welcome subtitle in mobile documents view"
+  },
+  "welcomeToYourKnowledgeBase": "지식 베이스에 오신 것을 환영합니다",
+  "@developmentDocumentation": {
+    "description": "Project notes subtitle in mobile documents view"
+  },
+  "developmentDocumentation": "Entwicklungsdokumentation",
+  "@welcomeToLoomTitle": {
+    "description": "Welcome title in desktop content area"
+  },
+  "welcomeToLoomTitle": "Loom에 오신 것을 환영합니다",
+  "@yourNextGenerationKnowledgeBase": {
+    "description": "Welcome subtitle in desktop content area"
+  },
+  "yourNextGenerationKnowledgeBase": "차세대 지식 베이스",
+  "@openFolderTitle": {
+    "description": "Open folder action title"
+  },
+  "openFolderTitle": "폴더 열기",
+  "@openAnExistingWorkspace": {
+    "description": "Open folder action subtitle"
+  },
+  "openAnExistingWorkspace": "기존 작업 공간 열기",
+  "@newFileTitle": {
+    "description": "New file action title"
+  },
+  "newFileTitle": "새 파일",
+  "@createANewDocument": {
+    "description": "New file action subtitle"
+  },
+  "createANewDocument": "새 문서 만들기",
+  "@cloneRepositoryTitle": {
+    "description": "Clone repository action title"
+  },
+  "cloneRepositoryTitle": "저장소 복제",
+  "@cloneFromGit": {
+    "description": "Clone repository action subtitle"
+  },
+  "cloneFromGit": "Git에서 복제",
+  "@enterFileNameHint": {
+    "description": "File name input hint in create file dialog"
+  },
+  "enterFileNameHint": "파일 이름을 입력하세요 (예: document.md)",
+  "@failedToOpenFolder": {
+    "description": "Error message when folder opening fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToOpenFolder": "폴더를 여는 중 오류가 발생했습니다: {error}",
+  "@openedWorkspace": {
+    "description": "Success message when workspace is opened",
+    "placeholders": {
+      "workspaceName": {
+        "type": "String"
+      }
+    }
+  },
+  "openedWorkspace": "작업 공간을 열었습니다: {workspaceName}",
+  "@cloningRepository": {
+    "description": "Loading message during repository cloning"
+  },
+  "cloningRepository": "저장소를 복제하는 중...",
+  "@successfullyClonedRepository": {
+    "description": "Success message when repository is cloned",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "successfullyClonedRepository": "저장소가 다음 위치에 성공적으로 복제되었습니다: {path}",
+  "@failedToCloneRepository": {
+    "description": "Error message when repository cloning fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToCloneRepository": "저장소 복제 실패: {error}",
+  "@repositoryUrl": {
+    "description": "Repository URL input label"
+  },
+  "repositoryUrl": "저장소 URL",
+  "@enterGitRepositoryUrl": {
+    "description": "Repository URL input hint"
+  },
+  "enterGitRepositoryUrl": "Git-Repository-URL eingeben (z.B. https://github.com/user/repo.git)",
+  "@targetDirectoryOptional": {
+    "description": "Target directory input label"
+  },
+  "targetDirectoryOptional": "Zielverzeichnis (optional)",
+  "@leaveEmptyToUseRepositoryName": {
+    "description": "Target directory input hint"
+  },
+  "leaveEmptyToUseRepositoryName": "비워두면 저장소 이름을 사용합니다",
+  "@editingFile": {
+    "description": "Editor view title showing current file",
+    "placeholders": {
+      "filePath": {
+        "type": "String"
+      }
+    }
+  },
+  "editingFile": "Bearbeiten: {filePath}",
+  "@editorContentPlaceholder": {
+    "description": "Placeholder text in editor view"
+  },
+  "editorContentPlaceholder": "편집기 콘텐츠가 여기에 구현됩니다.\n\n여기가 혁신적인 지식 기반 편집 경험의 장소입니다!",
+  "selectFolder": "폴더 선택",
+  "@selectFolder": {
+    "description": "Title for folder selection dialog"
+  },
+  "goUp": "위로",
+  "@goUp": {
+    "description": "Tooltip for navigate up button"
+  },
+  "quickAccess": "빠른 액세스",
+  "@quickAccess": {
+    "description": "Section title for quick access buttons"
+  },
+  "home": "홈",
+  "@home": {
+    "description": "Home directory quick access label"
+  },
+  "workspaces": "작업 공간",
+  "@workspaces": {
+    "description": "Workspaces directory quick access label"
+  },
+  "folders": "폴더",
+  "@folders": {
+    "description": "Section title for folders list"
+  },
+  "noFoldersFound": "폴더를 찾을 수 없습니다",
+  "@noFoldersFound": {
+    "description": "Message when no folders are found in current directory"
+  },
+  "searchResultsSummary": "{files}개 파일에서 {matches}개 일치 ({time}ms)",
+  "@searchResultsSummary": {
+    "description": "Summary text showing search results count and time",
+    "placeholders": {
+      "matches": {
+        "type": "int"
+      },
+      "files": {
+        "type": "int"
+      },
+      "time": {
+        "type": "int"
+      }
+    }
+  },
+  "matchesInFile": "{count}개 일치",
+  "@matchesInFile": {
+    "description": "Number of matches in a file",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sidebarSearchPlaceholder": "검색...",
+  "@sidebarSearchPlaceholder": {
+    "description": "Placeholder text for the sidebar search field"
+  },
+  "sidebarSearchOptions": "옵션",
+  "@sidebarSearchOptions": {
+    "description": "Label for the sidebar search options"
+  },
+  "settingsAppearanceDetail": "모양 설정",
+  "@settingsAppearanceDetail": {
+    "description": "Title for the appearance detail page in settings"
+  },
+  "settingsInterfaceDetail": "인터페이스 설정",
+  "@settingsInterfaceDetail": {
+    "description": "Title for the interface detail page in settings"
+  },
+  "topbarSearchDialogPlaceholder": "검색어를 입력하세요...",
+  "@topbarSearchDialogPlaceholder": {
+    "description": "Placeholder text for the topbar search dialog"
+  },
+  "searchOptionFilesTitle": "파일",
+  "@searchOptionFilesTitle": {
+    "description": "Title for file search option in side panel"
+  },
+  "searchOptionFilesSubtitle": "파일 이름에서 검색",
+  "@searchOptionFilesSubtitle": {
+    "description": "Subtitle for file search option in side panel"
+  },
+  "searchOptionContentTitle": "내용",
+  "@searchOptionContentTitle": {
+    "description": "Title for content search option in side panel"
+  },
+  "searchOptionContentSubtitle": "파일 내용에서 검색",
+  "@searchOptionContentSubtitle": {
+    "description": "Subtitle for content search option in side panel"
+  },
+  "searchOptionSymbolsTitle": "심볼",
+  "@searchOptionSymbolsTitle": {
+    "description": "Title for symbol search option in side panel"
+  },
+  "searchOptionSymbolsSubtitle": "함수, 클래스 검색",
+  "@searchOptionSymbolsSubtitle": {
+    "description": "Subtitle for symbol search option in side panel"
+  },
+  "moreMatches": "+{count}개 더",
+  "@moreMatches": {
+    "description": "Indicator when more search matches exist in a file",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noCommandsAvailable": "사용 가능한 명령이 없습니다",
+  "@noCommandsAvailable": {
+    "description": "Shown when a plugin has no commands"
+  },
+  "commandPaletteSearchFilesTitle": "파일 검색",
+  "@commandPaletteSearchFilesTitle": {
+    "description": "Command palette item title for file search"
+  },
+  "commandPaletteSearchFilesSubtitle": "이름으로 파일 검색",
+  "@commandPaletteSearchFilesSubtitle": {
+    "description": "Command palette item subtitle for file search"
+  },
+  "commandPaletteSearchInFilesTitle": "파일에서 검색",
+  "@commandPaletteSearchInFilesTitle": {
+    "description": "Command palette item title for content search"
+  },
+  "commandPaletteSearchInFilesSubtitle": "파일의 텍스트 내용을 검색",
+  "@commandPaletteSearchInFilesSubtitle": {
+    "description": "Command palette item subtitle for content search"
+  },
+  "footerFilesCount": "{count} 파일",
+  "@footerFilesCount": {
+    "description": "Footer label showing number of files",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "linePrefix": "{number}번째 줄",
+  "@linePrefix": {
+    "description": "Prefix for line number display",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "typeToSearchFilesAndCommands": "파일과 명령을 검색하려면 입력하세요...",
+  "@typeToSearchFilesAndCommands": {
+    "description": "Hint text for command palette search field"
+  },
+  "noResultsFound": "결과를 찾을 수 없습니다",
+  "@noResultsFound": {
+    "description": "Message when no search results are found"
+  },
+  "navigateUpDown": "↑↓ 탐색",
+  "@navigateUpDown": {
+    "description": "Keyboard shortcut hint for navigation"
+  },
+  "selectEnter": "↵ 선택",
+  "@selectEnter": {
+    "description": "Keyboard shortcut hint for selection"
+  },
+  "closeEscape": "Esc 닫기",
+  "@closeEscape": {
+    "description": "Keyboard shortcut hint for closing"
+  },
+  "findFile": "파일 찾기",
+  "@findFile": {
+    "description": "Title for file search dialog"
+  },
+  "typeToSearchFiles": "파일을 검색하려면 입력하세요...",
+  "@typeToSearchFiles": {
+    "description": "Hint text for file search field"
+  },
+  "noFilesFoundInWorkspace": "작업 영역에서 파일을 찾을 수 없습니다",
+  "@noFilesFoundInWorkspace": {
+    "description": "Message when no files are found in workspace"
+  },
+  "noFilesMatchSearch": "검색과 일치하는 파일이 없습니다",
+  "@noFilesMatchSearch": {
+    "description": "Message when no files match the search query"
+  },
+  "navigateOpenClose": "↑↓ 탐색 • ↵ 열기 • Esc 닫기",
+  "@navigateOpenClose": {
+    "description": "Keyboard shortcuts for file search dialog"
+  },
+  "replacing": "바꾸는 중...",
+  "@replacing": {
+    "description": "Button text during replace operation"
+  },
+  "replacingAll": "모두 바꾸는 중...",
+  "@replacingAll": {
+    "description": "Button text during replace all operation"
+  },
+  "searchError": "검색 오류",
+  "@searchError": {
+    "description": "Title for search error dialog"
+  },
+  "recentSearches": "최근 검색",
+  "@recentSearches": {
+    "description": "Section title for recent search queries"
+  },
+  "openInNewTab": "新しいタブで開く",
+  "rename": "名前を変更",
+  "deleteItem": "項目を削除",
+  "cancelButton": "キャンセル",
+  "enterPathPrompt": "開きたいフォルダのパスを入力してください:",
+  "folderPathLabel": "フォルダパス",
+  "folderPathHint": "フォルダパスを入力してください（例: /workspaces/my-folder）",
+  "enterFolderNameHint": "フォルダ名を入力してください",
+  "browse": "参照",
+  "selectFolderLocation": "フォルダの場所を選択",
+  "enterInitialFileContentHint": "初期ファイルの内容を入力してください...",
+  "enterNewNameHint": "新しい名前を入力してください",
+  "closeFolder": "フォルダを閉じる",
+  "openFolderMenu": "フォルダを開く",
+  "createFolder": "フォルダを作成",
+  "filterFileExtensions": "ファイル拡張子をフィルタ",
+  "showHiddenFiles": "隠しファイルを表示",
+  "searchFilesHint": "ファイルを検索...",
+  "newFolderPlaceholder": "新しいフォルダ",
+  "openInNewTabLabel": "新しいタブで開く",
+  "closeLabel": "閉じる",
+  "closeOthersLabel": "他を閉じる",
+  "closeAllLabel": "すべて閉じる",
+  "commentBlockTitle": "ブロックにコメント",
+  "systemDefault": "システムのデフォルト",
+  "systemDefaultSubtitle": "システムのテーマに合わせる",
+  "defaultLight": "デフォルトライト",
+  "defaultLightSubtitle": "ライトテーマ",
+  "defaultDark": "デフォルトダーク",
+  "defaultDarkSubtitle": "ダークテーマ",
+  "minimizeTooltip": "最小化",
+  "maximizeTooltip": "最大化",
+  "closeTooltip": "閉じる",
+  "zoomTooltip": "ズーム",
+  "toggleLineNumbersTooltip": "行番号の切り替え",
+  "toggleMinimapTooltip": "ミニマップの切り替え",
+  "undoTooltip": "元に戻す (Ctrl+Z)",
+  "redoTooltip": "やり直し (Ctrl+Y)",
+  "cutTooltip": "切り取り (Ctrl+X)",
+  "copyTooltip": "コピー (Ctrl+C)",
+  "pasteTooltip": "貼り付け (Ctrl+V)",
+  "foldAllTooltip": "すべて折りたたむ (Ctrl+Shift+[)",
+  "unfoldAllTooltip": "すべて展開 (Ctrl+Shift+])",
+  "exportTooltip": "エクスポート (Ctrl+E)",
+  "moreActionsTooltip": "その他のアクション",
+  "newFileTooltip": "新しいファイル",
+  "newFolderTooltip": "新しいフォルダ",
+  "refreshTooltip": "更新",
+  "fileSystemTooltip": "ファイルシステム",
+  "collectionsTooltip": "コレクション",
+  "removeFromCollectionTooltip": "コレクションから削除",
+  "openInNewTabAction": "新しいタブで開く",
+  "showAppTitle": "アプリタイトルを表示",
+  "showAppTitleSubtitle": "上部バーにアプリ名を表示する",
+  "applicationTitleLabel": "アプリケーションのタイトル",
+  "applicationTitleHint": "カスタムアプリタイトルを入力",
+  "showSearchBarTitle": "検索バーを表示",
+  "showSearchBarSubtitle": "上部バーに検索機能を表示",
+  "animationSpeedTestTitle": "アニメーション速度テスト",
+  "hoverMeFastAnimation": "ホバーしてください（高速アニメーション）",
+  "fadeInNormalSpeed": "フェードイン（通常速度）",
+  "gettingStartedTitle": "はじめに",
+  "projectNotesTitle": "プロジェクトノート",
+  "@apply": {
+    "description": "Apply button text"
+  },
+  "@preview": {
+    "description": "Preview label for theme/color previews"
+  },
+  "@selectColorLabel": {
+    "description": "Dialog title for selecting a color",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "@fontFamilyLabel": {
+    "description": "Label for font family selector"
+  },
+  "@fontSizeLabel": {
+    "description": "Label for font size selector"
+  },
+  "@previewSampleText": {
+    "description": "Sample preview text for fonts"
+  },
+  "@appearanceDescription": {
+    "description": "Description for appearance settings"
+  },
+  "@switchTheme": {
+    "description": "Tooltip for theme switch button"
+  },
+  "@layoutAndVisual": {
+    "description": "Layout and visual settings section title"
+  },
+  "@compactMode": {
+    "description": "Compact mode setting label"
+  },
+  "@compactModeDescription": {
+    "description": "Description for compact mode setting"
+  },
+  "@showIconsInMenu": {
+    "description": "Show icons in menu setting label"
+  },
+  "@showIconsInMenuDescription": {
+    "description": "Description for show icons in menu setting"
+  },
+  "@animationSpeed": {
+    "description": "Animation speed setting label"
+  },
+  "@animationSpeedDescription": {
+    "description": "Description for animation speed setting"
+  },
+  "@slow": {
+    "description": "Slow animation speed option"
+  },
+  "@normal": {
+    "description": "Normal animation speed option"
+  },
+  "@fast": {
+    "description": "Fast animation speed option"
+  },
+  "@disabled": {
+    "description": "Disabled animation speed option"
+  },
+  "@sidebarTransparency": {
+    "description": "Sidebar transparency setting label"
+  },
+  "@sidebarTransparencyDescription": {
+    "description": "Description for sidebar transparency setting"
+  },
+  "@interfaceDescription": {
+    "description": "Description for interface settings page"
+  },
+  "@currentVersion": {
+    "description": "Current application version number"
+  },
+  "@currentBuild": {
+    "description": "Current application build number"
+  },
+  "@theme": {
+    "description": "Theme settings page title"
+  },
+  "@currentTheme": {
+    "description": "Current theme section title"
+  },
+  "@currentThemeDescription": {
+    "description": "Description for current theme section"
+  },
+  "@colorScheme": {
+    "description": "Color scheme label"
+  },
+  "@primary": {
+    "description": "Primary color label"
+  },
+  "@secondary": {
+    "description": "Secondary color label"
+  },
+  "@surface": {
+    "description": "Surface color label"
+  },
+  "@themePresets": {
+    "description": "Theme presets section title"
+  },
+  "@themePresetsDescription": {
+    "description": "Description for theme presets section"
+  },
+  "@systemThemes": {
+    "description": "System themes group title"
+  },
+  "@lightThemes": {
+    "description": "Light themes group title"
+  },
+  "@darkThemes": {
+    "description": "Dark themes group title"
+  },
+  "@customizeColors": {
+    "description": "Customize colors section title"
+  },
+  "@customizeColorsDescription": {
+    "description": "Description for customize colors section"
+  },
+  "@primaryColor": {
+    "description": "Primary color picker label"
+  },
+  "@secondaryColor": {
+    "description": "Secondary color picker label"
+  },
+  "@surfaceColor": {
+    "description": "Surface color picker label"
+  },
+  "@typography": {
+    "description": "Typography section title"
+  },
+  "@typographyDescription": {
+    "description": "Description for typography section"
+  },
+  "@windowControls": {
+    "description": "Window controls settings section title"
+  },
+  "@showWindowControls": {
+    "description": "Show window controls toggle label"
+  },
+  "@showWindowControlsDescription": {
+    "description": "Description for show window controls setting"
+  },
+  "@controlsPlacement": {
+    "description": "Window controls placement setting label"
+  },
+  "@controlsPlacementDescription": {
+    "description": "Description for controls placement setting"
+  },
+  "@controlsOrder": {
+    "description": "Window controls order setting label"
+  },
+  "@controlsOrderDescription": {
+    "description": "Description for controls order setting"
+  },
+  "@auto": {
+    "description": "Auto option for various settings"
+  },
+  "@left": {
+    "description": "Left position option"
+  },
+  "@right": {
+    "description": "Right position option"
+  },
+  "@minimizeMaximizeClose": {
+    "description": "Standard window controls order"
+  },
+  "@closeMinimizeMaximize": {
+    "description": "macOS style window controls order"
+  },
+  "@closeMaximizeMinimize": {
+    "description": "Reverse window controls order"
+  },
+  "@closeButtonPositions": {
+    "description": "Close button positions settings section title"
+  },
+  "@closeButtonPositionsDescription": {
+    "description": "Description for close button positions settings"
+  },
+  "@quickSettings": {
+    "description": "Quick settings section title"
+  },
+  "@quickSettingsDescription": {
+    "description": "Description for quick settings section"
+  },
+  "@autoDescription": {
+    "description": "Description for auto quick setting"
+  },
+  "@allLeft": {
+    "description": "All left quick setting title"
+  },
+  "@allLeftDescription": {
+    "description": "Description for all left quick setting"
+  },
+  "@allRight": {
+    "description": "All right quick setting title"
+  },
+  "@allRightDescription": {
+    "description": "Description for all right quick setting"
+  },
+  "@individualSettings": {
+    "description": "Individual settings section title"
+  },
+  "@individualSettingsDescription": {
+    "description": "Description for individual settings section"
+  },
+  "@tabCloseButtons": {
+    "description": "Tab close buttons setting title"
+  },
+  "@tabCloseButtonsDescription": {
+    "description": "Description for tab close buttons setting"
+  },
+  "@panelCloseButtons": {
+    "description": "Panel close buttons setting title"
+  },
+  "@panelCloseButtonsDescription": {
+    "description": "Description for panel close buttons setting"
+  },
+  "@currently": {
+    "description": "Currently label for effective position display"
+  },
+  "@openInNewTab": {
+    "description": "Auto-added metadata for openInNewTab"
+  },
+  "@rename": {
+    "description": "Auto-added metadata for rename"
+  },
+  "@deleteItem": {
+    "description": "Auto-added metadata for deleteItem"
+  },
+  "@cancelButton": {
+    "description": "Auto-added metadata for cancelButton"
+  },
+  "@enterPathPrompt": {
+    "description": "Auto-added metadata for enterPathPrompt"
+  },
+  "@folderPathLabel": {
+    "description": "Auto-added metadata for folderPathLabel"
+  },
+  "@folderPathHint": {
+    "description": "Auto-added metadata for folderPathHint"
+  },
+  "@enterFolderNameHint": {
+    "description": "Auto-added metadata for enterFolderNameHint"
+  },
+  "@browse": {
+    "description": "Auto-added metadata for browse"
+  },
+  "@selectFolderLocation": {
+    "description": "Auto-added metadata for selectFolderLocation"
+  },
+  "@enterInitialFileContentHint": {
+    "description": "Auto-added metadata for enterInitialFileContentHint"
+  },
+  "@enterNewNameHint": {
+    "description": "Auto-added metadata for enterNewNameHint"
+  },
+  "@closeFolder": {
+    "description": "Auto-added metadata for closeFolder"
+  },
+  "@openFolderMenu": {
+    "description": "Auto-added metadata for openFolderMenu"
+  },
+  "@createFolder": {
+    "description": "Auto-added metadata for createFolder"
+  },
+  "@filterFileExtensions": {
+    "description": "Auto-added metadata for filterFileExtensions"
+  },
+  "@showHiddenFiles": {
+    "description": "Auto-added metadata for showHiddenFiles"
+  },
+  "@searchFilesHint": {
+    "description": "Auto-added metadata for searchFilesHint"
+  },
+  "@newFolderPlaceholder": {
+    "description": "Auto-added metadata for newFolderPlaceholder"
+  },
+  "@openInNewTabLabel": {
+    "description": "Auto-added metadata for openInNewTabLabel"
+  },
+  "@closeLabel": {
+    "description": "Auto-added metadata for closeLabel"
+  },
+  "@closeOthersLabel": {
+    "description": "Auto-added metadata for closeOthersLabel"
+  },
+  "@closeAllLabel": {
+    "description": "Auto-added metadata for closeAllLabel"
+  },
+  "@commentBlockTitle": {
+    "description": "Auto-added metadata for commentBlockTitle"
+  },
+  "@systemDefault": {
+    "description": "Auto-added metadata for systemDefault"
+  },
+  "@systemDefaultSubtitle": {
+    "description": "Auto-added metadata for systemDefaultSubtitle"
+  },
+  "@defaultLight": {
+    "description": "Auto-added metadata for defaultLight"
+  },
+  "@defaultLightSubtitle": {
+    "description": "Auto-added metadata for defaultLightSubtitle"
+  },
+  "@defaultDark": {
+    "description": "Auto-added metadata for defaultDark"
+  },
+  "@defaultDarkSubtitle": {
+    "description": "Auto-added metadata for defaultDarkSubtitle"
+  },
+  "@minimizeTooltip": {
+    "description": "Auto-added metadata for minimizeTooltip"
+  },
+  "@maximizeTooltip": {
+    "description": "Auto-added metadata for maximizeTooltip"
+  },
+  "@closeTooltip": {
+    "description": "Auto-added metadata for closeTooltip"
+  },
+  "@zoomTooltip": {
+    "description": "Auto-added metadata for zoomTooltip"
+  },
+  "@toggleLineNumbersTooltip": {
+    "description": "Auto-added metadata for toggleLineNumbersTooltip"
+  },
+  "@toggleMinimapTooltip": {
+    "description": "Auto-added metadata for toggleMinimapTooltip"
+  },
+  "@undoTooltip": {
+    "description": "Auto-added metadata for undoTooltip"
+  },
+  "@redoTooltip": {
+    "description": "Auto-added metadata for redoTooltip"
+  },
+  "@cutTooltip": {
+    "description": "Auto-added metadata for cutTooltip"
+  },
+  "@copyTooltip": {
+    "description": "Auto-added metadata for copyTooltip"
+  },
+  "@pasteTooltip": {
+    "description": "Auto-added metadata for pasteTooltip"
+  },
+  "@foldAllTooltip": {
+    "description": "Auto-added metadata for foldAllTooltip"
+  },
+  "@unfoldAllTooltip": {
+    "description": "Auto-added metadata for unfoldAllTooltip"
+  },
+  "@exportTooltip": {
+    "description": "Auto-added metadata for exportTooltip"
+  },
+  "@moreActionsTooltip": {
+    "description": "Auto-added metadata for moreActionsTooltip"
+  },
+  "@newFileTooltip": {
+    "description": "Auto-added metadata for newFileTooltip"
+  },
+  "@newFolderTooltip": {
+    "description": "Auto-added metadata for newFolderTooltip"
+  },
+  "@refreshTooltip": {
+    "description": "Auto-added metadata for refreshTooltip"
+  },
+  "@fileSystemTooltip": {
+    "description": "Auto-added metadata for fileSystemTooltip"
+  },
+  "@collectionsTooltip": {
+    "description": "Auto-added metadata for collectionsTooltip"
+  },
+  "@removeFromCollectionTooltip": {
+    "description": "Auto-added metadata for removeFromCollectionTooltip"
+  },
+  "@openInNewTabAction": {
+    "description": "Auto-added metadata for openInNewTabAction"
+  },
+  "@showAppTitle": {
+    "description": "Auto-added metadata for showAppTitle"
+  },
+  "@showAppTitleSubtitle": {
+    "description": "Auto-added metadata for showAppTitleSubtitle"
+  },
+  "@applicationTitleLabel": {
+    "description": "Auto-added metadata for applicationTitleLabel"
+  },
+  "@applicationTitleHint": {
+    "description": "Auto-added metadata for applicationTitleHint"
+  },
+  "@showSearchBarTitle": {
+    "description": "Auto-added metadata for showSearchBarTitle"
+  },
+  "@showSearchBarSubtitle": {
+    "description": "Auto-added metadata for showSearchBarSubtitle"
+  },
+  "@animationSpeedTestTitle": {
+    "description": "Auto-added metadata for animationSpeedTestTitle"
+  },
+  "@hoverMeFastAnimation": {
+    "description": "Auto-added metadata for hoverMeFastAnimation"
+  },
+  "@fadeInNormalSpeed": {
+    "description": "Auto-added metadata for fadeInNormalSpeed"
+  },
+  "@gettingStartedTitle": {
+    "description": "Auto-added metadata for gettingStartedTitle"
+  },
+  "@projectNotesTitle": {
+    "description": "Auto-added metadata for projectNotesTitle"
   }
 }

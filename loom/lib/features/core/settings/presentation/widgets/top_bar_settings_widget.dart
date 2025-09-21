@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Top bar settings widget
 class TopBarSettingsWidget extends ConsumerWidget {
@@ -11,6 +12,8 @@ class TopBarSettingsWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final settings = ref.watch(topBarSettingsProvider);
+
+    final loc = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,8 +26,8 @@ class TopBarSettingsWidget extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
         _SettingsItem(
-          title: 'Show App Title',
-          subtitle: 'Display application name in the top bar',
+          title: loc.showAppTitle,
+          subtitle: loc.showAppTitleSubtitle,
           trailing: Switch(
             value: settings.showTitle,
             onChanged: (value) {
@@ -37,13 +40,14 @@ class TopBarSettingsWidget extends ConsumerWidget {
         if (settings.showTitle) ...[
           Padding(
             padding: const EdgeInsets.only(
-                left: AppSpacing.md,
-                right: AppSpacing.md,
-                bottom: AppSpacing.smd,),
+              left: AppSpacing.md,
+              right: AppSpacing.md,
+              bottom: AppSpacing.smd,
+            ),
             child: TextField(
               decoration: InputDecoration(
-                labelText: 'Application Title',
-                hintText: 'Enter custom app title',
+                labelText: loc.applicationTitleLabel,
+                hintText: loc.applicationTitleHint,
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                 ),
@@ -59,14 +63,14 @@ class TopBarSettingsWidget extends ConsumerWidget {
               onChanged: (value) {
                 ref
                     .read(topBarSettingsProvider.notifier)
-                    .setTitle(value.isNotEmpty ? value : 'Loom');
+                    .setTitle(value.isNotEmpty ? value : loc.loomAppTitle);
               },
             ),
           ),
         ],
         _SettingsItem(
-          title: 'Show Search Bar',
-          subtitle: 'Display search functionality in top bar',
+          title: loc.showSearchBarTitle,
+          subtitle: loc.showSearchBarSubtitle,
           trailing: Switch(
             value: settings.showSearch,
             onChanged: (value) {
@@ -102,7 +106,9 @@ class _SettingsItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.symmetric(
-              vertical: AppSpacing.smd, horizontal: AppSpacing.md,),
+            vertical: AppSpacing.smd,
+            horizontal: AppSpacing.md,
+          ),
           margin: AppSpacing.marginBottomSm,
           child: Row(
             children: [

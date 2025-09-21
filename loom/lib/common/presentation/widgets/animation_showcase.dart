@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Demo widget showcasing the enhanced UI animations and polish
 class AnimationShowcase extends StatelessWidget {
@@ -8,10 +9,11 @@ class AnimationShowcase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('UI Polish Showcase'),
+        title: Text(localizations.uiPolishShowcase),
         backgroundColor: theme.colorScheme.surfaceContainerHighest,
       ),
       body: SingleChildScrollView(
@@ -21,7 +23,7 @@ class AnimationShowcase extends StatelessWidget {
           children: [
             // Header
             Text(
-              'Enhanced UI Animations',
+              localizations.enhancedUiAnimations,
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -32,14 +34,14 @@ class AnimationShowcase extends StatelessWidget {
             // Loading Indicators Section
             _buildSection(
               context,
-              'Loading Indicators',
+              localizations.loadingIndicators,
               [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Column(
                       children: [
-                        const Text('Smooth Loading'),
+                        Text(localizations.smoothLoading),
                         const SizedBox(height: AppSpacing.sm),
                         Container(
                           width: 48,
@@ -52,11 +54,11 @@ class AnimationShowcase extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const Column(
+                    Column(
                       children: [
-                        Text('Skeleton Loader'),
-                        SizedBox(height: AppSpacing.sm),
-                        SkeletonLoader(
+                        Text(localizations.skeletonLoader),
+                        const SizedBox(height: AppSpacing.sm),
+                        const SkeletonLoader(
                           width: 120,
                         ),
                       ],
@@ -71,7 +73,7 @@ class AnimationShowcase extends StatelessWidget {
             // Interactive Elements Section
             _buildSection(
               context,
-              'Interactive Elements',
+              localizations.interactiveElements,
               [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -79,7 +81,7 @@ class AnimationShowcase extends StatelessWidget {
                     // Hover animation demo
                     Column(
                       children: [
-                        const Text('Hover Animation'),
+                        Text(localizations.hoverAnimation),
                         const SizedBox(height: AppSpacing.sm),
                         Container(
                           padding: AppSpacing.paddingMd,
@@ -96,7 +98,7 @@ class AnimationShowcase extends StatelessWidget {
                     // Press animation demo
                     Column(
                       children: [
-                        const Text('Press Animation'),
+                        Text(localizations.pressAnimation),
                         const SizedBox(height: AppSpacing.sm),
                         Container(
                           padding: AppSpacing.paddingMd,
@@ -113,7 +115,7 @@ class AnimationShowcase extends StatelessWidget {
                     // Pulse animation demo
                     Column(
                       children: [
-                        const Text('Pulse Animation'),
+                        Text(localizations.pulseAnimation),
                         const SizedBox(height: AppSpacing.sm),
                         Container(
                           padding: AppSpacing.paddingMd,
@@ -136,7 +138,7 @@ class AnimationShowcase extends StatelessWidget {
             // Shimmer Effects Section
             _buildSection(
               context,
-              'Shimmer Effects',
+              localizations.shimmerEffects,
               [
                 Container(
                   padding: AppSpacing.paddingMd,
@@ -191,7 +193,7 @@ class AnimationShowcase extends StatelessWidget {
             // Success Animations Section
             _buildSection(
               context,
-              'Success Animations',
+              localizations.successAnimations,
               [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -208,7 +210,7 @@ class AnimationShowcase extends StatelessWidget {
                               .withSuccessAnimation(),
                           const SizedBox(width: AppSpacing.sm),
                           Text(
-                            'Task Completed!',
+                            localizations.taskCompleted,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.w500,
@@ -227,7 +229,7 @@ class AnimationShowcase extends StatelessWidget {
             // Animation Combinations Section
             _buildSection(
               context,
-              'Animation Combinations',
+              localizations.animationCombinations,
               [
                 Container(
                   padding: AppSpacing.paddingMd,
@@ -248,7 +250,7 @@ class AnimationShowcase extends StatelessWidget {
                             borderRadius: AppRadius.radiusMd,
                           ),
                         ),
-                        child: const Text('Interactive Button'),
+                        child: Text(localizations.interactiveButton),
                       )
                           .withHoverAnimation(scale: 1.05)
                           .withPressAnimation(scale: 0.95),
@@ -268,12 +270,12 @@ class AnimationShowcase extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              'Animated Card',
+                              localizations.animatedCard,
                               style: theme.textTheme.titleMedium,
                             ),
                             const SizedBox(height: AppSpacing.sm),
                             Text(
-                              'This card demonstrates fade-in and slide-in animations combined.',
+                              localizations.animatedCardDescription,
                               style: theme.textTheme.bodySmall,
                               textAlign: TextAlign.center,
                             ),

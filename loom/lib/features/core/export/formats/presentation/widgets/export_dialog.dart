@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/export/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Export dialog for configuring and executing exports
 class ExportDialog extends ConsumerStatefulWidget {
@@ -33,6 +34,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
   Widget build(BuildContext context) {
     final exportState = ref.watch(exportProvider);
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Dialog(
       child: Container(
@@ -50,7 +52,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
                   Icon(Icons.file_download, color: theme.colorScheme.primary),
                   const SizedBox(width: 8),
                   Text(
-                    'Export Document',
+                    localizations.exportDocument,
                     style: theme.textTheme.headlineSmall,
                   ),
                   const Spacer(),
@@ -73,7 +75,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
                   children: [
                     // File info
                     Text(
-                      'File: ${widget.fileName}',
+                      localizations.fileLabel(widget.fileName),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
@@ -167,7 +169,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
+                    child: Text(localizations.cancel),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton.icon(
@@ -180,7 +182,9 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
                           )
                         : const Icon(Icons.file_download),
                     label: Text(
-                      exportState.isExporting ? 'Exporting...' : 'Export',
+                      exportState.isExporting
+                          ? localizations.exporting
+                          : localizations.export,
                     ),
                   ),
                 ],
@@ -194,12 +198,13 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
 
   Widget _buildFormatSection(ThemeData theme) {
     final formats = ref.read(exportProvider.notifier).getSupportedFormats();
+    final localizations = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Export Format',
+          localizations.exportFormat,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w500,
           ),
@@ -209,7 +214,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
           spacing: 8,
           children: formats.map((format) {
             return ChoiceChip(
-              label: Text(format.displayName),
+              label: Text(format.displayName(localizations)),
               selected: _options.format == format,
               onSelected: (selected) {
                 if (selected) {
@@ -226,18 +231,19 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
   }
 
   Widget _buildOptionsSection(ThemeData theme) {
+    final localizations = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Options',
+          localizations.options,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 8),
         SwitchListTile(
-          title: const Text('Include line numbers'),
+          title: Text(localizations.includeLineNumbers),
           value: _options.includeLineNumbers,
           onChanged: (value) {
             setState(() {
@@ -246,7 +252,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
           },
         ),
         SwitchListTile(
-          title: const Text('Include syntax highlighting'),
+          title: Text(localizations.includeSyntaxHighlighting),
           value: _options.includeSyntaxHighlighting,
           onChanged: (value) {
             setState(() {
@@ -257,7 +263,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
         if (_options.format == ExportFormat.html ||
             _options.format == ExportFormat.pdf) ...[
           SwitchListTile(
-            title: const Text('Include header'),
+            title: Text(localizations.includeHeader),
             value: _options.includeHeader,
             onChanged: (value) {
               setState(() {
@@ -274,8 +280,8 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
               ),
               child: TextField(
                 decoration: InputDecoration(
-                  labelText: 'Header text',
-                  hintText: 'Document title',
+                  labelText: localizations.headerText,
+                  hintText: localizations.documentTitle,
                   hintStyle: TextStyle(
                     color: theme.colorScheme.onSurface.withOpacity(0.4),
                   ),
@@ -294,11 +300,12 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
   }
 
   Widget _buildFilePathSection(ThemeData theme) {
+    final localizations = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Save Location',
+          localizations.saveLocation,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w500,
           ),
@@ -317,7 +324,7 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
             ElevatedButton.icon(
               onPressed: _selectFilePath,
               icon: const Icon(Icons.folder_open),
-              label: const Text('Choose...'),
+              label: Text(localizations.choose),
             ),
           ],
         ),
@@ -333,12 +340,13 @@ class _ExportDialogState extends ConsumerState<ExportDialog> {
   }
 
   Future<void> _selectFilePath() async {
+    final localizations = AppLocalizations.of(context);
     final extension =
         ref.read(exportProvider.notifier).getFileExtension(_options.format);
     final fileName = '${widget.fileName.split('.').first}$extension';
 
     final result = await FilePicker.platform.saveFile(
-      dialogTitle: 'Save Export',
+      dialogTitle: localizations.saveExport,
       fileName: fileName,
       type: FileType.custom,
       allowedExtensions: [extension.substring(1)], // Remove the dot

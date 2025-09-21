@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loom/common/presentation/theme/app_spacing.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// A dialog for find and replace functionality
 class FindReplaceDialog extends StatefulWidget {
@@ -64,6 +65,7 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Dialog(
       child: Container(
@@ -77,14 +79,18 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
             Row(
               children: [
                 Text(
-                  _showReplace ? 'Find & Replace' : 'Find',
+                  _showReplace
+                      ? localizations.findAndReplace
+                      : localizations.find,
                   style: theme.textTheme.titleLarge,
                 ),
                 const Spacer(),
                 IconButton(
                   icon: Icon(_showReplace ? Icons.search : Icons.find_replace),
                   onPressed: () => setState(() => _showReplace = !_showReplace),
-                  tooltip: _showReplace ? 'Hide Replace' : 'Show Replace',
+                  tooltip: _showReplace
+                      ? localizations.hideReplace
+                      : localizations.showReplace,
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -99,10 +105,10 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
             TextField(
               controller: _findController,
               focusNode: _findFocusNode,
-              decoration: const InputDecoration(
-                labelText: 'Find',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search),
+              decoration: InputDecoration(
+                labelText: localizations.findLabel,
+                border: const OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.search),
               ),
               onSubmitted: (_) => _performFind(),
             ),
@@ -112,10 +118,10 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
               const SizedBox(height: 12),
               TextField(
                 controller: _replaceController,
-                decoration: const InputDecoration(
-                  labelText: 'Replace with',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.find_replace),
+                decoration: InputDecoration(
+                  labelText: localizations.replaceWith,
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.find_replace),
                 ),
                 onSubmitted: (_) => _performReplace(),
               ),
@@ -134,7 +140,7 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
                       onChanged: (value) =>
                           setState(() => _caseSensitive = value ?? false),
                     ),
-                    const Text('Match case'),
+                    Text(localizations.matchCase),
                   ],
                 ),
                 const SizedBox(width: 16),
@@ -146,7 +152,7 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
                       onChanged: (value) =>
                           setState(() => _useRegex = value ?? false),
                     ),
-                    const Text('Use regex'),
+                    Text(localizations.useRegex),
                   ],
                 ),
               ],
@@ -162,20 +168,20 @@ class _FindReplaceDialogState extends State<FindReplaceDialog> {
                 if (_showReplace) ...[
                   TextButton(
                     onPressed: _performReplace,
-                    child: const Text('Replace'),
+                    child: Text(localizations.replace),
                   ),
                   TextButton(
                     onPressed: _performReplaceAll,
-                    child: const Text('Replace All'),
+                    child: Text(localizations.replaceAll),
                   ),
                 ],
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Close'),
+                  child: Text(localizations.close),
                 ),
                 ElevatedButton(
                   onPressed: _performFind,
-                  child: const Text('Find Next'),
+                  child: Text(localizations.findNext),
                 ),
               ],
             ),

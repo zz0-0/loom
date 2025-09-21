@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/features/core/explorer/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 /// Template selection chip widget
@@ -60,9 +61,10 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return AlertDialog(
-      title: const Text('Create Collection'),
+      title: Text(localizations.createCollection),
       content: SizedBox(
         width: 400,
         child: Column(
@@ -71,8 +73,8 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
             TextField(
               controller: _controller,
               decoration: InputDecoration(
-                labelText: 'Collection name',
-                hintText: 'My Collection',
+                labelText: localizations.collectionName,
+                hintText: localizations.myCollection,
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                 ),
@@ -80,9 +82,9 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
               autofocus: true,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Choose a template (optional)',
-              style: TextStyle(fontWeight: FontWeight.w500),
+            Text(
+              localizations.chooseTemplateOptional,
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 8),
             Consumer(
@@ -94,7 +96,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
                   children: [
                     // Empty template option
                     _TemplateChip(
-                      label: 'Empty',
+                      label: localizations.empty,
                       icon: LucideIcons.file,
                       isSelected: _selectedTemplateId == null,
                       onSelected: () {
@@ -122,7 +124,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(localizations.cancel),
         ),
         TextButton(
           onPressed: () {
@@ -133,7 +135,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
               });
             }
           },
-          child: const Text('Create'),
+          child: Text(localizations.create),
         ),
       ],
     );

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:loom/plugins/api/plugin_api.dart';
@@ -29,6 +30,7 @@ class PluginRegistry {
   }
 
   /// Discover and load all available plugins
+  // ignore: avoid_slow_async_io
   Future<void> _discoverPlugins() async {
     final pluginsDir = Directory(_pluginsDirectory);
     if (!await pluginsDir.exists()) {
@@ -43,12 +45,12 @@ class PluginRegistry {
   }
 
   /// Load a plugin from its directory
+  // ignore: avoid_slow_async_io
   Future<void> _loadPluginFromDirectory(String pluginPath) async {
     final manifestPath = '$pluginPath/manifest.json';
     final manifestFile = File(manifestPath);
 
     if (!await manifestFile.exists()) {
-      print('Warning: No manifest.json found in $pluginPath');
       return;
     }
 
@@ -59,27 +61,29 @@ class PluginRegistry {
       // Validate manifest
       final validationErrors = PluginManifestParser.validate(manifest);
       if (validationErrors.isNotEmpty) {
-        print('Plugin ${manifest.id} validation errors:');
         for (final error in validationErrors) {
-          print('  - $error');
+          // Log validation errors
+          log(
+            'PluginRegistry: manifest validation error for ${manifest.id}: $error',
+            name: 'PluginRegistry',
+          );
         }
         return;
       }
 
       _loadedManifests[manifest.id] = manifest;
       _pluginStates[manifest.id] = PluginState.unloaded;
-
-      print(
-        'Loaded plugin: ${manifest.name} (${manifest.id}) v${manifest.version}',
-      );
     } catch (e) {
-      print('Failed to load plugin from $pluginPath: $e');
+      log(
+        'PluginRegistry: failed to load plugin manifest at $manifestPath: $e',
+        name: 'PluginRegistry',
+      );
     }
   }
 
   /// Install a plugin from a package/archive
   Future<bool> installPlugin(String pluginPackagePath) async {
-    // TODO: Implement plugin installation from package
+    // TODO(user): Implement plugin installation from package
     // This would involve:
     // 1. Extracting the plugin package
     // 2. Validating the manifest
@@ -111,9 +115,13 @@ class PluginRegistry {
       _loadedManifests.remove(pluginId);
       _pluginStates.remove(pluginId);
 
-      print('Uninstalled plugin: ${manifest.name}');
       return true;
     } catch (e) {
+      // Preserve original behavior but log for visibility
+      log(
+        'PluginRegistry: failed to uninstall plugin $pluginId: $e',
+        name: 'PluginRegistry',
+      );
       throw PluginRegistryException('Failed to uninstall plugin $pluginId: $e');
     }
   }
@@ -158,7 +166,6 @@ class PluginRegistry {
 
       _pluginStates[pluginId] = PluginState.active;
 
-      print('Loaded plugin: ${manifest.name}');
       return true;
     } catch (e) {
       _pluginStates[pluginId] = PluginState.error;
@@ -179,7 +186,6 @@ class PluginRegistry {
 
       _pluginStates[pluginId] = PluginState.unloaded;
 
-      print('Unloaded plugin: ${_loadedManifests[pluginId]!.name}');
       return true;
     } catch (e) {
       throw PluginRegistryException('Failed to unload plugin $pluginId: $e');
@@ -200,7 +206,6 @@ class PluginRegistry {
   Future<bool> _checkDependencies(PluginManifest manifest) async {
     for (final dependency in manifest.dependencies.plugins) {
       if (!_loadedManifests.containsKey(dependency)) {
-        print('Missing dependency: $dependency');
         return false;
       }
 
@@ -210,7 +215,6 @@ class PluginRegistry {
         try {
           await loadPlugin(dependency);
         } catch (e) {
-          print('Failed to load dependency $dependency: $e');
           return false;
         }
       }
@@ -306,6 +310,7 @@ class PluginRegistry {
   }
 
   /// Ensure plugins directory exists
+  // ignore: avoid_slow_async_io
   Future<void> _ensurePluginsDirectory() async {
     final dir = Directory(_pluginsDirectory);
     if (!await dir.exists()) {
@@ -321,7 +326,10 @@ class PluginRegistry {
       try {
         await unloadPlugin(pluginId);
       } catch (e) {
-        print('Error unloading plugin $pluginId during shutdown: $e');
+        log(
+          'PluginRegistry: failed to unload plugin $pluginId during shutdown: $e',
+          name: 'PluginRegistry',
+        );
       }
     }
   }

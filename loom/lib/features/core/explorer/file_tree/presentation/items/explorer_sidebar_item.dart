@@ -11,7 +11,7 @@ class ExplorerSidebarItem implements SidebarItem {
   IconData get icon => Icons.folder;
 
   @override
-  String? get tooltip => 'Explorer';
+  String? get tooltip => null; // Handled by ExtensibleSidebar for localization
 
   @override
   VoidCallback? get onPressed => null; // Use default panel behavior
@@ -25,6 +25,7 @@ class ExplorerSidebarItem implements SidebarItem {
 /// Registration function for the explorer feature
 class ExplorerFeatureRegistration {
   static void register() {
-    UIRegistry().registerSidebarItem(ExplorerSidebarItem());
+    final registry = UIRegistry();
+    registry.registerSidebarItem(ExplorerSidebarItem());
   }
 }

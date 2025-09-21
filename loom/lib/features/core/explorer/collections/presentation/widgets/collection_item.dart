@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/explorer/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -135,7 +136,7 @@ class _CollectionItemState extends State<CollectionItem> {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Smart Suggestion'),
+        title: Text(AppLocalizations.of(context).smartSuggestion),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -154,7 +155,9 @@ class _CollectionItemState extends State<CollectionItem> {
                 subtitle: Text(suggestion.reason),
                 trailing: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.sm, vertical: AppSpacing.xs,),
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.xs,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
@@ -179,7 +182,7 @@ class _CollectionItemState extends State<CollectionItem> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Keep Here'),
+            child: Text(AppLocalizations.of(context).keepHere),
           ),
         ],
       ),
@@ -299,13 +302,16 @@ class _CollectionItemState extends State<CollectionItem> {
                           }
                         },
                         itemBuilder: (context) => [
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'delete',
                             child: Row(
                               children: [
-                                Icon(LucideIcons.trash2, size: 14),
-                                SizedBox(width: 8),
-                                Text('Delete Collection'),
+                                const Icon(LucideIcons.trash2, size: 14),
+                                const SizedBox(width: 8),
+                                Text(
+                                  AppLocalizations.of(context)
+                                      .deleteCollection(widget.collectionName),
+                                ),
                               ],
                             ),
                           ),

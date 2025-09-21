@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Extensible side panel that displays content for the selected sidebar item
 class ExtensibleSidePanel extends ConsumerWidget {
@@ -29,6 +30,20 @@ class ExtensibleSidePanel extends ConsumerWidget {
         final selectedItem = registry.getSidebarItem(selectedItemId!);
         final panelContent = selectedItem?.buildPanel(context);
 
+        // Compute localized title for the panel header
+        final loc = AppLocalizations.of(context);
+        String title;
+        switch (selectedItemId) {
+          case 'explorer':
+            title = loc.explorerTooltip;
+          case 'search':
+            title = loc.searchTooltip;
+          case 'settings':
+            title = loc.settings;
+          default:
+            title = selectedItem?.tooltip ?? selectedItemId!;
+        }
+
         return Container(
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
@@ -42,7 +57,7 @@ class ExtensibleSidePanel extends ConsumerWidget {
             children: [
               // Panel header
               _PanelHeader(
-                title: selectedItem?.tooltip ?? selectedItemId!,
+                title: title,
                 onClose: onClose,
               ),
 

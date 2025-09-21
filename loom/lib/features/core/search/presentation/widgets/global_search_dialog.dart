@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/search/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Global search dialog
 class GlobalSearchDialog extends ConsumerStatefulWidget {
@@ -39,6 +40,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchProvider);
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Dialog(
       child: Container(
@@ -54,7 +56,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                 Icon(Icons.search, color: theme.colorScheme.primary, size: 20),
                 const SizedBox(width: 6),
                 Text(
-                  'Global Search',
+                  localizations.search,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -78,7 +80,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
               controller: _searchController,
               focusNode: _searchFocusNode,
               decoration: InputDecoration(
-                hintText: 'Search for text...',
+                hintText: localizations.searchYourKnowledgeBase,
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                 ),
@@ -95,7 +97,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                       ),
                       onPressed: () =>
                           setState(() => _caseSensitive = !_caseSensitive),
-                      tooltip: 'Case sensitive',
+                      tooltip: localizations.matchCase,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(
                         minWidth: 24,
@@ -108,7 +110,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                         size: 16,
                       ),
                       onPressed: () => setState(() => _useRegex = !_useRegex),
-                      tooltip: 'Use regex',
+                      tooltip: localizations.useRegex,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(
                         minWidth: 24,
@@ -132,7 +134,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
             TextField(
               controller: _replaceController,
               decoration: InputDecoration(
-                hintText: 'Replace with...',
+                hintText: localizations.replaceWith,
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                 ),
@@ -153,7 +155,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
               runSpacing: AppSpacing.xs,
               children: [
                 FilterChip(
-                  label: const Text('Include hidden files'),
+                  label: Text(AppLocalizations.of(context).includeHiddenFiles),
                   selected: _includeHiddenFiles,
                   onSelected: (selected) =>
                       setState(() => _includeHiddenFiles = selected),
@@ -189,7 +191,9 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                           )
                         : const Icon(Icons.find_replace, size: 16),
                     label: Text(
-                      searchState.isSearching ? 'Replacing...' : 'Replace',
+                      searchState.isSearching
+                          ? localizations.replacing
+                          : localizations.replace,
                       style: const TextStyle(fontSize: 12),
                     ),
                     style: ElevatedButton.styleFrom(
@@ -216,8 +220,8 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                         : const Icon(Icons.find_replace, size: 16),
                     label: Text(
                       searchState.isSearching
-                          ? 'Replacing All...'
-                          : 'Replace All',
+                          ? localizations.replacingAll
+                          : localizations.replaceAll,
                       style: const TextStyle(fontSize: 12),
                     ),
                     style: ElevatedButton.styleFrom(
@@ -237,7 +241,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
             if (searchState.recentSearches.isNotEmpty) ...[
               const Divider(),
               Text(
-                'Recent Searches',
+                localizations.recentSearches,
                 style: theme.textTheme.titleSmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -272,6 +276,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
     SearchState searchState,
     ThemeData theme,
   ) {
+    final localizations = AppLocalizations.of(context);
     if (searchState.error != null) {
       return Center(
         child: Column(
@@ -284,7 +289,8 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Search Error',
+              // searchError expects an Object parameter (error); pass the actual error
+              localizations.searchError(searchState.error ?? ''),
               style: theme.textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
@@ -312,7 +318,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Enter search text to find matches',
+              localizations.searchResultsWillAppearHere,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -335,7 +341,10 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              'No matches found',
+              // noMatchesFound expects a String argument for the query
+              localizations.noMatchesFound(
+                _searchController.text.isEmpty ? '' : _searchController.text,
+              ),
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -350,7 +359,12 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
       children: [
         // Summary
         Text(
-          '${results.totalMatches} matches in ${results.totalFiles} files (${results.searchTime.inMilliseconds}ms)',
+          localizations.searchResultsSummary(
+            results.totalMatches,
+            results.totalFiles,
+            results.searchTime.inMilliseconds,
+            // results.totalMatches,
+          ),
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -376,6 +390,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
     SearchResultsGroup group,
     ThemeData theme,
   ) {
+    final localizations = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -406,7 +421,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                 ),
               ),
               Text(
-                '${group.totalMatches} matches',
+                localizations.matchesInFile(group.totalMatches),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -429,6 +444,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
     SearchResult result,
     ThemeData theme,
   ) {
+    final localizations = AppLocalizations.of(context);
     return InkWell(
       onTap: () {
         // Navigate to file and line
@@ -451,7 +467,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
           children: [
             // Line number
             Text(
-              'Line ${result.lineNumber}',
+              localizations.linePrefix(result.lineNumber),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.w500,

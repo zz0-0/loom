@@ -44,6 +44,7 @@ class SettingsSerializationService {
       autoSave: jsonData['autoSave'] as bool? ?? true,
       confirmOnExit: jsonData['confirmOnExit'] as bool? ?? true,
       language: jsonData['language'] as String? ?? 'en',
+      followSystemLanguage: jsonData['followSystemLanguage'] as bool? ?? false,
     );
   }
 
@@ -53,6 +54,7 @@ class SettingsSerializationService {
       'autoSave': settings.autoSave,
       'confirmOnExit': settings.confirmOnExit,
       'language': settings.language,
+      'followSystemLanguage': settings.followSystemLanguage,
     };
   }
 

@@ -187,15 +187,24 @@ class __$$BloxInlineElement_TextImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_TextImpl extends BloxInlineElement_Text {
+class _$BloxInlineElement_TextImpl extends BloxInlineElement_Text
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_TextImpl(this.field0) : super._();
 
   @override
   final String field0;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.text(field0: $field0)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.text'))
+      ..add(DiagnosticsProperty('field0', field0));
   }
 
   @override
@@ -410,7 +419,8 @@ class __$$BloxInlineElement_LinkImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_LinkImpl extends BloxInlineElement_Link {
+class _$BloxInlineElement_LinkImpl extends BloxInlineElement_Link
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_LinkImpl({required this.text, required this.url})
       : super._();
 
@@ -420,8 +430,17 @@ class _$BloxInlineElement_LinkImpl extends BloxInlineElement_Link {
   final String url;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.link(text: $text, url: $url)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.link'))
+      ..add(DiagnosticsProperty('text', text))
+      ..add(DiagnosticsProperty('url', url));
   }
 
   @override
@@ -634,15 +653,24 @@ class __$$BloxInlineElement_BoldImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_BoldImpl extends BloxInlineElement_Bold {
+class _$BloxInlineElement_BoldImpl extends BloxInlineElement_Bold
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_BoldImpl(this.field0) : super._();
 
   @override
   final String field0;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.bold(field0: $field0)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.bold'))
+      ..add(DiagnosticsProperty('field0', field0));
   }
 
   @override
@@ -853,15 +881,24 @@ class __$$BloxInlineElement_ItalicImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_ItalicImpl extends BloxInlineElement_Italic {
+class _$BloxInlineElement_ItalicImpl extends BloxInlineElement_Italic
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_ItalicImpl(this.field0) : super._();
 
   @override
   final String field0;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.italic(field0: $field0)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.italic'))
+      ..add(DiagnosticsProperty('field0', field0));
   }
 
   @override
@@ -1071,15 +1108,24 @@ class __$$BloxInlineElement_CodeImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_CodeImpl extends BloxInlineElement_Code {
+class _$BloxInlineElement_CodeImpl extends BloxInlineElement_Code
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_CodeImpl(this.field0) : super._();
 
   @override
   final String field0;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.code(field0: $field0)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.code'))
+      ..add(DiagnosticsProperty('field0', field0));
   }
 
   @override
@@ -1289,15 +1335,24 @@ class __$$BloxInlineElement_MathImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_MathImpl extends BloxInlineElement_Math {
+class _$BloxInlineElement_MathImpl extends BloxInlineElement_Math
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_MathImpl(this.field0) : super._();
 
   @override
   final String field0;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.math(field0: $field0)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.math'))
+      ..add(DiagnosticsProperty('field0', field0));
   }
 
   @override
@@ -1509,15 +1564,23 @@ class __$$BloxInlineElement_StrikethroughImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$BloxInlineElement_StrikethroughImpl
-    extends BloxInlineElement_Strikethrough {
+    extends BloxInlineElement_Strikethrough with DiagnosticableTreeMixin {
   const _$BloxInlineElement_StrikethroughImpl(this.field0) : super._();
 
   @override
   final String field0;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.strikethrough(field0: $field0)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.strikethrough'))
+      ..add(DiagnosticsProperty('field0', field0));
   }
 
   @override
@@ -1730,15 +1793,24 @@ class __$$BloxInlineElement_HighlightImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_HighlightImpl extends BloxInlineElement_Highlight {
+class _$BloxInlineElement_HighlightImpl extends BloxInlineElement_Highlight
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_HighlightImpl(this.field0) : super._();
 
   @override
   final String field0;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.highlight(field0: $field0)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.highlight'))
+      ..add(DiagnosticsProperty('field0', field0));
   }
 
   @override
@@ -1949,15 +2021,24 @@ class __$$BloxInlineElement_SubscriptImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_SubscriptImpl extends BloxInlineElement_Subscript {
+class _$BloxInlineElement_SubscriptImpl extends BloxInlineElement_Subscript
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_SubscriptImpl(this.field0) : super._();
 
   @override
   final String field0;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.subscript(field0: $field0)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.subscript'))
+      ..add(DiagnosticsProperty('field0', field0));
   }
 
   @override
@@ -2168,16 +2249,24 @@ class __$$BloxInlineElement_SuperscriptImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_SuperscriptImpl
-    extends BloxInlineElement_Superscript {
+class _$BloxInlineElement_SuperscriptImpl extends BloxInlineElement_Superscript
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_SuperscriptImpl(this.field0) : super._();
 
   @override
   final String field0;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.superscript(field0: $field0)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.superscript'))
+      ..add(DiagnosticsProperty('field0', field0));
   }
 
   @override
@@ -2390,15 +2479,24 @@ class __$$BloxInlineElement_ReferenceImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_ReferenceImpl extends BloxInlineElement_Reference {
+class _$BloxInlineElement_ReferenceImpl extends BloxInlineElement_Reference
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_ReferenceImpl(this.field0) : super._();
 
   @override
   final String field0;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.reference(field0: $field0)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.reference'))
+      ..add(DiagnosticsProperty('field0', field0));
   }
 
   @override
@@ -2614,7 +2712,8 @@ class __$$BloxInlineElement_FootnoteImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_FootnoteImpl extends BloxInlineElement_Footnote {
+class _$BloxInlineElement_FootnoteImpl extends BloxInlineElement_Footnote
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_FootnoteImpl({required this.id, required this.text})
       : super._();
 
@@ -2624,8 +2723,17 @@ class _$BloxInlineElement_FootnoteImpl extends BloxInlineElement_Footnote {
   final String text;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.footnote(id: $id, text: $text)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.footnote'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('text', text));
   }
 
   @override
@@ -2850,7 +2958,8 @@ class __$$BloxInlineElement_CustomImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxInlineElement_CustomImpl extends BloxInlineElement_Custom {
+class _$BloxInlineElement_CustomImpl extends BloxInlineElement_Custom
+    with DiagnosticableTreeMixin {
   const _$BloxInlineElement_CustomImpl(
       {required this.elementType,
       required final Map<String, String> attributes,
@@ -2872,8 +2981,18 @@ class _$BloxInlineElement_CustomImpl extends BloxInlineElement_Custom {
   final String content;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxInlineElement.custom(elementType: $elementType, attributes: $attributes, content: $content)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxInlineElement.custom'))
+      ..add(DiagnosticsProperty('elementType', elementType))
+      ..add(DiagnosticsProperty('attributes', attributes))
+      ..add(DiagnosticsProperty('content', content));
   }
 
   @override
@@ -3148,12 +3267,19 @@ class __$$BloxListItemType_UncheckedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxListItemType_UncheckedImpl extends BloxListItemType_Unchecked {
+class _$BloxListItemType_UncheckedImpl extends BloxListItemType_Unchecked
+    with DiagnosticableTreeMixin {
   const _$BloxListItemType_UncheckedImpl() : super._();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxListItemType.unchecked()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'BloxListItemType.unchecked'));
   }
 
   @override
@@ -3263,12 +3389,19 @@ class __$$BloxListItemType_CheckedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxListItemType_CheckedImpl extends BloxListItemType_Checked {
+class _$BloxListItemType_CheckedImpl extends BloxListItemType_Checked
+    with DiagnosticableTreeMixin {
   const _$BloxListItemType_CheckedImpl() : super._();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxListItemType.checked()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'BloxListItemType.checked'));
   }
 
   @override
@@ -3393,15 +3526,24 @@ class __$$BloxListItemType_DefinitionImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$BloxListItemType_DefinitionImpl extends BloxListItemType_Definition {
+class _$BloxListItemType_DefinitionImpl extends BloxListItemType_Definition
+    with DiagnosticableTreeMixin {
   const _$BloxListItemType_DefinitionImpl({required this.term}) : super._();
 
   @override
   final String term;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'BloxListItemType.definition(term: $term)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'BloxListItemType.definition'))
+      ..add(DiagnosticsProperty('term', term));
   }
 
   @override

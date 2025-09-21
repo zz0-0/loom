@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loom/plugins/core/plugin_manager.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
@@ -50,7 +51,7 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
 
       // Mobile AppBar (completely different from desktop top bar)
       appBar: AppBar(
-        title: const Text('Loom'),
+        title: Text(AppLocalizations.of(context).loomAppTitle),
         backgroundColor: theme.colorScheme.surface,
         foregroundColor: theme.colorScheme.onSurface,
         elevation: 0,
@@ -108,14 +109,14 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Loom Knowledge Base',
+                  AppLocalizations.of(context).loomKnowledgeBase,
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: theme.colorScheme.onPrimaryContainer,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  'Your workspace',
+                  AppLocalizations.of(context).yourWorkspace,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color:
                         theme.colorScheme.onPrimaryContainer.withOpacity(0.8),
@@ -132,33 +133,33 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
               children: [
                 _DrawerItem(
                   icon: LucideIcons.folderOpen,
-                  title: 'Recent Files',
+                  title: AppLocalizations.of(context).recentFiles,
                   onTap: _navigateToRecentFiles,
                 ),
                 _DrawerItem(
                   icon: LucideIcons.star,
-                  title: 'Favorites',
+                  title: AppLocalizations.of(context).favorites,
                   onTap: _navigateToFavorites,
                 ),
                 _DrawerItem(
                   icon: LucideIcons.clock,
-                  title: 'History',
+                  title: AppLocalizations.of(context).history,
                   onTap: _navigateToHistory,
                 ),
                 const Divider(),
                 _DrawerItem(
                   icon: LucideIcons.puzzle,
-                  title: 'Plugins',
+                  title: AppLocalizations.of(context).plugins,
                   onTap: _navigateToPlugins,
                 ),
                 _DrawerItem(
                   icon: LucideIcons.settings,
-                  title: 'Settings',
+                  title: AppLocalizations.of(context).settings,
                   onTap: _navigateToSettings,
                 ),
                 _DrawerItem(
                   icon: LucideIcons.helpCircle,
-                  title: 'Help & Support',
+                  title: AppLocalizations.of(context).helpAndSupport,
                   onTap: _navigateToHelp,
                 ),
               ],
@@ -172,7 +173,7 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
               children: [
                 _DrawerItem(
                   icon: LucideIcons.moon,
-                  title: 'Dark Mode',
+                  title: AppLocalizations.of(context).darkMode,
                   trailing: Switch(
                     value: Theme.of(context).brightness == Brightness.dark,
                     onChanged: (value) {
@@ -226,22 +227,22 @@ class _MobileLayoutState extends ConsumerState<MobileLayout> {
           _selectedBottomNavIndex = index;
         });
       },
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(LucideIcons.fileText),
-          label: 'Documents',
+          icon: const Icon(LucideIcons.fileText),
+          label: AppLocalizations.of(context).documents,
         ),
         BottomNavigationBarItem(
-          icon: Icon(LucideIcons.search),
-          label: 'Search',
+          icon: const Icon(LucideIcons.search),
+          label: AppLocalizations.of(context).search,
         ),
         BottomNavigationBarItem(
-          icon: Icon(LucideIcons.edit),
-          label: 'Editor',
+          icon: const Icon(LucideIcons.edit),
+          label: AppLocalizations.of(context).editor,
         ),
         BottomNavigationBarItem(
-          icon: Icon(LucideIcons.bookmark),
-          label: 'Collections',
+          icon: const Icon(LucideIcons.bookmark),
+          label: AppLocalizations.of(context).collections,
         ),
       ],
     );
@@ -357,7 +358,8 @@ class _MobileDocumentsView extends StatelessWidget {
           child: ListTile(
             leading: const Icon(LucideIcons.fileText),
             title: const Text('Getting Started'),
-            subtitle: const Text('Welcome to your knowledge base'),
+            subtitle:
+                Text(AppLocalizations.of(context).welcomeToYourKnowledgeBase),
             trailing: const Icon(LucideIcons.chevronRight),
             onTap: () {
               // Open file
@@ -368,7 +370,8 @@ class _MobileDocumentsView extends StatelessWidget {
           child: ListTile(
             leading: const Icon(LucideIcons.fileCode),
             title: const Text('Project Notes'),
-            subtitle: const Text('Development documentation'),
+            subtitle:
+                Text(AppLocalizations.of(context).developmentDocumentation),
             trailing: const Icon(LucideIcons.chevronRight),
             onTap: () {
               // Open file
@@ -387,6 +390,7 @@ class _MobileSearchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Padding(
       padding: AppSpacing.paddingMd,
@@ -394,7 +398,7 @@ class _MobileSearchView extends StatelessWidget {
         children: [
           TextField(
             decoration: InputDecoration(
-              hintText: 'Search your knowledge base...',
+              hintText: localizations.searchYourKnowledgeBase,
               hintStyle: TextStyle(
                 color: theme.colorScheme.onSurface.withOpacity(0.4),
               ),
@@ -403,9 +407,9 @@ class _MobileSearchView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Expanded(
+          Expanded(
             child: Center(
-              child: Text('Search results will appear here'),
+              child: Text(localizations.searchResultsWillAppearHere),
             ),
           ),
         ],
@@ -419,8 +423,9 @@ class _MobileCollectionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Collections view for mobile'),
+    final localizations = AppLocalizations.of(context);
+    return Center(
+      child: Text(localizations.collectionsViewForMobile),
     );
   }
 }
@@ -433,6 +438,7 @@ class _MobileSearchModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
@@ -442,16 +448,16 @@ class _MobileSearchModal extends StatelessWidget {
           TextField(
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Search everything...',
+              hintText: localizations.searchEverything,
               hintStyle: TextStyle(
                 color: theme.colorScheme.onSurface.withOpacity(0.4),
               ),
               prefixIcon: const Icon(LucideIcons.search),
             ),
           ),
-          const Expanded(
+          Expanded(
             child: Center(
-              child: Text('Mobile search interface'),
+              child: Text(localizations.mobileSearchInterface),
             ),
           ),
         ],
@@ -465,22 +471,23 @@ class _MobileOptionsMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.paddingMd,
-      child: const Column(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            leading: Icon(LucideIcons.settings),
-            title: Text('Settings'),
+            leading: const Icon(LucideIcons.settings),
+            title: Text(localizations.settings),
           ),
           ListTile(
-            leading: Icon(LucideIcons.share),
-            title: Text('Share'),
+            leading: const Icon(LucideIcons.share),
+            title: Text(localizations.share),
           ),
           ListTile(
-            leading: Icon(LucideIcons.download),
-            title: Text('Export'),
+            leading: const Icon(LucideIcons.download),
+            title: Text(localizations.export),
           ),
         ],
       ),
@@ -493,22 +500,23 @@ class _MobileCreateOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Container(
       padding: AppSpacing.paddingMd,
-      child: const Column(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            leading: Icon(LucideIcons.fileText),
-            title: Text('New Document'),
+            leading: const Icon(LucideIcons.fileText),
+            title: Text(localizations.newDocument),
           ),
           ListTile(
-            leading: Icon(LucideIcons.folder),
-            title: Text('New Folder'),
+            leading: const Icon(LucideIcons.folder),
+            title: Text(localizations.newFolder),
           ),
           ListTile(
-            leading: Icon(LucideIcons.camera),
-            title: Text('Scan Document'),
+            leading: const Icon(LucideIcons.camera),
+            title: Text(localizations.scanDocument),
           ),
         ],
       ),
@@ -524,6 +532,7 @@ class _MobilePluginsModal extends StatelessWidget {
     final pluginManager = PluginManager.instance;
     final activePlugins = pluginManager.getActivePlugins();
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.8,
@@ -536,7 +545,7 @@ class _MobilePluginsModal extends StatelessWidget {
               const Icon(LucideIcons.puzzle),
               const SizedBox(width: 8),
               Text(
-                'Plugins',
+                localizations.plugins,
                 style: theme.textTheme.titleLarge,
               ),
               const Spacer(),
@@ -556,12 +565,12 @@ class _MobilePluginsModal extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _PluginStatItem(
-                    label: 'Active',
+                    label: localizations.active,
                     value: activePlugins.length.toString(),
                     icon: LucideIcons.play,
                   ),
                   _PluginStatItem(
-                    label: 'Total',
+                    label: localizations.total,
                     value:
                         pluginManager.getInstalledPlugins().length.toString(),
                     icon: LucideIcons.package,
@@ -597,8 +606,11 @@ class _MobilePluginsModal extends StatelessWidget {
                               SnackBar(
                                 content: Text(
                                   result.success
-                                      ? 'Command executed successfully'
-                                      : 'Command failed: ${result.error}',
+                                      ? localizations
+                                          .commandExecutedSuccessfully
+                                      : localizations.commandFailed(
+                                          result.error ?? 'Unknown error',
+                                        ),
                                 ),
                               ),
                             );
@@ -607,7 +619,10 @@ class _MobilePluginsModal extends StatelessWidget {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Failed to execute command: $e'),
+                                content: Text(
+                                  localizations
+                                      .failedToExecuteCommand(e.toString()),
+                                ),
                                 backgroundColor: theme.colorScheme.error,
                               ),
                             );
@@ -632,9 +647,9 @@ class _MobilePluginsModal extends StatelessWidget {
 
           // If no plugins
           if (activePlugins.isEmpty)
-            const Expanded(
+            Expanded(
               child: Center(
-                child: Text('No active plugins'),
+                child: Text(localizations.noActivePlugins),
               ),
             ),
         ],

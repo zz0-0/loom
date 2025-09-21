@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Color picker dialog for theme customization
 class ThemeColorPicker extends StatefulWidget {
@@ -31,6 +32,7 @@ class _ThemeColorPickerState extends State<ThemeColorPicker> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return AlertDialog(
       title: Text(widget.title),
@@ -62,7 +64,7 @@ class _ThemeColorPickerState extends State<ThemeColorPicker> {
               ),
               child: Center(
                 child: Text(
-                  'Preview',
+                  loc.preview,
                   style: TextStyle(
                     color: _currentColor.computeLuminance() > 0.5
                         ? Colors.black
@@ -78,14 +80,14 @@ class _ThemeColorPickerState extends State<ThemeColorPicker> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(loc.cancel),
         ),
         ElevatedButton(
           onPressed: () {
             widget.onColorChanged(_currentColor);
             Navigator.of(context).pop();
           },
-          child: const Text('Apply'),
+          child: Text(loc.apply),
         ),
       ],
     );
@@ -108,6 +110,7 @@ class ColorPickerButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return InkWell(
       onTap: () async {
@@ -115,7 +118,7 @@ class ColorPickerButton extends StatelessWidget {
           context: context,
           builder: (context) => ThemeColorPicker(
             initialColor: color,
-            title: 'Select $label Color',
+            title: loc.selectColorLabel(label),
             onColorChanged: (color) => Navigator.of(context).pop(color),
           ),
         );
@@ -203,12 +206,13 @@ class FontFamilySelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Font Family',
+          loc.fontFamilyLabel,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -249,7 +253,7 @@ class FontFamilySelector extends StatelessWidget {
             borderRadius: AppRadius.radiusSm,
           ),
           child: Text(
-            'Preview: The quick brown fox jumps over the lazy dog',
+            loc.previewSampleText,
             style: TextStyle(
               fontFamily: currentFontFamily,
               fontSize: 14,
@@ -276,12 +280,13 @@ class FontSizeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final loc = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Font Size',
+          loc.fontSizeLabel,
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
           ),

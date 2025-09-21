@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/explorer/index.dart';
 import 'package:loom/features/core/search/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -26,8 +27,13 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
   @override
   void initState() {
     super.initState();
-    _focusNode.requestFocus();
-    _loadItems();
+    // Delay loading items until after the first frame so inherited widgets
+    // (like Localizations) are available. Calling AppLocalizations.of(context)
+    // in initState can throw; running in a post-frame callback is safe.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+      _loadItems();
+    });
   }
 
   @override
@@ -43,41 +49,42 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
     final items = <_PaletteItem>[];
 
     // Add static command items
+    final loc = AppLocalizations.of(context);
     final staticItems = [
       _PaletteItem(
-        title: 'Search Files',
-        subtitle: 'Search for files by name',
+        title: loc.commandPaletteSearchFilesTitle,
+        subtitle: loc.commandPaletteSearchFilesSubtitle,
         icon: LucideIcons.search,
         action: _showFileSearch,
-        category: 'Search',
+        category: loc.search,
       ),
       _PaletteItem(
-        title: 'Search in Files',
-        subtitle: 'Search for text content in files',
+        title: loc.commandPaletteSearchInFilesTitle,
+        subtitle: loc.commandPaletteSearchInFilesSubtitle,
         icon: LucideIcons.fileSearch,
         action: _showContentSearch,
-        category: 'Search',
+        category: loc.search,
       ),
       _PaletteItem(
-        title: 'Open Folder',
-        subtitle: 'Open a workspace folder',
+        title: loc.openFolder,
+        subtitle: loc.openFolderMenu,
         icon: LucideIcons.folderOpen,
         action: _openFolder,
-        category: 'File',
+        category: loc.file,
       ),
       _PaletteItem(
-        title: 'New File',
-        subtitle: 'Create a new file',
+        title: loc.newFile,
+        subtitle: loc.create, // short label 'Create'
         icon: LucideIcons.filePlus,
         action: _newFile,
-        category: 'File',
+        category: loc.file,
       ),
       _PaletteItem(
-        title: 'Settings',
-        subtitle: 'Open settings',
+        title: loc.settings,
+        subtitle: loc.settingsPanelComingSoon,
         icon: LucideIcons.settings,
         action: _openSettings,
-        category: 'View',
+        category: loc.view,
       ),
     ];
 
@@ -201,7 +208,9 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
     // Trigger open folder dialog from desktop layout
     // This would need to be coordinated with the desktop layout
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Use File > Open to open a folder')),
+      SnackBar(
+        content: Text(AppLocalizations.of(context).useFileOpenToOpenFolder),
+      ),
     );
   }
 
@@ -209,8 +218,9 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
     // Trigger new file creation from content area
     // This would need to be coordinated with the content area
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Use the welcome screen to create a new file'),
+      SnackBar(
+        content:
+            Text(AppLocalizations.of(context).useWelcomeScreenToCreateFile),
       ),
     );
   }
@@ -218,7 +228,9 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
   void _openSettings() {
     // Navigate to settings - this would need integration with the UI registry
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Settings panel coming soon')),
+      SnackBar(
+        content: Text(AppLocalizations.of(context).settingsPanelComingSoon),
+      ),
     );
   }
 
@@ -226,7 +238,11 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
     final container = ProviderScope.containerOf(context, listen: false);
     container.read(fileOpeningServiceProvider).openFile(filePath);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Opened: ${path.basename(filePath)}')),
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context).openedFile(path.basename(filePath)),
+        ),
+      ),
     );
   }
 
@@ -293,7 +309,8 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
                   controller: _controller,
                   focusNode: _focusNode,
                   decoration: InputDecoration(
-                    hintText: 'Type to search files and commands...',
+                    hintText: AppLocalizations.of(context)
+                        .typeToSearchFilesAndCommands,
                     hintStyle: TextStyle(
                       color: theme.colorScheme.onSurface.withOpacity(0.4),
                     ),
@@ -328,7 +345,7 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'No results found',
+                                  AppLocalizations.of(context).noResultsFound,
                                   style: theme.textTheme.bodyLarge?.copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
                                   ),
@@ -442,21 +459,21 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
               child: Row(
                 children: [
                   Text(
-                    '↑↓ Navigate',
+                    AppLocalizations.of(context).navigateUpDown,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Text(
-                    '↵ Select',
+                    AppLocalizations.of(context).selectEnter,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Text(
-                    'Esc Close',
+                    AppLocalizations.of(context).closeEscape,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -595,7 +612,11 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
       container.read(fileOpeningServiceProvider).openFile(filePath);
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Opened: ${path.basename(filePath)}')),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).openedFile(path.basename(filePath)),
+          ),
+        ),
       );
     }
   }
@@ -643,7 +664,7 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Find File',
+                    AppLocalizations.of(context).findFile,
                     style: theme.textTheme.headlineSmall,
                   ),
                   const Spacer(),
@@ -685,7 +706,7 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
                   controller: _controller,
                   focusNode: _focusNode,
                   decoration: InputDecoration(
-                    hintText: 'Type to search files...',
+                    hintText: AppLocalizations.of(context).typeToSearchFiles,
                     hintStyle: TextStyle(
                       color: theme.colorScheme.onSurface.withOpacity(0.4),
                     ),
@@ -716,8 +737,10 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
                               const SizedBox(height: 16),
                               Text(
                                 _controller.text.isEmpty
-                                    ? 'No files found in workspace'
-                                    : 'No files match your search',
+                                    ? AppLocalizations.of(context)
+                                        .noFilesFoundInWorkspace
+                                    : AppLocalizations.of(context)
+                                        .noFilesMatchSearch,
                                 style: theme.textTheme.bodyLarge?.copyWith(
                                   color: theme.colorScheme.onSurfaceVariant,
                                 ),
@@ -813,14 +836,15 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
               child: Row(
                 children: [
                   Text(
-                    '${_filteredFiles.length} files',
+                    AppLocalizations.of(context)
+                        .footerFilesCount(_filteredFiles.length),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                   const Spacer(),
                   Text(
-                    '↑↓ Navigate • ↵ Open • Esc Close',
+                    AppLocalizations.of(context).navigateOpenClose,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),

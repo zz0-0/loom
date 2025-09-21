@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/explorer/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class ContentArea extends ConsumerWidget {
@@ -173,6 +174,7 @@ class _WelcomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Consumer(
       builder: (context, ref, child) => Center(
@@ -186,7 +188,7 @@ class _WelcomeView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Welcome to Loom',
+              localizations.welcomeToLoomTitle,
               style: theme.textTheme.headlineSmall?.copyWith(
                 color: theme.colorScheme.onSurface,
                 fontWeight: FontWeight.w600,
@@ -194,7 +196,7 @@ class _WelcomeView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Your next-generation knowledge base',
+              localizations.yourNextGenerationKnowledgeBase,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -205,22 +207,22 @@ class _WelcomeView extends StatelessWidget {
               children: [
                 _WelcomeAction(
                   icon: LucideIcons.folderOpen,
-                  title: 'Open Folder',
-                  subtitle: 'Open an existing workspace',
+                  title: localizations.openFolderTitle,
+                  subtitle: localizations.openAnExistingWorkspace,
                   onTap: () => _openFolder(context, ref),
                 ),
                 const SizedBox(width: 24),
                 _WelcomeAction(
                   icon: LucideIcons.filePlus,
-                  title: 'New File',
-                  subtitle: 'Create a new document',
+                  title: localizations.newFileTitle,
+                  subtitle: localizations.createANewDocument,
                   onTap: () => _createNewFile(context, ref),
                 ),
                 const SizedBox(width: 24),
                 _WelcomeAction(
                   icon: LucideIcons.gitBranch,
-                  title: 'Clone Repository',
-                  subtitle: 'Clone from Git',
+                  title: localizations.cloneRepositoryTitle,
+                  subtitle: localizations.cloneFromGit,
                   onTap: () => _cloneRepository(context, ref),
                 ),
               ],
@@ -232,6 +234,7 @@ class _WelcomeView extends StatelessWidget {
   }
 
   Future<void> _openFolder(BuildContext context, WidgetRef ref) async {
+    final localizations = AppLocalizations.of(context);
     try {
       final selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
@@ -244,7 +247,8 @@ class _WelcomeView extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Opened workspace: ${selectedDirectory.split('/').last}',
+                localizations
+                    .openedWorkspace(selectedDirectory.split('/').last),
               ),
               duration: const Duration(seconds: 2),
             ),
@@ -255,7 +259,7 @@ class _WelcomeView extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to open folder: $e'),
+            content: Text(localizations.failedToOpenFolder(e.toString())),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -264,18 +268,19 @@ class _WelcomeView extends StatelessWidget {
   }
 
   Future<void> _createNewFile(BuildContext context, WidgetRef ref) async {
+    final localizations = AppLocalizations.of(context);
     final controller = TextEditingController();
     final theme = Theme.of(context);
 
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Create New File'),
+        title: Text(localizations.createNewFile),
         content: TextField(
           controller: controller,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: 'Enter file name (e.g., document.md)',
+            hintText: localizations.enterFileNameHint,
             hintStyle: TextStyle(
               color: theme.colorScheme.onSurface.withOpacity(0.4),
             ),
@@ -285,7 +290,7 @@ class _WelcomeView extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(localizations.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -294,7 +299,7 @@ class _WelcomeView extends StatelessWidget {
                 Navigator.of(context).pop(fileName);
               }
             },
-            child: const Text('Create'),
+            child: Text(localizations.create),
           ),
         ],
       ),
@@ -317,7 +322,7 @@ class _WelcomeView extends StatelessWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Created and opened: $fileName'),
+                content: Text(localizations.createdAndOpenedFile(fileName)),
                 duration: const Duration(seconds: 2),
               ),
             );
@@ -326,7 +331,7 @@ class _WelcomeView extends StatelessWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Failed to create file: $e'),
+                content: Text(localizations.failedToCreateFolder(e.toString())),
                 backgroundColor: Theme.of(context).colorScheme.error,
               ),
             );
@@ -334,8 +339,8 @@ class _WelcomeView extends StatelessWidget {
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please open a workspace first'),
+          SnackBar(
+            content: Text(localizations.pleaseOpenWorkspaceFirst),
             backgroundColor: Colors.orange,
           ),
         );
@@ -344,6 +349,7 @@ class _WelcomeView extends StatelessWidget {
   }
 
   Future<void> _cloneRepository(BuildContext context, WidgetRef ref) async {
+    final localizations = AppLocalizations.of(context);
     final urlController = TextEditingController();
     final directoryController = TextEditingController();
     final theme = Theme.of(context);
@@ -351,16 +357,15 @@ class _WelcomeView extends StatelessWidget {
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clone Git Repository'),
+        title: Text(localizations.cloneRepositoryTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: urlController,
               decoration: InputDecoration(
-                labelText: 'Repository URL',
-                hintText:
-                    'Enter Git repository URL (e.g., https://github.com/user/repo.git)',
+                labelText: localizations.repositoryUrl,
+                hintText: localizations.enterGitRepositoryUrl,
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                 ),
@@ -370,8 +375,8 @@ class _WelcomeView extends StatelessWidget {
             TextField(
               controller: directoryController,
               decoration: InputDecoration(
-                labelText: 'Target Directory (optional)',
-                hintText: 'Leave empty to use repository name',
+                labelText: localizations.targetDirectoryOptional,
+                hintText: localizations.leaveEmptyToUseRepositoryName,
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                 ),
@@ -382,7 +387,7 @@ class _WelcomeView extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(localizations.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -395,7 +400,7 @@ class _WelcomeView extends StatelessWidget {
                 });
               }
             },
-            child: const Text('Clone'),
+            child: Text(localizations.create),
           ),
         ],
       ),
@@ -408,9 +413,9 @@ class _WelcomeView extends StatelessWidget {
 
         // Show loading indicator
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Cloning repository...'),
-            duration: Duration(seconds: 1),
+          SnackBar(
+            content: Text(localizations.cloningRepository),
+            duration: const Duration(seconds: 1),
           ),
         );
 
@@ -432,8 +437,8 @@ class _WelcomeView extends StatelessWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content:
-                    Text('Successfully cloned repository to: $fullClonePath'),
+                content: Text(
+                    localizations.successfullyClonedRepository(fullClonePath),),
                 duration: const Duration(seconds: 3),
               ),
             );
@@ -442,7 +447,8 @@ class _WelcomeView extends StatelessWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Failed to clone repository: ${process.stderr}'),
+                content: Text(localizations
+                    .failedToCloneRepository(process.stderr.toString()),),
                 backgroundColor: Theme.of(context).colorScheme.error,
                 duration: const Duration(seconds: 5),
               ),
@@ -531,6 +537,7 @@ class _EditorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Container(
       padding: AppSpacing.paddingMd,
@@ -538,7 +545,7 @@ class _EditorView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Editing: $filePath',
+            localizations.editingFile(filePath),
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
@@ -557,7 +564,7 @@ class _EditorView extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Editor content will be implemented here.\n\nThis is where your innovative knowledge base editing experience will live!',
+                localizations.editorContentPlaceholder,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),

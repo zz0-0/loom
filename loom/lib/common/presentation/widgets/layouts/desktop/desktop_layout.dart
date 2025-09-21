@@ -6,6 +6,7 @@ import 'package:loom/common/presentation/widgets/layouts/desktop/panels/resizabl
 import 'package:loom/features/core/explorer/index.dart';
 import 'package:loom/features/core/search/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loom/plugins/core/plugin_manager.dart';
 import 'package:loom/plugins/core/presentation/plugin_sidebar_item.dart';
 import 'package:path/path.dart' as path;
@@ -21,16 +22,33 @@ class DesktopLayout extends ConsumerStatefulWidget {
 }
 
 class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
+  bool _isInitialized = false;
+  Locale? _currentLocale;
+
   @override
   void initState() {
     super.initState();
     _initializePluginSystem();
-    _registerDefaultComponents();
 
     // Register plugin sidebar items after the UI is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _registerPluginSidebarItems();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Register default components after dependencies are available
+    // This ensures AppLocalizations is available
+    if (!_isInitialized) {
+      _isInitialized = true;
+      // Defer menu registration to ensure localization is fully available
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _registerDefaultComponents();
+      });
+    }
   }
 
   /// Initialize the plugin system
@@ -48,6 +66,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   /// Register default UI components
   void _registerDefaultComponents() {
     final menuRegistry = MenuRegistry();
+    final l10n = AppLocalizations.of(context);
 
     // Register file content provider
     UIRegistry().registerContentProvider(FileContentProvider());
@@ -58,109 +77,258 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     // Register default menus
     menuRegistry.registerMenus([
       SimpleMenuItem(
-        label: 'File',
+        label: l10n.file,
         children: [
           SimpleMenuItem(
-            label: 'New',
+            label: l10n.newFile,
             icon: Icons.add,
             onPressedWithContext: _handleNewFile,
           ),
           SimpleMenuItem(
-            label: 'Open Folder',
+            label: l10n.openFolder,
             icon: Icons.folder_open,
             onPressedWithContext: (context) =>
                 ref.read(currentFolderProvider.notifier).openFolder(context),
           ),
           SimpleMenuItem(
-            label: 'Save',
+            label: l10n.save,
             icon: Icons.save,
             onPressedWithContext: _handleSave,
           ),
           SimpleMenuItem(
-            label: 'Save As',
+            label: l10n.saveAs,
             icon: Icons.save_as,
             onPressedWithContext: _handleSaveAs,
           ),
           SimpleMenuItem(
-            label: 'Export',
+            label: l10n.export,
             icon: Icons.file_download,
             onPressedWithContext: _handleExport,
           ),
           SimpleMenuItem(
-            label: 'Exit',
+            label: l10n.exit,
             icon: Icons.exit_to_app,
             onPressedWithContext: _handleExit,
           ),
         ],
       ),
       SimpleMenuItem(
-        label: 'Edit',
+        label: l10n.edit,
         children: [
           SimpleMenuItem(
-            label: 'Undo',
+            label: l10n.undo,
             icon: Icons.undo,
             onPressedWithContext: _handleUndo,
           ),
           SimpleMenuItem(
-            label: 'Redo',
+            label: l10n.redo,
             icon: Icons.redo,
             onPressedWithContext: _handleRedo,
           ),
           SimpleMenuItem(
-            label: 'Cut',
+            label: l10n.cut,
             icon: Icons.content_cut,
             onPressedWithContext: _handleCut,
           ),
           SimpleMenuItem(
-            label: 'Copy',
+            label: l10n.copy,
             icon: Icons.copy,
             onPressedWithContext: _handleCopy,
           ),
           SimpleMenuItem(
-            label: 'Paste',
+            label: l10n.paste,
             icon: Icons.paste,
             onPressedWithContext: _handlePaste,
           ),
         ],
       ),
       SimpleMenuItem(
-        label: 'View',
+        label: l10n.view,
         children: [
           SimpleMenuItem(
-            label: 'Toggle Sidebar',
+            label: l10n.toggleSidebar,
             onPressedWithContext: _handleToggleSidebar,
           ),
           SimpleMenuItem(
-            label: 'Toggle Panel',
+            label: l10n.togglePanel,
             onPressedWithContext: _handleTogglePanel,
           ),
           SimpleMenuItem(
-            label: 'Full Screen',
+            label: l10n.fullScreen,
             onPressedWithContext: _handleFullScreen,
           ),
         ],
       ),
       SimpleMenuItem(
-        label: 'Help',
+        label: l10n.help,
         children: [
           SimpleMenuItem(
-            label: 'Documentation',
+            label: l10n.documentation,
             onPressedWithContext: _handleDocumentation,
           ),
           SimpleMenuItem(
-            label: 'About',
+            label: l10n.about,
             onPressedWithContext: _handleAbout,
           ),
         ],
       ),
       // Add Plugins menu
       SimpleMenuItem(
-        label: 'Plugins',
+        label: l10n.plugins,
         children: _buildPluginMenuItems(context),
       ),
     ]);
 
     // Future features can register their own components here
+  }
+
+  /// Re-register menus when locale changes
+  void _reRegisterMenus() {
+    debugPrint('🔄 Re-registering menus for locale change');
+    final menuRegistry = MenuRegistry();
+
+    final l10n = AppLocalizations.of(context);
+
+    // Clear existing menus and re-register default menus with new locale
+    menuRegistry
+      ..clear()
+      ..registerMenus([
+        SimpleMenuItem(
+          label: l10n.file,
+          children: [
+            SimpleMenuItem(
+              label: l10n.newFile,
+              icon: Icons.add,
+              onPressedWithContext: _handleNewFile,
+            ),
+            SimpleMenuItem(
+              label: l10n.openFolder,
+              icon: Icons.folder_open,
+              onPressedWithContext: (context) =>
+                  ref.read(currentFolderProvider.notifier).openFolder(context),
+            ),
+            SimpleMenuItem(
+              label: l10n.save,
+              icon: Icons.save,
+              onPressedWithContext: _handleSave,
+            ),
+            SimpleMenuItem(
+              label: l10n.saveAs,
+              icon: Icons.save_as,
+              onPressedWithContext: _handleSaveAs,
+            ),
+            SimpleMenuItem(
+              label: l10n.export,
+              icon: Icons.file_download,
+              onPressedWithContext: _handleExport,
+            ),
+            SimpleMenuItem(
+              label: l10n.exit,
+              icon: Icons.exit_to_app,
+              onPressedWithContext: _handleExit,
+            ),
+          ],
+        ),
+        SimpleMenuItem(
+          label: l10n.edit,
+          children: [
+            SimpleMenuItem(
+              label: l10n.undo,
+              icon: Icons.undo,
+              onPressedWithContext: _handleUndo,
+            ),
+            SimpleMenuItem(
+              label: l10n.redo,
+              icon: Icons.redo,
+              onPressedWithContext: _handleRedo,
+            ),
+            SimpleMenuItem(
+              label: l10n.cut,
+              icon: Icons.content_cut,
+              onPressedWithContext: _handleCut,
+            ),
+            SimpleMenuItem(
+              label: l10n.copy,
+              icon: Icons.copy,
+              onPressedWithContext: _handleCopy,
+            ),
+            SimpleMenuItem(
+              label: l10n.paste,
+              icon: Icons.paste,
+              onPressedWithContext: _handlePaste,
+            ),
+          ],
+        ),
+        SimpleMenuItem(
+          label: l10n.view,
+          children: [
+            SimpleMenuItem(
+              label: l10n.toggleSidebar,
+              onPressedWithContext: _handleToggleSidebar,
+            ),
+            SimpleMenuItem(
+              label: l10n.togglePanel,
+              onPressedWithContext: _handleTogglePanel,
+            ),
+            SimpleMenuItem(
+              label: l10n.fullScreen,
+              onPressedWithContext: _handleFullScreen,
+            ),
+          ],
+        ),
+        SimpleMenuItem(
+          label: l10n.help,
+          children: [
+            SimpleMenuItem(
+              label: l10n.documentation,
+              onPressedWithContext: _handleDocumentation,
+            ),
+            SimpleMenuItem(
+              label: l10n.about,
+              onPressedWithContext: _handleAbout,
+            ),
+          ],
+        ),
+        // Add Plugins menu
+        SimpleMenuItem(
+          label: l10n.plugins,
+          children: _buildPluginMenuItems(context),
+        ),
+      ]);
+
+    debugPrint('✅ Re-registered ${menuRegistry.menus.length} menus');
+
+    // Force rebuild of the widget tree to update menu display
+    if (mounted) {
+      // Refresh titles of any open settings tabs so they reflect the new locale
+      try {
+        ref.read(tabProvider.notifier).updateTabTitles((tab) {
+          if (tab.contentType == 'settings') {
+            // Map id to localized title where possible
+            switch (tab.id) {
+              case 'settings':
+                return l10n.settings;
+              case 'settings:appearance':
+                return l10n.appearance;
+              case 'settings:interface':
+                return l10n.interface;
+              case 'settings:general':
+                return l10n.general;
+              case 'settings:about':
+                return l10n.about;
+              default:
+                return tab.title;
+            }
+          }
+          return tab.title;
+        });
+      } catch (_) {
+        // If tabProvider isn't available for some reason, ignore and continue
+      }
+
+      setState(() {});
+      debugPrint('🔄 Forced widget rebuild');
+    }
   }
 
   /// Register all features
@@ -192,15 +360,14 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
   void _registerSettingsFeature() {
     final settingsItem = SettingsSidebarItem();
-    UIRegistry().registerSidebarItem(settingsItem);
-
-    // Register settings content providers
-    UIRegistry()
-      ..registerContentProvider(SettingsContentProvider())
-      ..registerContentProvider(AppearanceSettingsContentProvider())
-      ..registerContentProvider(InterfaceSettingsContentProvider())
-      ..registerContentProvider(GeneralSettingsContentProvider())
-      ..registerContentProvider(AboutSettingsContentProvider());
+    // Register settings sidebar item and content providers
+    final registry = UIRegistry();
+    registry.registerSidebarItem(settingsItem);
+    registry.registerContentProvider(SettingsContentProvider());
+    registry.registerContentProvider(AppearanceSettingsContentProvider());
+    registry.registerContentProvider(InterfaceSettingsContentProvider());
+    registry.registerContentProvider(GeneralSettingsContentProvider());
+    registry.registerContentProvider(AboutSettingsContentProvider());
   }
 
   void _registerSearchFeature() {
@@ -219,13 +386,14 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     try {
       final pluginManager = PluginManager.instance;
       final activePlugins = pluginManager.getActivePlugins();
+      final registry = UIRegistry();
 
       if (activePlugins.isNotEmpty) {
         debugPrint('Registering ${activePlugins.length} plugin sidebar items');
 
         for (final plugin in activePlugins) {
           final sidebarItem = IndividualPluginSidebarItem(plugin);
-          UIRegistry().registerSidebarItem(sidebarItem);
+          registry.registerSidebarItem(sidebarItem);
           debugPrint('Registered sidebar item for plugin: ${plugin.name}');
         }
       } else {
@@ -249,8 +417,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     final workspace = ref.read(currentWorkspaceProvider);
     if (workspace == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please open a folder first to create a new file'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).openFolderFirst,
+          ),
           backgroundColor: Colors.orange,
         ),
       );
@@ -266,8 +436,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
     if (editorState.filePath == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No file is currently open to save'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).noFileOpenToSave,
+          ),
           backgroundColor: Colors.orange,
         ),
       );
@@ -282,7 +454,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('File "${editorState.filePath!.split('/').last}" saved'),
+        content: Text(
+          AppLocalizations.of(context)
+              .fileSaved(editorState.filePath!.split('/').last),
+        ),
       ),
     );
   }
@@ -297,8 +472,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
     if (editorState.content.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No content to export'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).noContentToExport,
+          ),
           backgroundColor: Colors.orange,
         ),
       );
@@ -313,12 +490,18 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Exit Application'),
-        content: const Text('Are you sure you want to exit Loom?'),
+        title: Text(
+          AppLocalizations.of(context).exitApplication,
+        ),
+        content: Text(
+          AppLocalizations.of(context).confirmExit,
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(
+              AppLocalizations.of(context).cancel,
+            ),
           ),
           TextButton(
             onPressed: () async {
@@ -333,7 +516,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                 print('Failed to close window gracefully: $e');
               }
             },
-            child: const Text('Exit'),
+            child: Text(
+              AppLocalizations.of(context).exit,
+            ),
           ),
         ],
       ),
@@ -355,7 +540,11 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nothing to undo')),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).nothingToUndo,
+          ),
+        ),
       );
     }
   }
@@ -375,7 +564,11 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nothing to redo')),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).nothingToRedo,
+          ),
+        ),
       );
     }
   }
@@ -393,13 +586,21 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       }
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Content cut to clipboard')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).contentCutToClipboard,
+            ),
+          ),
         );
       }
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No content to cut')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).noContentToCut,
+            ),
+          ),
         );
       }
     }
@@ -412,13 +613,21 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       await Clipboard.setData(ClipboardData(text: editorState.content));
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Content copied to clipboard')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).contentCopiedToClipboard,
+            ),
+          ),
         );
       }
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No content to copy')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).noContentToCopy,
+            ),
+          ),
         );
       }
     }
@@ -437,13 +646,21 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       }
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Content pasted from clipboard')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).contentPastedFromClipboard,
+            ),
+          ),
         );
       }
     } else {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No text in clipboard to paste')),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).noTextInClipboard,
+            ),
+          ),
         );
       }
     }
@@ -455,16 +672,19 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
 
   void _handleTogglePanel(BuildContext context) {
     final uiState = ref.read(uiStateProvider);
+    final uiNotifier = ref.read(uiStateProvider.notifier);
     if (uiState.isSidePanelVisible) {
-      ref.read(uiStateProvider.notifier).hideSidePanel();
+      uiNotifier.hideSidePanel();
     } else {
       // Show side panel if there's a selected item, otherwise show a message
       if (uiState.selectedSidebarItem != null) {
-        ref.read(uiStateProvider.notifier).showSidePanel();
+        uiNotifier.showSidePanel();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please select an item from the sidebar first'),
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).selectSidebarItemFirst,
+            ),
           ),
         );
       }
@@ -478,46 +698,68 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   }
 
   void _handleDocumentation(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Loom Documentation'),
-        content: const Column(
+        title: Text(
+          l10n.loomDocumentation,
+        ),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Welcome to Loom!',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              l10n.welcomeToLoom,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Loom is a knowledge base application for organizing and editing documents.',
+              l10n.loomDescriptionFull,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
-              'Key Features:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              l10n.keyFeatures,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text('• File Explorer: Browse and manage your files'),
-            Text('• Rich Text Editor: Edit documents with syntax highlighting'),
-            Text('• Search: Find files and content quickly'),
-            Text('• Settings: Customize your experience'),
-            SizedBox(height: 16),
             Text(
-              'Keyboard Shortcuts:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              l10n.fileExplorerFeature,
             ),
-            Text('• Ctrl+S: Save file'),
-            Text('• Ctrl+Shift+F: Global search'),
-            Text('• Ctrl+Z: Undo'),
-            Text('• Ctrl+Y: Redo'),
+            Text(
+              l10n.richTextEditorFeature,
+            ),
+            Text(
+              l10n.searchFeature,
+            ),
+            Text(
+              l10n.settingsFeature,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.keyboardShortcuts,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              l10n.saveShortcut,
+            ),
+            Text(
+              l10n.globalSearchShortcut,
+            ),
+            Text(
+              l10n.undoShortcut,
+            ),
+            Text(
+              l10n.redoShortcut,
+            ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(
+              l10n.close,
+            ),
           ),
         ],
       ),
@@ -525,16 +767,18 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   }
 
   void _handleAbout(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     showDialog<void>(
       context: context,
-      builder: (context) => const AboutDialog(
+      builder: (context) => AboutDialog(
         applicationName: 'Loom',
         applicationVersion: '1.0.0',
         applicationLegalese: '© 2025 Loom Team',
         children: [
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
-            'Loom is a knowledge base application for organizing and editing documents.',
+            l10n.loomDescriptionFull,
           ),
         ],
       ),
@@ -549,12 +793,14 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('New File'),
+        title: Text(
+          AppLocalizations.of(context).newFile,
+        ),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
-            labelText: 'File name',
-            hintText: 'Enter file name (e.g., example.blox)',
+            labelText: AppLocalizations.of(context).fileName,
+            hintText: AppLocalizations.of(context).enterFileName,
             hintStyle: TextStyle(
               color: theme.colorScheme.onSurface.withOpacity(0.4),
             ),
@@ -564,7 +810,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(
+              AppLocalizations.of(context).cancel,
+            ),
           ),
           TextButton(
             onPressed: () async {
@@ -574,7 +822,11 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                 // Input validation
                 if (fileName.isEmpty || fileName.length > 255) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid file name')),
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context).invalidFileName,
+                      ),
+                    ),
                   );
                   return;
                 }
@@ -584,8 +836,11 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                     fileName.contains('/') ||
                     fileName.contains(r'\')) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Invalid characters in file name'),
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)
+                            .invalidCharactersInFileName,
+                      ),
                     ),
                   );
                   return;
@@ -608,14 +863,21 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                     Navigator.of(context).pop();
 
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('File "$fileName" created')),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context).fileCreated(fileName),
+                        ),
+                      ),
                     );
                   }
                 } catch (e) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Failed to create file: $e'),
+                        content: Text(
+                          AppLocalizations.of(context)
+                              .failedToCreateFile(e.toString()),
+                        ),
                         backgroundColor: Theme.of(context).colorScheme.error,
                       ),
                     );
@@ -623,7 +885,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                 }
               }
             },
-            child: const Text('Create'),
+            child: Text(
+              AppLocalizations.of(context).create,
+            ),
           ),
         ],
       ),
@@ -642,32 +906,34 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Export File'),
+        title: Text(
+          AppLocalizations.of(context).exportFile,
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: fileNameController,
-              decoration: const InputDecoration(
-                labelText: 'File name',
-                hintText: 'Enter file name (without extension)',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).fileName,
+                hintText: AppLocalizations.of(context).enterFileName,
               ),
               autofocus: true,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: locationController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Location',
-                hintText: 'Enter export location',
+                hintText: AppLocalizations.of(context).enterExportLocation,
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: formatController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Format',
-                hintText: 'txt, md, html, etc.',
+                hintText: AppLocalizations.of(context).formatHint,
               ),
             ),
           ],
@@ -675,7 +941,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(
+              AppLocalizations.of(context).cancel,
+            ),
           ),
           TextButton(
             onPressed: () async {
@@ -698,7 +966,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('File exported as "$fileName.$format"'),
+                        content: Text(
+                          AppLocalizations.of(context)
+                              .fileExportedAs('$fileName.$format'),
+                        ),
                       ),
                     );
                   }
@@ -706,7 +977,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Failed to export file: $e'),
+                        content: Text(
+                          AppLocalizations.of(context)
+                              .failedToExportFile(e.toString()),
+                        ),
                         backgroundColor: Theme.of(context).colorScheme.error,
                       ),
                     );
@@ -714,7 +988,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                 }
               }
             },
-            child: const Text('Export'),
+            child: Text(
+              AppLocalizations.of(context).export,
+            ),
           ),
         ],
       ),
@@ -732,24 +1008,24 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Save As'),
+        title: Text(AppLocalizations.of(context).saveAs),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: fileNameController,
-              decoration: const InputDecoration(
-                labelText: 'File name',
-                hintText: 'Enter file name (e.g., document.blox)',
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context).fileName,
+                hintText: AppLocalizations.of(context).enterFileName,
               ),
               autofocus: true,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: locationController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Location',
-                hintText: 'Enter save location',
+                hintText: AppLocalizations.of(context).enterSaveLocation,
               ),
             ),
           ],
@@ -757,7 +1033,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(
+              AppLocalizations.of(context).cancel,
+            ),
           ),
           TextButton(
             onPressed: () async {
@@ -781,14 +1059,21 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                   if (context.mounted) {
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('File saved as "$fileName"')),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context).fileSavedAs(fileName),
+                        ),
+                      ),
                     );
                   }
                 } catch (e) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Failed to save file: $e'),
+                        content: Text(
+                          AppLocalizations.of(context)
+                              .failedToSaveFile(e.toString()),
+                        ),
                         backgroundColor: Theme.of(context).colorScheme.error,
                       ),
                     );
@@ -796,7 +1081,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
                 }
               }
             },
-            child: const Text('Save'),
+            child: Text(
+              AppLocalizations.of(context).save,
+            ),
           ),
         ],
       ),
@@ -816,16 +1103,16 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     final pluginManager = PluginManager.instance;
     final activePlugins = pluginManager.getActivePlugins();
     final menuItems = <MenuItem>[];
+    final l10n = AppLocalizations.of(context);
 
     // Add plugin management items
     menuItems.add(
       SimpleMenuItem(
-        label: 'Plugin Manager',
+        label: l10n.pluginManager,
         icon: Icons.extension,
         onPressedWithContext: _showPluginManager,
       ),
     );
-
     menuItems.add(const SimpleMenuItem(label: '-')); // Separator
 
     // Add menu items for each active plugin
@@ -858,12 +1145,14 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     if (activePlugins.isEmpty) {
       menuItems.add(
         SimpleMenuItem(
-          label: 'No plugins loaded',
+          label: l10n.noPluginsLoaded,
           icon: Icons.info,
           onPressedWithContext: (context) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('No plugins are currently loaded'),
+              SnackBar(
+                content: Text(
+                  l10n.noPluginsCurrentlyLoaded,
+                ),
               ),
             );
           },
@@ -909,7 +1198,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     String commandId,
   ) async {
     try {
-      final result = await PluginManager.instance.executeCommand(
+      final pluginManager = PluginManager.instance;
+      final result = await pluginManager.executeCommand(
         pluginId,
         commandId,
         <String, dynamic>{},
@@ -918,8 +1208,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       if (result.success) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Command executed successfully'),
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context).commandExecutedSuccessfully,
+              ),
             ),
           );
         }
@@ -927,7 +1219,10 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Command failed: ${result.error}'),
+              content: Text(
+                AppLocalizations.of(context)
+                    .commandFailed(result.error ?? 'Unknown error'),
+              ),
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
@@ -937,7 +1232,9 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to execute command: $e'),
+            content: Text(
+              AppLocalizations.of(context).failedToExecuteCommand(e.toString()),
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -950,6 +1247,25 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     final uiState = ref.watch(uiStateProvider);
     final appearanceSettings = ref.watch(appearanceSettingsProvider);
     final compactMode = appearanceSettings.compactMode;
+
+    // Watch for locale changes and re-register menus when it changes
+    final currentLocale = ref.watch(localeProvider);
+    if (_currentLocale != currentLocale) {
+      final previousLocale = _currentLocale;
+      _currentLocale = currentLocale;
+
+      // Only re-register if this is not the initial load
+      if (previousLocale != null && _isInitialized) {
+        debugPrint(
+          '🌍 Locale changed from ${previousLocale.languageCode} to ${currentLocale.languageCode}',
+        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _reRegisterMenus();
+        });
+      } else {
+        debugPrint('🌍 Initial locale set to ${currentLocale.languageCode}');
+      }
+    }
 
     return Focus(
       autofocus: true,
@@ -1058,9 +1374,12 @@ class PluginManagerDialog extends ConsumerWidget {
     final installedPlugins = pluginManager.getInstalledPlugins();
     final activePlugins = pluginManager.getActivePlugins();
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return AlertDialog(
-      title: const Text('Plugin Manager'),
+      title: Text(
+        AppLocalizations.of(context).pluginManager,
+      ),
       content: SizedBox(
         width: 600,
         height: 400,
@@ -1075,17 +1394,17 @@ class PluginManagerDialog extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _StatItem(
-                      label: 'Installed',
+                      label: AppLocalizations.of(context).installed,
                       value: installedPlugins.length.toString(),
                       icon: Icons.inventory,
                     ),
                     _StatItem(
-                      label: 'Active',
+                      label: AppLocalizations.of(context).active,
                       value: activePlugins.length.toString(),
                       icon: Icons.play_arrow,
                     ),
                     _StatItem(
-                      label: 'Inactive',
+                      label: AppLocalizations.of(context).inactive,
                       value: (installedPlugins.length - activePlugins.length)
                           .toString(),
                       icon: Icons.stop,
@@ -1120,7 +1439,7 @@ class PluginManagerDialog extends ConsumerWidget {
                         children: [
                           Text(plugin.description),
                           Text(
-                            'Version: ${plugin.version} • State: ${state.name}',
+                            l10n.versionState(plugin.version, state.name),
                             style: theme.textTheme.bodySmall,
                           ),
                         ],
@@ -1131,7 +1450,9 @@ class PluginManagerDialog extends ConsumerWidget {
                           if (plugin.capabilities.commands.isNotEmpty)
                             Chip(
                               label: Text(
-                                '${plugin.capabilities.commands.length} commands',
+                                l10n.commandsCount(
+                                  plugin.capabilities.commands.length,
+                                ),
                               ),
                               backgroundColor:
                                   theme.colorScheme.primaryContainer,
@@ -1154,7 +1475,15 @@ class PluginManagerDialog extends ConsumerWidget {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        'Failed to ${isActive ? 'disable' : 'enable'} plugin: $e',
+                                        isActive
+                                            ? AppLocalizations.of(context)
+                                                .failedToDisablePlugin(
+                                                e.toString(),
+                                              )
+                                            : AppLocalizations.of(context)
+                                                .failedToEnablePlugin(
+                                                e.toString(),
+                                              ),
                                       ),
                                       backgroundColor: theme.colorScheme.error,
                                     ),
@@ -1162,8 +1491,9 @@ class PluginManagerDialog extends ConsumerWidget {
                                 }
                               }
                             },
-                            tooltip:
-                                isActive ? 'Disable Plugin' : 'Enable Plugin',
+                            tooltip: isActive
+                                ? AppLocalizations.of(context).disablePlugin
+                                : AppLocalizations.of(context).enablePlugin,
                           ),
                         ],
                       ),
@@ -1178,7 +1508,9 @@ class PluginManagerDialog extends ConsumerWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
+          child: Text(
+            AppLocalizations.of(context).close,
+          ),
         ),
       ],
     );

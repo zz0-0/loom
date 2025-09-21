@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/explorer/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -48,6 +49,7 @@ class ExplorerPanel extends ConsumerWidget {
 
   Widget _buildWelcomeView(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return SingleChildScrollView(
       padding: AppSpacing.paddingMd,
@@ -60,14 +62,14 @@ class ExplorerPanel extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'No Workspace Open',
+            localizations.welcomeToLoomTitle,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Open a folder to start exploring files',
+            localizations.useFileOpenToOpenFolder,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -78,20 +80,18 @@ class ExplorerPanel extends ConsumerWidget {
             children: [
               _WelcomeAction(
                 icon: LucideIcons.folderOpen,
-                title: 'Open Folder',
-                subtitle: 'Browse and explore files',
-                onTap: () => ref
-                    .read(currentFolderProvider.notifier)
-                    .openFolder(context),
+                title: localizations.openFolder,
+                subtitle: localizations.openAnExistingWorkspace,
+                onTap: () {
+                  ref.read(currentFolderProvider.notifier).openFolder(context);
+                },
               ),
               const SizedBox(height: 12),
               _WelcomeAction(
-                icon: LucideIcons.folderPlus,
-                title: 'Create Folder',
-                subtitle: 'Create a new folder',
-                onTap: () => ref
-                    .read(currentFolderProvider.notifier)
-                    .createFolder(context),
+                icon: LucideIcons.filePlus,
+                title: localizations.newFile,
+                subtitle: localizations.createANewDocument,
+                onTap: () => _showNewFileDialog(context, ref),
               ),
             ],
           ),
@@ -147,12 +147,12 @@ class ExplorerPanel extends ConsumerWidget {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('New File'),
+        title: Text(AppLocalizations.of(context).newFile),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
-            labelText: 'File name',
-            hintText: 'Enter file name (e.g., example.blox)',
+            labelText: AppLocalizations.of(context).fileName,
+            hintText: AppLocalizations.of(context).enterFileName,
             hintStyle: TextStyle(
               color: theme.colorScheme.onSurface.withOpacity(0.4),
             ),
@@ -162,7 +162,7 @@ class ExplorerPanel extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -172,7 +172,11 @@ class ExplorerPanel extends ConsumerWidget {
                 // Input validation
                 if (fileName.isEmpty || fileName.length > 255) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid file name')),
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context).invalidFileName,
+                      ),
+                    ),
                   );
                   return;
                 }
@@ -182,8 +186,11 @@ class ExplorerPanel extends ConsumerWidget {
                     fileName.contains('/') ||
                     fileName.contains(r'\')) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Invalid characters in file name'),
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)
+                            .invalidCharactersInFileName,
+                      ),
                     ),
                   );
                   return;
@@ -206,14 +213,21 @@ class ExplorerPanel extends ConsumerWidget {
                     Navigator.of(context).pop();
 
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('File "$fileName" created')),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context).fileCreated(fileName),
+                        ),
+                      ),
                     );
                   }
                 } catch (e) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Failed to create file: $e'),
+                        content: Text(
+                          AppLocalizations.of(context)
+                              .failedToCreateFile(e.toString()),
+                        ),
                         backgroundColor: Theme.of(context).colorScheme.error,
                       ),
                     );
@@ -221,7 +235,7 @@ class ExplorerPanel extends ConsumerWidget {
                 }
               }
             },
-            child: const Text('Create'),
+            child: Text(AppLocalizations.of(context).create),
           ),
         ],
       ),
@@ -243,11 +257,11 @@ class ExplorerPanel extends ConsumerWidget {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('New Folder'),
+        title: Text(AppLocalizations.of(context).newFolder),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
-            labelText: 'Folder name',
+            labelText: AppLocalizations.of(context).newFolder,
             hintText: 'new-folder',
             hintStyle: TextStyle(
               color: theme.colorScheme.onSurface.withOpacity(0.4),
@@ -258,7 +272,7 @@ class ExplorerPanel extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -268,7 +282,11 @@ class ExplorerPanel extends ConsumerWidget {
                 // Input validation
                 if (folderName.isEmpty || folderName.length > 255) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Invalid folder name')),
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context).invalidFolderName,
+                      ),
+                    ),
                   );
                   return;
                 }
@@ -278,8 +296,11 @@ class ExplorerPanel extends ConsumerWidget {
                     folderName.contains('/') ||
                     folderName.contains(r'\')) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Invalid characters in folder name'),
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)
+                            .invalidCharactersInFolderName,
+                      ),
                     ),
                   );
                   return;
@@ -305,14 +326,22 @@ class ExplorerPanel extends ConsumerWidget {
                     Navigator.of(context).pop();
 
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Folder "$folderName" created')),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context)
+                              .folderCreated(folderName),
+                        ),
+                      ),
                     );
                   }
                 } catch (e) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Failed to create folder: $e'),
+                        content: Text(
+                          AppLocalizations.of(context)
+                              .failedToCreateFolder(e.toString()),
+                        ),
                         backgroundColor: Theme.of(context).colorScheme.error,
                       ),
                     );
@@ -320,7 +349,7 @@ class ExplorerPanel extends ConsumerWidget {
                 }
               }
             },
-            child: const Text('Create'),
+            child: Text(AppLocalizations.of(context).create),
           ),
         ],
       ),

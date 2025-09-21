@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/explorer/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 class SidePanel extends ConsumerWidget {
@@ -43,7 +44,7 @@ class SidePanel extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Text(
-                    _getPanelTitle(selectedItem),
+                    _getPanelTitle(context, selectedItem),
                     style: theme.textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -72,22 +73,24 @@ class SidePanel extends ConsumerWidget {
     );
   }
 
-  String _getPanelTitle(String? item) {
+  String _getPanelTitle(BuildContext context, String? item) {
+    // Use localizations where possible so titles update when locale changes
+    final loc = AppLocalizations.of(context);
     switch (item) {
       case 'explorer':
-        return 'EXPLORER';
+        return loc.explorerTooltip.toUpperCase();
       case 'search':
-        return 'SEARCH';
+        return loc.searchTooltip.toUpperCase();
       case 'source_control':
-        return 'SOURCE CONTROL';
+        return loc.sourceControlPanelPlaceholder.toUpperCase();
       case 'debug':
-        return 'RUN AND DEBUG';
+        return loc.debugPanelPlaceholder.toUpperCase();
       case 'extensions':
-        return 'EXTENSIONS';
+        return loc.extensionsPanelPlaceholder.toUpperCase();
       case 'settings':
-        return 'SETTINGS';
+        return loc.settings.toUpperCase();
       default:
-        return 'PANEL';
+        return (item ?? 'PANEL').toUpperCase();
     }
   }
 
@@ -126,7 +129,7 @@ class _ExplorerPanel extends ConsumerWidget {
           child: Row(
             children: [
               Text(
-                'WORKSPACE',
+                AppLocalizations.of(context).yourWorkspace.toUpperCase(),
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: theme.colorScheme.onSurfaceVariant,
@@ -213,12 +216,14 @@ class _ExplorerPanel extends ConsumerWidget {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Create New Folder'),
+        title: Text(
+          AppLocalizations.of(context).createNewFolder,
+        ),
         content: TextField(
           controller: controller,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: 'Enter folder name',
+            hintText: AppLocalizations.of(context).enterFolderNameHint,
             hintStyle: TextStyle(
               color: theme.colorScheme.onSurface.withOpacity(0.4),
             ),
@@ -227,7 +232,9 @@ class _ExplorerPanel extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(
+              AppLocalizations.of(context).cancel,
+            ),
           ),
           TextButton(
             onPressed: () {
@@ -236,7 +243,9 @@ class _ExplorerPanel extends ConsumerWidget {
                 Navigator.of(context).pop(folderName);
               }
             },
-            child: const Text('Create'),
+            child: Text(
+              AppLocalizations.of(context).create,
+            ),
           ),
         ],
       ),
@@ -254,7 +263,9 @@ class _ExplorerPanel extends ConsumerWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Created folder: $result'),
+                content: Text(
+                  AppLocalizations.of(context).createdFolder(result),
+                ),
                 duration: const Duration(seconds: 2),
               ),
             );
@@ -262,8 +273,10 @@ class _ExplorerPanel extends ConsumerWidget {
         } else {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Please open a workspace first'),
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context).pleaseOpenWorkspaceFirst,
+                ),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -273,7 +286,9 @@ class _ExplorerPanel extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to create folder: $e'),
+              content: Text(
+                AppLocalizations.of(context).failedToCreateFolder(e.toString()),
+              ),
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
@@ -289,12 +304,14 @@ class _ExplorerPanel extends ConsumerWidget {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Create New File'),
+        title: Text(
+          AppLocalizations.of(context).createNewFile,
+        ),
         content: TextField(
           controller: controller,
           autofocus: true,
           decoration: InputDecoration(
-            hintText: 'Enter file name (e.g., document.md)',
+            hintText: AppLocalizations.of(context).enterFileNameHint,
             hintStyle: TextStyle(
               color: theme.colorScheme.onSurface.withOpacity(0.4),
             ),
@@ -303,7 +320,9 @@ class _ExplorerPanel extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(
+              AppLocalizations.of(context).cancel,
+            ),
           ),
           TextButton(
             onPressed: () {
@@ -312,7 +331,9 @@ class _ExplorerPanel extends ConsumerWidget {
                 Navigator.of(context).pop(fileName);
               }
             },
-            child: const Text('Create'),
+            child: Text(
+              AppLocalizations.of(context).create,
+            ),
           ),
         ],
       ),
@@ -333,7 +354,9 @@ class _ExplorerPanel extends ConsumerWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Created and opened: $result'),
+                content: Text(
+                  AppLocalizations.of(context).createdAndOpenedFile(result),
+                ),
                 duration: const Duration(seconds: 2),
               ),
             );
@@ -341,8 +364,10 @@ class _ExplorerPanel extends ConsumerWidget {
         } else {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Please open a workspace first'),
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context).pleaseOpenWorkspaceFirst,
+                ),
                 backgroundColor: Colors.orange,
               ),
             );
@@ -352,7 +377,9 @@ class _ExplorerPanel extends ConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to create file: $e'),
+              content: Text(
+                AppLocalizations.of(context).failedToCreateFile(e.toString()),
+              ),
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
@@ -449,7 +476,11 @@ class _SearchPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Search Panel\n(To be implemented)'));
+    return Center(
+      child: Text(
+        AppLocalizations.of(context).searchPanelPlaceholder,
+      ),
+    );
   }
 }
 
@@ -458,8 +489,10 @@ class _SourceControlPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Source Control Panel\n(To be implemented)'),
+    return Center(
+      child: Text(
+        AppLocalizations.of(context).sourceControlPanelPlaceholder,
+      ),
     );
   }
 }
@@ -469,7 +502,11 @@ class _DebugPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Debug Panel\n(To be implemented)'));
+    return Center(
+      child: Text(
+        AppLocalizations.of(context).debugPanelPlaceholder,
+      ),
+    );
   }
 }
 
@@ -478,7 +515,11 @@ class _ExtensionsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Extensions Panel\n(To be implemented)'));
+    return Center(
+      child: Text(
+        AppLocalizations.of(context).extensionsPanelPlaceholder,
+      ),
+    );
   }
 }
 
@@ -487,7 +528,11 @@ class _SettingsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Settings Panel\n(To be implemented)'));
+    return Center(
+      child: Text(
+        AppLocalizations.of(context).settingsPanelPlaceholder,
+      ),
+    );
   }
 }
 
@@ -496,6 +541,10 @@ class _DefaultPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Select a panel from the sidebar'));
+    return Center(
+      child: Text(
+        AppLocalizations.of(context).selectPanelFromSidebar,
+      ),
+    );
   }
 }

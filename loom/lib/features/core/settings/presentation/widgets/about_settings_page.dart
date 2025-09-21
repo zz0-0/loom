@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// About settings page
 class AboutSettingsPage extends ConsumerWidget {
@@ -9,6 +10,7 @@ class AboutSettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Container(
       padding: AppSpacing.paddingMd,
@@ -16,14 +18,14 @@ class AboutSettingsPage extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'About',
+            localizations.about,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Information about Loom',
+            localizations.aboutDescription,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -36,17 +38,17 @@ class AboutSettingsPage extends ConsumerWidget {
               child: Column(
                 children: [
                   _SettingsItem(
-                    title: 'Version',
-                    subtitle: '1.0.0',
+                    title: localizations.version,
+                    subtitle: localizations.currentVersion,
                     onTap: () {
-                      _showVersionInfo(context);
+                      _showVersionInfo(context, localizations);
                     },
                   ),
                   _SettingsItem(
-                    title: 'Licenses',
-                    subtitle: 'View open source licenses',
+                    title: localizations.licenses,
+                    subtitle: localizations.viewOpenSourceLicenses,
                     onTap: () {
-                      _showLicenses(context);
+                      _showLicenses(context, localizations);
                     },
                   ),
                 ],
@@ -58,43 +60,40 @@ class AboutSettingsPage extends ConsumerWidget {
     );
   }
 
-  void _showVersionInfo(BuildContext context) {
+  void _showVersionInfo(BuildContext context, AppLocalizations localizations) {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Loom'),
-        content: const Column(
+        title: Text(localizations.loom),
+        content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Version: 1.0.0'),
-            SizedBox(height: 8),
-            Text('Build: 20241201'),
-            SizedBox(height: 16),
-            Text(
-              'Loom is a modern code editor built with Flutter, '
-              'designed for productivity and ease of use.',
-            ),
-            SizedBox(height: 16),
-            Text('© 2024 Loom Team'),
+            Text('${localizations.version}: ${localizations.currentVersion}'),
+            const SizedBox(height: 8),
+            Text('${localizations.build}: ${localizations.currentBuild}'),
+            const SizedBox(height: 16),
+            Text(localizations.loomDescription),
+            const SizedBox(height: 16),
+            Text(localizations.copyright),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(localizations.close),
           ),
         ],
       ),
     );
   }
 
-  void _showLicenses(BuildContext context) {
+  void _showLicenses(BuildContext context, AppLocalizations localizations) {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Open Source Licenses'),
-        content: const SizedBox(
+        title: Text(localizations.openSourceLicenses),
+        content: SizedBox(
           width: 400,
           height: 300,
           child: SingleChildScrollView(
@@ -102,20 +101,17 @@ class AboutSettingsPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Loom uses the following open source libraries:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  localizations.usesFollowingLibraries,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 16),
-                Text('• Flutter - BSD License'),
-                Text('• Riverpod - MIT License'),
-                Text('• Adaptive Theme - MIT License'),
-                Text('• File Picker - MIT License'),
-                Text('• Shared Preferences - BSD License'),
-                SizedBox(height: 16),
-                Text(
-                  'For full license texts, please visit the respective '
-                  'folder repositories on GitHub.',
-                ),
+                const SizedBox(height: 16),
+                Text('• ${localizations.flutterLicense}'),
+                Text('• ${localizations.riverpodLicense}'),
+                Text('• ${localizations.adaptiveThemeLicense}'),
+                Text('• ${localizations.filePickerLicense}'),
+                Text('• ${localizations.sharedPreferencesLicense}'),
+                const SizedBox(height: 16),
+                Text(localizations.fullLicenseTexts),
               ],
             ),
           ),
@@ -123,7 +119,7 @@ class AboutSettingsPage extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(localizations.close),
           ),
         ],
       ),

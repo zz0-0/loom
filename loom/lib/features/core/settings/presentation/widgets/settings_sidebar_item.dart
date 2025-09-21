@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Settings sidebar item that opens settings in the main content area
 class SettingsSidebarItem implements SidebarItem {
@@ -12,7 +12,7 @@ class SettingsSidebarItem implements SidebarItem {
   IconData get icon => Icons.settings;
 
   @override
-  String? get tooltip => 'Settings';
+  String? get tooltip => null; // Handled by ExtensibleSidebar for localization
 
   @override
   VoidCallback? get onPressed => null; // Use default panel behavior
@@ -29,7 +29,7 @@ class SettingsQuickPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context);
 
     return Container(
       padding: AppSpacing.paddingSm,

@@ -176,6 +176,15 @@ class TabNotifier extends StateNotifier<TabState> {
     state = state.copyWith(tabs: updatedTabs);
   }
 
+  /// Update titles of tabs based on a mapping function. Useful when
+  /// localizations change and tab titles need to be refreshed.
+  void updateTabTitles(String Function(ContentTab) titleMapper) {
+    final updatedTabs = state.tabs
+        .map((t) => t.copyWith(title: titleMapper(t)))
+        .toList(growable: false);
+    state = state.copyWith(tabs: updatedTabs);
+  }
+
   /// Closes all tabs
   void closeAllTabs() {
     state = const TabState();

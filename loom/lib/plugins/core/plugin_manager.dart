@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:loom/plugins/api/plugin_api.dart';
 import 'package:loom/plugins/api/plugin_manifest.dart';
 import 'package:loom/plugins/communication/plugin_ipc_manager.dart';
@@ -15,12 +17,8 @@ class PluginManager {
   bool _initialized = false;
 
   /// Get the singleton instance
-  static PluginManager? _instance;
-
-  static PluginManager get instance {
-    _instance ??= PluginManager._();
-    return _instance!;
-  }
+  // Use a static final instance for a conventional singleton pattern.
+  static final PluginManager instance = PluginManager._();
 
   /// Initialize the plugin system
   Future<void> initialize({
@@ -48,7 +46,6 @@ class PluginManager {
     }
 
     _initialized = true;
-    print('Plugin system v2.0 initialized');
   }
 
   /// Load all discovered plugins
@@ -58,9 +55,12 @@ class PluginManager {
     for (final manifest in installedPlugins) {
       try {
         await _registry.loadPlugin(manifest.id);
-        print('Auto-loaded plugin: ${manifest.name}');
       } catch (e) {
-        print('Failed to auto-load plugin ${manifest.name}: $e');
+        // Log and continue loading other plugins
+        log(
+          'PluginManager: failed to load plugin ${manifest.id}: $e',
+          name: 'PluginManager',
+        );
       }
     }
   }
@@ -237,8 +237,7 @@ class PluginManager {
 
     for (final plugin in plugins) {
       if (getPluginState(plugin.id) == PluginState.active) {
-        // TODO: Implement hook registration with plugins
-        print('Registered hook $hookName with plugin ${plugin.id}');
+        // TODO(user): Implement hook registration with plugins
       }
     }
   }
@@ -249,13 +248,10 @@ class PluginManager {
       return;
     }
 
-    print('Shutting down plugin system...');
-
     // Shutdown registry (this will unload all plugins)
     await _registry.shutdown();
 
     _initialized = false;
-    print('Plugin system shutdown complete');
   }
 
   /// Ensure the plugin system is initialized

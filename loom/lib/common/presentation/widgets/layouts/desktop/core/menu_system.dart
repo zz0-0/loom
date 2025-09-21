@@ -69,17 +69,25 @@ class TopBarSettings {
 
 /// Menu registry for top bar menus
 class MenuRegistry {
-  factory MenuRegistry() => _instance;
-  MenuRegistry._internal();
+  factory MenuRegistry() {
+    debugPrint('🏭 MenuRegistry: Factory called, returning instance');
+    return _instance;
+  }
+  MenuRegistry._internal() {
+    debugPrint('🏗️ MenuRegistry: Internal constructor called');
+  }
   static final MenuRegistry _instance = MenuRegistry._internal();
 
   final List<MenuItem> _menus = [];
+  final ValueNotifier<List<MenuItem>> _menusNotifier = ValueNotifier([]);
 
   /// Register a menu
   void registerMenu(MenuItem menu) {
     _menus
       ..removeWhere((existing) => existing.label == menu.label)
       ..add(menu);
+    debugPrint('📝 MenuRegistry: Registered menu "${menu.label}"');
+    _notifyListeners();
   }
 
   /// Register multiple menus
@@ -92,14 +100,25 @@ class MenuRegistry {
   /// Get all registered menus
   List<MenuItem> get menus => List.unmodifiable(_menus);
 
+  /// Get the notifier for menu changes
+  ValueNotifier<List<MenuItem>> get menusNotifier => _menusNotifier;
+
   /// Clear all registrations
   void clear() {
+    debugPrint('🗑️ MenuRegistry: Clearing ${_menus.length} menus');
     _menus.clear();
+    _notifyListeners();
+  }
+
+  void _notifyListeners() {
+    debugPrint(
+        '📢 MenuRegistry: Notifying listeners with ${_menus.length} menus',);
+    _menusNotifier.value = List.unmodifiable(_menus);
   }
 }
 
 /// Desktop-style menu widget
-class DesktopMenuBar extends ConsumerWidget {
+class DesktopMenuBar extends StatefulWidget {
   const DesktopMenuBar({
     required this.settings,
     super.key,
@@ -110,25 +129,65 @@ class DesktopMenuBar extends ConsumerWidget {
   final VoidCallback? onMenuPressed;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final registry = MenuRegistry();
-    final menus = registry.menus;
+  State<DesktopMenuBar> createState() => _DesktopMenuBarState();
+}
 
-    if (settings.showMenuAsHamburger || menus.isEmpty) {
-      // Show hamburger menu
-      return IconButton(
-        icon: const Icon(Icons.menu, size: 16),
-        onPressed:
-            onMenuPressed ?? () => _showHamburgerMenu(context, ref, menus),
-        splashRadius: 16,
-      );
-    } else {
-      // Show desktop-style menu bar
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: menus.map((menu) => _MenuBarItem(menu: menu)).toList(),
-      );
-    }
+class _DesktopMenuBarState extends State<DesktopMenuBar> {
+  late final MenuRegistry _registry;
+  late final ValueNotifier<List<MenuItem>> _menusNotifier;
+  List<MenuItem> _menus = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _registry = MenuRegistry();
+    _menusNotifier = _registry.menusNotifier;
+    _menus = _registry.menus;
+    _menusNotifier.addListener(_onMenusChanged);
+  }
+
+  @override
+  void dispose() {
+    _menusNotifier.removeListener(_onMenusChanged);
+    super.dispose();
+  }
+
+  void _onMenusChanged() {
+    debugPrint(
+        '📡 DesktopMenuBar: Menus changed, rebuilding with ${MenuRegistry().menus.length} menus',);
+    setState(() {
+      _menus = _registry.menus;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        // Watch locale changes to force rebuild when language changes
+        ref.watch(localeProvider);
+
+        if (widget.settings.showMenuAsHamburger || _menus.isEmpty) {
+          // Show hamburger menu only if there are menus to show
+          if (_menus.isEmpty) {
+            return const SizedBox.shrink(); // Don't show hamburger if no menus
+          }
+
+          return IconButton(
+            icon: const Icon(Icons.menu, size: 16),
+            onPressed: widget.onMenuPressed ??
+                () => _showHamburgerMenu(context, ref, _menus),
+            splashRadius: 16,
+          );
+        } else {
+          // Show desktop-style menu bar
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: _menus.map((menu) => _MenuBarItem(menu: menu)).toList(),
+          );
+        }
+      },
+    );
   }
 
   void _showHamburgerMenu(
@@ -136,6 +195,11 @@ class DesktopMenuBar extends ConsumerWidget {
     WidgetRef ref,
     List<MenuItem> menus,
   ) {
+    // Don't show menu if there are no items
+    if (menus.isEmpty) {
+      return;
+    }
+
     final button = context.findRenderObject()! as RenderBox;
     final overlay =
         Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;

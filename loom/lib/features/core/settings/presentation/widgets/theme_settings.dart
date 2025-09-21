@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Theme settings widget
 class ThemeSettings extends ConsumerWidget {
@@ -12,12 +13,13 @@ class ThemeSettings extends ConsumerWidget {
     final theme = Theme.of(context);
     final customTheme = ref.watch(customThemeProvider);
     final fontSettings = ref.watch(fontSettingsProvider);
+    final localizations = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Theme',
+          localizations.theme,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
@@ -26,8 +28,8 @@ class ThemeSettings extends ConsumerWidget {
 
         // Current theme info
         _SettingsSection(
-          title: 'Current Theme',
-          subtitle: 'Your currently active theme',
+          title: localizations.currentTheme,
+          subtitle: localizations.currentThemeDescription,
           children: [
             Container(
               padding: AppSpacing.paddingMd,
@@ -50,7 +52,7 @@ class ThemeSettings extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Color Scheme:',
+                    localizations.colorScheme,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
@@ -61,17 +63,17 @@ class ThemeSettings extends ConsumerWidget {
                     children: [
                       _ColorSwatch(
                         color: customTheme.primaryColor,
-                        label: 'Primary',
+                        label: localizations.primary,
                       ),
                       const SizedBox(width: 8),
                       _ColorSwatch(
                         color: customTheme.secondaryColor,
-                        label: 'Secondary',
+                        label: localizations.secondary,
                       ),
                       const SizedBox(width: 8),
                       _ColorSwatch(
                         color: customTheme.surfaceColor,
-                        label: 'Surface',
+                        label: localizations.surface,
                       ),
                     ],
                   ),
@@ -85,13 +87,12 @@ class ThemeSettings extends ConsumerWidget {
 
         // Built-in theme presets
         _SettingsSection(
-          title: 'Theme Presets',
-          subtitle:
-              'Choose from pre-designed themes. System themes automatically adapt to your system settings.',
+          title: localizations.themePresets,
+          subtitle: localizations.themePresetsDescription,
           children: [
             // System themes
             _ThemeGroup(
-              title: 'System Themes',
+              title: localizations.systemThemes,
               themes: BuiltInThemes.systemThemes,
               currentTheme: customTheme,
               onThemeSelected: (theme) {
@@ -101,7 +102,7 @@ class ThemeSettings extends ConsumerWidget {
             const SizedBox(height: 16),
             // Light themes
             _ThemeGroup(
-              title: 'Light Themes',
+              title: localizations.lightThemes,
               themes: BuiltInThemes.lightThemes,
               currentTheme: customTheme,
               onThemeSelected: (theme) {
@@ -111,7 +112,7 @@ class ThemeSettings extends ConsumerWidget {
             const SizedBox(height: 16),
             // Dark themes
             _ThemeGroup(
-              title: 'Dark Themes',
+              title: localizations.darkThemes,
               themes: BuiltInThemes.darkThemes,
               currentTheme: customTheme,
               onThemeSelected: (theme) {
@@ -127,12 +128,12 @@ class ThemeSettings extends ConsumerWidget {
 
         // Custom theme colors
         _SettingsSection(
-          title: 'Customize Colors',
-          subtitle: 'Personalize your theme colors',
+          title: localizations.customizeColors,
+          subtitle: localizations.customizeColorsDescription,
           children: [
             ColorPickerButton(
               color: customTheme.primaryColor,
-              label: 'Primary Color',
+              label: localizations.primaryColor,
               onColorChanged: (color) {
                 ref.read(customThemeProvider.notifier).updateTheme(
                       (theme) => theme.copyWith(primaryColor: color),
@@ -142,7 +143,7 @@ class ThemeSettings extends ConsumerWidget {
             const SizedBox(height: 12),
             ColorPickerButton(
               color: customTheme.secondaryColor,
-              label: 'Secondary Color',
+              label: localizations.secondaryColor,
               onColorChanged: (color) {
                 ref.read(customThemeProvider.notifier).updateTheme(
                       (theme) => theme.copyWith(secondaryColor: color),
@@ -152,7 +153,7 @@ class ThemeSettings extends ConsumerWidget {
             const SizedBox(height: 12),
             ColorPickerButton(
               color: customTheme.surfaceColor,
-              label: 'Surface Color',
+              label: localizations.surfaceColor,
               onColorChanged: (color) {
                 ref.read(customThemeProvider.notifier).updateTheme(
                       (theme) => theme.copyWith(surfaceColor: color),
@@ -168,8 +169,8 @@ class ThemeSettings extends ConsumerWidget {
 
         // Font settings
         _SettingsSection(
-          title: 'Typography',
-          subtitle: 'Customize fonts and text appearance',
+          title: localizations.typography,
+          subtitle: localizations.typographyDescription,
           children: [
             FontFamilySelector(
               currentFontFamily: fontSettings.fontFamily,

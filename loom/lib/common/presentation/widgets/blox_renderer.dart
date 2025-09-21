@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loom/src/rust/api/blox_api.dart';
 
 /// Enhanced Blox renderer that handles inline elements, lists, and tables
@@ -371,6 +372,7 @@ class BloxRenderer {
     TextStyle baseStyle,
   ) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
     final src = block.getAttribute('src') ?? '';
     final alt = block.getAttribute('alt') ?? '';
     final width = block.getAttribute('width');
@@ -393,7 +395,7 @@ class BloxRenderer {
             ),
             const SizedBox(height: 8),
             Text(
-              alt.isNotEmpty ? alt : 'Image: $src',
+              alt.isNotEmpty ? alt : localizations.imageAlt(src),
               style: baseStyle.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -573,15 +575,16 @@ class BloxRenderer {
   }
 
   static void _handleLinkTap(BuildContext context, String url) {
+    final localizations = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Open Link'),
-        content: Text('Open this link in your browser?\n\n$url'),
+        title: Text(localizations.openLink),
+        content: Text(localizations.openLinkConfirmation(url)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(localizations.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -590,12 +593,12 @@ class BloxRenderer {
               Clipboard.setData(ClipboardData(text: url));
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('URL copied to clipboard: $url'),
+                  content: Text(localizations.urlCopiedToClipboard(url)),
                   duration: const Duration(seconds: 2),
                 ),
               );
             },
-            child: const Text('Copy URL'),
+            child: Text(localizations.copyUrl),
           ),
         ],
       ),
@@ -603,15 +606,16 @@ class BloxRenderer {
   }
 
   static void _handleFootnoteTap(BuildContext context, String id, String text) {
+    final localizations = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Footnote $id'),
+        title: Text(localizations.footnote(id)),
         content: Text(text),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(localizations.close),
           ),
         ],
       ),

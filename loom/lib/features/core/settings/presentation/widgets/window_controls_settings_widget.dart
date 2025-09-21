@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Window controls settings widget
 class WindowControlsSettingsWidget extends ConsumerWidget {
@@ -11,20 +12,21 @@ class WindowControlsSettingsWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final settings = ref.watch(windowControlsSettingsProvider);
+    final localizations = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Window Controls',
+          localizations.windowControls,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(height: 16),
         _SettingsItem(
-          title: 'Show Window Controls',
-          subtitle: 'Display minimize, maximize, and close buttons',
+          title: localizations.showWindowControls,
+          subtitle: localizations.showWindowControlsDescription,
           trailing: Switch(
             value: settings.showControls,
             onChanged: (value) {
@@ -35,8 +37,8 @@ class WindowControlsSettingsWidget extends ConsumerWidget {
           ),
         ),
         _SettingsItem(
-          title: 'Controls Placement',
-          subtitle: 'Position of window control buttons',
+          title: localizations.controlsPlacement,
+          subtitle: localizations.controlsPlacementDescription,
           trailing: DropdownButton<WindowControlsPlacement>(
             value: settings.placement,
             onChanged: (placement) {
@@ -46,25 +48,25 @@ class WindowControlsSettingsWidget extends ConsumerWidget {
                     .setPlacement(placement);
               }
             },
-            items: const [
+            items: [
               DropdownMenuItem(
                 value: WindowControlsPlacement.auto,
-                child: Text('Auto'),
+                child: Text(localizations.auto),
               ),
               DropdownMenuItem(
                 value: WindowControlsPlacement.left,
-                child: Text('Left'),
+                child: Text(localizations.left),
               ),
               DropdownMenuItem(
                 value: WindowControlsPlacement.right,
-                child: Text('Right'),
+                child: Text(localizations.right),
               ),
             ],
           ),
         ),
         _SettingsItem(
-          title: 'Controls Order',
-          subtitle: 'Order of window control buttons',
+          title: localizations.controlsOrder,
+          subtitle: localizations.controlsOrderDescription,
           trailing: DropdownButton<WindowControlsOrder>(
             value: settings.order,
             onChanged: (order) {
@@ -74,18 +76,18 @@ class WindowControlsSettingsWidget extends ConsumerWidget {
                     .setOrder(order);
               }
             },
-            items: const [
+            items: [
               DropdownMenuItem(
                 value: WindowControlsOrder.standard,
-                child: Text('Minimize, Maximize, Close'),
+                child: Text(localizations.minimizeMaximizeClose),
               ),
               DropdownMenuItem(
                 value: WindowControlsOrder.macOS,
-                child: Text('Close, Minimize, Maximize'),
+                child: Text(localizations.closeMinimizeMaximize),
               ),
               DropdownMenuItem(
                 value: WindowControlsOrder.reverse,
-                child: Text('Close, Maximize, Minimize'),
+                child: Text(localizations.closeMaximizeMinimize),
               ),
             ],
           ),
@@ -116,7 +118,9 @@ class _SettingsItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.symmetric(
-              vertical: AppSpacing.smd, horizontal: AppSpacing.md,),
+            vertical: AppSpacing.smd,
+            horizontal: AppSpacing.md,
+          ),
           margin: AppSpacing.marginBottomSm,
           child: Row(
             children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -36,6 +37,7 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
   Widget build(BuildContext context) {
     final state = ref.watch(folderBrowserProvider);
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Dialog(
       child: Container(
@@ -53,7 +55,7 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Select Folder',
+                  localizations.selectFolder,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -85,14 +87,14 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                   IconButton(
                     onPressed: _navigateUp,
                     icon: const Icon(LucideIcons.arrowUp),
-                    tooltip: 'Go up',
+                    tooltip: localizations.goUp,
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              'Quick Access',
+              localizations.quickAccess,
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -102,21 +104,21 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
               children: [
                 _QuickAccessButton(
                   icon: LucideIcons.home,
-                  label: 'Home',
+                  label: localizations.home,
                   path: '/home',
                   onTap: _navigateToDirectory,
                 ),
                 const SizedBox(width: 8),
                 _QuickAccessButton(
                   icon: LucideIcons.code,
-                  label: 'Workspaces',
+                  label: localizations.workspaces,
                   path: '/workspaces',
                   onTap: _navigateToDirectory,
                 ),
                 const SizedBox(width: 8),
                 _QuickAccessButton(
                   icon: LucideIcons.folder,
-                  label: 'Documents',
+                  label: localizations.documents,
                   path: path.join('/home', 'Documents'),
                   onTap: _navigateToDirectory,
                 ),
@@ -124,7 +126,7 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Folders',
+              localizations.folders,
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
@@ -136,7 +138,7 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                   : state.directories.isEmpty
                       ? Center(
                           child: Text(
-                            'No folders found',
+                            localizations.noFoldersFound,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -166,50 +168,59 @@ class _FolderBrowserDialogState extends ConsumerState<FolderBrowserDialog> {
                         TextEditingController(text: state.currentPath);
                     final customPath = await showDialog<String>(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Enter Path'),
-                        content: TextField(
-                          controller: controller,
-                          decoration: InputDecoration(
-                            labelText: 'Directory Path',
-                            hintText: '/home/user/folder',
-                            hintStyle: TextStyle(
-                              color:
-                                  theme.colorScheme.onSurface.withOpacity(0.4),
+                      builder: (context) {
+                        final localizations = AppLocalizations.of(context);
+                        return AlertDialog(
+                          title: Text(localizations.enterPath),
+                          content: TextField(
+                            controller: controller,
+                            decoration: InputDecoration(
+                              labelText: localizations.directoryPath,
+                              hintText: localizations.pathHint,
+                              hintStyle: TextStyle(
+                                color: theme.colorScheme.onSurface
+                                    .withOpacity(0.4),
+                              ),
                             ),
                           ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () =>
-                                Navigator.of(context).pop(controller.text),
-                            child: const Text('Go'),
-                          ),
-                        ],
-                      ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text(localizations.cancel),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.of(context).pop(controller.text),
+                              child: Text(localizations.go),
+                            ),
+                          ],
+                        );
+                      },
                     );
                     if (customPath != null && customPath.isNotEmpty) {
                       _navigateToDirectory(customPath);
                     }
                   },
                   icon: const Icon(LucideIcons.edit),
-                  label: const Text('Enter Path'),
+                  label: Text(
+                    AppLocalizations.of(context).enterPath,
+                  ),
                 ),
                 Row(
                   children: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
+                      child: Text(
+                        AppLocalizations.of(context).cancel,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     FilledButton(
                       onPressed: () =>
                           Navigator.of(context).pop(state.currentPath),
-                      child: const Text('Select'),
+                      child: Text(
+                        AppLocalizations.of(context).select,
+                      ),
                     ),
                   ],
                 ),
@@ -242,7 +253,9 @@ class _QuickAccessButton extends StatelessWidget {
       label: Text(label),
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.smd, vertical: AppSpacing.sm,),
+          horizontal: AppSpacing.smd,
+          vertical: AppSpacing.sm,
+        ),
       ),
     );
   }

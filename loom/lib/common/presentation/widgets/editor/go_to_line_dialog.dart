@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Dialog for navigating to a specific line or block in the editor
 class GoToLineDialog extends StatefulWidget {
@@ -38,26 +39,31 @@ class _GoToLineDialogState extends State<GoToLineDialog> {
   }
 
   void _handleGoToLine() {
+    final localizations = AppLocalizations.of(context);
     final text = _lineController.text.trim();
     if (text.isEmpty) {
-      setState(() => _errorText = 'Please enter a line number');
+      setState(() => _errorText = localizations.pleaseEnterLineNumber);
       return;
     }
 
     final lineNumber = int.tryParse(text);
     if (lineNumber == null) {
-      setState(() => _errorText = 'Invalid line number');
+      setState(() => _errorText = localizations.invalidLineNumber);
       return;
     }
 
     if (lineNumber < 1) {
-      setState(() => _errorText = 'Line number must be greater than 0');
+      setState(
+        () => _errorText = localizations.lineNumberMustBeGreaterThanZero,
+      );
       return;
     }
 
     final maxLines = widget.maxLines ?? _getMaxLines();
     if (lineNumber > maxLines) {
-      setState(() => _errorText = 'Line number exceeds maximum ($maxLines)');
+      setState(
+        () => _errorText = localizations.lineNumberExceedsMaximum(maxLines),
+      );
       return;
     }
 
@@ -74,10 +80,11 @@ class _GoToLineDialogState extends State<GoToLineDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
     final maxLines = widget.maxLines ?? _getMaxLines();
 
     return AlertDialog(
-      title: const Text('Go to Line'),
+      title: Text(localizations.goToLine),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,8 +95,8 @@ class _GoToLineDialogState extends State<GoToLineDialog> {
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
-              labelText: 'Line number (1 - $maxLines)',
-              hintText: 'Enter line number',
+              labelText: localizations.lineNumberLabel(maxLines),
+              hintText: localizations.enterLineNumber,
               hintStyle: TextStyle(
                 color: theme.colorScheme.onSurface.withOpacity(0.4),
               ),
@@ -106,7 +113,7 @@ class _GoToLineDialogState extends State<GoToLineDialog> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Total lines: $maxLines',
+            localizations.totalLines(maxLines),
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -116,11 +123,11 @@ class _GoToLineDialogState extends State<GoToLineDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(localizations.cancel),
         ).withHoverAnimation(),
         FilledButton(
           onPressed: _handleGoToLine,
-          child: const Text('Go to Line'),
+          child: Text(localizations.goToLine),
         ).withHoverAnimation().withPressAnimation(),
       ],
     );

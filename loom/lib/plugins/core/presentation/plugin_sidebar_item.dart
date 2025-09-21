@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:loom/plugins/api/plugin_manifest.dart';
 import 'package:loom/plugins/core/plugin_manager.dart';
 
@@ -79,6 +80,7 @@ class _PluginPanelState extends ConsumerState<PluginPanel> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Container(
       padding: AppSpacing.paddingMd,
@@ -122,7 +124,8 @@ class _PluginPanelState extends ConsumerState<PluginPanel> {
           // Commands
           if (widget.plugin.capabilities.commands.isNotEmpty) ...[
             Text(
-              'Commands',
+              localizations
+                  .commandsCount(widget.plugin.capabilities.commands.length),
               style: theme.textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w600,
                 color: theme.colorScheme.primary,
@@ -170,7 +173,7 @@ class _PluginPanelState extends ConsumerState<PluginPanel> {
     return Card(
       margin: const EdgeInsets.only(bottom: AppSpacing.xs),
       child: InkWell(
-        onTap: () => _executeCommand(command),
+        onTap: () => _executeCommand(context, command),
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: AppSpacing.paddingSm,
@@ -239,7 +242,9 @@ class _PluginPanelState extends ConsumerState<PluginPanel> {
     return command.replaceAll('_', ' ').toUpperCase();
   }
 
-  Future<void> _executeCommand(String commandId) async {
+  Future<void> _executeCommand(BuildContext context, String commandId) async {
+    final localizations = AppLocalizations.of(context);
+
     try {
       final result = await PluginManager.instance.executeCommand(
         widget.plugin.id,
@@ -250,15 +255,17 @@ class _PluginPanelState extends ConsumerState<PluginPanel> {
       if (context.mounted) {
         if (result.success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Command executed successfully'),
-              duration: Duration(seconds: 2),
+            SnackBar(
+              content: Text(localizations.commandExecutedSuccessfully),
+              duration: const Duration(seconds: 2),
             ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Command failed: ${result.error}'),
+              content: Text(
+                localizations.commandFailed(result.error ?? 'Unknown error'),
+              ),
               backgroundColor: Theme.of(context).colorScheme.error,
               duration: const Duration(seconds: 3),
             ),
@@ -269,7 +276,7 @@ class _PluginPanelState extends ConsumerState<PluginPanel> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to execute command: $e'),
+            content: Text(localizations.failedToExecuteCommand(e.toString())),
             backgroundColor: Theme.of(context).colorScheme.error,
             duration: const Duration(seconds: 3),
           ),
@@ -286,13 +293,15 @@ class PluginSidebarRegistration {
     final activePlugins = pluginManager.getActivePlugins();
 
     // Register individual sidebar items for each active plugin
+    final registry = UIRegistry();
     for (final plugin in activePlugins) {
-      UIRegistry().registerSidebarItem(IndividualPluginSidebarItem(plugin));
+      registry.registerSidebarItem(IndividualPluginSidebarItem(plugin));
     }
   }
 
   static void unregisterPlugin(String pluginId) {
-    UIRegistry().getSidebarItem('plugin-$pluginId');
+    final registry = UIRegistry();
+    registry.getSidebarItem('plugin-$pluginId');
     // Note: UIRegistry doesn't have an unregister method yet
     // This would need to be added to properly clean up
   }

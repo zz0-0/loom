@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/search/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// Search sidebar item that opens search in the side panel
 class SearchSidebarItem implements SidebarItem {
@@ -12,7 +13,7 @@ class SearchSidebarItem implements SidebarItem {
   IconData get icon => Icons.search;
 
   @override
-  String? get tooltip => 'Search';
+  String? get tooltip => null; // Handled by ExtensibleSidebar for localization
 
   @override
   VoidCallback? get onPressed => null; // Use default panel behavior
@@ -46,6 +47,8 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
     final theme = Theme.of(context);
     final searchState = ref.watch(searchProvider);
 
+    final localizations = AppLocalizations.of(context);
+
     return Container(
       padding: AppSpacing.paddingMd,
       child: Column(
@@ -55,7 +58,7 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Search files and content...',
+              hintText: localizations.sidebarSearchPlaceholder,
               hintStyle: TextStyle(
                 color: theme.colorScheme.onSurface.withOpacity(0.4),
               ),
@@ -76,24 +79,24 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
           // Quick search options
           _SearchOption(
             icon: Icons.file_present,
-            title: 'Files',
-            subtitle: 'Search in file names',
+            title: localizations.searchOptionFilesTitle,
+            subtitle: localizations.searchOptionFilesSubtitle,
             isSelected: _currentMode == SearchMode.files,
             onTap: () => _setSearchMode(SearchMode.files),
           ),
           const SizedBox(height: AppSpacing.xs),
           _SearchOption(
             icon: Icons.text_fields,
-            title: 'Content',
-            subtitle: 'Search in file content',
+            title: localizations.searchOptionContentTitle,
+            subtitle: localizations.searchOptionContentSubtitle,
             isSelected: _currentMode == SearchMode.content,
             onTap: () => _setSearchMode(SearchMode.content),
           ),
           const SizedBox(height: AppSpacing.xs),
           _SearchOption(
             icon: Icons.code,
-            title: 'Symbols',
-            subtitle: 'Search for functions, classes',
+            title: localizations.searchOptionSymbolsTitle,
+            subtitle: localizations.searchOptionSymbolsSubtitle,
             isSelected: _currentMode == SearchMode.symbols,
             onTap: () => _setSearchMode(SearchMode.symbols),
           ),
@@ -104,7 +107,7 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
             const Divider(height: AppSpacing.xs),
             const SizedBox(height: AppSpacing.xs),
             Expanded(
-              child: _buildResults(searchState, theme),
+              child: _buildResults(context, searchState, theme),
             ),
           ],
         ],
@@ -162,7 +165,13 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
     }
   }
 
-  Widget _buildResults(SearchState searchState, ThemeData theme) {
+  Widget _buildResults(
+    BuildContext context,
+    SearchState searchState,
+    ThemeData theme,
+  ) {
+    final localizations = AppLocalizations.of(context);
+
     if (searchState.isSearching) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -181,11 +190,21 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Search Error',
+              // searchError expects an Object parameter (error); use the state's error
+              localizations.searchError(searchState.error ?? ''),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.error,
               ),
             ),
+            const SizedBox(height: 8),
+            if (searchState.error != null)
+              Text(
+                searchState.error!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                ),
+                textAlign: TextAlign.center,
+              ),
           ],
         ),
       );
@@ -204,7 +223,7 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
             ),
             const SizedBox(height: 8),
             Text(
-              'No matches found',
+              localizations.noResultsFound,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -219,7 +238,12 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
       children: [
         // Summary
         Text(
-          '${results.totalMatches} matches in ${results.totalFiles} files',
+          localizations.searchResultsSummary(
+            results.totalMatches,
+            results.totalFiles,
+            results.searchTime.inMilliseconds,
+            // results.totalMatches,
+          ),
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w500,
@@ -260,11 +284,11 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
             child: Row(
               children: [
                 Icon(
-                  _getFileIcon(group.fileName),
-                  size: 12,
+                  Icons.description,
+                  size: 14,
                   color: theme.colorScheme.primary,
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     group.fileName,
@@ -275,7 +299,8 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
                   ),
                 ),
                 Text(
-                  '${group.totalMatches}',
+                  AppLocalizations.of(context)
+                      .matchesInFile(group.totalMatches),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -296,7 +321,8 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
           Padding(
             padding: const EdgeInsets.only(left: AppSpacing.sm),
             child: Text(
-              '+${group.results.length - 3} more matches',
+              AppLocalizations.of(context)
+                  .moreMatches(group.results.length - 3),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontStyle: FontStyle.italic,
@@ -322,7 +348,7 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
           children: [
             // Line number
             Text(
-              'Line ${result.lineNumber}',
+              AppLocalizations.of(context).linePrefix(result.lineNumber),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.w500,
@@ -365,37 +391,37 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
     );
   }
 
-  IconData _getFileIcon(String fileName) {
-    final extension = fileName.split('.').last.toLowerCase();
+  // IconData _getFileIcon(String fileName) {
+  //   final extension = fileName.split('.').last.toLowerCase();
 
-    switch (extension) {
-      case 'dart':
-        return Icons.code;
-      case 'py':
-        return Icons.code;
-      case 'js':
-      case 'ts':
-        return Icons.javascript;
-      case 'html':
-        return Icons.html;
-      case 'css':
-        return Icons.css;
-      case 'json':
-        return Icons.data_object;
-      case 'md':
-        return Icons.description;
-      case 'txt':
-        return Icons.text_fields;
-      case 'png':
-      case 'jpg':
-      case 'jpeg':
-      case 'gif':
-      case 'svg':
-        return Icons.image;
-      default:
-        return Icons.insert_drive_file;
-    }
-  }
+  //   switch (extension) {
+  //     case 'dart':
+  //       return Icons.code;
+  //     case 'py':
+  //       return Icons.code;
+  //     case 'js':
+  //     case 'ts':
+  //       return Icons.javascript;
+  //     case 'html':
+  //       return Icons.html;
+  //     case 'css':
+  //       return Icons.css;
+  //     case 'json':
+  //       return Icons.data_object;
+  //     case 'md':
+  //       return Icons.description;
+  //     case 'txt':
+  //       return Icons.text_fields;
+  //     case 'png':
+  //     case 'jpg':
+  //     case 'jpeg':
+  //     case 'gif':
+  //     case 'svg':
+  //       return Icons.image;
+  //     default:
+  //       return Icons.insert_drive_file;
+  //   }
+  // }
 
   void _openFile(String filePath) {
     final container = ProviderScope.containerOf(context, listen: false);
@@ -512,6 +538,7 @@ class _SearchOption extends StatelessWidget {
 /// Registration function for the search feature
 class SearchFeatureRegistration {
   static void register() {
-    UIRegistry().registerSidebarItem(SearchSidebarItem());
+    final registry = UIRegistry();
+    registry.registerSidebarItem(SearchSidebarItem());
   }
 }

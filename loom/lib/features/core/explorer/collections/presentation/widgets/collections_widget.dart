@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/explorer/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path/path.dart' as path;
 
@@ -55,6 +56,7 @@ class CollectionsWidget extends ConsumerWidget {
 
   Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final localizations = AppLocalizations.of(context);
 
     return Center(
       child: Padding(
@@ -69,14 +71,14 @@ class CollectionsWidget extends ConsumerWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'No Collections',
+              localizations.noCollections,
               style: theme.textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 4),
             Text(
-              'Create collections to organize your files',
+              localizations.createCollectionsToOrganize,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -86,7 +88,7 @@ class CollectionsWidget extends ConsumerWidget {
             FilledButton.icon(
               onPressed: () => _showCreateCollectionDialog(context, ref),
               icon: const Icon(LucideIcons.plus, size: 16),
-              label: const Text('Create Collection'),
+              label: Text(localizations.createCollection),
             ),
           ],
         ),
@@ -141,17 +143,16 @@ class CollectionsWidget extends ConsumerWidget {
     WidgetRef ref,
     String collectionName,
   ) {
+    final localizations = AppLocalizations.of(context);
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete "$collectionName"'),
-        content: const Text(
-          'Are you sure you want to delete this collection? This will not delete the actual files.',
-        ),
+        title: Text(localizations.deleteCollection(collectionName)),
+        content: Text(localizations.deleteCollectionConfirmation),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(localizations.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -165,7 +166,7 @@ class CollectionsWidget extends ConsumerWidget {
               }
               Navigator.of(context).pop();
             },
-            child: const Text('Delete'),
+            child: Text(localizations.delete),
           ),
         ],
       ),

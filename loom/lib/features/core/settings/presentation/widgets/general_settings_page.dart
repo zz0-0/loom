@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/features/core/settings/index.dart';
+import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
 
 /// General settings page
 class GeneralSettingsPage extends ConsumerWidget {
@@ -11,7 +11,7 @@ class GeneralSettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context);
 
     return Container(
       padding: AppSpacing.paddingMd,
@@ -55,7 +55,7 @@ class _GeneralSettings extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final generalSettings = ref.watch(generalSettingsProvider);
     final autoSaveState = ref.watch(autoSaveProvider);
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -83,7 +83,7 @@ class _GeneralSettings extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Auto-save Interval',
+                  localizations.autoSaveInterval,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
@@ -115,7 +115,7 @@ class _GeneralSettings extends ConsumerWidget {
                   Padding(
                     padding: AppSpacing.paddingTopSm,
                     child: Text(
-                      'Last saved: ${_formatLastSaveTime(autoSaveState.lastSaveTime!)}',
+                      '${localizations.lastSaved}${_formatLastSaveTime(autoSaveState.lastSaveTime!, localizations)}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,
@@ -228,18 +228,18 @@ class _GeneralSettings extends ConsumerWidget {
     );
   }
 
-  String _formatLastSaveTime(DateTime time) {
+  String _formatLastSaveTime(DateTime time, AppLocalizations localizations) {
     final now = DateTime.now();
     final difference = now.difference(time);
 
     if (difference.inSeconds < 60) {
-      return 'just now';
+      return localizations.justNow;
     } else if (difference.inMinutes < 60) {
-      return '${difference.inMinutes}m ago';
+      return localizations.minutesAgo(difference.inMinutes);
     } else if (difference.inHours < 24) {
-      return '${difference.inHours}h ago';
+      return localizations.hoursAgo(difference.inHours);
     } else {
-      return '${difference.inDays}d ago';
+      return localizations.daysAgo(difference.inDays);
     }
   }
 }

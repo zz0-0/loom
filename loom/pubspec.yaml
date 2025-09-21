@@ -36,6 +36,7 @@ dev_dependencies:
   freezed: ^2.5.7
   integration_test:
     sdk: flutter
+  intl_utils: ^2.8.8
   mockito: ^5.4.4
   pubspec_dependency_sorter: ^1.0.4
   riverpod_generator: ^2.4.0

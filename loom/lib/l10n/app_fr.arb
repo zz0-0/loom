@@ -44,19 +44,19 @@
   "@manualLanguageSelection": {
     "description": "Option for manual language selection"
   },
-  "english": "English",
+  "english": "Anglais",
   "@english": {
     "description": "English language name"
   },
-  "spanish": "Español",
+  "spanish": "Espagnol",
   "@spanish": {
     "description": "Spanish language name"
   },
-  "french": "Français",
+  "french": "Langue française",
   "@french": {
     "description": "French language name"
   },
-  "german": "Deutsch",
+  "german": "Allemand",
   "@german": {
     "description": "German language name"
   },
@@ -88,17 +88,13 @@
   "@appearanceSubtitle": {
     "description": "Appearance settings subtitle"
   },
-  "interface": "Interface",
+  "interface": "Interface utilisateur",
   "@interface": {
     "description": "Interface settings title"
   },
   "interfaceSubtitle": "Contrôles de fenêtre, mise en page",
   "@interfaceSubtitle": {
     "description": "Interface settings subtitle"
-  },
-  "general": "Général",
-  "@general": {
-    "description": "General settings title"
   },
   "generalSubtitle": "Préférences, comportement",
   "@generalSubtitle": {
@@ -112,8 +108,2034 @@
   "@aboutSubtitle": {
     "description": "About settings subtitle"
   },
-  "appTitle": "Loom - Base de Connaissances",
-  "@appTitle": {
-    "description": "The title of the application"
+  "aboutDescription": "Informations sur la version et les licences de Loom.",
+  "version": "Version de l'application",
+  "licenses": "Licences",
+  "viewOpenSourceLicenses": "Voir les licences open source",
+  "loom": "Loom — application",
+  "build": "Numéro de build",
+  "loomDescription": "Loom est une application de base de connaissances pour organiser et éditer des documents.",
+  "loomDescriptionFull": "Loom est une application de base de connaissances pour organiser, rechercher et éditer vos documents efficacement.",
+  "loomDocumentation": "Documentation Loom",
+  "welcomeToLoom": "Bienvenue sur Loom !",
+  "keyFeatures": "Fonctionnalités clés :",
+  "fileExplorerFeature": "• Explorateur de fichiers : parcourir et gérer vos fichiers",
+  "richTextEditorFeature": "• Éditeur riche : éditer des documents avec coloration syntaxique",
+  "searchFeature": "Recherche",
+  "settingsFeature": "• Paramètres : personnaliser votre expérience",
+  "keyboardShortcuts": "Raccourcis clavier :",
+  "saveShortcut": "• Ctrl+S : Sauvegarder le fichier",
+  "globalSearchShortcut": "• Ctrl+Maj+F : Recherche globale",
+  "undoShortcut": "• Ctrl+Z : Annuler",
+  "redoShortcut": "• Ctrl+Y : Rétablir",
+  "menu": "Menu principal",
+  "file": "Fichier",
+  "newFile": "Nouveau fichier",
+  "openFolder": "Ouvrir un dossier",
+  "save": "Enregistrer",
+  "saveAs": "Enregistrer sous",
+  "export": "Exporter",
+  "exportFile": "Exporter le fichier",
+  "enterExportLocation": "Saisir l'emplacement d'exportation",
+  "formatHint": "ex : txt, md, html",
+  "fileExportedAs": "Fichier exporté sous \"{filename}\"",
+  "failedToExportFile": "Échec de l'exportation : {error}",
+  "enterSaveLocation": "Saisir l'emplacement d'enregistrement",
+  "fileSavedAs": "Fichier enregistré sous \"{filename}\"",
+  "failedToSaveFile": "Échec de l'enregistrement : {error}",
+  "openInNewTab": "Ouvrir dans un nouvel onglet",
+  "openInNewTabLabel": "Ouvrir dans un nouvel onglet",
+  "openInNewTabAction": "Ouvrir dans un nouvel onglet",
+  "openInNewTabTooltip": "Ouvrir dans un nouvel onglet",
+  "close": "Fermer",
+  "closeLabel": "Fermer",
+  "closeOthersLabel": "Fermer les autres",
+  "closeAllLabel": "Fermer tout",
+  "edit": "Éditer",
+  "undo": "Annuler",
+  "redo": "Rétablir",
+  "cut": "Couper",
+  "copy": "Copier",
+  "paste": "Coller",
+  "rename": "Renommer",
+  "delete": "Supprimer",
+  "deleteItem": "Supprimer l'élément",
+  "renameSuccess": "Renommé en {name}",
+  "deleteSuccess": "{itemType} supprimé avec succès",
+  "newFolderPlaceholder": "nouveau-dossier",
+  "create": "Créer",
+  "createFolder": "Créer un dossier",
+  "createNewFile": "Créer un nouveau fichier",
+  "createNewFolder": "Créer un nouveau dossier",
+  "fileCreated": "Fichier \"{filename}\" créé",
+  "failedToCreateFile": "Échec de la création du fichier : {error}",
+  "failedToCreateFolder": "Échec de la création du dossier : {error}",
+  "failedToOpenFolder": "Échec de l'ouverture du dossier : {error}",
+  "failedToDeleteItem": "Échec de la suppression : {error}",
+  "failedToRenameItem": "Échec du renommage : {error}",
+  "failedToCloneRepository": "Échec du clonage du dépôt : {error}",
+  "browse": "Parcourir",
+  "selectFolderLocation": "Sélectionner l'emplacement du dossier",
+  "enterPathPrompt": "Entrez le chemin du dossier à ouvrir :",
+  "directoryPath": "Chemin du dossier",
+  "folderPathHint": "Entrez le chemin du dossier (ex. /workspaces/mon-dossier)",
+  "folderCreatedSuccess": "Dossier \"{folderName}\" créé avec succès !",
+  "failedToSelectLocation": "Erreur lors de la sélection : {error}",
+  "select": "Sélectionner",
+  "selectPanelFromSidebar": "Sélectionnez un panneau depuis la barre latérale",
+  "selectSidebarItemFirst": "Veuillez d'abord sélectionner un élément dans la barre latérale",
+  "searchFilesHint": "Rechercher des fichiers...",
+  "searchFilesAndCommands": "Rechercher fichiers et commandes",
+  "searchResultsWillAppearHere": "Les résultats de recherche apparaîtront ici",
+  "noResultsFound": "Aucun résultat trouvé",
+  "searchYourKnowledgeBase": "Recherchez dans votre base de connaissances",
+  "searchEverything": "Tout rechercher",
+  "searchPanelPlaceholder": "Rechercher...",
+  "searchTooltip": "Recherche",
+  "find": "Rechercher",
+  "findAndReplace": "Rechercher et remplacer",
+  "findLabel": "Rechercher",
+  "replaceWith": "Remplacer par",
+  "replace": "Remplacer",
+  "replaceAll": "Remplacer tout",
+  "findNext": "Rechercher suivant",
+  "goToLine": "Aller à la ligne",
+  "pleaseEnterLineNumber": "Veuillez saisir un numéro de ligne",
+  "invalidLineNumber": "Numéro de ligne invalide",
+  "lineNumberMustBeGreaterThanZero": "Le numéro de ligne doit être supérieur à 0",
+  "lineNumberExceedsMaximum": "Le numéro de ligne dépasse la limite ({maxLines})",
+  "lineNumberLabel": "Numéro de ligne {maxLines}",
+  "enterLineNumber": "Entrez le numéro de ligne",
+  "totalLines": "Total des lignes : {count}",
+  "documentTitle": "Titre du document",
+  "headerText": "En-tête",
+  "preview": "Aperçu",
+  "previewSampleText": "Texte d'exemple",
+  "exporting": "Export en cours...",
+  "exportFormat": "Format d'export",
+  "pdf": "PDF (format)",
+  "html": "HTML (format)",
+  "markdown": "Markdown (format)",
+  "plainText": "Texte brut",
+  "pluginManager": "Gestionnaire de plugins",
+  "plugins": "Extensions",
+  "noPluginsCurrentlyLoaded": "Aucun plugin chargé",
+  "disablePlugin": "Désactiver le plugin",
+  "enablePlugin": "Activer le plugin",
+  "failedToEnablePlugin": "Échec de l'activation du plugin : {error}",
+  "failedToDisablePlugin": "Échec de la désactivation du plugin : {error}",
+  "installed": "Installé",
+  "active": "Actif",
+  "inactive": "Inactif",
+  "commandsCount": "{count} commandes",
+  "commandExecutedSuccessfully": "Commande exécutée avec succès",
+  "commandFailed": "Échec de la commande : {error}",
+  "failedToExecuteCommand": "Échec de l'exécution : {error}",
+  "commandKeyShortcut": "Raccourci : ⌘K",
+  "minimizeTooltip": "Minimiser",
+  "maximizeTooltip": "Maximiser",
+  "closeTooltip": "Fermer",
+  "zoomTooltip": "Contrôler le zoom",
+  "toggleLineNumbersTooltip": "Basculer les numéros de ligne",
+  "toggleMinimapTooltip": "Basculer le minimap",
+  "undoTooltip": "Annuler (Ctrl+Z)",
+  "redoTooltip": "Rétablir (Ctrl+Y)",
+  "cutTooltip": "Couper (Ctrl+X)",
+  "copyTooltip": "Copier (Ctrl+C)",
+  "pasteTooltip": "Coller (Ctrl+V)",
+  "foldAllTooltip": "Réduire tout (Ctrl+Maj+[)",
+  "unfoldAllTooltip": "Développer tout (Ctrl+Maj+])",
+  "exportTooltip": "Exporter (Ctrl+E)",
+  "newFileTooltip": "Nouveau fichier",
+  "newFolderTooltip": "Nouveau dossier",
+  "refreshTooltip": "Actualiser",
+  "fileSystemTooltip": "Système de fichiers",
+  "collectionsTooltip": "Gérer les collections",
+  "removeFromCollectionTooltip": "Retirer de la collection",
+  "nothingToUndo": "Rien à annuler",
+  "nothingToRedo": "Rien à rétablir",
+  "contentCutToClipboard": "Contenu coupé dans le presse-papiers",
+  "contentCopiedToClipboard": "Contenu copié dans le presse-papiers",
+  "contentPastedFromClipboard": "Contenu collé depuis le presse-papiers",
+  "noTextInClipboard": "Aucun texte dans le presse-papiers",
+  "noContentToCopy": "Aucun contenu à copier",
+  "noContentToCut": "Aucun contenu à couper",
+  "noContentToPreview": "Aucun contenu à prévisualiser",
+  "fileSaved": "Fichier \"{filename}\" enregistré",
+  "fileSavedSuccessfully": "Fichier enregistré avec succès",
+  "openFolderFirst": "Ouvrez d'abord un dossier",
+  "noFileOpenToSave": "Aucun fichier ouvert à enregistrer",
+  "exportDocument": "Exporter le document",
+  "includeLineNumbers": "Inclure les numéros de ligne",
+  "includeSyntaxHighlighting": "Inclure la coloration syntaxique",
+  "includeHeader": "Inclure l'en-tête",
+  "saveLocation": "Emplacement d'enregistrement",
+  "choose": "Choisir",
+  "chooseTemplateOptional": "Choisir un modèle (optionnel)",
+  "empty": "Vide",
+  "noCollections": "Aucune collection",
+  "createCollectionsToOrganize": "Créez des collections pour organiser vos fichiers",
+  "createCollection": "Créer une collection",
+  "collectionName": "Nom de la collection",
+  "myCollection": "Ma collection",
+  "saveExport": "Enregistrer l'export",
+  "repositoryUrl": "URL du dépôt",
+  "enterGitRepositoryUrl": "Entrez l'URL du dépôt Git",
+  "cloneFromGit": "Cloner depuis Git",
+  "cloningRepository": "Clonage du dépôt...",
+  "successfullyClonedRepository": "Dépôt cloné avec succès {path}",
+  "openFolderTitle": "Ouvrir un dossier",
+  "openAnExistingWorkspace": "Ouvrir un espace de travail existant",
+  "openFolderMenu": "Ouvrir le dossier",
+  "closeFolder": "Fermer le dossier",
+  "createANewDocument": "Créer un nouveau document",
+  "newFileTitle": "Nouveau fichier",
+  "newFolder": "Nouveau dossier",
+  "noMatchesFound": "Aucun résultat trouvé {searchText}",
+  "welcomeToYourKnowledgeBase": "Bienvenue dans votre base de connaissances",
+  "loomAppTitle": "Loom — Base de connaissances",
+  "loomKnowledgeBase": "Base de connaissances Loom",
+  "yourWorkspace": "Votre espace de travail",
+  "recentFiles": "Fichiers récents",
+  "favorites": "Favoris",
+  "history": "Historique",
+  "helpAndSupport": "Aide et support",
+  "darkMode": "Mode sombre",
+  "documents": "Documents (vos fichiers)",
+  "editor": "Éditeur",
+  "collections": "Collections (groupes)",
+  "welcomeToLoomTitle": "Bienvenue sur Loom",
+  "yourNextGenerationKnowledgeBase": "Votre prochaine génération de base de connaissances",
+  "fileLabel": "Fichier: {fileName}",
+  "options": "Paramètres",
+  "applicationTitleLabel": "Titre de l'application",
+  "applicationTitleHint": "Titre affiché dans la barre d'application",
+  "showAppTitle": "Afficher le titre de l'application",
+  "showSearchBarTitle": "Afficher la barre de recherche",
+  "showSearchBarSubtitle": "Afficher la barre de recherche dans la barre supérieure",
+  "animationSpeed": "Vitesse de l'animation",
+  "slow": "Lent",
+  "normal": "Normal (défaut)",
+  "fast": "Rapide",
+  "disabled": "Désactivé",
+  "sidebarTransparency": "Transparence de la barre latérale",
+  "interfaceDescription": "Configurer les contrôles de fenêtre et les options de mise en page",
+  "currentVersion": "1.0.0 (version actuelle)",
+  "currentBuild": "20241201 (build actuelle)",
+  "uiPolishShowcase": "Démonstration d'amélioration de l'interface",
+  "enhancedUiAnimations": "Animations UI améliorées",
+  "loadingIndicators": "Indicateurs de chargement",
+  "smoothLoading": "Chargement fluide",
+  "skeletonLoader": "Chargeur squelette",
+  "interactiveElements": "Éléments interactifs",
+  "hoverAnimation": "Animation au survol",
+  "pressAnimation": "Animation à la pression",
+  "pulseAnimation": "Animation pulsée",
+  "shimmerEffects": "Effets de scintillement",
+  "successAnimations": "Animations de réussite",
+  "taskCompleted": "Tâche terminée",
+  "animationCombinations": "Combinaisons d'animations",
+  "interactiveButton": "Bouton interactif",
+  "animatedCard": "Carte animée",
+  "animatedCardDescription": "Exemple de carte avec animations",
+  "autoSaveInterval": "Intervalle d'auto-enregistrement",
+  "lastSaved": "Dernière sauvegarde : {time}",
+  "justNow": "À l'instant",
+  "minutesAgo": "il y a {count} minutes",
+  "hoursAgo": "il y a {count} heures",
+  "daysAgo": "il y a {count} jours",
+  "copyright": "© 2024 Équipe Loom",
+  "openSourceLicenses": "Licences open source",
+  "usesFollowingLibraries": "Utilise les bibliothèques suivantes :",
+  "fullLicenseTexts": "Textes complets des licences",
+  "enterPath": "Saisir le chemin",
+  "pathHint": "Chemin (ex. /workspaces/mon-dossier)",
+  "cancel": "Annuler",
+  "go": "Aller",
+  "apply": "Appliquer",
+  "selectColorLabel": "Sélectionner une couleur {label}",
+  "fontFamilyLabel": "Famille de polices",
+  "fontSizeLabel": "Taille de la police",
+  "exit": "Quitter",
+  "view": "Affichage",
+  "toggleSidebar": "Basculer la barre latérale",
+  "togglePanel": "Basculer le panneau",
+  "fullScreen": "Plein écran",
+  "help": "Aide",
+  "documentation": "Documentation du projet",
+  "noPluginsLoaded": "Aucun plugin chargé",
+  "noContentToExport": "Aucun contenu à exporter",
+  "exitApplication": "Quitter l'application",
+  "confirmExit": "Confirmer la fermeture",
+  "cancelButton": "Annuler",
+  "folderPathLabel": "Chemin du dossier",
+  "enterFolderNameHint": "Entrez le nom du dossier",
+  "enterFileNameHint": "Entrez le nom du fichier (ex. main.dart)",
+  "enterInitialFileContentHint": "Entrez le contenu initial du fichier...",
+  "enterNewNameHint": "Entrez le nouveau nom",
+  "filterFileExtensions": "Filtrer les extensions de fichier",
+  "showHiddenFiles": "Afficher les fichiers cachés",
+  "commentBlockTitle": "Bloc de commentaire",
+  "systemDefault": "Par défaut (système)",
+  "systemDefaultSubtitle": "S'adapte au thème système",
+  "defaultLight": "Clair par défaut",
+  "defaultLightSubtitle": "Thème clair",
+  "defaultDark": "Sombre par défaut",
+  "defaultDarkSubtitle": "Thème sombre",
+  "syntaxWarningsTooltip": "{count} avertissements de syntaxe",
+  "moreActionsTooltip": "Plus d'actions",
+  "fileName": "Nom de fichier",
+  "enterFileName": "Entrez le nom du fichier",
+  "invalidFileName": "Nom de fichier invalide",
+  "invalidCharactersInFileName": "Caractères invalides dans le nom de fichier",
+  "versionState": "Version : {version} • État : {state}",
+  "appearanceDescription": "Apparence et paramètres visuels",
+  "openLink": "Ouvrir le lien",
+  "openLinkConfirmation": "Voulez-vous ouvrir ce lien ? {url}",
+  "urlCopiedToClipboard": "URL copiée dans le presse-papiers {url}",
+  "copyUrl": "Copier l'URL",
+  "footnote": "Note de bas de page {id}",
+  "imageAlt": "Image (source : {src})",
+  "hideReplace": "Masquer Remplacer",
+  "showReplace": "Afficher Remplacer",
+  "matchCase": "Respecter la casse",
+  "useRegex": "Utiliser une expression régulière",
+  "share": "Partager",
+  "newDocument": "Nouveau document",
+  "scanDocument": "Analyser le document",
+  "total": "Total :",
+  "noActivePlugins": "Aucun plugin actif",
+  "collectionsViewForMobile": "Vue collections pour mobile",
+  "mobileSearchInterface": "Interface de recherche mobile",
+  "deleteCollection": "Supprimer la collection {collectionName}",
+  "deleteCollectionConfirmation": "Supprimer cette collection ? Cela n'effacera pas les fichiers.",
+  "smartSuggestion": "Suggestion intelligente",
+  "keepHere": "Garder ici",
+  "invalidFolderName": "Nom de dossier invalide",
+  "invalidCharactersInFolderName": "Caractères invalides dans le nom du dossier",
+  "folderCreated": "Dossier créé {folderName}",
+  "useFileOpenToOpenFolder": "Utilisez Fichier > Ouvrir pour ouvrir un dossier",
+  "useWelcomeScreenToCreateFile": "Utilisez l'écran de bienvenue pour créer un fichier",
+  "settingsPanelComingSoon": "Panneau Paramètres bientôt disponible",
+  "openedFile": "Fichier ouvert {fileName}",
+  "includeHiddenFiles": "Inclure les fichiers cachés",
+  "errorSavingFile": "Erreur lors de l'enregistrement : {error}",
+  "syntaxWarnings": "Avertissements de syntaxe",
+  "replacedOccurrences": "Remplacements effectués : {count}",
+  "createdFolder": "Dossier créé : {folderName}",
+  "pleaseOpenWorkspaceFirst": "Veuillez ouvrir un espace de travail d'abord",
+  "createdAndOpenedFile": "Créé et ouvert : {fileName}",
+  "sourceControlPanelPlaceholder": "Panel de contrôle de source (à implémenter)",
+  "debugPanelPlaceholder": "Panel de débogage (à implémenter)",
+  "extensionsPanelPlaceholder": "Panel des extensions (à implémenter)",
+  "settingsPanelPlaceholder": "Panneau Paramètres (à implémenter)",
+  "settingsTooltip": "Paramètres",
+  "explorerTooltip": "Explorateur",
+  "flutterLicense": "Flutter - Licence BSD",
+  "riverpodLicense": "Riverpod - Licence",
+  "adaptiveThemeLicense": "AdaptiveTheme - Licence",
+  "filePickerLicense": "FilePicker - Licence",
+  "sharedPreferencesLicense": "SharedPreferences - Licence",
+  "search": "Recherche",
+  "developmentDocumentation": "Documentation de développement",
+  "cloneRepositoryTitle": "Cloner le dépôt",
+  "openedWorkspace": "Espace de travail ouvert {workspaceName}",
+  "targetDirectoryOptional": "Répertoire cible (optionnel)",
+  "leaveEmptyToUseRepositoryName": "Laisser vide pour utiliser le nom du dépôt",
+  "editingFile": "Édition du fichier {filePath}",
+  "editorContentPlaceholder": "Contenu de l'éditeur...",
+  "replacing": "Remplacement...",
+  "replacingAll": "Remplacement de tous",
+  "searchError": "Erreur de recherche : {error}",
+  "recentSearches": "Recherches récentes",
+  "selectFolder": "Sélectionner un dossier",
+  "goUp": "Remonter",
+  "quickAccess": "Accès rapide",
+  "home": "Accueil",
+  "workspaces": "Espaces de travail",
+  "folders": "Dossiers",
+  "noFoldersFound": "Aucun dossier trouvé",
+  "searchResultsSummary": "{matches} correspondances dans {files} fichiers {time}",
+  "matchesInFile": "{count} correspondances dans ce fichier",
+  "linePrefix": "Ligne {number}",
+  "typeToSearchFilesAndCommands": "Tapez pour rechercher fichiers et commandes",
+  "navigateUpDown": "Naviguer haut/bas",
+  "selectEnter": "Sélectionner (Entrée)",
+  "closeEscape": "Fermer (Échap)",
+  "findFile": "Trouver un fichier",
+  "typeToSearchFiles": "Tapez pour rechercher des fichiers",
+  "noFilesFoundInWorkspace": "Aucun fichier trouvé dans l'espace de travail",
+  "noFilesMatchSearch": "Aucun fichier ne correspond à la recherche",
+  "navigateOpenClose": "Ouvrir/Fermer",
+  "switchTheme": "Changer le thème",
+  "layoutAndVisual": "Disposition et visuel",
+  "compactMode": "Mode compact",
+  "compactModeDescription": "Réduit les paddings pour une interface compacte",
+  "showIconsInMenu": "Afficher les icônes dans le menu",
+  "showIconsInMenuDescription": "Afficher des icônes à côté des éléments de menu",
+  "animationSpeedDescription": "Contrôle la vitesse des animations UI",
+  "sidebarTransparencyDescription": "Règle la transparence de la barre latérale",
+  "theme": "Thème",
+  "currentTheme": "Thème actuel",
+  "currentThemeDescription": "Le thème actuellement sélectionné",
+  "colorScheme": "Schéma de couleurs",
+  "primary": "Primaire",
+  "secondary": "Secondaire",
+  "surface": "Surface (couleur)",
+  "themePresets": "Préréglages de thème",
+  "themePresetsDescription": "Choisissez un préréglage de couleur",
+  "systemThemes": "Thèmes système",
+  "lightThemes": "Thèmes clairs",
+  "darkThemes": "Thèmes sombres",
+  "customizeColors": "Personnaliser les couleurs",
+  "customizeColorsDescription": "Choisissez vos couleurs personnalisées",
+  "primaryColor": "Couleur primaire",
+  "secondaryColor": "Couleur secondaire",
+  "surfaceColor": "Couleur de surface",
+  "typography": "Typographie",
+  "typographyDescription": "Choisissez la famille et la taille de police",
+  "windowControls": "Contrôles de la fenêtre",
+  "showWindowControls": "Afficher les contrôles de la fenêtre",
+  "showWindowControlsDescription": "Afficher les boutons de contrôle de la fenêtre",
+  "controlsPlacement": "Placement des contrôles",
+  "controlsPlacementDescription": "Position des boutons de contrôle",
+  "controlsOrder": "Ordre des contrôles",
+  "controlsOrderDescription": "Ordre des boutons de contrôle",
+  "auto": "Automatique",
+  "left": "Gauche",
+  "right": "Droite",
+  "minimizeMaximizeClose": "Minimiser, Maximiser, Fermer",
+  "closeMinimizeMaximize": "Fermer, Minimiser, Maximiser",
+  "closeMaximizeMinimize": "Fermer, Maximiser, Minimiser",
+  "closeButtonPositions": "Positions du bouton Fermer",
+  "closeButtonPositionsDescription": "Choisissez la position du bouton fermer",
+  "quickSettings": "Paramètres rapides",
+  "quickSettingsDescription": "Accès rapide aux paramètres courants",
+  "autoDescription": "Détecte automatiquement la meilleure option",
+  "allLeft": "Tous à gauche",
+  "allLeftDescription": "Tous les contrôles alignés à gauche",
+  "allRight": "Tous à droite",
+  "allRightDescription": "Tous les contrôles alignés à droite",
+  "individualSettings": "Paramètres individuels",
+  "individualSettingsDescription": "Réglez chaque contrôle séparément",
+  "tabCloseButtons": "Boutons de fermeture d'onglet",
+  "tabCloseButtonsDescription": "Afficher les boutons de fermeture sur les onglets",
+  "panelCloseButtons": "Boutons de fermeture du panneau",
+  "panelCloseButtonsDescription": "Afficher les boutons de fermeture sur les panneaux",
+  "currently": "Actuellement",
+  "sidebarSearchPlaceholder": "Rechercher dans la barre latérale...",
+  "sidebarSearchOptions": "Options de recherche",
+  "settingsAppearanceDetail": "Détails d'apparence",
+  "settingsInterfaceDetail": "Détails de l'interface",
+  "topbarSearchDialogPlaceholder": "Rechercher dans la barre supérieure...",
+  "showAppTitleSubtitle": "Afficher le titre de l'application dans la barre supérieure",
+  "animationSpeedTestTitle": "Test de vitesse d'animation",
+  "hoverMeFastAnimation": "Survolez pour voir l'animation rapide",
+  "fadeInNormalSpeed": "Fondu (vitesse normale)",
+  "gettingStartedTitle": "Prise en main",
+  "projectNotesTitle": "Notes du projet",
+  "searchOptionFilesTitle": "Rechercher fichiers",
+  "searchOptionFilesSubtitle": "Inclure le contenu des fichiers dans la recherche",
+  "searchOptionContentTitle": "Rechercher contenu",
+  "searchOptionContentSubtitle": "Rechercher le texte à l'intérieur des fichiers",
+  "searchOptionSymbolsTitle": "Rechercher symboles",
+  "searchOptionSymbolsSubtitle": "Inclure les symboles dans la recherche",
+  "moreMatches": "Plus de correspondances {count}",
+  "noCommandsAvailable": "Aucune commande disponible",
+  "commandPaletteSearchFilesTitle": "Recherche de fichiers dans la palette de commandes",
+  "commandPaletteSearchFilesSubtitle": "Rechercher des fichiers depuis la palette de commandes",
+  "commandPaletteSearchInFilesTitle": "Recherche dans les fichiers",
+  "commandPaletteSearchInFilesSubtitle": "Rechercher dans le contenu des fichiers depuis la palette",
+  "footerFilesCount": "{count} fichiers",
+  "@uiPolishShowcase": {
+    "description": "Title for the UI polish showcase demo"
+  },
+  "@enhancedUiAnimations": {
+    "description": "Header for enhanced UI animations section"
+  },
+  "@loadingIndicators": {
+    "description": "Section title for loading indicators"
+  },
+  "@smoothLoading": {
+    "description": "Label for smooth loading indicator"
+  },
+  "@skeletonLoader": {
+    "description": "Label for skeleton loader"
+  },
+  "@interactiveElements": {
+    "description": "Section title for interactive elements"
+  },
+  "@hoverAnimation": {
+    "description": "Label for hover animation demo"
+  },
+  "@pressAnimation": {
+    "description": "Label for press animation demo"
+  },
+  "@pulseAnimation": {
+    "description": "Label for pulse animation demo"
+  },
+  "@shimmerEffects": {
+    "description": "Section title for shimmer effects"
+  },
+  "@successAnimations": {
+    "description": "Section title for success animations"
+  },
+  "@taskCompleted": {
+    "description": "Success message for completed task"
+  },
+  "@animationCombinations": {
+    "description": "Section title for animation combinations"
+  },
+  "@interactiveButton": {
+    "description": "Label for interactive button demo"
+  },
+  "@animatedCard": {
+    "description": "Title for animated card demo"
+  },
+  "@animatedCardDescription": {
+    "description": "Description text for animated card demo"
+  },
+  "@autoSaveInterval": {
+    "description": "Label for auto-save interval setting"
+  },
+  "@lastSaved": {
+    "description": "Prefix for last saved time display",
+    "placeholders": {
+      "time": {
+        "type": "int"
+      }
+    }
+  },
+  "@justNow": {
+    "description": "Text for when something was saved just now"
+  },
+  "@minutesAgo": {
+    "description": "Time format for minutes ago",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@hoursAgo": {
+    "description": "Time format for hours ago",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@daysAgo": {
+    "description": "Time format for days ago",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@commandExecutedSuccessfully": {
+    "description": "Success message when a plugin command executes successfully"
+  },
+  "@commandFailed": {
+    "description": "Error message when a plugin command fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToExecuteCommand": {
+    "description": "Error message when command execution fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@aboutDescription": {
+    "description": "Description for about page"
+  },
+  "@version": {
+    "description": "Version label"
+  },
+  "@licenses": {
+    "description": "Licenses label"
+  },
+  "@viewOpenSourceLicenses": {
+    "description": "Description for licenses section"
+  },
+  "@loom": {
+    "description": "Application name"
+  },
+  "@build": {
+    "description": "Build label"
+  },
+  "@loomDescription": {
+    "description": "Application description"
+  },
+  "@copyright": {
+    "description": "Copyright notice"
+  },
+  "@close": {
+    "description": "Close button text"
+  },
+  "@openSourceLicenses": {
+    "description": "Open source licenses dialog title"
+  },
+  "@usesFollowingLibraries": {
+    "description": "Text introducing the list of libraries"
+  },
+  "@fullLicenseTexts": {
+    "description": "Text about where to find full license texts"
+  },
+  "@enterPath": {
+    "description": "Dialog title for entering a custom path"
+  },
+  "@directoryPath": {
+    "description": "Label for directory path input field"
+  },
+  "@pathHint": {
+    "description": "Hint text for path input field"
+  },
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "@go": {
+    "description": "Go button text"
+  },
+  "@select": {
+    "description": "Select button text"
+  },
+  "@apply": {
+    "description": "Apply button text"
+  },
+  "@preview": {
+    "description": "Preview label for theme/color previews"
+  },
+  "@selectColorLabel": {
+    "description": "Dialog title for selecting a color",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "@fontFamilyLabel": {
+    "description": "Label for font family selector"
+  },
+  "@fontSizeLabel": {
+    "description": "Label for font size selector"
+  },
+  "@previewSampleText": {
+    "description": "Sample preview text for fonts"
+  },
+  "@searchFilesAndCommands": {
+    "description": "Search bar placeholder text"
+  },
+  "@commandKeyShortcut": {
+    "description": "Keyboard shortcut display"
+  },
+  "@menu": {
+    "description": "Menu tooltip"
+  },
+  "@file": {
+    "description": "File menu label"
+  },
+  "@newFile": {
+    "description": "New file dialog title"
+  },
+  "@openFolder": {
+    "description": "Open folder menu item"
+  },
+  "@save": {
+    "description": "Save menu item"
+  },
+  "@saveAs": {
+    "description": "Save as menu item"
+  },
+  "@export": {
+    "description": "Export menu item"
+  },
+  "@exit": {
+    "description": "Exit menu item"
+  },
+  "@edit": {
+    "description": "Edit menu label"
+  },
+  "@undo": {
+    "description": "Undo menu item"
+  },
+  "@redo": {
+    "description": "Redo menu item"
+  },
+  "@cut": {
+    "description": "Cut menu item"
+  },
+  "@copy": {
+    "description": "Copy menu item"
+  },
+  "@paste": {
+    "description": "Paste menu item"
+  },
+  "@view": {
+    "description": "View menu label"
+  },
+  "@toggleSidebar": {
+    "description": "Toggle sidebar menu item"
+  },
+  "@togglePanel": {
+    "description": "Toggle panel menu item"
+  },
+  "@fullScreen": {
+    "description": "Full screen menu item"
+  },
+  "@help": {
+    "description": "Help menu label"
+  },
+  "@documentation": {
+    "description": "Documentation menu item"
+  },
+  "@plugins": {
+    "description": "Plugins menu label"
+  },
+  "@pluginManager": {
+    "description": "Plugin manager menu item"
+  },
+  "@noPluginsLoaded": {
+    "description": "Message when no plugins are loaded"
+  },
+  "@openFolderFirst": {
+    "description": "Message when trying to create file without workspace"
+  },
+  "@noFileOpenToSave": {
+    "description": "Message when trying to save without open file"
+  },
+  "@fileSaved": {
+    "description": "Success message when file is saved",
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "@noContentToExport": {
+    "description": "Message when trying to export empty content"
+  },
+  "@exitApplication": {
+    "description": "Exit confirmation dialog title"
+  },
+  "@confirmExit": {
+    "description": "Exit confirmation dialog message"
+  },
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "@failedToSelectLocation": {
+    "description": "Auto-added metadata for failedToSelectLocation",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@folderCreatedSuccess": {
+    "description": "Auto-added metadata for folderCreatedSuccess",
+    "placeholders": {
+      "folderName": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToCreateFolder": {
+    "description": "Error message when folder creation fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@enterFileNameHint": {
+    "description": "File name input hint in create file dialog"
+  },
+  "@failedToOpenFolder": {
+    "description": "Error message when folder opening fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToCreateFile": {
+    "description": "Error message when file creation fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToDeleteItem": {
+    "description": "Auto-added metadata for failedToDeleteItem",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToRenameItem": {
+    "description": "Auto-added metadata for failedToRenameItem",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@renameSuccess": {
+    "description": "Auto-added metadata for renameSuccess",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@deleteSuccess": {
+    "description": "Auto-added metadata for deleteSuccess",
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "@syntaxWarningsTooltip": {
+    "description": "Auto-added metadata for syntaxWarningsTooltip",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@failedToCloneRepository": {
+    "description": "Error message when repository cloning fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@nothingToUndo": {
+    "description": "Message when undo is not available"
+  },
+  "@nothingToRedo": {
+    "description": "Message when redo is not available"
+  },
+  "@contentCutToClipboard": {
+    "description": "Success message for cut operation"
+  },
+  "@noContentToCut": {
+    "description": "Message when trying to cut empty content"
+  },
+  "@contentCopiedToClipboard": {
+    "description": "Success message for copy operation"
+  },
+  "@noContentToCopy": {
+    "description": "Message when trying to copy empty content"
+  },
+  "@contentPastedFromClipboard": {
+    "description": "Success message for paste operation"
+  },
+  "@noTextInClipboard": {
+    "description": "Message when clipboard is empty"
+  },
+  "@selectSidebarItemFirst": {
+    "description": "Message when trying to show panel without selection"
+  },
+  "@loomDocumentation": {
+    "description": "Documentation dialog title"
+  },
+  "@welcomeToLoom": {
+    "description": "Welcome message in documentation"
+  },
+  "@loomDescriptionFull": {
+    "description": "Full description of Loom"
+  },
+  "@keyFeatures": {
+    "description": "Key features section header"
+  },
+  "@fileExplorerFeature": {
+    "description": "File explorer feature description"
+  },
+  "@richTextEditorFeature": {
+    "description": "Rich text editor feature description"
+  },
+  "@searchFeature": {
+    "description": "Search feature description"
+  },
+  "@settingsFeature": {
+    "description": "Settings feature description"
+  },
+  "@keyboardShortcuts": {
+    "description": "Keyboard shortcuts section header"
+  },
+  "@saveShortcut": {
+    "description": "Save keyboard shortcut"
+  },
+  "@globalSearchShortcut": {
+    "description": "Global search keyboard shortcut"
+  },
+  "@undoShortcut": {
+    "description": "Undo keyboard shortcut"
+  },
+  "@redoShortcut": {
+    "description": "Redo keyboard shortcut"
+  },
+  "@fileName": {
+    "description": "File name input label"
+  },
+  "@enterFileName": {
+    "description": "File name input hint"
+  },
+  "@create": {
+    "description": "Create button text"
+  },
+  "@invalidFileName": {
+    "description": "Error message for invalid file name"
+  },
+  "@invalidCharactersInFileName": {
+    "description": "Error message for invalid characters in file name"
+  },
+  "@fileCreated": {
+    "description": "Success message when file is created",
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "@exportFile": {
+    "description": "Export file dialog title"
+  },
+  "@enterExportLocation": {
+    "description": "Export location input hint"
+  },
+  "@formatHint": {
+    "description": "Format input hint"
+  },
+  "@fileExportedAs": {
+    "description": "Success message when file is exported",
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToExportFile": {
+    "description": "Error message when file export fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@enterSaveLocation": {
+    "description": "Save location input hint"
+  },
+  "@fileSavedAs": {
+    "description": "Success message when file is saved as",
+    "placeholders": {
+      "filename": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToSaveFile": {
+    "description": "Error message when file save fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@installed": {
+    "description": "Installed plugins count label"
+  },
+  "@active": {
+    "description": "Active status label"
+  },
+  "@inactive": {
+    "description": "Inactive plugins count label"
+  },
+  "@versionState": {
+    "description": "Plugin version and state display",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "@commandsCount": {
+    "description": "Number of commands display",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@failedToEnablePlugin": {
+    "description": "Error message when plugin enable fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@failedToDisablePlugin": {
+    "description": "Error message when plugin disable fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@disablePlugin": {
+    "description": "Disable plugin tooltip"
+  },
+  "@enablePlugin": {
+    "description": "Enable plugin tooltip"
+  },
+  "@noPluginsCurrentlyLoaded": {
+    "description": "Message when no plugins are loaded"
+  },
+  "@appearanceDescription": {
+    "description": "Description for appearance settings"
+  },
+  "@openLink": {
+    "description": "Dialog title for opening a link"
+  },
+  "@openLinkConfirmation": {
+    "description": "Confirmation message for opening a link",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "@urlCopiedToClipboard": {
+    "description": "Success message when URL is copied to clipboard",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "@copyUrl": {
+    "description": "Button text for copying URL"
+  },
+  "@footnote": {
+    "description": "Dialog title for footnote",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "@imageAlt": {
+    "description": "Alt text for images",
+    "placeholders": {
+      "src": {
+        "type": "String"
+      }
+    }
+  },
+  "@find": {
+    "description": "Find dialog title"
+  },
+  "@findAndReplace": {
+    "description": "Find and replace dialog title"
+  },
+  "@hideReplace": {
+    "description": "Tooltip for hiding replace field"
+  },
+  "@showReplace": {
+    "description": "Tooltip for showing replace field"
+  },
+  "@findLabel": {
+    "description": "Label for find text field"
+  },
+  "@replaceWith": {
+    "description": "Label for replace text field"
+  },
+  "@matchCase": {
+    "description": "Checkbox label for case sensitive search"
+  },
+  "@useRegex": {
+    "description": "Checkbox label for regex search"
+  },
+  "@replace": {
+    "description": "Replace button text"
+  },
+  "@replaceAll": {
+    "description": "Replace all button text"
+  },
+  "@findNext": {
+    "description": "Find next button text"
+  },
+  "@goToLine": {
+    "description": "Go to line dialog title"
+  },
+  "@pleaseEnterLineNumber": {
+    "description": "Error message for empty line number input"
+  },
+  "@invalidLineNumber": {
+    "description": "Error message for invalid line number format"
+  },
+  "@lineNumberMustBeGreaterThanZero": {
+    "description": "Error message for line number less than 1"
+  },
+  "@lineNumberExceedsMaximum": {
+    "description": "Error message for line number exceeding maximum",
+    "placeholders": {
+      "maxLines": {
+        "type": "int"
+      }
+    }
+  },
+  "@lineNumberLabel": {
+    "description": "Label for line number input field",
+    "placeholders": {
+      "maxLines": {
+        "type": "int"
+      }
+    }
+  },
+  "@enterLineNumber": {
+    "description": "Hint text for line number input field"
+  },
+  "@totalLines": {
+    "description": "Display text for total number of lines",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@share": {
+    "description": "Share menu item"
+  },
+  "@newDocument": {
+    "description": "New document menu item"
+  },
+  "@newFolder": {
+    "description": "New folder menu item"
+  },
+  "@scanDocument": {
+    "description": "Scan document menu item"
+  },
+  "@total": {
+    "description": "Total count label"
+  },
+  "@noActivePlugins": {
+    "description": "Message when no plugins are active"
+  },
+  "@searchYourKnowledgeBase": {
+    "description": "Hint text for knowledge base search"
+  },
+  "@searchResultsWillAppearHere": {
+    "description": "Placeholder text for search results"
+  },
+  "@collectionsViewForMobile": {
+    "description": "Placeholder text for mobile collections view"
+  },
+  "@searchEverything": {
+    "description": "Hint text for global search"
+  },
+  "@mobileSearchInterface": {
+    "description": "Placeholder text for mobile search interface"
+  },
+  "@exportDocument": {
+    "description": "Export dialog title"
+  },
+  "@fileLabel": {
+    "description": "File information display",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "@exportFormat": {
+    "description": "Export format section title"
+  },
+  "@options": {
+    "description": "Options section title"
+  },
+  "@includeLineNumbers": {
+    "description": "Option to include line numbers in export"
+  },
+  "@includeSyntaxHighlighting": {
+    "description": "Option to include syntax highlighting in export"
+  },
+  "@includeHeader": {
+    "description": "Option to include header in export"
+  },
+  "@headerText": {
+    "description": "Label for header text input"
+  },
+  "@documentTitle": {
+    "description": "Hint text for document title input"
+  },
+  "@saveLocation": {
+    "description": "Save location section title"
+  },
+  "@choose": {
+    "description": "Choose file button text"
+  },
+  "@exporting": {
+    "description": "Export button text during export process"
+  },
+  "@saveExport": {
+    "description": "File picker dialog title for saving export"
+  },
+  "@createCollection": {
+    "description": "Create collection dialog title"
+  },
+  "@collectionName": {
+    "description": "Label for collection name input field"
+  },
+  "@myCollection": {
+    "description": "Hint text for collection name input"
+  },
+  "@chooseTemplateOptional": {
+    "description": "Text for template selection section"
+  },
+  "@empty": {
+    "description": "Label for empty template option"
+  },
+  "@noCollections": {
+    "description": "Empty state title when no collections exist"
+  },
+  "@createCollectionsToOrganize": {
+    "description": "Empty state description for collections"
+  },
+  "@deleteCollection": {
+    "description": "Delete collection dialog title",
+    "placeholders": {
+      "collectionName": {
+        "type": "String"
+      }
+    }
+  },
+  "@deleteCollectionConfirmation": {
+    "description": "Confirmation message for deleting a collection"
+  },
+  "@smartSuggestion": {
+    "description": "Title for smart suggestion in collection item"
+  },
+  "@keepHere": {
+    "description": "Button text for keeping item in current position"
+  },
+  "@invalidFolderName": {
+    "description": "Error message for invalid folder name"
+  },
+  "@invalidCharactersInFolderName": {
+    "description": "Error message for invalid characters in folder name"
+  },
+  "@folderCreated": {
+    "description": "Success message when folder is created",
+    "placeholders": {
+      "folderName": {
+        "type": "String"
+      }
+    }
+  },
+  "@useFileOpenToOpenFolder": {
+    "description": "Message prompting user to use File > Open menu to open a folder"
+  },
+  "@useWelcomeScreenToCreateFile": {
+    "description": "Message prompting user to use welcome screen to create a new file"
+  },
+  "@settingsPanelComingSoon": {
+    "description": "Message indicating settings panel is not yet available"
+  },
+  "@openedFile": {
+    "description": "Success message when a file is opened",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "@includeHiddenFiles": {
+    "description": "Label for option to include hidden files in search"
+  },
+  "@fileSavedSuccessfully": {
+    "description": "Success message when file is saved"
+  },
+  "@errorSavingFile": {
+    "description": "Error message when file save fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@noContentToPreview": {
+    "description": "Message when there is no content to preview"
+  },
+  "@syntaxWarnings": {
+    "description": "Title for syntax warnings dialog"
+  },
+  "@noMatchesFound": {
+    "description": "Message when no search matches are found",
+    "placeholders": {
+      "searchText": {
+        "type": "String"
+      }
+    }
+  },
+  "@replacedOccurrences": {
+    "description": "Message showing number of replacements made",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@createNewFolder": {
+    "description": "Title for create new folder dialog"
+  },
+  "@createdFolder": {
+    "description": "Success message when folder is created",
+    "placeholders": {
+      "folderName": {
+        "type": "String"
+      }
+    }
+  },
+  "@pleaseOpenWorkspaceFirst": {
+    "description": "Message prompting user to open a workspace"
+  },
+  "@createNewFile": {
+    "description": "Title for create new file dialog"
+  },
+  "@createdAndOpenedFile": {
+    "description": "Success message when file is created and opened",
+    "placeholders": {
+      "fileName": {
+        "type": "String"
+      }
+    }
+  },
+  "@searchPanelPlaceholder": {
+    "description": "Placeholder text for search panel"
+  },
+  "@sourceControlPanelPlaceholder": {
+    "description": "Placeholder text for source control panel"
+  },
+  "@debugPanelPlaceholder": {
+    "description": "Placeholder text for debug panel"
+  },
+  "@extensionsPanelPlaceholder": {
+    "description": "Placeholder text for extensions panel"
+  },
+  "@settingsPanelPlaceholder": {
+    "description": "Placeholder text for settings panel"
+  },
+  "@selectPanelFromSidebar": {
+    "description": "Message prompting user to select a panel from sidebar"
+  },
+  "@settingsTooltip": {
+    "description": "Tooltip for the settings sidebar button"
+  },
+  "@explorerTooltip": {
+    "description": "Tooltip for the explorer sidebar button"
+  },
+  "@searchTooltip": {
+    "description": "Tooltip for the search sidebar button"
+  },
+  "@flutterLicense": {
+    "description": "License information for Flutter"
+  },
+  "@riverpodLicense": {
+    "description": "License information for Riverpod"
+  },
+  "@adaptiveThemeLicense": {
+    "description": "License information for Adaptive Theme"
+  },
+  "@filePickerLicense": {
+    "description": "License information for File Picker"
+  },
+  "@sharedPreferencesLicense": {
+    "description": "License information for Shared Preferences"
+  },
+  "@pdf": {
+    "description": "PDF export format name"
+  },
+  "@html": {
+    "description": "HTML export format name"
+  },
+  "@markdown": {
+    "description": "Markdown export format name"
+  },
+  "@plainText": {
+    "description": "Plain text export format name"
+  },
+  "@loomAppTitle": {
+    "description": "Application name in mobile app bar"
+  },
+  "@loomKnowledgeBase": {
+    "description": "Knowledge base title in mobile drawer header"
+  },
+  "@yourWorkspace": {
+    "description": "Workspace subtitle in mobile drawer header"
+  },
+  "@recentFiles": {
+    "description": "Recent files drawer item"
+  },
+  "@favorites": {
+    "description": "Favorites drawer item"
+  },
+  "@history": {
+    "description": "History drawer item"
+  },
+  "@helpAndSupport": {
+    "description": "Help and support drawer item"
+  },
+  "@darkMode": {
+    "description": "Dark mode toggle label"
+  },
+  "@documents": {
+    "description": "Documents bottom navigation label"
+  },
+  "@search": {
+    "description": "Search bottom navigation label"
+  },
+  "@editor": {
+    "description": "Editor bottom navigation label"
+  },
+  "@collections": {
+    "description": "Collections bottom navigation label"
+  },
+  "@welcomeToYourKnowledgeBase": {
+    "description": "Welcome subtitle in mobile documents view"
+  },
+  "@developmentDocumentation": {
+    "description": "Project notes subtitle in mobile documents view"
+  },
+  "@welcomeToLoomTitle": {
+    "description": "Welcome title in desktop content area"
+  },
+  "@yourNextGenerationKnowledgeBase": {
+    "description": "Welcome subtitle in desktop content area"
+  },
+  "@openFolderTitle": {
+    "description": "Open folder action title"
+  },
+  "@openAnExistingWorkspace": {
+    "description": "Open folder action subtitle"
+  },
+  "@newFileTitle": {
+    "description": "New file action title"
+  },
+  "@createANewDocument": {
+    "description": "New file action subtitle"
+  },
+  "@cloneRepositoryTitle": {
+    "description": "Clone repository action title"
+  },
+  "@cloneFromGit": {
+    "description": "Clone repository action subtitle"
+  },
+  "@openedWorkspace": {
+    "description": "Success message when workspace is opened",
+    "placeholders": {
+      "workspaceName": {
+        "type": "String"
+      }
+    }
+  },
+  "@cloningRepository": {
+    "description": "Loading message during repository cloning"
+  },
+  "@successfullyClonedRepository": {
+    "description": "Success message when repository is cloned",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@repositoryUrl": {
+    "description": "Repository URL input label"
+  },
+  "@enterGitRepositoryUrl": {
+    "description": "Repository URL input hint"
+  },
+  "@targetDirectoryOptional": {
+    "description": "Target directory input label"
+  },
+  "@leaveEmptyToUseRepositoryName": {
+    "description": "Target directory input hint"
+  },
+  "@editingFile": {
+    "description": "Editor view title showing current file",
+    "placeholders": {
+      "filePath": {
+        "type": "String"
+      }
+    }
+  },
+  "@editorContentPlaceholder": {
+    "description": "Placeholder text in editor view"
+  },
+  "@replacing": {
+    "description": "Button text during replace operation"
+  },
+  "@replacingAll": {
+    "description": "Button text during replace all operation"
+  },
+  "@searchError": {
+    "description": "Title for search error dialog",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "@recentSearches": {
+    "description": "Section title for recent search queries"
+  },
+  "@selectFolder": {
+    "description": "Title for folder selection dialog"
+  },
+  "@goUp": {
+    "description": "Tooltip for navigate up button"
+  },
+  "@quickAccess": {
+    "description": "Section title for quick access buttons"
+  },
+  "@home": {
+    "description": "Home directory quick access label"
+  },
+  "@workspaces": {
+    "description": "Workspaces directory quick access label"
+  },
+  "@folders": {
+    "description": "Section title for folders list"
+  },
+  "@noFoldersFound": {
+    "description": "Message when no folders are found in current directory"
+  },
+  "@searchResultsSummary": {
+    "description": "Summary text showing search results count and time",
+    "placeholders": {
+      "matches": {
+        "type": "int"
+      },
+      "files": {
+        "type": "int"
+      },
+      "time": {
+        "type": "int"
+      }
+    }
+  },
+  "@matchesInFile": {
+    "description": "Number of matches in a file",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@linePrefix": {
+    "description": "Prefix for line number display",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "@typeToSearchFilesAndCommands": {
+    "description": "Hint text for command palette search field"
+  },
+  "@noResultsFound": {
+    "description": "Message when no search results are found"
+  },
+  "@navigateUpDown": {
+    "description": "Keyboard shortcut hint for navigation"
+  },
+  "@selectEnter": {
+    "description": "Keyboard shortcut hint for selection"
+  },
+  "@closeEscape": {
+    "description": "Keyboard shortcut hint for closing"
+  },
+  "@findFile": {
+    "description": "Title for file search dialog"
+  },
+  "@typeToSearchFiles": {
+    "description": "Hint text for file search field"
+  },
+  "@noFilesFoundInWorkspace": {
+    "description": "Message when no files are found in workspace"
+  },
+  "@noFilesMatchSearch": {
+    "description": "Message when no files match the search query"
+  },
+  "@navigateOpenClose": {
+    "description": "Keyboard shortcuts for file search dialog"
+  },
+  "@switchTheme": {
+    "description": "Tooltip for theme switch button"
+  },
+  "@layoutAndVisual": {
+    "description": "Layout and visual settings section title"
+  },
+  "@compactMode": {
+    "description": "Compact mode setting label"
+  },
+  "@compactModeDescription": {
+    "description": "Description for compact mode setting"
+  },
+  "@showIconsInMenu": {
+    "description": "Show icons in menu setting label"
+  },
+  "@showIconsInMenuDescription": {
+    "description": "Description for show icons in menu setting"
+  },
+  "@animationSpeed": {
+    "description": "Animation speed setting label"
+  },
+  "@animationSpeedDescription": {
+    "description": "Description for animation speed setting"
+  },
+  "@slow": {
+    "description": "Slow animation speed option"
+  },
+  "@normal": {
+    "description": "Normal animation speed option"
+  },
+  "@fast": {
+    "description": "Fast animation speed option"
+  },
+  "@disabled": {
+    "description": "Disabled animation speed option"
+  },
+  "@sidebarTransparency": {
+    "description": "Sidebar transparency setting label"
+  },
+  "@sidebarTransparencyDescription": {
+    "description": "Description for sidebar transparency setting"
+  },
+  "@interfaceDescription": {
+    "description": "Description for interface settings page"
+  },
+  "@currentVersion": {
+    "description": "Current application version number"
+  },
+  "@currentBuild": {
+    "description": "Current application build number"
+  },
+  "@theme": {
+    "description": "Theme settings page title"
+  },
+  "@currentTheme": {
+    "description": "Current theme section title"
+  },
+  "@currentThemeDescription": {
+    "description": "Description for current theme section"
+  },
+  "@colorScheme": {
+    "description": "Color scheme label"
+  },
+  "@primary": {
+    "description": "Primary color label"
+  },
+  "@secondary": {
+    "description": "Secondary color label"
+  },
+  "@surface": {
+    "description": "Surface color label"
+  },
+  "@themePresets": {
+    "description": "Theme presets section title"
+  },
+  "@themePresetsDescription": {
+    "description": "Description for theme presets section"
+  },
+  "@systemThemes": {
+    "description": "System themes group title"
+  },
+  "@lightThemes": {
+    "description": "Light themes group title"
+  },
+  "@darkThemes": {
+    "description": "Dark themes group title"
+  },
+  "@customizeColors": {
+    "description": "Customize colors section title"
+  },
+  "@customizeColorsDescription": {
+    "description": "Description for customize colors section"
+  },
+  "@primaryColor": {
+    "description": "Primary color picker label"
+  },
+  "@secondaryColor": {
+    "description": "Secondary color picker label"
+  },
+  "@surfaceColor": {
+    "description": "Surface color picker label"
+  },
+  "@typography": {
+    "description": "Typography section title"
+  },
+  "@typographyDescription": {
+    "description": "Description for typography section"
+  },
+  "@windowControls": {
+    "description": "Window controls settings section title"
+  },
+  "@showWindowControls": {
+    "description": "Show window controls toggle label"
+  },
+  "@showWindowControlsDescription": {
+    "description": "Description for show window controls setting"
+  },
+  "@controlsPlacement": {
+    "description": "Window controls placement setting label"
+  },
+  "@controlsPlacementDescription": {
+    "description": "Description for controls placement setting"
+  },
+  "@controlsOrder": {
+    "description": "Window controls order setting label"
+  },
+  "@controlsOrderDescription": {
+    "description": "Description for controls order setting"
+  },
+  "@auto": {
+    "description": "Auto option for various settings"
+  },
+  "@left": {
+    "description": "Left position option"
+  },
+  "@right": {
+    "description": "Right position option"
+  },
+  "@minimizeMaximizeClose": {
+    "description": "Standard window controls order"
+  },
+  "@closeMinimizeMaximize": {
+    "description": "macOS style window controls order"
+  },
+  "@closeMaximizeMinimize": {
+    "description": "Reverse window controls order"
+  },
+  "@closeButtonPositions": {
+    "description": "Close button positions settings section title"
+  },
+  "@closeButtonPositionsDescription": {
+    "description": "Description for close button positions settings"
+  },
+  "@quickSettings": {
+    "description": "Quick settings section title"
+  },
+  "@quickSettingsDescription": {
+    "description": "Description for quick settings section"
+  },
+  "@autoDescription": {
+    "description": "Description for auto quick setting"
+  },
+  "@allLeft": {
+    "description": "All left quick setting title"
+  },
+  "@allLeftDescription": {
+    "description": "Description for all left quick setting"
+  },
+  "@allRight": {
+    "description": "All right quick setting title"
+  },
+  "@allRightDescription": {
+    "description": "Description for all right quick setting"
+  },
+  "@individualSettings": {
+    "description": "Individual settings section title"
+  },
+  "@individualSettingsDescription": {
+    "description": "Description for individual settings section"
+  },
+  "@tabCloseButtons": {
+    "description": "Tab close buttons setting title"
+  },
+  "@tabCloseButtonsDescription": {
+    "description": "Description for tab close buttons setting"
+  },
+  "@panelCloseButtons": {
+    "description": "Panel close buttons setting title"
+  },
+  "@panelCloseButtonsDescription": {
+    "description": "Description for panel close buttons setting"
+  },
+  "@currently": {
+    "description": "Currently label for effective position display"
+  },
+  "@sidebarSearchPlaceholder": {
+    "description": "Placeholder text for the sidebar search field"
+  },
+  "@sidebarSearchOptions": {
+    "description": "Label for the sidebar search options"
+  },
+  "@settingsAppearanceDetail": {
+    "description": "Title for the appearance detail page in settings"
+  },
+  "@settingsInterfaceDetail": {
+    "description": "Title for the interface detail page in settings"
+  },
+  "@topbarSearchDialogPlaceholder": {
+    "description": "Placeholder text for the topbar search dialog"
+  },
+  "@searchOptionFilesTitle": {
+    "description": "Title for file search option in side panel"
+  },
+  "@searchOptionFilesSubtitle": {
+    "description": "Subtitle for file search option in side panel"
+  },
+  "@searchOptionContentTitle": {
+    "description": "Title for content search option in side panel"
+  },
+  "@searchOptionContentSubtitle": {
+    "description": "Subtitle for content search option in side panel"
+  },
+  "@searchOptionSymbolsTitle": {
+    "description": "Title for symbol search option in side panel"
+  },
+  "@searchOptionSymbolsSubtitle": {
+    "description": "Subtitle for symbol search option in side panel"
+  },
+  "@moreMatches": {
+    "description": "Indicator when more search matches exist in a file",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@noCommandsAvailable": {
+    "description": "Shown when a plugin has no commands"
+  },
+  "@commandPaletteSearchFilesTitle": {
+    "description": "Command palette item title for file search"
+  },
+  "@commandPaletteSearchFilesSubtitle": {
+    "description": "Command palette item subtitle for file search"
+  },
+  "@commandPaletteSearchInFilesTitle": {
+    "description": "Command palette item title for content search"
+  },
+  "@commandPaletteSearchInFilesSubtitle": {
+    "description": "Command palette item subtitle for content search"
+  },
+  "@footerFilesCount": {
+    "description": "Footer label showing number of files",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@openInNewTab": {
+    "description": "Auto-added metadata for openInNewTab"
+  },
+  "@openInNewTabLabel": {
+    "description": "Auto-added metadata for openInNewTabLabel"
+  },
+  "@openInNewTabAction": {
+    "description": "Auto-added metadata for openInNewTabAction"
+  },
+  "@openInNewTabTooltip": {
+    "description": "Auto-added metadata for openInNewTabTooltip"
+  },
+  "@closeLabel": {
+    "description": "Auto-added metadata for closeLabel"
+  },
+  "@closeOthersLabel": {
+    "description": "Auto-added metadata for closeOthersLabel"
+  },
+  "@closeAllLabel": {
+    "description": "Auto-added metadata for closeAllLabel"
+  },
+  "@rename": {
+    "description": "Auto-added metadata for rename"
+  },
+  "@deleteItem": {
+    "description": "Auto-added metadata for deleteItem"
+  },
+  "@newFolderPlaceholder": {
+    "description": "Auto-added metadata for newFolderPlaceholder"
+  },
+  "@createFolder": {
+    "description": "Auto-added metadata for createFolder"
+  },
+  "@browse": {
+    "description": "Auto-added metadata for browse"
+  },
+  "@selectFolderLocation": {
+    "description": "Auto-added metadata for selectFolderLocation"
+  },
+  "@enterPathPrompt": {
+    "description": "Auto-added metadata for enterPathPrompt"
+  },
+  "@folderPathHint": {
+    "description": "Auto-added metadata for folderPathHint"
+  },
+  "@searchFilesHint": {
+    "description": "Auto-added metadata for searchFilesHint"
+  },
+  "@minimizeTooltip": {
+    "description": "Auto-added metadata for minimizeTooltip"
+  },
+  "@maximizeTooltip": {
+    "description": "Auto-added metadata for maximizeTooltip"
+  },
+  "@closeTooltip": {
+    "description": "Auto-added metadata for closeTooltip"
+  },
+  "@zoomTooltip": {
+    "description": "Auto-added metadata for zoomTooltip"
+  },
+  "@toggleLineNumbersTooltip": {
+    "description": "Auto-added metadata for toggleLineNumbersTooltip"
+  },
+  "@toggleMinimapTooltip": {
+    "description": "Auto-added metadata for toggleMinimapTooltip"
+  },
+  "@undoTooltip": {
+    "description": "Auto-added metadata for undoTooltip"
+  },
+  "@redoTooltip": {
+    "description": "Auto-added metadata for redoTooltip"
+  },
+  "@cutTooltip": {
+    "description": "Auto-added metadata for cutTooltip"
+  },
+  "@copyTooltip": {
+    "description": "Auto-added metadata for copyTooltip"
+  },
+  "@pasteTooltip": {
+    "description": "Auto-added metadata for pasteTooltip"
+  },
+  "@foldAllTooltip": {
+    "description": "Auto-added metadata for foldAllTooltip"
+  },
+  "@unfoldAllTooltip": {
+    "description": "Auto-added metadata for unfoldAllTooltip"
+  },
+  "@exportTooltip": {
+    "description": "Auto-added metadata for exportTooltip"
+  },
+  "@newFileTooltip": {
+    "description": "Auto-added metadata for newFileTooltip"
+  },
+  "@newFolderTooltip": {
+    "description": "Auto-added metadata for newFolderTooltip"
+  },
+  "@refreshTooltip": {
+    "description": "Auto-added metadata for refreshTooltip"
+  },
+  "@fileSystemTooltip": {
+    "description": "Auto-added metadata for fileSystemTooltip"
+  },
+  "@collectionsTooltip": {
+    "description": "Auto-added metadata for collectionsTooltip"
+  },
+  "@removeFromCollectionTooltip": {
+    "description": "Auto-added metadata for removeFromCollectionTooltip"
+  },
+  "@openFolderMenu": {
+    "description": "Auto-added metadata for openFolderMenu"
+  },
+  "@closeFolder": {
+    "description": "Auto-added metadata for closeFolder"
+  },
+  "@applicationTitleLabel": {
+    "description": "Auto-added metadata for applicationTitleLabel"
+  },
+  "@applicationTitleHint": {
+    "description": "Auto-added metadata for applicationTitleHint"
+  },
+  "@showAppTitle": {
+    "description": "Auto-added metadata for showAppTitle"
+  },
+  "@showSearchBarTitle": {
+    "description": "Auto-added metadata for showSearchBarTitle"
+  },
+  "@showSearchBarSubtitle": {
+    "description": "Auto-added metadata for showSearchBarSubtitle"
+  },
+  "@cancelButton": {
+    "description": "Auto-added metadata for cancelButton"
+  },
+  "@folderPathLabel": {
+    "description": "Auto-added metadata for folderPathLabel"
+  },
+  "@enterFolderNameHint": {
+    "description": "Auto-added metadata for enterFolderNameHint"
+  },
+  "@enterInitialFileContentHint": {
+    "description": "Auto-added metadata for enterInitialFileContentHint"
+  },
+  "@enterNewNameHint": {
+    "description": "Auto-added metadata for enterNewNameHint"
+  },
+  "@filterFileExtensions": {
+    "description": "Auto-added metadata for filterFileExtensions"
+  },
+  "@showHiddenFiles": {
+    "description": "Auto-added metadata for showHiddenFiles"
+  },
+  "@commentBlockTitle": {
+    "description": "Auto-added metadata for commentBlockTitle"
+  },
+  "@systemDefault": {
+    "description": "Auto-added metadata for systemDefault"
+  },
+  "@systemDefaultSubtitle": {
+    "description": "Auto-added metadata for systemDefaultSubtitle"
+  },
+  "@defaultLight": {
+    "description": "Auto-added metadata for defaultLight"
+  },
+  "@defaultLightSubtitle": {
+    "description": "Auto-added metadata for defaultLightSubtitle"
+  },
+  "@defaultDark": {
+    "description": "Auto-added metadata for defaultDark"
+  },
+  "@defaultDarkSubtitle": {
+    "description": "Auto-added metadata for defaultDarkSubtitle"
+  },
+  "@moreActionsTooltip": {
+    "description": "Auto-added metadata for moreActionsTooltip"
+  },
+  "@showAppTitleSubtitle": {
+    "description": "Auto-added metadata for showAppTitleSubtitle"
+  },
+  "@animationSpeedTestTitle": {
+    "description": "Auto-added metadata for animationSpeedTestTitle"
+  },
+  "@hoverMeFastAnimation": {
+    "description": "Auto-added metadata for hoverMeFastAnimation"
+  },
+  "@fadeInNormalSpeed": {
+    "description": "Auto-added metadata for fadeInNormalSpeed"
+  },
+  "@gettingStartedTitle": {
+    "description": "Auto-added metadata for gettingStartedTitle"
+  },
+  "@projectNotesTitle": {
+    "description": "Auto-added metadata for projectNotesTitle"
   }
 }
