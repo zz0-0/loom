@@ -37,10 +37,21 @@ Future<void> main() async {
   // Initialize Rust bridge
   await RustLib.init();
 
-  // Initialize plugin system v2.0
-  await PluginManager.instance.initialize(
-    pluginsDirectory: 'lib/plugins/plugins',
-  );
+  // Plugin system: temporarily disabled to avoid plugin startup side-effects.
+  // Enable by setting environment variable `ENABLE_PLUGINS=true` when launching
+  // the app, or change this check to `true` for a local override.
+  final bool enablePlugins = Platform.environment['ENABLE_PLUGINS'] == 'true';
+
+  if (enablePlugins) {
+    // Initialize plugin system v2.0
+    await PluginManager.instance.initialize(
+      pluginsDirectory: 'lib/plugins/plugins',
+    );
+  } else {
+    // Intentionally skipping plugin initialization during early development
+    // to prevent plugins from affecting startup behavior.
+    // PluginManager will remain available and can be initialized later if needed.
+  }
 
   runApp(
     ProviderScope(

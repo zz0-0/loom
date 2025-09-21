@@ -11,6 +11,7 @@ import 'package:loom/plugins/core/plugin_manager.dart';
 import 'package:loom/plugins/core/presentation/plugin_sidebar_item.dart';
 import 'package:path/path.dart' as path;
 import 'package:window_manager/window_manager.dart';
+import 'dart:io' show Platform;
 
 /// Extensible desktop layout with customizable UI components
 /// This serves as the main UI scaffold that features can register into
@@ -28,12 +29,20 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   @override
   void initState() {
     super.initState();
-    _initializePluginSystem();
+    // Only initialize plugin UI hooks when plugins are enabled explicitly.
+    final pluginsEnabled = Platform.environment['ENABLE_PLUGINS'] == 'true';
 
-    // Register plugin sidebar items after the UI is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _registerPluginSidebarItems();
-    });
+    if (pluginsEnabled) {
+      _initializePluginSystem();
+
+      // Register plugin sidebar items after the UI is built
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _registerPluginSidebarItems();
+      });
+    } else {
+      debugPrint(
+          'Plugins disabled via ENABLE_PLUGINS; skipping plugin UI init');
+    }
   }
 
   @override
@@ -75,7 +84,7 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     _registerFeatures();
 
     // Register default menus
-    menuRegistry.registerMenus([
+    final menus = <MenuItem>[
       SimpleMenuItem(
         label: l10n.file,
         children: [
@@ -172,12 +181,19 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
           ),
         ],
       ),
-      // Add Plugins menu
-      SimpleMenuItem(
-        label: l10n.plugins,
-        children: _buildPluginMenuItems(context),
-      ),
-    ]);
+    ];
+
+    // Add Plugins menu only when plugins are enabled
+    if (Platform.environment['ENABLE_PLUGINS'] == 'true') {
+      menus.add(
+        SimpleMenuItem(
+          label: l10n.plugins,
+          children: _buildPluginMenuItems(context),
+        ),
+      );
+    }
+
+    menuRegistry.registerMenus(menus);
 
     // Future features can register their own components here
   }
@@ -190,111 +206,116 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     final l10n = AppLocalizations.of(context);
 
     // Clear existing menus and re-register default menus with new locale
-    menuRegistry
-      ..clear()
-      ..registerMenus([
-        SimpleMenuItem(
-          label: l10n.file,
-          children: [
-            SimpleMenuItem(
-              label: l10n.newFile,
-              icon: Icons.add,
-              onPressedWithContext: _handleNewFile,
-            ),
-            SimpleMenuItem(
-              label: l10n.openFolder,
-              icon: Icons.folder_open,
-              onPressedWithContext: (context) =>
-                  ref.read(currentFolderProvider.notifier).openFolder(context),
-            ),
-            SimpleMenuItem(
-              label: l10n.save,
-              icon: Icons.save,
-              onPressedWithContext: _handleSave,
-            ),
-            SimpleMenuItem(
-              label: l10n.saveAs,
-              icon: Icons.save_as,
-              onPressedWithContext: _handleSaveAs,
-            ),
-            SimpleMenuItem(
-              label: l10n.export,
-              icon: Icons.file_download,
-              onPressedWithContext: _handleExport,
-            ),
-            SimpleMenuItem(
-              label: l10n.exit,
-              icon: Icons.exit_to_app,
-              onPressedWithContext: _handleExit,
-            ),
-          ],
-        ),
-        SimpleMenuItem(
-          label: l10n.edit,
-          children: [
-            SimpleMenuItem(
-              label: l10n.undo,
-              icon: Icons.undo,
-              onPressedWithContext: _handleUndo,
-            ),
-            SimpleMenuItem(
-              label: l10n.redo,
-              icon: Icons.redo,
-              onPressedWithContext: _handleRedo,
-            ),
-            SimpleMenuItem(
-              label: l10n.cut,
-              icon: Icons.content_cut,
-              onPressedWithContext: _handleCut,
-            ),
-            SimpleMenuItem(
-              label: l10n.copy,
-              icon: Icons.copy,
-              onPressedWithContext: _handleCopy,
-            ),
-            SimpleMenuItem(
-              label: l10n.paste,
-              icon: Icons.paste,
-              onPressedWithContext: _handlePaste,
-            ),
-          ],
-        ),
-        SimpleMenuItem(
-          label: l10n.view,
-          children: [
-            SimpleMenuItem(
-              label: l10n.toggleSidebar,
-              onPressedWithContext: _handleToggleSidebar,
-            ),
-            SimpleMenuItem(
-              label: l10n.togglePanel,
-              onPressedWithContext: _handleTogglePanel,
-            ),
-            SimpleMenuItem(
-              label: l10n.fullScreen,
-              onPressedWithContext: _handleFullScreen,
-            ),
-          ],
-        ),
-        SimpleMenuItem(
-          label: l10n.help,
-          children: [
-            SimpleMenuItem(
-              label: l10n.documentation,
-              onPressedWithContext: _handleDocumentation,
-            ),
-            SimpleMenuItem(
-              label: l10n.about,
-              onPressedWithContext: _handleAbout,
-            ),
-          ],
-        ),
-        // Add Plugins menu
+    menuRegistry.clear();
+    final menus = <MenuItem>[
+      SimpleMenuItem(
+        label: l10n.file,
+        children: [
+          SimpleMenuItem(
+            label: l10n.newFile,
+            icon: Icons.add,
+            onPressedWithContext: _handleNewFile,
+          ),
+          SimpleMenuItem(
+            label: l10n.openFolder,
+            icon: Icons.folder_open,
+            onPressedWithContext: (context) =>
+                ref.read(currentFolderProvider.notifier).openFolder(context),
+          ),
+          SimpleMenuItem(
+            label: l10n.save,
+            icon: Icons.save,
+            onPressedWithContext: _handleSave,
+          ),
+          SimpleMenuItem(
+            label: l10n.saveAs,
+            icon: Icons.save_as,
+            onPressedWithContext: _handleSaveAs,
+          ),
+          SimpleMenuItem(
+            label: l10n.export,
+            icon: Icons.file_download,
+            onPressedWithContext: _handleExport,
+          ),
+          SimpleMenuItem(
+            label: l10n.exit,
+            icon: Icons.exit_to_app,
+            onPressedWithContext: _handleExit,
+          ),
+        ],
+      ),
+      SimpleMenuItem(
+        label: l10n.edit,
+        children: [
+          SimpleMenuItem(
+            label: l10n.undo,
+            icon: Icons.undo,
+            onPressedWithContext: _handleUndo,
+          ),
+          SimpleMenuItem(
+            label: l10n.redo,
+            icon: Icons.redo,
+            onPressedWithContext: _handleRedo,
+          ),
+          SimpleMenuItem(
+            label: l10n.cut,
+            icon: Icons.content_cut,
+            onPressedWithContext: _handleCut,
+          ),
+          SimpleMenuItem(
+            label: l10n.copy,
+            icon: Icons.copy,
+            onPressedWithContext: _handleCopy,
+          ),
+          SimpleMenuItem(
+            label: l10n.paste,
+            icon: Icons.paste,
+            onPressedWithContext: _handlePaste,
+          ),
+        ],
+      ),
+      SimpleMenuItem(
+        label: l10n.view,
+        children: [
+          SimpleMenuItem(
+            label: l10n.toggleSidebar,
+            onPressedWithContext: _handleToggleSidebar,
+          ),
+          SimpleMenuItem(
+            label: l10n.togglePanel,
+            onPressedWithContext: _handleTogglePanel,
+          ),
+          SimpleMenuItem(
+            label: l10n.fullScreen,
+            onPressedWithContext: _handleFullScreen,
+          ),
+        ],
+      ),
+      SimpleMenuItem(
+        label: l10n.help,
+        children: [
+          SimpleMenuItem(
+            label: l10n.documentation,
+            onPressedWithContext: _handleDocumentation,
+          ),
+          SimpleMenuItem(
+            label: l10n.about,
+            onPressedWithContext: _handleAbout,
+          ),
+        ],
+      ),
+    ];
+
+    if (Platform.environment['ENABLE_PLUGINS'] == 'true') {
+      menus.add(
         SimpleMenuItem(
           label: l10n.plugins,
           children: _buildPluginMenuItems(context),
         ),
-      ]);
+      );
+    }
+
+    menuRegistry.registerMenus(menus);
 
     debugPrint('✅ Re-registered ${menuRegistry.menus.length} menus');
 
