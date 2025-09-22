@@ -6,8 +6,8 @@ analyzer:
     lines_longer_than_80_chars: ignore
   exclude: 
     - build/**
-    - lib/src/rust/frb_generated.dart
-    - lib/src/rust/frb_generated.*.dart
+    - lib/src/rust/*
+    - flutter_gen/**
   language:
     strict-casts: true
     strict-inference: true

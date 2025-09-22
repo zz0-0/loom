@@ -276,8 +276,8 @@ class HelloWorldPlugin
 /// Factory function to create the plugin instance
 /// This is called by the plugin system when loading the plugin
 Plugin createHelloWorldPlugin(PluginManifest manifest, SendPort mainSendPort) {
-  final plugin = HelloWorldPlugin();
-  plugin._manifest = manifest;
-  plugin._mainSendPort = mainSendPort;
+  final plugin = HelloWorldPlugin()
+    .._manifest = manifest
+    .._mainSendPort = mainSendPort;
   return plugin;
 }

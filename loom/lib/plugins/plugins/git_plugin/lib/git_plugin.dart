@@ -667,8 +667,8 @@ class GitPlugin implements Plugin, CommandPlugin, FilePlugin, LifecyclePlugin {
 
 /// Factory function to create the Git plugin instance
 Plugin createGitPlugin(PluginManifest manifest, SendPort mainSendPort) {
-  final plugin = GitPlugin();
-  plugin._manifest = manifest;
-  plugin._mainSendPort = mainSendPort;
+  final plugin = GitPlugin()
+    .._manifest = manifest
+    .._mainSendPort = mainSendPort;
   return plugin;
 }

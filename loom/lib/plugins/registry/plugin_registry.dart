@@ -30,10 +30,10 @@ class PluginRegistry {
   }
 
   /// Discover and load all available plugins
-  // ignore: avoid_slow_async_io
+
   Future<void> _discoverPlugins() async {
     final pluginsDir = Directory(_pluginsDirectory);
-    if (!await pluginsDir.exists()) {
+    if (!pluginsDir.existsSync()) {
       return;
     }
 
@@ -45,12 +45,12 @@ class PluginRegistry {
   }
 
   /// Load a plugin from its directory
-  // ignore: avoid_slow_async_io
+
   Future<void> _loadPluginFromDirectory(String pluginPath) async {
     final manifestPath = '$pluginPath/manifest.json';
     final manifestFile = File(manifestPath);
 
-    if (!await manifestFile.exists()) {
+    if (!manifestFile.existsSync()) {
       return;
     }
 
@@ -108,7 +108,7 @@ class PluginRegistry {
 
     try {
       final pluginDir = Directory(pluginPath);
-      if (await pluginDir.exists()) {
+      if (pluginDir.existsSync()) {
         await pluginDir.delete(recursive: true);
       }
 
@@ -310,10 +310,10 @@ class PluginRegistry {
   }
 
   /// Ensure plugins directory exists
-  // ignore: avoid_slow_async_io
+
   Future<void> _ensurePluginsDirectory() async {
     final dir = Directory(_pluginsDirectory);
-    if (!await dir.exists()) {
+    if (!dir.existsSync()) {
       await dir.create(recursive: true);
     }
   }

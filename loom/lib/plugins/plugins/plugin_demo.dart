@@ -97,14 +97,16 @@ Future<void> main() async {
     }
 
     // Get plugins by capability
-    final greetingPlugins = pm.getPluginsByCapability('hello.greet');
-    // Touch the list to avoid unused variable lints in the demo
-    greetingPlugins.length;
+    pm
+        .getPluginsByCapability('hello.greet')
+        // Touch the list to avoid unused variable lints in the demo
+        .length;
 
     // Get plugins for file extension
-    final txtPlugins = pm.getPluginsForFileExtension('txt');
-    // Touch the list to avoid unused variable lints in the demo
-    txtPlugins.length;
+    pm
+        .getPluginsForFileExtension('txt')
+        // Touch the list to avoid unused variable lints in the demo
+        .length;
 
     // Show plugin statistics
   } catch (e) {

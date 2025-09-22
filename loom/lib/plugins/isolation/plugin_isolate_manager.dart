@@ -212,32 +212,31 @@ void _pluginIsolateEntry(Map<String, dynamic> message) {
 
   // Create plugin instance and send port back to main isolate
   final plugin = _createPluginInstance(manifest, context);
-  final pluginPort = ReceivePort();
+  final pluginPort = ReceivePort()
+    ..listen((message) async {
+      if (message is Map<String, dynamic>) {
+        final type = message['type'] as String?;
+        final data = message['data'];
+        final responsePort = message['responsePort'] as SendPort?;
 
-  pluginPort.listen((message) async {
-    if (message is Map<String, dynamic>) {
-      final type = message['type'] as String?;
-      final data = message['data'];
-      final responsePort = message['responsePort'] as SendPort?;
-
-      try {
-        final result = await plugin.handleMessage(type!, data);
-        if (responsePort != null) {
-          responsePort.send({
-            'type': 'response',
-            'data': result,
-          });
-        }
-      } catch (e) {
-        if (responsePort != null) {
-          responsePort.send({
-            'type': 'error',
-            'error': e.toString(),
-          });
+        try {
+          final result = await plugin.handleMessage(type!, data);
+          if (responsePort != null) {
+            responsePort.send({
+              'type': 'response',
+              'data': result,
+            });
+          }
+        } catch (e) {
+          if (responsePort != null) {
+            responsePort.send({
+              'type': 'error',
+              'error': e.toString(),
+            });
+          }
         }
       }
-    }
-  });
+    });
 
   // Send the plugin's send port back to main isolate
   mainSendPort.send(pluginPort.sendPort);

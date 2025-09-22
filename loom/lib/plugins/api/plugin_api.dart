@@ -189,18 +189,18 @@ class PluginMessageTypes {
   // The analyzer prefers lowerCamelCase for constant names. These are
   // exported string values used as message identifiers; keep the names
   // stable but silence the lint to avoid renaming public API.
-  // ignore: constant_identifier_names
-  static const String COMMAND_EXECUTE = 'command.execute';
-  // ignore: constant_identifier_names
-  static const String FILE_OPERATION = 'file.operation';
-  // ignore: constant_identifier_names
-  static const String UI_EVENT = 'ui.event';
-  // ignore: constant_identifier_names
-  static const String LIFECYCLE_EVENT = 'lifecycle.event';
-  // ignore: constant_identifier_names
-  static const String PLUGIN_STATUS = 'plugin.status';
-  // ignore: constant_identifier_names
-  static const String ERROR = 'error';
+
+  // static const String COMMAND_EXECUTE = 'command.execute';
+
+  // static const String FILE_OPERATION = 'file.operation';
+
+  // static const String UI_EVENT = 'ui.event';
+
+  // static const String LIFECYCLE_EVENT = 'lifecycle.event';
+
+  // static const String PLUGIN_STATUS = 'plugin.status';
+
+  // static const String ERROR = 'error';
 }
 
 /// Plugin lifecycle states

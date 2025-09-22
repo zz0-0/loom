@@ -538,7 +538,6 @@ class _SearchOption extends StatelessWidget {
 /// Registration function for the search feature
 class SearchFeatureRegistration {
   static void register() {
-    final registry = UIRegistry();
-    registry.registerSidebarItem(SearchSidebarItem());
+    UIRegistry().registerSidebarItem(SearchSidebarItem());
   }
 }

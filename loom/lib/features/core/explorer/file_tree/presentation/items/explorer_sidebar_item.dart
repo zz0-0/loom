@@ -25,7 +25,6 @@ class ExplorerSidebarItem implements SidebarItem {
 /// Registration function for the explorer feature
 class ExplorerFeatureRegistration {
   static void register() {
-    final registry = UIRegistry();
-    registry.registerSidebarItem(ExplorerSidebarItem());
+    UIRegistry().registerSidebarItem(ExplorerSidebarItem());
   }
 }

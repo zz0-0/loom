@@ -1,7 +1,5 @@
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: type=lint
-// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'blox_api.dart';
 
@@ -141,9 +139,8 @@ class _$BloxInlineElementCopyWithImpl<$Res, $Val extends BloxInlineElement>
     implements $BloxInlineElementCopyWith<$Res> {
   _$BloxInlineElementCopyWithImpl(this._value, this._then);
 
-  // ignore: unused_field
   final $Val _value;
-  // ignore: unused_field
+
   final $Res Function($Val) _then;
 
   /// Create a copy of BloxInlineElement
@@ -177,10 +174,7 @@ class __$$BloxInlineElement_TextImplCopyWithImpl<$Res>
     Object? field0 = null,
   }) {
     return _then(_$BloxInlineElement_TextImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == field0 ? _value.field0 : field0 as String,
     ));
   }
 }
@@ -405,14 +399,8 @@ class __$$BloxInlineElement_LinkImplCopyWithImpl<$Res>
     Object? url = null,
   }) {
     return _then(_$BloxInlineElement_LinkImpl(
-      text: null == text
-          ? _value.text
-          : text // ignore: cast_nullable_to_non_nullable
-              as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
+      text: null == text ? _value.text : text as String,
+      url: null == url ? _value.url : url as String,
     ));
   }
 }
@@ -643,10 +631,7 @@ class __$$BloxInlineElement_BoldImplCopyWithImpl<$Res>
     Object? field0 = null,
   }) {
     return _then(_$BloxInlineElement_BoldImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == field0 ? _value.field0 : field0 as String,
     ));
   }
 }
@@ -871,10 +856,7 @@ class __$$BloxInlineElement_ItalicImplCopyWithImpl<$Res>
     Object? field0 = null,
   }) {
     return _then(_$BloxInlineElement_ItalicImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == field0 ? _value.field0 : field0 as String,
     ));
   }
 }
@@ -1098,10 +1080,7 @@ class __$$BloxInlineElement_CodeImplCopyWithImpl<$Res>
     Object? field0 = null,
   }) {
     return _then(_$BloxInlineElement_CodeImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == field0 ? _value.field0 : field0 as String,
     ));
   }
 }
@@ -1325,10 +1304,7 @@ class __$$BloxInlineElement_MathImplCopyWithImpl<$Res>
     Object? field0 = null,
   }) {
     return _then(_$BloxInlineElement_MathImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == field0 ? _value.field0 : field0 as String,
     ));
   }
 }
@@ -1553,10 +1529,7 @@ class __$$BloxInlineElement_StrikethroughImplCopyWithImpl<$Res>
     Object? field0 = null,
   }) {
     return _then(_$BloxInlineElement_StrikethroughImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == field0 ? _value.field0 : field0 as String,
     ));
   }
 }
@@ -1783,10 +1756,7 @@ class __$$BloxInlineElement_HighlightImplCopyWithImpl<$Res>
     Object? field0 = null,
   }) {
     return _then(_$BloxInlineElement_HighlightImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == field0 ? _value.field0 : field0 as String,
     ));
   }
 }
@@ -2011,10 +1981,7 @@ class __$$BloxInlineElement_SubscriptImplCopyWithImpl<$Res>
     Object? field0 = null,
   }) {
     return _then(_$BloxInlineElement_SubscriptImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == field0 ? _value.field0 : field0 as String,
     ));
   }
 }
@@ -2239,10 +2206,7 @@ class __$$BloxInlineElement_SuperscriptImplCopyWithImpl<$Res>
     Object? field0 = null,
   }) {
     return _then(_$BloxInlineElement_SuperscriptImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == field0 ? _value.field0 : field0 as String,
     ));
   }
 }
@@ -2469,10 +2433,7 @@ class __$$BloxInlineElement_ReferenceImplCopyWithImpl<$Res>
     Object? field0 = null,
   }) {
     return _then(_$BloxInlineElement_ReferenceImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == field0 ? _value.field0 : field0 as String,
     ));
   }
 }
@@ -2698,14 +2659,8 @@ class __$$BloxInlineElement_FootnoteImplCopyWithImpl<$Res>
     Object? text = null,
   }) {
     return _then(_$BloxInlineElement_FootnoteImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      text: null == text
-          ? _value.text
-          : text // ignore: cast_nullable_to_non_nullable
-              as String,
+      id: null == id ? _value.id : id as String,
+      text: null == text ? _value.text : text as String,
     ));
   }
 }
@@ -2940,18 +2895,12 @@ class __$$BloxInlineElement_CustomImplCopyWithImpl<$Res>
     Object? content = null,
   }) {
     return _then(_$BloxInlineElement_CustomImpl(
-      elementType: null == elementType
-          ? _value.elementType
-          : elementType // ignore: cast_nullable_to_non_nullable
-              as String,
+      elementType:
+          null == elementType ? _value.elementType : elementType as String,
       attributes: null == attributes
           ? _value._attributes
-          : attributes // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>,
-      content: null == content
-          ? _value.content
-          : content // ignore: cast_nullable_to_non_nullable
-              as String,
+          : attributes as Map<String, String>,
+      content: null == content ? _value.content : content as String,
     ));
   }
 }
@@ -2973,7 +2922,7 @@ class _$BloxInlineElement_CustomImpl extends BloxInlineElement_Custom
   @override
   Map<String, String> get attributes {
     if (_attributes is EqualUnmodifiableMapView) return _attributes;
-    // ignore: implicit_dynamic_type
+
     return EqualUnmodifiableMapView(_attributes);
   }
 
@@ -3234,9 +3183,8 @@ class _$BloxListItemTypeCopyWithImpl<$Res, $Val extends BloxListItemType>
     implements $BloxListItemTypeCopyWith<$Res> {
   _$BloxListItemTypeCopyWithImpl(this._value, this._then);
 
-  // ignore: unused_field
   final $Val _value;
-  // ignore: unused_field
+
   final $Res Function($Val) _then;
 
   /// Create a copy of BloxListItemType
@@ -3516,10 +3464,7 @@ class __$$BloxListItemType_DefinitionImplCopyWithImpl<$Res>
     Object? term = null,
   }) {
     return _then(_$BloxListItemType_DefinitionImpl(
-      term: null == term
-          ? _value.term
-          : term // ignore: cast_nullable_to_non_nullable
-              as String,
+      term: null == term ? _value.term : term as String,
     ));
   }
 }

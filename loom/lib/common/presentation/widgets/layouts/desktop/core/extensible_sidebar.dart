@@ -38,8 +38,7 @@ IconData _getFilledIcon(IconData originalIcon) {
     // Language & theme icons
     Icons.language: Icons.language,
     Icons.translate: Icons.translate,
-    Icons.flag: Icons.flag,
-    Icons.outlined_flag: Icons.flag,
+    Icons.flag_outlined: Icons.flag,
     Icons.g_translate: Icons.g_translate,
     Icons.dark_mode: Icons.dark_mode,
     Icons.light_mode: Icons.light_mode,
@@ -91,27 +90,6 @@ IconData _getOutlinedIcon(IconData originalIcon) {
   return iconMap[originalIcon] ?? originalIcon;
 }
 
-IconData languageCodeToIcon(String languageCode) {
-  switch (languageCode) {
-    case 'en':
-      return Icons.language;
-    case 'es':
-      return Icons.translate;
-    case 'fr':
-      return Icons.flag;
-    case 'de':
-      return Icons.outlined_flag;
-    case 'zh':
-      return Icons.g_translate;
-    case 'ja':
-      return Icons.translate;
-    case 'ko':
-      return Icons.language;
-    default:
-      return Icons.language;
-  }
-}
-
 /// Extensible sidebar that displays registered sidebar items
 class ExtensibleSidebar extends ConsumerWidget {
   const ExtensibleSidebar({super.key});
@@ -134,27 +112,6 @@ class ExtensibleSidebar extends ConsumerWidget {
         return localizations.searchTooltip;
       default:
         return null;
-    }
-  }
-
-  IconData _getLanguageIcon(String languageCode) {
-    switch (languageCode) {
-      case 'en':
-        return Icons.language;
-      case 'es':
-        return Icons.translate;
-      case 'fr':
-        return Icons.flag;
-      case 'de':
-        return Icons.outlined_flag;
-      case 'zh':
-        return Icons.g_translate;
-      case 'ja':
-        return Icons.translate;
-      case 'ko':
-        return Icons.language;
-      default:
-        return Icons.language;
     }
   }
 
@@ -254,7 +211,7 @@ class ExtensibleSidebar extends ConsumerWidget {
     final registry = UIRegistry();
 
     // Watch current language once so icon and badge update together
-    final _currentLanguage = ref.watch(generalSettingsProvider).language;
+    final currentLanguage = ref.watch(generalSettingsProvider).language;
 
     return AnimatedBuilder(
       animation: registry,
@@ -297,8 +254,9 @@ class ExtensibleSidebar extends ConsumerWidget {
             // Show short uppercase language code next to the icon so users
             // can quickly see the current language (e.g. EN, FR)
             _LanguageUtilityButton(
-              languageCode: _currentLanguage,
-              icon: languageCodeToIcon(_currentLanguage),
+              languageCode: currentLanguage,
+              // Use Icons.language which has outlined/filled variants in our mappings
+              icon: Icons.flag_outlined,
               tooltip: AppLocalizations.of(context).language,
               compactMode: compactMode,
               onPressed: () => _showLanguageSelectionDialog(context, ref),
@@ -492,15 +450,15 @@ class _SidebarButtonState extends State<_SidebarButton> {
 class _UtilityButton extends StatefulWidget {
   const _UtilityButton({
     required this.icon,
-    this.tooltip,
-    this.compactMode = false,
-    this.onPressed,
+    required this.compactMode,
+    required this.tooltip,
+    required this.onPressed,
   });
 
   final IconData icon;
-  final String? tooltip;
+  final String tooltip;
   final bool compactMode;
-  final VoidCallback? onPressed;
+  final VoidCallback onPressed;
 
   @override
   State<_UtilityButton> createState() => _UtilityButtonState();
@@ -526,7 +484,7 @@ class _UtilityButtonState extends State<_UtilityButton> {
             : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         child: Tooltip(
-          message: widget.tooltip ?? '',
+          message: widget.tooltip,
           child: InkWell(
             onTap: widget.onPressed,
             onHover: (hovering) {
@@ -575,6 +533,7 @@ class _LanguageUtilityButton extends StatefulWidget {
 
 class _LanguageUtilityButtonState extends State<_LanguageUtilityButton> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -596,6 +555,21 @@ class _LanguageUtilityButtonState extends State<_LanguageUtilityButton> {
           message: widget.tooltip ?? '',
           child: InkWell(
             onTap: widget.onPressed,
+            onTapDown: (_) {
+              setState(() {
+                _isPressed = true;
+              });
+            },
+            onTapUp: (_) {
+              setState(() {
+                _isPressed = false;
+              });
+            },
+            onTapCancel: () {
+              setState(() {
+                _isPressed = false;
+              });
+            },
             onHover: (hovering) {
               setState(() {
                 _isHovered = hovering;
@@ -610,25 +584,28 @@ class _LanguageUtilityButtonState extends State<_LanguageUtilityButton> {
                       alignment: Alignment.center,
                       children: [
                         // Icon that becomes filled when hovered (or style change fallback)
-                        Builder(builder: (context) {
-                          final orig = widget.icon ?? Icons.language;
-                          final outlined = _getOutlinedIcon(orig);
-                          final filled = _getFilledIcon(orig);
-                          final hasVariant = outlined != filled;
-                          final iconToShow = _isHovered ? filled : outlined;
-                          return Icon(
-                            iconToShow,
-                            size: _isHovered ? 20 : 18,
-                            color: hasVariant
-                                ? (_isHovered
-                                    ? theme.colorScheme.onSurface
-                                    : theme.colorScheme.onSurfaceVariant)
-                                : (_isHovered
-                                    ? theme.colorScheme.onSurface
-                                    : theme.colorScheme.onSurfaceVariant),
-                          );
-                        }),
-                        // small badge overlay at top-right (compact only) - slightly larger so two letters fit
+                        Builder(
+                          builder: (context) {
+                            final orig = widget.icon ?? Icons.language;
+                            final outlined = _getOutlinedIcon(orig);
+                            final filled = _getFilledIcon(orig);
+                            final hasVariant = outlined != filled;
+                            final active = _isHovered || _isPressed;
+                            final iconToShow = active ? filled : outlined;
+                            return Icon(
+                              iconToShow,
+                              size: _isHovered ? 20 : 18,
+                              color: hasVariant
+                                  ? (_isHovered
+                                      ? theme.colorScheme.onSurface
+                                      : theme.colorScheme.onSurfaceVariant)
+                                  : (_isHovered
+                                      ? theme.colorScheme.onSurface
+                                      : theme.colorScheme.onSurfaceVariant),
+                            );
+                          },
+                        ),
+                        // small badge overlay at top-right (compact only) - static (non-interactive) visual only
                         Positioned(
                           right: 6,
                           top: 6,
@@ -636,16 +613,13 @@ class _LanguageUtilityButtonState extends State<_LanguageUtilityButton> {
                             width: 16,
                             height: 16,
                             decoration: BoxDecoration(
-                              color: _isHovered
-                                  ? theme.colorScheme.primary
-                                  : Colors.transparent,
+                              // keep badge appearance static; do not change on hover/click
+                              color: Colors.transparent,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                  color: _isHovered
-                                      ? theme.colorScheme.primary
-                                          .withOpacity(0.9)
-                                      : theme.colorScheme.outline
-                                          .withOpacity(0.2)),
+                                color:
+                                    theme.colorScheme.outline.withOpacity(0.2),
+                              ),
                             ),
                             alignment: Alignment.center,
                             child: FittedBox(
@@ -655,9 +629,7 @@ class _LanguageUtilityButtonState extends State<_LanguageUtilityButton> {
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w700,
-                                  color: _isHovered
-                                      ? theme.colorScheme.onPrimary
-                                      : theme.colorScheme.onSurface,
+                                  color: theme.colorScheme.onSurface,
                                 ),
                               ),
                             ),
@@ -667,29 +639,31 @@ class _LanguageUtilityButtonState extends State<_LanguageUtilityButton> {
                     )
                   : Center(
                       // Normal mode: only the icon (outlined -> filled on hover). If no filled variant exists, change appearance instead.
-                      child: Builder(builder: (context) {
-                        final orig = widget.icon ?? Icons.language;
-                        final outlined = _getOutlinedIcon(orig);
-                        final filled = _getFilledIcon(orig);
-                        final hasVariant = outlined != filled;
-                        if (hasVariant) {
+                      child: Builder(
+                        builder: (context) {
+                          final orig = widget.icon ?? Icons.language;
+                          final outlined = _getOutlinedIcon(orig);
+                          final filled = _getFilledIcon(orig);
+                          final hasVariant = outlined != filled;
+                          if (hasVariant) {
+                            return Icon(
+                              _isHovered ? filled : outlined,
+                              size: 20,
+                              color: _isHovered
+                                  ? theme.colorScheme.onSurface
+                                  : theme.colorScheme.onSurfaceVariant,
+                            );
+                          }
+                          // fallback: change color/size to indicate hover
                           return Icon(
-                            _isHovered ? filled : outlined,
-                            size: 20,
+                            orig,
+                            size: _isHovered ? 22 : 20,
                             color: _isHovered
                                 ? theme.colorScheme.onSurface
                                 : theme.colorScheme.onSurfaceVariant,
                           );
-                        }
-                        // fallback: change color/size to indicate hover
-                        return Icon(
-                          orig,
-                          size: _isHovered ? 22 : 20,
-                          color: _isHovered
-                              ? theme.colorScheme.onSurface
-                              : theme.colorScheme.onSurfaceVariant,
-                        );
-                      }),
+                        },
+                      ),
                     ),
             ),
           ),
@@ -793,10 +767,21 @@ class _ThemeUtilityButtonState extends State<_ThemeUtilityButton> {
     } else if (nameLower.contains('light')) {
       themeIcon = Icons.light_mode;
     } else if (nameLower.contains('system')) {
-      themeIcon = Icons.brightness_auto;
+      // Reflect the actual current brightness so the icon shows dark/light
+      // appropriately for system-default themes.
+      themeIcon = theme.brightness == Brightness.dark
+          ? Icons.dark_mode
+          : Icons.light_mode;
     } else {
       themeIcon = widget.icon ?? Icons.brightness_6;
     }
+
+    // Badge color for compact theme indicator: if this is a system theme,
+    // show the app's current primary color; otherwise use the preset's
+    // primary color from the CustomThemeData.
+    final badgeColor = nameLower.contains('system')
+        ? theme.colorScheme.primary
+        : widget.themeData.primaryColor;
 
     return Container(
       margin: widget.compactMode
@@ -824,23 +809,25 @@ class _ThemeUtilityButtonState extends State<_ThemeUtilityButton> {
                   ? Stack(
                       alignment: Alignment.center,
                       children: [
-                        Builder(builder: (context) {
-                          final outlined = _getOutlinedIcon(themeIcon);
-                          final filled = _getFilledIcon(themeIcon);
-                          final hasVariant = outlined != filled;
-                          final iconToShow = _isHovered ? filled : outlined;
-                          return Icon(
-                            iconToShow,
-                            size: _isHovered ? 20 : 18,
-                            color: hasVariant
-                                ? (_isHovered
-                                    ? theme.colorScheme.onSurface
-                                    : theme.colorScheme.onSurfaceVariant)
-                                : (_isHovered
-                                    ? theme.colorScheme.onSurface
-                                    : theme.colorScheme.onSurfaceVariant),
-                          );
-                        }),
+                        Builder(
+                          builder: (context) {
+                            final outlined = _getOutlinedIcon(themeIcon);
+                            final filled = _getFilledIcon(themeIcon);
+                            final hasVariant = outlined != filled;
+                            final iconToShow = _isHovered ? filled : outlined;
+                            return Icon(
+                              iconToShow,
+                              size: _isHovered ? 20 : 18,
+                              color: hasVariant
+                                  ? (_isHovered
+                                      ? theme.colorScheme.onSurface
+                                      : theme.colorScheme.onSurfaceVariant)
+                                  : (_isHovered
+                                      ? theme.colorScheme.onSurface
+                                      : theme.colorScheme.onSurfaceVariant),
+                            );
+                          },
+                        ),
                         Positioned(
                           right: 6,
                           top: 6,
@@ -848,43 +835,37 @@ class _ThemeUtilityButtonState extends State<_ThemeUtilityButton> {
                             width: 16,
                             height: 16,
                             decoration: BoxDecoration(
-                              color: _isHovered
-                                  ? theme.colorScheme.primary
-                                  : Colors.transparent,
+                              color: badgeColor,
                               shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: _isHovered
-                                      ? theme.colorScheme.primary
-                                          .withOpacity(0.9)
-                                      : theme.colorScheme.outline
-                                          .withOpacity(0.3)),
                             ),
                           ),
                         ),
                       ],
                     )
                   : Center(
-                      child: Builder(builder: (context) {
-                        final outlined = _getOutlinedIcon(themeIcon);
-                        final filled = _getFilledIcon(themeIcon);
-                        final hasVariant = outlined != filled;
-                        if (hasVariant) {
+                      child: Builder(
+                        builder: (context) {
+                          final outlined = _getOutlinedIcon(themeIcon);
+                          final filled = _getFilledIcon(themeIcon);
+                          final hasVariant = outlined != filled;
+                          if (hasVariant) {
+                            return Icon(
+                              _isHovered ? filled : outlined,
+                              size: 20,
+                              color: _isHovered
+                                  ? theme.colorScheme.onSurface
+                                  : theme.colorScheme.onSurfaceVariant,
+                            );
+                          }
                           return Icon(
-                            _isHovered ? filled : outlined,
-                            size: 20,
+                            themeIcon,
+                            size: _isHovered ? 22 : 20,
                             color: _isHovered
                                 ? theme.colorScheme.onSurface
                                 : theme.colorScheme.onSurfaceVariant,
                           );
-                        }
-                        return Icon(
-                          themeIcon,
-                          size: _isHovered ? 22 : 20,
-                          color: _isHovered
-                              ? theme.colorScheme.onSurface
-                              : theme.colorScheme.onSurfaceVariant,
-                        );
-                      }),
+                        },
+                      ),
                     ),
             ),
           ),
@@ -1009,8 +990,8 @@ class _ThemeDialogGroup extends StatelessWidget {
                           color: presetTheme.primaryColor,
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(
-                              color:
-                                  theme.colorScheme.outline.withOpacity(0.4)),
+                            color: theme.colorScheme.outline.withOpacity(0.4),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),

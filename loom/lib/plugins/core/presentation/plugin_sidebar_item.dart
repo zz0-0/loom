@@ -300,8 +300,7 @@ class PluginSidebarRegistration {
   }
 
   static void unregisterPlugin(String pluginId) {
-    final registry = UIRegistry();
-    registry.getSidebarItem('plugin-$pluginId');
+    UIRegistry().getSidebarItem('plugin-$pluginId');
     // Note: UIRegistry doesn't have an unregister method yet
     // This would need to be added to properly clean up
   }

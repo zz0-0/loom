@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,7 +13,6 @@ import 'package:loom/plugins/core/plugin_manager.dart';
 import 'package:loom/plugins/core/presentation/plugin_sidebar_item.dart';
 import 'package:path/path.dart' as path;
 import 'package:window_manager/window_manager.dart';
-import 'dart:io' show Platform;
 
 /// Extensible desktop layout with customizable UI components
 /// This serves as the main UI scaffold that features can register into
@@ -41,7 +42,8 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
       });
     } else {
       debugPrint(
-          'Plugins disabled via ENABLE_PLUGINS; skipping plugin UI init');
+        'Plugins disabled via ENABLE_PLUGINS; skipping plugin UI init',
+      );
     }
   }
 
@@ -382,13 +384,15 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
   void _registerSettingsFeature() {
     final settingsItem = SettingsSidebarItem();
     // Register settings sidebar item and content providers
-    final registry = UIRegistry();
-    registry.registerSidebarItem(settingsItem);
-    registry.registerContentProvider(SettingsContentProvider());
-    registry.registerContentProvider(AppearanceSettingsContentProvider());
-    registry.registerContentProvider(InterfaceSettingsContentProvider());
-    registry.registerContentProvider(GeneralSettingsContentProvider());
-    registry.registerContentProvider(AboutSettingsContentProvider());
+    // final registry = UIRegistry();
+    UIRegistry()
+      ..registerSidebarItem(settingsItem)
+      ..registerSidebarItem(settingsItem)
+      ..registerContentProvider(SettingsContentProvider())
+      ..registerContentProvider(AppearanceSettingsContentProvider())
+      ..registerContentProvider(InterfaceSettingsContentProvider())
+      ..registerContentProvider(GeneralSettingsContentProvider())
+      ..registerContentProvider(AboutSettingsContentProvider());
   }
 
   void _registerSearchFeature() {
@@ -533,8 +537,6 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
               } catch (e) {
                 // Fallback: use system exit if window_manager fails
                 // This is a last resort and may not work on all platforms
-                // ignore: avoid_print
-                print('Failed to close window gracefully: $e');
               }
             },
             child: Text(
@@ -1127,14 +1129,15 @@ class _DesktopLayoutState extends ConsumerState<DesktopLayout> {
     final l10n = AppLocalizations.of(context);
 
     // Add plugin management items
-    menuItems.add(
-      SimpleMenuItem(
-        label: l10n.pluginManager,
-        icon: Icons.extension,
-        onPressedWithContext: _showPluginManager,
-      ),
-    );
-    menuItems.add(const SimpleMenuItem(label: '-')); // Separator
+    menuItems
+      ..add(
+        SimpleMenuItem(
+          label: l10n.pluginManager,
+          icon: Icons.extension,
+          onPressedWithContext: _showPluginManager,
+        ),
+      )
+      ..add(const SimpleMenuItem(label: '-')); // Separator
 
     // Add menu items for each active plugin
     for (final plugin in activePlugins) {
