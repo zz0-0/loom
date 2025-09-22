@@ -257,3 +257,60 @@ class BloxDocumentInfoBottomBarItem implements BottomBarItem {
     );
   }
 }
+
+/// Preview mode indicator for the bottom bar
+class PreviewModeBottomBarItem implements BottomBarItem {
+  const PreviewModeBottomBarItem();
+
+  @override
+  String get id => 'preview_mode';
+
+  @override
+  int get priority => 103;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        return _buildContent(context, ref);
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final editorState = ref.watch(editorStateProvider);
+
+    // Only show if we're in preview mode for a Blox file
+    if (!editorState.isBloxFile ||
+        editorState.filePath == null ||
+        !editorState.showPreview) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.smd,
+        vertical: AppSpacing.xs,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.visibility,
+            size: 14,
+            color: theme.colorScheme.primary,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            'Preview Mode',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:loom/features/core/explorer/collections/domain/entities/file_tree_node.dart';
 import 'package:loom/features/core/explorer/collections/domain/entities/folder.dart';
 import 'package:loom/features/core/explorer/collections/domain/repositories/folder_repository.dart';
 
@@ -40,7 +41,7 @@ class FolderRenameItemUseCase {
 class RefreshFolderTreeUseCase {
   RefreshFolderTreeUseCase(this.repository);
   final FolderRepository repository;
-  Future<List<dynamic>> call(Folder folder) async {
+  Future<List<FileTreeNode>> call(Folder folder) async {
     return repository.refreshFileTree(folder.rootPath);
   }
 }

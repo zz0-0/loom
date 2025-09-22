@@ -82,9 +82,7 @@ class ExplorerPanel extends ConsumerWidget {
                 icon: LucideIcons.folderOpen,
                 title: localizations.openFolder,
                 subtitle: localizations.openAnExistingWorkspace,
-                onTap: () {
-                  ref.read(currentFolderProvider.notifier).openFolder(context);
-                },
+                onTap: () => _showOpenFolderDialog(context, ref),
               ),
               const SizedBox(height: 12),
               _WelcomeAction(
@@ -100,37 +98,37 @@ class ExplorerPanel extends ConsumerWidget {
     );
   }
 
-  // Future<void> _showOpenFolderDialog(
-  //   BuildContext context,
-  //   WidgetRef ref,
-  // ) async {
-  //   try {
-  //     // Skip FilePicker in containerized environments and go straight to fallback
-  //     if (!context.mounted) return;
+  Future<void> _showOpenFolderDialog(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    try {
+      // Skip FilePicker in containerized environments and go straight to fallback
+      if (!context.mounted) return;
 
-  //     final selectedDirectory = await showDialog<String>(
-  //       context: context,
-  //       builder: (context) => const FolderBrowserDialog(
-  //         initialPath: '/workspaces',
-  //       ),
-  //     );
+      final selectedDirectory = await showDialog<String>(
+        context: context,
+        builder: (context) => const FolderBrowserDialog(
+          initialPath: '/workspaces',
+        ),
+      );
 
-  //     if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
-  //       await ref
-  //           .read(currentWorkspaceProvider.notifier)
-  //           .openWorkspace(selectedDirectory);
-  //     }
-  //   } catch (e) {
-  //     if (context.mounted) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(
-  //           content: Text('Failed to open folder: $e'),
-  //           backgroundColor: Theme.of(context).colorScheme.error,
-  //         ),
-  //       );
-  //     }
-  //   }
-  // }
+      if (selectedDirectory != null && selectedDirectory.isNotEmpty) {
+        await ref
+            .read(currentWorkspaceProvider.notifier)
+            .openWorkspace(selectedDirectory);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to open folder: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
 
   // void _showCreateFolderDialog(BuildContext context, WidgetRef ref) {
   //   showDialog<void>(

@@ -1,4 +1,5 @@
 import 'package:loom/common/index.dart';
+import 'package:loom/features/core/explorer/collections/domain/entities/file_tree_node.dart';
 import 'package:loom/features/core/explorer/collections/domain/entities/folder.dart';
 
 abstract class FolderRepository {
@@ -12,7 +13,7 @@ abstract class FolderRepository {
   Future<void> createDirectory(String rootPath, String directoryPath);
   Future<void> deleteItem(String rootPath, String itemPath);
   Future<void> renameItem(String rootPath, String oldPath, String newPath);
-  Future<List<dynamic>> refreshFileTree(String rootPath);
+  Future<List<FileTreeNode>> refreshFileTree(String rootPath);
 }
 
 class FolderRepositoryImpl implements FolderRepository {
@@ -112,7 +113,7 @@ class FolderRepositoryImpl implements FolderRepository {
   }
 
   @override
-  Future<List<dynamic>> refreshFileTree(String rootPath) async {
+  Future<List<FileTreeNode>> refreshFileTree(String rootPath) async {
     return FileUtils.buildFileTree(rootPath);
   }
 }

@@ -348,8 +348,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)
-                  .fileSavedSuccessfully,
+              AppLocalizations.of(context).fileSavedSuccessfully,
             ),
           ),
         );
@@ -359,8 +358,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)
-                  .errorSavingFile(e.toString()),
+              AppLocalizations.of(context).errorSavingFile(e.toString()),
             ),
           ),
         );
@@ -740,7 +738,10 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           key: 'preview',
           icon: _showPreview ? Icons.visibility : Icons.visibility_outlined,
           tooltip: _showPreview ? 'Show editor' : 'Show preview',
-          onPressed: () => setState(() => _showPreview = !_showPreview),
+          onPressed: () {
+            final ref = ProviderScope.containerOf(context, listen: false);
+            ref.read(editorStateProvider.notifier).togglePreview();
+          },
         ),
       if (_isBloxFile && _syntaxWarnings.isNotEmpty)
         _EditorToolbarAction(
@@ -834,6 +835,10 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final editorState = ref.watch(editorStateProvider);
+
+    // Sync local preview state with global editor state
+    _showPreview = editorState.showPreview;
 
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -980,62 +985,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
             ),
           ),
         ),
-
-        // Status bar
-        if (_isBloxFile &&
-            (_parsedDocument != null ||
-                _syntaxWarnings.isNotEmpty ||
-                _showPreview))
-          Container(
-            height: 24,
-            padding: AppSpacing.paddingMd,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
-              border: Border(
-                top: BorderSide(
-                  color: theme.dividerColor,
-                ),
-              ),
-            ),
-            child: Row(
-              children: [
-                if (_showPreview)
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.visibility,
-                        size: 14,
-                        color: theme.colorScheme.primary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Preview Mode',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  )
-                else if (_parsedDocument != null)
-                  Text(
-                    '${_parsedDocument!.blocks.length} blocks',
-                    style: theme.textTheme.bodySmall,
-                  ),
-                if (_syntaxWarnings.isNotEmpty) ...[
-                  const SizedBox(width: 16),
-                  const Icon(Icons.warning, size: 14, color: Colors.orange),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${_syntaxWarnings.length} warnings',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: Colors.orange,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
       ],
     );
   }
@@ -1293,8 +1242,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     if (_parsedDocument == null) {
       return Center(
         child: Text(
-          AppLocalizations.of(context)
-              .noContentToPreview,
+          AppLocalizations.of(context).noContentToPreview,
         ),
       );
     }
@@ -1401,8 +1349,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)
-                  .noMatchesFound(searchText),
+              AppLocalizations.of(context).noMatchesFound(searchText),
             ),
           ),
         );
@@ -1473,8 +1420,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            AppLocalizations.of(context)
-                .replacedOccurrences(replacements),
+            AppLocalizations.of(context).replacedOccurrences(replacements),
           ),
         ),
       );

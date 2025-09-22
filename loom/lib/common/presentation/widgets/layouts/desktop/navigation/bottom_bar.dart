@@ -26,6 +26,7 @@ class _BottomBarState extends State<BottomBar> {
       const FileTypeBottomBarItem(),
       const CursorPositionBottomBarItem(),
       const BloxDocumentInfoBottomBarItem(),
+      const PreviewModeBottomBarItem(),
       // EncodingBottomBarItem(),
       // LineEndingBottomBarItem(),
     ];

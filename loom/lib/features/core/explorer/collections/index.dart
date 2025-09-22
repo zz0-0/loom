@@ -17,6 +17,7 @@ export 'domain/entities/file_category.dart';
 export 'domain/entities/file_system_explorer_state.dart';
 export 'domain/entities/file_tree_node.dart';
 export 'domain/entities/file_tree_node_type.dart';
+export 'domain/entities/folder.dart';
 export 'domain/entities/folder_file.dart';
 export 'domain/entities/folder_metadata.dart';
 export 'domain/entities/folder_template.dart';
