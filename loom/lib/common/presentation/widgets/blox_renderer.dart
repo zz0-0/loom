@@ -84,7 +84,7 @@ class BloxRenderer {
     final title = block.getAttribute('title') ?? '';
 
     return Padding(
-      padding: AppSpacing.paddingVerticalMd,
+      padding: AppSpacing.paddingVerticalSm, // Reduced from paddingVerticalMd
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -93,7 +93,7 @@ class BloxRenderer {
             style: headingStyle,
           ),
           if (block.inlineElements.isNotEmpty) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 4), // Reduced from 8
             RichText(
               text: _buildInlineTextSpan(
                 context,
@@ -116,8 +116,8 @@ class BloxRenderer {
     final lang = block.getAttribute('lang') ?? '';
 
     return Container(
-      margin: AppSpacing.marginVerticalSm,
-      padding: AppSpacing.paddingMd,
+      margin: AppSpacing.marginVerticalXs, // Reduced from marginVerticalSm
+      padding: AppSpacing.paddingSm, // Reduced from paddingMd
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
@@ -136,7 +136,7 @@ class BloxRenderer {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4), // Reduced from 8
           ],
           Text(
             block.content,
@@ -159,8 +159,8 @@ class BloxRenderer {
     final author = block.getAttribute('author');
 
     return Container(
-      margin: AppSpacing.marginVerticalSm,
-      padding: AppSpacing.paddingMd,
+      margin: AppSpacing.marginVerticalXs, // Reduced from marginVerticalSm
+      padding: AppSpacing.paddingSm, // Reduced from paddingMd
       decoration: BoxDecoration(
         border: Border(
           left: BorderSide(
@@ -178,7 +178,7 @@ class BloxRenderer {
                 _buildInlineTextSpan(context, block.inlineElements, baseStyle),
           ),
           if (author != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 4), // Reduced from 8
             Text(
               '— $author',
               style: baseStyle.copyWith(
@@ -425,8 +425,8 @@ class BloxRenderer {
     final theme = Theme.of(context);
 
     return Container(
-      margin: AppSpacing.marginVerticalSm,
-      padding: AppSpacing.paddingMd,
+      margin: AppSpacing.marginVerticalXs, // Reduced from marginVerticalSm
+      padding: AppSpacing.paddingSm, // Reduced from paddingMd
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
@@ -441,7 +441,7 @@ class BloxRenderer {
             color: theme.colorScheme.primary,
             size: 24,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4), // Reduced from 8
           Text(
             block.content,
             style: baseStyle.copyWith(

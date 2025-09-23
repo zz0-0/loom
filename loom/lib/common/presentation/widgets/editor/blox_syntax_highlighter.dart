@@ -29,23 +29,26 @@ class BloxSyntaxHighlighter extends TextEditingController {
     }
 
     // Block start line
-    final blockMatch = RegExp(r'^(#{1,6})\s*([a-zA-Z][a-zA-Z0-9_-]*)\s*(.*?)$')
-        .firstMatch(line);
+    final blockMatch =
+        RegExp(r'^(#{1,6})(\s*)([a-zA-Z][a-zA-Z0-9_-]*)(\s*)(.*?)$')
+            .firstMatch(line);
     if (blockMatch != null) {
       final indent = line.substring(0, line.indexOf('#'));
       final hashes = blockMatch.group(1)!;
-      final blockType = blockMatch.group(2)!;
-      final attributes = blockMatch.group(3) ?? '';
+      final space1 = blockMatch.group(2)!;
+      final blockType = blockMatch.group(3)!;
+      final space2 = blockMatch.group(4)!;
+      final attributes = blockMatch.group(5) ?? '';
 
       spans
         ..add(TextSpan(text: indent, style: colors.text))
         ..add(TextSpan(text: hashes, style: colors.blockIndicator))
-        ..add(TextSpan(text: blockType, style: colors.blockType));
+        ..add(TextSpan(text: space1, style: colors.text))
+        ..add(TextSpan(text: blockType, style: colors.blockType))
+        ..add(TextSpan(text: space2, style: colors.text));
 
       if (attributes.isNotEmpty) {
-        spans
-          ..add(TextSpan(text: ' ', style: colors.text))
-          ..addAll(_highlightAttributes(attributes));
+        spans.addAll(_highlightAttributes(attributes));
       }
 
       return spans;

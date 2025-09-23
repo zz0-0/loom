@@ -14,6 +14,7 @@ class EditorState {
     this.showLineNumbers = true,
     this.showMinimap = false,
     this.showPreview = false,
+    this.showLivePreview = false,
   });
 
   final String? filePath;
@@ -25,6 +26,7 @@ class EditorState {
   final bool showLineNumbers;
   final bool showMinimap;
   final bool showPreview;
+  final bool showLivePreview;
 
   EditorState copyWith({
     String? filePath,
@@ -36,6 +38,7 @@ class EditorState {
     bool? showLineNumbers,
     bool? showMinimap,
     bool? showPreview,
+    bool? showLivePreview,
     bool clearFilePath = false,
     bool clearParsedDocument = false,
   }) {
@@ -50,6 +53,7 @@ class EditorState {
       showLineNumbers: showLineNumbers ?? this.showLineNumbers,
       showMinimap: showMinimap ?? this.showMinimap,
       showPreview: showPreview ?? this.showPreview,
+      showLivePreview: showLivePreview ?? this.showLivePreview,
     );
   }
 }
@@ -125,6 +129,10 @@ class EditorStateNotifier extends StateNotifier<EditorState> {
 
   void togglePreview() {
     state = state.copyWith(showPreview: !state.showPreview);
+  }
+
+  void toggleLivePreview() {
+    state = state.copyWith(showLivePreview: !state.showLivePreview);
   }
 
   void clear() {

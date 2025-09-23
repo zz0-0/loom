@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +5,6 @@ import 'package:loom/common/index.dart';
 import 'package:loom/features/core/export/index.dart';
 import 'package:loom/features/core/settings/index.dart';
 import 'package:loom/flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:loom/src/rust/api/blox_api.dart';
 
 /// Clipboard service for text operations
 class ClipboardService {
@@ -96,14 +93,11 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   bool _isBloxFile = false;
   bool _isLoadingFile = false; // Flag to track if we're loading a file
   bool _showMinimap = false; // Minimap visibility toggle
-  bool _showPreview = false; // Preview mode toggle for Blox files
+  String _previousContent =
+      ''; // Track previous content to detect actual changes
 
   // Code folding
   late CodeFoldingManager _foldingManager;
-
-  // Blox-specific state
-  BloxDocument? _parsedDocument;
-  List<String> _syntaxWarnings = [];
   @override
   void initState() {
     super.initState();
@@ -217,8 +211,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       setState(() {
         _isLoading = false;
         _error = null;
-        _parsedDocument = null;
-        _syntaxWarnings = [];
       });
     }
   }
@@ -236,6 +228,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       // Set flag to prevent marking as dirty during loading
       _isLoadingFile = true;
       _controller.text = content;
+      _previousContent = content; // Update previous content tracker
       _isLoadingFile = false;
 
       // Initialize undo/redo history with loaded content
@@ -250,7 +243,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       // Parse Blox content if it's a .blox file
       if (_isBloxFile) {
-        await _parseBloxContent(content);
+        // Blox parsing removed - keeping only editing functionality
       }
 
       // Mark tab as clean after successful load
@@ -288,38 +281,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     );
   }
 
-  Future<void> _parseBloxContent(String content) async {
-    try {
-      // Parse the document
-      final document = parseBloxString(content: content);
-      _parsedDocument = document;
-
-      // Validate syntax
-      final warnings = validateBloxSyntax(content: content);
-      _syntaxWarnings = warnings;
-
-      // Update editor state with parsed document and warnings
-      await Future.microtask(() {
-        if (mounted) {
-          ref.read(editorStateProvider.notifier).updateParsedDocument(document);
-          ref.read(editorStateProvider.notifier).updateSyntaxWarnings(warnings);
-        }
-      });
-
-      setState(() {});
-    } catch (e) {
-      _syntaxWarnings = ['Parse error: $e'];
-      await Future.microtask(() {
-        if (mounted) {
-          ref
-              .read(editorStateProvider.notifier)
-              .updateSyntaxWarnings(['Parse error: $e']);
-        }
-      });
-      setState(() {});
-    }
-  }
-
   Future<void> _saveFile() async {
     if (_currentFilePath == null) return;
 
@@ -329,7 +290,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
       // Re-parse if it's a Blox file
       if (_isBloxFile) {
-        await _parseBloxContent(_controller.text);
+        // Blox parsing removed - keeping only editing functionality
       }
 
       // Mark tab as not dirty
@@ -369,44 +330,48 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   void _onTextChanged() {
     // Don't mark as dirty if we're currently loading a file
     if (_currentFilePath != null && !_isLoadingFile) {
-      // Mark tab as dirty when content changes
-      Future.microtask(() {
-        if (mounted) {
-          ref
-              .read(tabProvider.notifier)
-              .updateTab(_currentFilePath!, isDirty: true);
-        }
-      });
+      // Only mark as dirty if content actually changed
+      final currentContent = _controller.text;
+      if (currentContent != _previousContent) {
+        _previousContent = currentContent;
 
-      // Update editor state with new content
-      Future.microtask(() {
-        if (mounted) {
-          ref
-              .read(editorStateProvider.notifier)
-              .updateContent(_controller.text);
-        }
-      });
+        // Mark tab as dirty when content changes
+        Future.microtask(() {
+          if (mounted) {
+            ref
+                .read(tabProvider.notifier)
+                .updateTab(_currentFilePath!, isDirty: true);
+          }
+        });
 
-      // Add current state to undo history
-      _editHistoryService.addState(_controller.text);
+        // Update editor state with new content
+        Future.microtask(() {
+          if (mounted) {
+            ref
+                .read(editorStateProvider.notifier)
+                .updateContent(currentContent);
+          }
+        });
 
-      // Mark unsaved changes for auto-save
-      _autoSaveService.markUnsavedChanges(_currentFilePath!);
+        // Add current state to undo history
+        _editHistoryService.addState(currentContent);
+
+        // Mark unsaved changes for auto-save
+        _autoSaveService.markUnsavedChanges(_currentFilePath!);
+      }
     }
 
-    // Update code folding regions
-    _foldingManager = CodeFoldingManager(_controller.text);
-
-    // Debounced parsing for Blox files
-    if (_isBloxFile) {
-      _debounceParse();
-    }
+    // Update code folding regions, preserving existing fold states
+    final oldFoldStates =
+        _foldingManager.regions.map((r) => r.isFolded).toList();
+    _foldingManager = CodeFoldingManager(_controller.text, oldFoldStates);
   }
 
   void _undo() {
     final previousState = _editHistoryService.undo();
     if (previousState != null) {
       _controller.text = previousState;
+      _previousContent = previousState; // Update previous content tracker
       // Mark as dirty if the content changed
       if (_currentFilePath != null) {
         Future.microtask(() {
@@ -424,6 +389,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     final nextState = _editHistoryService.redo();
     if (nextState != null) {
       _controller.text = nextState;
+      _previousContent = nextState; // Update previous content tracker
       // Mark as dirty if the content changed
       if (_currentFilePath != null) {
         Future.microtask(() {
@@ -695,28 +661,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     }
   }
 
-  void _debounceParse() {
-    // Simple debounce - in a real app, you'd use a proper debouncer
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted && _isBloxFile) {
-        _parseBloxContent(_controller.text);
-      }
-    });
-  }
-
-  double _calculateMinWidth() {
-    if (_controller.text.isEmpty) return 2000;
-
-    final lines = _controller.text.split('\n');
-    final longestLine = lines.reduce((a, b) => a.length > b.length ? a : b);
-
-    // Estimate width based on character count (rough estimate)
-    const charWidth = 8.0; // Approximate width per character in monospace
-    final estimatedWidth = longestLine.length * charWidth + 100; // Add padding
-
-    return max(2000, estimatedWidth); // Minimum width of 2000
-  }
-
   List<_EditorToolbarAction> _getToolbarActions() {
     return [
       _EditorToolbarAction(
@@ -733,24 +677,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         tooltip: 'Toggle minimap',
         onPressed: () => setState(() => _showMinimap = !_showMinimap),
       ),
-      if (_isBloxFile)
-        _EditorToolbarAction(
-          key: 'preview',
-          icon: _showPreview ? Icons.visibility : Icons.visibility_outlined,
-          tooltip: _showPreview ? 'Show editor' : 'Show preview',
-          onPressed: () {
-            final ref = ProviderScope.containerOf(context, listen: false);
-            ref.read(editorStateProvider.notifier).togglePreview();
-          },
-        ),
-      if (_isBloxFile && _syntaxWarnings.isNotEmpty)
-        _EditorToolbarAction(
-          key: 'warnings',
-          icon: Icons.warning,
-          iconColor: Colors.orange,
-          tooltip: '${_syntaxWarnings.length} syntax warnings',
-          onPressed: () => _showSyntaxWarnings(context),
-        ),
       _EditorToolbarAction(
         key: 'undo',
         icon: Icons.undo,
@@ -835,10 +761,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final editorState = ref.watch(editorStateProvider);
-
-    // Sync local preview state with global editor state
-    _showPreview = editorState.showPreview;
 
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -909,9 +831,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
             child: KeyboardListener(
               focusNode: _keyboardFocusNode,
               onKeyEvent: (event) {
-                // Disable editing shortcuts in preview mode
-                if (_showPreview) return;
-
                 if (HardwareKeyboard.instance.isControlPressed) {
                   if (event.logicalKey == LogicalKeyboardKey.keyS) {
                     _saveFile();
@@ -949,38 +868,41 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                   }
                 }
               },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Line numbers (optional)
-                  if (_showLineNumbers) _buildLineNumbers(theme),
+              child: LayoutBuilder(
+                builder: (context, constraints) => Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Line numbers (optional)
+                    if (_showLineNumbers)
+                      _buildLineNumbers(theme, constraints.maxWidth),
 
-                  // Text editor with syntax highlighting
-                  Expanded(
-                    child: _buildEditor(theme),
-                  ),
-
-                  // Minimap (optional)
-                  if (_showMinimap)
-                    SizedBox(
-                      width: 200, // Fixed width for minimap
-                      child: MinimapWidget(
-                        text: _controller.text,
-                        scrollPosition: _scrollController.hasClients
-                            ? _scrollController.position.pixels
-                            : 0,
-                        maxScrollExtent: _scrollController.hasClients
-                            ? _scrollController.position.maxScrollExtent
-                            : 0,
-                        viewportHeight: _scrollController.hasClients
-                            ? _scrollController.position.viewportDimension
-                            : 0,
-                        onScrollToPosition: _scrollToPosition,
-                        isBloxFile: _isBloxFile,
-                        showLineNumbers: _showLineNumbers,
-                      ),
+                    // Text editor with syntax highlighting
+                    Expanded(
+                      child: _buildEditor(theme),
                     ),
-                ],
+
+                    // Minimap (optional)
+                    if (_showMinimap)
+                      SizedBox(
+                        width: 200, // Fixed width for minimap
+                        child: MinimapWidget(
+                          text: _controller.text,
+                          scrollPosition: _scrollController.hasClients
+                              ? _scrollController.position.pixels
+                              : 0,
+                          maxScrollExtent: _scrollController.hasClients
+                              ? _scrollController.position.maxScrollExtent
+                              : 0,
+                          viewportHeight: _scrollController.hasClients
+                              ? _scrollController.position.viewportDimension
+                              : 0,
+                          onScrollToPosition: _scrollToPosition,
+                          isBloxFile: _isBloxFile,
+                          showLineNumbers: _showLineNumbers,
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -990,11 +912,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   }
 
   Widget _buildEditor(ThemeData theme) {
-    if (_isBloxFile && _showPreview && _parsedDocument != null) {
-      return _buildBloxPreview(theme);
-    } else if (_isBloxFile &&
-        _enableSyntaxHighlighting &&
-        _bloxHighlighter != null) {
+    if (_isBloxFile && _enableSyntaxHighlighting && _bloxHighlighter != null) {
       return _buildBloxEditor(theme);
     } else {
       return _buildPlainEditor(theme);
@@ -1002,17 +920,19 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   }
 
   // Cache for line numbers to prevent unnecessary rebuilds
-  List<String>? _cachedLogicalLines;
-  int? _cachedTextHash;
-  List<UIFoldableRegion>? _cachedFoldableRegions;
   int? _cachedFoldingHash;
+  double? _cachedMaxWidth;
+  bool? _cachedShowMinimap;
 
-  Widget _buildLineNumbers(ThemeData theme) {
-    // Calculate current text hash
-    final currentTextHash = _controller.text.hashCode;
-    final currentLogicalLines =
-        _controller.text.isEmpty ? [''] : _controller.text.split('\n');
+  // New cached variables for folded text with line mapping
+  late int _cachedFoldedTextHash;
+  late List<String> _cachedFoldedLines;
+  late List<double> _cachedFoldedLineHeights;
+  late List<int>
+      _cachedFoldedLineNumbers; // Maps folded line index to original line number
+  late bool _cachedIsUsingFoldedText;
 
+  Widget _buildLineNumbers(ThemeData theme, double maxWidth) {
     // Calculate folding hash based on regions
     final currentFoldingHash = _foldingManager.regions.fold(
       0,
@@ -1020,24 +940,53 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           hash ^ region.startLine ^ region.endLine ^ (region.isFolded ? 1 : 0),
     );
 
-    // Only rebuild if text or folding has actually changed
-    if (_cachedLogicalLines == null ||
-        _cachedTextHash != currentTextHash ||
-        _cachedLogicalLines!.length != currentLogicalLines.length ||
-        _cachedFoldableRegions == null ||
-        _cachedFoldingHash != currentFoldingHash) {
-      _cachedLogicalLines = currentLogicalLines;
-      _cachedTextHash = currentTextHash;
-      _cachedFoldableRegions = List.from(_foldingManager.regions);
+    // Get current folded text for caching
+    final currentFoldedText = _foldingManager.regions.isNotEmpty &&
+            _foldingManager.regions.any((r) => r.isFolded)
+        ? _foldingManager.getFoldedText()
+        : _controller.text;
+    final currentFoldedLines = currentFoldedText.split('\n');
+    final currentFoldedTextHash = currentFoldedText.hashCode;
+
+    // Generate line number mapping for folded text
+    final isUsingFoldedText = _foldingManager.regions.isNotEmpty &&
+        _foldingManager.regions.any((r) => r.isFolded);
+    final currentFoldedLineNumbers = isUsingFoldedText
+        ? (_foldingManager._lastLineMapping ??
+            List.generate(currentFoldedLines.length, (i) => i + 1))
+        : List.generate(currentFoldedLines.length, (i) => i + 1);
+
+    // Only rebuild if folded text, folding, width, or minimap visibility has actually changed
+    if (_cachedFoldedTextHash != currentFoldedTextHash ||
+        _cachedFoldedLines.length != currentFoldedLines.length ||
+        _cachedFoldingHash != currentFoldingHash ||
+        _cachedMaxWidth != maxWidth ||
+        _cachedShowMinimap != _showMinimap ||
+        _cachedIsUsingFoldedText != isUsingFoldedText) {
+      _cachedFoldedTextHash = currentFoldedTextHash;
+      _cachedFoldedLines = currentFoldedLines;
+      _cachedFoldedLineNumbers = currentFoldedLineNumbers;
       _cachedFoldingHash = currentFoldingHash;
+      _cachedMaxWidth = maxWidth;
+      _cachedShowMinimap = _showMinimap;
+      _cachedIsUsingFoldedText = isUsingFoldedText;
+
+      // Calculate the available width for text wrapping
+      final availableWidth = maxWidth;
+      final minimapWidth = _showMinimap ? 200 : 0;
+      final textWidth = availableWidth -
+          80 -
+          32 -
+          minimapWidth; // Subtract line number width, padding, and minimap width
+
+      // Calculate heights for folded lines
+      _cachedFoldedLineHeights =
+          _calculateWrappedLineHeights(currentFoldedLines, textWidth, theme);
     }
 
-    final lines = _cachedLogicalLines!;
-    final foldableRegions = _cachedFoldableRegions!;
-
-    const fontSize = 14.0;
-    const lineHeight = 1.5;
-    const actualLineHeight = fontSize * lineHeight; // 21.0
+    final foldedLines = _cachedFoldedLines;
+    final foldedLineHeights = _cachedFoldedLineHeights;
+    final foldedLineNumbers = _cachedFoldedLineNumbers;
 
     return Container(
       width: 80, // Increased width for folding controls
@@ -1060,41 +1009,41 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: lines.asMap().entries.map((entry) {
-              final lineNumber = entry.key + 1;
+            children: foldedLines.asMap().entries.map((entry) {
+              final lineNumber =
+                  foldedLineNumbers[entry.key]; // Use original line number
+              final lineHeight = foldedLineHeights[entry.key];
+              final foldedLine = entry.value;
 
-              // Check if this line starts a foldable region (using cached regions)
-              final foldableRegion = foldableRegions.firstWhere(
-                (region) => region.startLine == entry.key,
-                orElse: () => UIFoldableRegion(
-                  startLine: -1,
-                  endLine: -1,
-                  title: '',
-                  type: UIFoldableRegionType.codeBlock,
-                  level: 0,
-                ),
-              );
+              // Check if this folded line corresponds to a foldable region
+              final isFoldableRegion = _isFoldableRegionLine(foldedLine);
+              final isFolded = _isFoldedRegionLine(foldedLine);
 
               return Container(
-                height: actualLineHeight,
-                alignment: Alignment.centerRight,
+                height: lineHeight,
+                alignment: Alignment.topRight,
                 padding: AppSpacing.paddingRightSm,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Folding control
-                    if (foldableRegion.startLine != -1)
+                    // Folding control - show for all foldable regions
+                    if (isFoldableRegion)
                       InkWell(
                         onTap: () {
-                          final regionIndex =
-                              _foldingManager.regions.indexOf(foldableRegion);
-                          _foldingManager.toggleFold(regionIndex);
-                          setState(() {});
+                          // Find the corresponding region in the original text
+                          final regionIndex = _findRegionIndexForFoldedLine(
+                            entry.key,
+                            foldedLines,
+                          );
+                          if (regionIndex != -1) {
+                            _foldingManager.toggleFold(regionIndex);
+                            setState(() {});
+                          }
                         },
                         child: Icon(
-                          foldableRegion.isFolded
-                              ? Icons.chevron_right
-                              : Icons.expand_more,
+                          isFolded
+                              ? Icons.chevron_right // Folded state
+                              : Icons.expand_more, // Unfolded state
                           size: 14,
                           color: theme.colorScheme.onSurfaceVariant
                               .withOpacity(0.6),
@@ -1108,12 +1057,12 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                       width: 30, // Fixed width for line numbers
                       child: Text(
                         '$lineNumber',
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant
                               .withOpacity(0.6),
                           fontFamily: 'monospace',
-                          fontSize: fontSize,
-                          height: lineHeight,
+                          fontSize: 14,
+                          height: 1.5,
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -1128,9 +1077,113 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     );
   }
 
+  int _findRegionIndexForFoldedLine(
+    int foldedLineIndex,
+    List<String> foldedLines,
+  ) {
+    final foldedLine = foldedLines[foldedLineIndex];
+
+    // Extract the title from the folded line
+    final titleEndIndex = foldedLine.indexOf(' ...');
+    final lineText = titleEndIndex != -1
+        ? foldedLine.substring(0, titleEndIndex).trim()
+        : foldedLine.trim();
+
+    // For headers, extract just the title part (after # and spaces)
+    String title;
+    if (lineText.startsWith('#')) {
+      final headerMatch = RegExp(r'^(#{1,6})\s*(.*)$').firstMatch(lineText);
+      if (headerMatch != null) {
+        title = headerMatch.group(2) ?? '';
+      } else {
+        title = lineText;
+      }
+    } else {
+      title = lineText;
+    }
+
+    // Find the region with this title
+    for (var i = 0; i < _foldingManager.regions.length; i++) {
+      if (_foldingManager.regions[i].title == title) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
+  bool _isFoldableRegionLine(String foldedLine) {
+    // Extract the title from the folded line
+    final titleEndIndex = foldedLine.indexOf(' ...');
+    final lineText = titleEndIndex != -1
+        ? foldedLine.substring(0, titleEndIndex).trim()
+        : foldedLine.trim();
+
+    // For headers, extract just the title part (after # and spaces)
+    if (lineText.startsWith('#')) {
+      final headerMatch = RegExp(r'^(#{1,6})\s*(.*)$').firstMatch(lineText);
+      if (headerMatch != null) {
+        final title = headerMatch.group(2) ?? '';
+        // Check if any region has this title
+        return _foldingManager.regions.any((region) => region.title == title);
+      }
+    }
+
+    // For code blocks, check the full line text
+    return _foldingManager.regions.any((region) => region.title == lineText);
+  }
+
+  bool _isFoldedRegionLine(String foldedLine) {
+    // A line is folded if it contains "..." and "folded"
+    return foldedLine.contains('...') && foldedLine.contains('folded');
+  }
+
+  List<double> _calculateWrappedLineHeights(
+    List<String> lines,
+    double maxWidth,
+    ThemeData theme,
+  ) {
+    final heights = <double>[];
+    const fontSize = 14.0;
+    const lineHeight = 1.5;
+    const minLineHeight = fontSize * lineHeight; // 21.0
+
+    for (final line in lines) {
+      if (line.isEmpty) {
+        heights.add(minLineHeight);
+        continue;
+      }
+
+      // Use TextPainter to measure the actual height when wrapped
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: line,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontFamily: 'monospace',
+            fontSize: fontSize,
+            height: lineHeight,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout(maxWidth: maxWidth);
+
+      // Get the actual height after layout
+      final actualHeight = textPainter.height;
+
+      // Ensure minimum height
+      heights.add(actualHeight > minLineHeight ? actualHeight : minLineHeight);
+    }
+
+    return heights;
+  }
+
   Widget _buildBloxEditor(ThemeData theme) {
     // Update highlighter text and theme
-    _bloxHighlighter!.text = _controller.text;
+    final displayText = _foldingManager.regions.isNotEmpty &&
+            _foldingManager.regions.any((r) => r.isFolded)
+        ? _foldingManager.getFoldedText()
+        : _controller.text;
+    _bloxHighlighter!.text = displayText;
     _bloxHighlighter!.updateTheme(theme);
 
     return Stack(
@@ -1138,9 +1191,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
         // Syntax highlighted display (background)
         SingleChildScrollView(
           controller: _syntaxScrollController,
-          scrollDirection: Axis.horizontal, // Allow horizontal scrolling
-          physics:
-              const NeverScrollableScrollPhysics(), // Let TextField handle scrolling
+          physics: const NeverScrollableScrollPhysics(),
           child: Padding(
             padding: const EdgeInsets.only(
               left: AppSpacing.md,
@@ -1148,8 +1199,8 @@ class _FileEditorState extends ConsumerState<FileEditor> {
               top: AppSpacing.md,
               bottom: AppSpacing.sm,
             ),
-            child: SizedBox(
-              width: _calculateMinWidth(), // Dynamic width based on content
+            child: Container(
+              constraints: const BoxConstraints(minWidth: double.infinity),
               child: SelectableText.rich(
                 _bloxHighlighter!.getHighlightedText(),
                 style: const TextStyle(
@@ -1164,36 +1215,37 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
         // Editable TextField (foreground)
         Positioned.fill(
-          child: Scrollbar(
+          child: SingleChildScrollView(
             controller: _scrollController,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal, // Allow horizontal scrolling
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: AppSpacing.md,
-                  bottom: AppSpacing.sm,
-                ),
-                child: SizedBox(
-                  width: _calculateMinWidth(), // Dynamic width based on content
-                  child: TextField(
-                    controller: _controller,
-                    maxLines: null, // Allow multiple logical lines
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontFamily: 'monospace',
-                      fontSize: 14,
-                      height: 1.5,
-                      color: Colors.transparent, // Make text invisible
-                    ),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: AppSpacing.paddingHorizontalMd,
-                    ),
-                    onChanged: (_) => _onTextChanged(),
-                    focusNode: _textFieldFocusNode,
-                    cursorColor: theme.colorScheme.primary,
-                    showCursor: true,
+            physics:
+                const NeverScrollableScrollPhysics(), // Prevent horizontal scroll
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: AppSpacing.md,
+                right: AppSpacing.md,
+                top: AppSpacing.md,
+                bottom: AppSpacing.sm,
+              ),
+              child: Container(
+                constraints: const BoxConstraints(minWidth: double.infinity),
+                child: TextField(
+                  controller: _controller,
+                  maxLines: null, // Allow multiple logical lines
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontFamily: 'monospace',
+                    fontSize: 14,
+                    height: 1.5,
+                    color: Colors.transparent, // Make text invisible
                   ),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.zero,
+                    isDense: true,
+                  ),
+                  onChanged: (_) => _onTextChanged(),
+                  focusNode: _textFieldFocusNode,
+                  cursorColor: theme.colorScheme.primary,
+                  showCursor: true,
                 ),
               ),
             ),
@@ -1208,49 +1260,29 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       controller: _scrollController,
       child: SingleChildScrollView(
         controller: _scrollController,
-        scrollDirection: Axis.horizontal, // Allow horizontal scrolling
         child: Padding(
           padding:
               const EdgeInsets.only(top: AppSpacing.md, bottom: AppSpacing.sm),
-          child: SizedBox(
-            width: _calculateMinWidth(), // Dynamic width based on content
-            child: TextField(
-              controller: _controller,
-              maxLines: null,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontFamily: 'monospace',
-                fontSize: 14,
-              ),
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  bottom: 8,
-                ),
-              ),
-              onChanged: (_) => _onTextChanged(),
-              focusNode: _textFieldFocusNode,
+          child: TextField(
+            controller: _controller,
+            maxLines: null,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontFamily: 'monospace',
+              fontSize: 14,
             ),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 8,
+              ),
+            ),
+            onChanged: (_) => _onTextChanged(),
+            focusNode: _textFieldFocusNode,
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildBloxPreview(ThemeData theme) {
-    if (_parsedDocument == null) {
-      return Center(
-        child: Text(
-          AppLocalizations.of(context).noContentToPreview,
-        ),
-      );
-    }
-
-    return BloxViewer(
-      blocks: _parsedDocument!.blocks,
-      scrollController: _scrollController,
-      isDark: theme.brightness == Brightness.dark,
     );
   }
 
@@ -1262,38 +1294,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       builder: (context) => ExportDialog(
         content: _controller.text,
         fileName: _currentFilePath!.split('/').last,
-      ),
-    );
-  }
-
-  void _showSyntaxWarnings(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          AppLocalizations.of(context).syntaxWarnings,
-        ),
-        content: SizedBox(
-          width: 400,
-          height: 300,
-          child: ListView.builder(
-            itemCount: _syntaxWarnings.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: const Icon(Icons.warning, color: Colors.orange),
-                title: Text(_syntaxWarnings[index]),
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(
-              AppLocalizations.of(context).close,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -1397,34 +1397,32 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     required bool caseSensitive,
     required bool useRegex,
   }) {
-    {
-      if (findText.isEmpty) return;
+    if (findText.isEmpty) return;
 
-      var text = _controller.text;
-      var replacements = 0;
+    var text = _controller.text;
+    var replacements = 0;
 
-      if (caseSensitive) {
-        final count = findText.allMatches(text).length;
-        text = text.replaceAll(findText, replaceText);
-        replacements = count;
-      } else {
-        final pattern = RegExp(RegExp.escape(findText), caseSensitive: false);
-        final count = pattern.allMatches(text).length;
-        text = text.replaceAll(pattern, replaceText);
-        replacements = count;
-      }
-
-      _controller.text = text;
-
-      // Show result
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context).replacedOccurrences(replacements),
-          ),
-        ),
-      );
+    if (caseSensitive) {
+      final count = findText.allMatches(text).length;
+      text = text.replaceAll(findText, replaceText);
+      replacements = count;
+    } else {
+      final pattern = RegExp(RegExp.escape(findText), caseSensitive: false);
+      final count = pattern.allMatches(text).length;
+      text = text.replaceAll(pattern, replaceText);
+      replacements = count;
     }
+
+    _controller.text = text;
+
+    // Show result
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          AppLocalizations.of(context).replacedOccurrences(replacements),
+        ),
+      ),
+    );
   }
 }
 
@@ -1433,14 +1431,12 @@ class _EditorToolbarAction {
   const _EditorToolbarAction({
     required this.key,
     required this.icon,
-    this.iconColor,
     this.tooltip,
     this.onPressed,
   });
 
   final String key;
   final IconData icon;
-  final Color? iconColor;
   final String? tooltip;
   final VoidCallback? onPressed;
 
@@ -1448,7 +1444,7 @@ class _EditorToolbarAction {
 
   Widget build(BuildContext context) {
     return IconButton(
-      icon: Icon(icon, color: iconColor),
+      icon: Icon(icon),
       onPressed: onPressed,
       splashRadius: 12,
       tooltip: tooltip,
@@ -1483,7 +1479,7 @@ class _EditorOverflowMenu extends StatelessWidget {
           value: action.key,
           child: Row(
             children: [
-              Icon(action.icon, size: 16, color: action.iconColor),
+              Icon(action.icon, size: 16),
               const SizedBox(width: 8),
               Text(action.tooltip ?? action.key),
             ],
@@ -1527,8 +1523,16 @@ enum UIFoldableRegionType {
 
 /// Code folding manager
 class CodeFoldingManager {
-  CodeFoldingManager(this._text) {
+  CodeFoldingManager(this._text, [List<bool>? preservedFoldStates]) {
     _parseRegions();
+    // Restore folding states if provided
+    if (preservedFoldStates != null) {
+      for (var i = 0;
+          i < _regions.length && i < preservedFoldStates.length;
+          i++) {
+        _regions[i].isFolded = preservedFoldStates[i];
+      }
+    }
   }
   final List<UIFoldableRegion> _regions = [];
   final String _text;
@@ -1572,10 +1576,10 @@ class CodeFoldingManager {
       // Parse headers (# ## ###)
       else if (line.trim().startsWith('#')) {
         final headerMatch =
-            RegExp(r'^(#{1,6})\s+(.+)$').firstMatch(line.trim());
+            RegExp(r'^(#{1,6})\s*(.*)$').firstMatch(line.trim());
         if (headerMatch != null) {
           final level = headerMatch.group(1)!.length;
-          final title = headerMatch.group(2)!;
+          final title = headerMatch.group(2) ?? '';
 
           // Find the end of this section (next header of same or higher level)
           var endLine = i + 1;
@@ -1591,18 +1595,22 @@ class CodeFoldingManager {
             endLine++;
           }
 
-          if (endLine > i + 1) {
-            // Only add if there's content after the header
-            _regions.add(
-              UIFoldableRegion(
-                startLine: i,
-                endLine: endLine - 1,
-                title: title,
-                type: UIFoldableRegionType.section,
-                level: level - 1, // 0-based level
-              ),
-            );
+          // Exclude trailing empty lines from the region
+          var actualEndLine = endLine - 1;
+          while (actualEndLine > i && lines[actualEndLine].trim().isEmpty) {
+            actualEndLine--;
           }
+
+          // Always add the region for headers, even if they have no content
+          _regions.add(
+            UIFoldableRegion(
+              startLine: i,
+              endLine: actualEndLine,
+              title: title,
+              type: UIFoldableRegionType.section,
+              level: level - 1, // 0-based level
+            ),
+          );
         }
       }
     }
@@ -1626,6 +1634,8 @@ class CodeFoldingManager {
 
     final lines = _text.split('\n');
     final result = <String>[];
+    final lineMapping =
+        <int>[]; // Maps folded line index to original line number
 
     for (var i = 0; i < lines.length; i++) {
       // Check if this line is the start of a folded region
@@ -1641,16 +1651,34 @@ class CodeFoldingManager {
       );
 
       if (foldedRegion.startLine != -1) {
+        // Count only content lines (non-empty lines after header, excluding trailing empty lines)
+        var contentLines = 0;
+        for (var j = foldedRegion.startLine + 1;
+            j <= foldedRegion.endLine;
+            j++) {
+          if (j < lines.length && lines[j].trim().isNotEmpty) {
+            contentLines++;
+          }
+        }
+
         // Add the folded line with indicator
         result.add(
-          '${lines[i]} ... (${foldedRegion.endLine - foldedRegion.startLine} lines folded)',
+          '${lines[i]} ... ($contentLines lines with content folded)',
         );
+        lineMapping
+            .add(i + 1); // This folded line corresponds to original line i+1
         i = foldedRegion.endLine; // Skip to end of folded region
       } else {
         result.add(lines[i]);
+        lineMapping
+            .add(i + 1); // This folded line corresponds to original line i+1
       }
     }
 
+    // Store the mapping for later use
+    _lastLineMapping = lineMapping;
     return result.join('\n');
   }
+
+  List<int>? _lastLineMapping;
 }
