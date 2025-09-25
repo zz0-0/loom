@@ -433,8 +433,8 @@ class _TabItemState extends State<_TabItem>
                   type: MaterialType.transparency,
                   child: Container(
                     constraints: const BoxConstraints(
-                      minWidth: 120,
-                      maxWidth: 200,
+                      minWidth: AppDimensions.tabBaseWidth,
+                      maxWidth: AppDimensions.tabMaxWidth,
                     ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: AppSpacing.smd,
@@ -445,7 +445,7 @@ class _TabItemState extends State<_TabItem>
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
                         color: theme.colorScheme.primary,
-                        width: 2,
+                        width: AppDimensions.borderWidthMedium,
                       ),
                       boxShadow: [
                         BoxShadow(
@@ -466,8 +466,8 @@ class _TabItemState extends State<_TabItem>
                 opacity: 0.3,
                 child: Container(
                   constraints: const BoxConstraints(
-                    minWidth: 120,
-                    maxWidth: 200,
+                    minWidth: AppDimensions.tabBaseWidth,
+                    maxWidth: AppDimensions.tabMaxWidth,
                   ),
                   decoration: BoxDecoration(
                     color: Colors.transparent,
@@ -477,7 +477,7 @@ class _TabItemState extends State<_TabItem>
                             right: BorderSide(color: theme.dividerColor),
                             top: BorderSide(
                               color: theme.colorScheme.primary,
-                              width: 2,
+                              width: AppDimensions.borderWidthMedium,
                             ),
                           )
                         : null,
@@ -500,8 +500,8 @@ class _TabItemState extends State<_TabItem>
                     _showTabContextMenu(context, details),
                 child: Container(
                   constraints: const BoxConstraints(
-                    minWidth: 120,
-                    maxWidth: 200,
+                    minWidth: AppDimensions.tabBaseWidth,
+                    maxWidth: AppDimensions.tabMaxWidth,
                   ),
                   decoration: BoxDecoration(
                     color: backgroundColor,
@@ -538,7 +538,7 @@ class _TabItemState extends State<_TabItem>
                           bottom: 0,
                           left: 0,
                           child: Container(
-                            width: 1,
+                            width: AppDimensions.borderWidthThin,
                             color: theme.dividerColor,
                           ),
                         ),
@@ -547,7 +547,7 @@ class _TabItemState extends State<_TabItem>
                           bottom: 0,
                           right: 0,
                           child: Container(
-                            width: 1,
+                            width: AppDimensions.borderWidthThin,
                             color: theme.dividerColor,
                           ),
                         ),
@@ -585,7 +585,7 @@ class _TabItemState extends State<_TabItem>
               padding: AppSpacing.paddingXs,
               child: Icon(
                 Icons.close,
-                size: 14,
+                size: AppDimensions.iconMedium,
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
@@ -595,7 +595,7 @@ class _TabItemState extends State<_TabItem>
     final icon = widget.tab.icon != null
         ? Icon(
             _getIconData(widget.tab.icon ?? ''),
-            size: 16,
+            size: AppDimensions.iconLarge,
             color: theme.colorScheme.onSurfaceVariant,
           )
         : null;
@@ -627,8 +627,8 @@ class _TabItemState extends State<_TabItem>
           );
     final dirtyIndicator = widget.tab.isDirty
         ? Container(
-            width: 6,
-            height: 6,
+            width: AppDimensions.iconTiny,
+            height: AppDimensions.iconTiny,
             decoration: BoxDecoration(
               color: theme.colorScheme.primary,
               shape: BoxShape.circle,
@@ -642,26 +642,26 @@ class _TabItemState extends State<_TabItem>
     if (widget.closeButtonPosition == CloseButtonPosition.left) {
       // Left layout: Close button | Icon | Title | Dirty
       if (closeButton != null) {
-        children.addAll([closeButton, const SizedBox(width: 4)]);
+        children.addAll([closeButton, const SizedBox(width: AppSpacing.xs)]);
       }
       if (icon != null) {
-        children.addAll([icon, const SizedBox(width: 8)]);
+        children.addAll([icon, const SizedBox(width: AppSpacing.sm)]);
       }
       children.add(title);
       if (dirtyIndicator != null) {
-        children.addAll([const SizedBox(width: 4), dirtyIndicator]);
+        children.addAll([const SizedBox(width: AppSpacing.xs), dirtyIndicator]);
       }
     } else {
       // Right layout: Icon | Title | Dirty | Close button
       if (icon != null) {
-        children.addAll([icon, const SizedBox(width: 8)]);
+        children.addAll([icon, const SizedBox(width: AppSpacing.sm)]);
       }
       children.add(title);
       if (dirtyIndicator != null) {
-        children.addAll([const SizedBox(width: 4), dirtyIndicator]);
+        children.addAll([const SizedBox(width: AppSpacing.xs), dirtyIndicator]);
       }
       if (closeButton != null) {
-        children.addAll([const SizedBox(width: 4), closeButton]);
+        children.addAll([const SizedBox(width: AppSpacing.xs), closeButton]);
       }
     }
 
@@ -701,10 +701,10 @@ class _TabItemState extends State<_TabItem>
               children: [
                 Icon(
                   Icons.close,
-                  size: 16,
+                  size: AppDimensions.iconLarge,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Text('Close', style: theme.textTheme.bodyMedium),
               ],
             ),
@@ -716,10 +716,10 @@ class _TabItemState extends State<_TabItem>
               children: [
                 Icon(
                   Icons.clear_all,
-                  size: 16,
+                  size: AppDimensions.iconLarge,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Text('Close Others', style: theme.textTheme.bodyMedium),
               ],
             ),
@@ -731,10 +731,10 @@ class _TabItemState extends State<_TabItem>
               children: [
                 Icon(
                   Icons.keyboard_arrow_right,
-                  size: 16,
+                  size: AppDimensions.iconLarge,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Text(
                   'Close Tabs to the Right',
                   style: theme.textTheme.bodyMedium,
@@ -749,10 +749,10 @@ class _TabItemState extends State<_TabItem>
               children: [
                 Icon(
                   Icons.close,
-                  size: 16,
+                  size: AppDimensions.iconLarge,
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Text('Close All', style: theme.textTheme.bodyMedium),
               ],
             ),

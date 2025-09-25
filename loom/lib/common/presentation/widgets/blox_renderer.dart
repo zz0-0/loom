@@ -22,6 +22,7 @@ class BloxRenderer {
       case 'p':
         return _renderParagraph(context, block, defaultStyle);
 
+      case 'document':
       case 'section':
       case 'h1':
       case 'h2':
@@ -65,10 +66,25 @@ class BloxRenderer {
     BloxBlock block,
     TextStyle baseStyle,
   ) {
+    final inlineText =
+        _buildInlineTextSpan(context, block.inlineElements, baseStyle);
+
+    // For empty paragraphs (empty lines), ensure minimum height to match text line height
+    if (block.inlineElements.isEmpty) {
+      return Padding(
+        padding: AppSpacing.paddingVerticalXs,
+        child: SizedBox(
+          height: baseStyle.fontSize! *
+              (baseStyle.height ?? 1.2), // Match text line height
+          child: RichText(text: inlineText),
+        ),
+      );
+    }
+
     return Padding(
-      padding: AppSpacing.paddingVerticalSm,
+      padding: AppSpacing.paddingVerticalXs,
       child: RichText(
-        text: _buildInlineTextSpan(context, block.inlineElements, baseStyle),
+        text: inlineText,
       ),
     );
   }
@@ -84,7 +100,7 @@ class BloxRenderer {
     final title = block.getAttribute('title') ?? '';
 
     return Padding(
-      padding: AppSpacing.paddingVerticalSm, // Reduced from paddingVerticalMd
+      padding: AppSpacing.paddingVerticalXs, // Reduced from paddingVerticalMd
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -92,16 +108,6 @@ class BloxRenderer {
             title,
             style: headingStyle,
           ),
-          if (block.inlineElements.isNotEmpty) ...[
-            const SizedBox(height: 4), // Reduced from 8
-            RichText(
-              text: _buildInlineTextSpan(
-                context,
-                block.inlineElements,
-                baseStyle,
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -120,7 +126,7 @@ class BloxRenderer {
       padding: AppSpacing.paddingSm, // Reduced from paddingMd
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.radiusLg,
         border: Border.all(
           color: theme.dividerColor,
         ),
@@ -140,10 +146,7 @@ class BloxRenderer {
           ],
           Text(
             block.content,
-            style: baseStyle.copyWith(
-              fontFamily: 'monospace',
-              fontSize: 13,
-            ),
+            style: AppTypography.codeTextStyle,
           ),
         ],
       ),
@@ -202,7 +205,7 @@ class BloxRenderer {
     }
 
     return Padding(
-      padding: AppSpacing.paddingVerticalSm,
+      padding: AppSpacing.paddingVerticalXs,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: block.listItems
@@ -218,7 +221,7 @@ class BloxRenderer {
     TextStyle baseStyle,
     int indentLevel,
   ) {
-    final indent = indentLevel * 20.0;
+    final indent = AppDimensions.getListItemIndent(indentLevel);
 
     return Padding(
       padding: EdgeInsets.only(left: indent, bottom: AppSpacing.xs),
@@ -227,7 +230,7 @@ class BloxRenderer {
         children: [
           // List marker
           SizedBox(
-            width: 24,
+            width: AppDimensions.iconMedium,
             child: _buildListMarker(item.itemType, baseStyle),
           ),
 
@@ -267,7 +270,8 @@ class BloxRenderer {
   ) {
     return itemType.when(
       unchecked: () => Text('•', style: baseStyle),
-      checked: () => Text('✓', style: baseStyle.copyWith(color: Colors.green)),
+      checked: () =>
+          Text('✓', style: baseStyle.copyWith(color: AppColors.success)),
       definition: (term) => Text(
         '$term:',
         style: baseStyle.copyWith(fontWeight: FontWeight.bold),
@@ -289,7 +293,7 @@ class BloxRenderer {
     final caption = block.getAttribute('caption');
 
     return Padding(
-      padding: AppSpacing.paddingVerticalSm,
+      padding: AppSpacing.paddingVerticalXs,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -301,12 +305,12 @@ class BloxRenderer {
                 fontStyle: FontStyle.italic,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
           ],
           Container(
             decoration: BoxDecoration(
               border: Border.all(color: theme.dividerColor),
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: AppRadius.radiusSm,
             ),
             child: Table(
               border: TableBorder.symmetric(
@@ -379,21 +383,21 @@ class BloxRenderer {
     final height = block.getAttribute('height');
 
     return Padding(
-      padding: AppSpacing.paddingVerticalSm,
+      padding: AppSpacing.paddingVerticalXs,
       child: Container(
         padding: AppSpacing.paddingMd,
         decoration: BoxDecoration(
           border: Border.all(color: theme.dividerColor),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppRadius.radiusLg,
         ),
         child: Column(
           children: [
             Icon(
               Icons.image,
-              size: 48,
+              size: AppDimensions.iconMassive,
               color: theme.colorScheme.onSurfaceVariant,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
               alt.isNotEmpty ? alt : localizations.imageAlt(src),
               style: baseStyle.copyWith(
@@ -405,8 +409,7 @@ class BloxRenderer {
               const SizedBox(height: 4),
               Text(
                 '${width ?? 'auto'} × ${height ?? 'auto'}',
-                style: baseStyle.copyWith(
-                  fontSize: 12,
+                style: AppTypography.smallTextStyle.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
@@ -429,7 +432,7 @@ class BloxRenderer {
       padding: AppSpacing.paddingSm, // Reduced from paddingMd
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.radiusLg,
         border: Border.all(
           color: theme.dividerColor,
         ),
@@ -439,15 +442,12 @@ class BloxRenderer {
           Icon(
             Icons.functions,
             color: theme.colorScheme.primary,
-            size: 24,
+            size: AppDimensions.iconXXXLarge,
           ),
           const SizedBox(height: 4), // Reduced from 8
           Text(
             block.content,
-            style: baseStyle.copyWith(
-              fontFamily: 'monospace',
-              fontSize: 16,
-            ),
+            style: AppTypography.mathTextStyle,
             textAlign: TextAlign.center,
           ),
         ],
@@ -509,15 +509,13 @@ class BloxRenderer {
           ),
           subscript: (content) => TextSpan(
             text: content,
-            style: baseStyle.copyWith(
-              fontSize: baseStyle.fontSize! * 0.8,
+            style: AppTypography.getSubscriptStyle(baseStyle).copyWith(
               textBaseline: TextBaseline.alphabetic,
             ),
           ),
           superscript: (content) => TextSpan(
             text: content,
-            style: baseStyle.copyWith(
-              fontSize: baseStyle.fontSize! * 0.8,
+            style: AppTypography.getSuperscriptStyle(baseStyle).copyWith(
               textBaseline: TextBaseline.alphabetic,
             ),
           ),
@@ -537,9 +535,8 @@ class BloxRenderer {
           ),
           footnote: (id, text) => TextSpan(
             text: '[$id]',
-            style: baseStyle.copyWith(
+            style: AppTypography.getFootnoteStyle(baseStyle).copyWith(
               color: Theme.of(context).colorScheme.secondary,
-              fontSize: baseStyle.fontSize! * 0.8,
             ),
             recognizer: TapGestureRecognizer()
               ..onTap = () => _handleFootnoteTap(context, id, text),
@@ -558,19 +555,10 @@ class BloxRenderer {
   }
 
   static TextStyle _getHeadingStyle(TextStyle baseStyle, int level) {
-    final fontSize = switch (level) {
-      1 => 28.0,
-      2 => 24.0,
-      3 => 20.0,
-      4 => 18.0,
-      5 => 16.0,
-      6 => 14.0,
-      _ => 16.0,
-    };
-
-    return baseStyle.copyWith(
-      fontSize: fontSize,
-      fontWeight: FontWeight.bold,
+    return AppTypography.getHeadingStyle(level).copyWith(
+      color: baseStyle.color,
+      fontFamily: baseStyle.fontFamily,
+      height: baseStyle.height,
     );
   }
 

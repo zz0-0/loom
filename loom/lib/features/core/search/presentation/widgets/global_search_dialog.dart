@@ -53,8 +53,12 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
             // Header
             Row(
               children: [
-                Icon(Icons.search, color: theme.colorScheme.primary, size: 20),
-                const SizedBox(width: 6),
+                Icon(
+                  Icons.search,
+                  color: theme.colorScheme.primary,
+                  size: AppDimensions.iconLarge,
+                ),
+                const SizedBox(width: AppSpacing.sm),
                 Text(
                   localizations.search,
                   style: theme.textTheme.titleMedium?.copyWith(
@@ -63,14 +67,9 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.close, size: 18),
+                  icon: const Icon(Icons.close, size: AppDimensions.iconMedium),
                   onPressed: () => Navigator.of(context).pop(),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 24,
-                    minHeight: 24,
-                  ),
-                ).withHoverAnimation().withPressAnimation(),
+                ),
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -84,7 +83,8 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                 ),
-                prefixIcon: const Icon(Icons.search, size: 18),
+                prefixIcon:
+                    const Icon(Icons.search, size: AppDimensions.iconMedium),
                 suffixIcon: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -93,7 +93,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                         _caseSensitive
                             ? Icons.text_fields
                             : Icons.text_fields_outlined,
-                        size: 16,
+                        size: AppDimensions.iconSmall,
                       ),
                       onPressed: () =>
                           setState(() => _caseSensitive = !_caseSensitive),
@@ -107,7 +107,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                     IconButton(
                       icon: Icon(
                         _useRegex ? Icons.code : Icons.code_outlined,
-                        size: 16,
+                        size: AppDimensions.iconSmall,
                       ),
                       onPressed: () => setState(() => _useRegex = !_useRegex),
                       tooltip: localizations.useRegex,
@@ -138,7 +138,10 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                 hintStyle: TextStyle(
                   color: theme.colorScheme.onSurface.withOpacity(0.4),
                 ),
-                prefixIcon: const Icon(Icons.find_replace, size: 18),
+                prefixIcon: const Icon(
+                  Icons.find_replace,
+                  size: AppDimensions.iconMedium,
+                ),
                 border: const OutlineInputBorder(),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.sm,
@@ -189,12 +192,15 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                             height: 14,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Icon(Icons.find_replace, size: 16),
+                        : const Icon(
+                            Icons.find_replace,
+                            size: AppDimensions.iconSmall,
+                          ),
                     label: Text(
                       searchState.isSearching
                           ? localizations.replacing
                           : localizations.replace,
-                      style: const TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: AppTypography.small),
                     ),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -217,12 +223,15 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
                             height: 14,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Icon(Icons.find_replace, size: 16),
+                        : const Icon(
+                            Icons.find_replace,
+                            size: AppDimensions.iconSmall,
+                          ),
                     label: Text(
                       searchState.isSearching
                           ? localizations.replacingAll
                           : localizations.replaceAll,
-                      style: const TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: AppTypography.small),
                     ),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -284,7 +293,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
           children: [
             Icon(
               Icons.error_outline,
-              size: 48,
+              size: AppDimensions.iconMassive,
               color: theme.colorScheme.error,
             ),
             const SizedBox(height: 16),
@@ -313,7 +322,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
           children: [
             Icon(
               Icons.search,
-              size: 48,
+              size: AppDimensions.iconMassive,
               color: theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 16),
@@ -336,7 +345,7 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
           children: [
             Icon(
               Icons.search_off,
-              size: 48,
+              size: AppDimensions.iconMassive,
               color: theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 16),
@@ -402,13 +411,13 @@ class _GlobalSearchDialogState extends ConsumerState<GlobalSearchDialog> {
           ),
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: AppRadius.radiusXs,
           ),
           child: Row(
             children: [
               Icon(
                 Icons.description,
-                size: 14,
+                size: AppDimensions.iconSmall,
                 color: theme.colorScheme.primary,
               ),
               const SizedBox(width: 6),

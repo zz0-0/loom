@@ -24,7 +24,7 @@ class ThemeSettings extends ConsumerWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
 
         // Current theme info
         _SettingsSection(
@@ -36,7 +36,7 @@ class ThemeSettings extends ConsumerWidget {
               decoration: BoxDecoration(
                 color:
                     theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: AppRadius.radiusLg,
                 border: Border.all(
                   color: theme.colorScheme.outline.withOpacity(0.2),
                 ),
@@ -50,7 +50,7 @@ class ThemeSettings extends ConsumerWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.smd),
                   Text(
                     localizations.colorScheme,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -58,19 +58,19 @@ class ThemeSettings extends ConsumerWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   Row(
                     children: [
                       _ColorSwatch(
                         color: customTheme.primaryColor,
                         label: localizations.primary,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.sm),
                       _ColorSwatch(
                         color: customTheme.secondaryColor,
                         label: localizations.secondary,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.sm),
                       _ColorSwatch(
                         color: customTheme.surfaceColor,
                         label: localizations.surface,
@@ -83,7 +83,7 @@ class ThemeSettings extends ConsumerWidget {
           ],
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
 
         // Built-in theme presets
         _SettingsSection(
@@ -99,7 +99,7 @@ class ThemeSettings extends ConsumerWidget {
                 ref.read(customThemeProvider.notifier).setTheme(theme);
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             // Light themes
             _ThemeGroup(
               title: localizations.lightThemes,
@@ -109,7 +109,7 @@ class ThemeSettings extends ConsumerWidget {
                 ref.read(customThemeProvider.notifier).setTheme(theme);
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             // Dark themes
             _ThemeGroup(
               title: localizations.darkThemes,
@@ -122,9 +122,9 @@ class ThemeSettings extends ConsumerWidget {
           ],
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
         const Divider(),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
 
         // Custom theme colors
         _SettingsSection(
@@ -140,7 +140,7 @@ class ThemeSettings extends ConsumerWidget {
                     );
               },
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.smd),
             ColorPickerButton(
               color: customTheme.secondaryColor,
               label: localizations.secondaryColor,
@@ -150,7 +150,7 @@ class ThemeSettings extends ConsumerWidget {
                     );
               },
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.smd),
             ColorPickerButton(
               color: customTheme.surfaceColor,
               label: localizations.surfaceColor,
@@ -163,9 +163,9 @@ class ThemeSettings extends ConsumerWidget {
           ],
         ),
 
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
         const Divider(),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppSpacing.lg),
 
         // Font settings
         _SettingsSection(
@@ -180,7 +180,7 @@ class ThemeSettings extends ConsumerWidget {
                     .setFontFamily(fontFamily);
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             FontSizeSelector(
               currentFontSize: fontSettings.fontSize,
               onFontSizeChanged: (fontSize) {
@@ -211,16 +211,16 @@ class _PresetThemeCard extends StatelessWidget {
     final themeData = Theme.of(context);
 
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.radiusLg,
         child: Container(
           width: 120,
           height: 100, // Fixed height to prevent size variations
           padding: AppSpacing.paddingMd,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: AppRadius.radiusLg,
             color: isSelected
                 ? theme.primaryColor.withOpacity(0.1)
                 : themeData.colorScheme.surfaceContainerHighest
@@ -239,11 +239,11 @@ class _PresetThemeCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: 16,
-                    height: 16,
+                    width: AppDimensions.iconLarge,
+                    height: AppDimensions.iconLarge,
                     decoration: BoxDecoration(
                       color: theme.primaryColor,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: AppRadius.radiusXs,
                       border: Border.all(
                         color: themeData.colorScheme.outline.withOpacity(0.5),
                       ),
@@ -251,23 +251,23 @@ class _PresetThemeCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Container(
-                    width: 16,
-                    height: 16,
+                    width: AppDimensions.iconLarge,
+                    height: AppDimensions.iconLarge,
                     decoration: BoxDecoration(
                       color: theme.secondaryColor,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: AppRadius.radiusXs,
                       border: Border.all(
                         color: themeData.colorScheme.outline.withOpacity(0.5),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppSpacing.xs),
                   Container(
-                    width: 16,
-                    height: 16,
+                    width: AppDimensions.iconLarge,
+                    height: AppDimensions.iconLarge,
                     decoration: BoxDecoration(
                       color: theme.surfaceColor,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: AppRadius.radiusXs,
                       border: Border.all(
                         color: themeData.colorScheme.outline.withOpacity(0.5),
                       ),
@@ -275,7 +275,7 @@ class _PresetThemeCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Expanded(
                 child: Center(
                   child: Text(
@@ -285,7 +285,8 @@ class _PresetThemeCard extends StatelessWidget {
                       color: isSelected
                           ? theme.primaryColor
                           : themeData.colorScheme.onSurface,
-                      fontSize: 11, // Slightly smaller to fit better
+                      fontSize: AppTypography
+                          .extraSmall, // Slightly smaller to fit better
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
@@ -326,14 +327,14 @@ class _SettingsSection extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.xs),
         Text(
           subtitle,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         ...children,
       ],
     );
@@ -368,7 +369,7 @@ class _ThemeGroup extends StatelessWidget {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -407,7 +408,7 @@ class _ColorSwatch extends StatelessWidget {
           height: 24,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: AppRadius.radiusXs,
             border: Border.all(
               color: theme.colorScheme.outline.withOpacity(0.5),
             ),
@@ -418,7 +419,7 @@ class _ColorSwatch extends StatelessWidget {
           label,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
-            fontSize: 10,
+            fontSize: AppTypography.tiny,
           ),
         ),
       ],

@@ -208,7 +208,7 @@ class CustomThemeData {
       ),
       bodyMedium: baseTextTheme.bodyMedium?.copyWith(
         fontFamily: fontFamily,
-        fontSize: fontSize - 2,
+        fontSize: fontSize,
         color: textColor,
       ),
       bodySmall: baseTextTheme.bodySmall?.copyWith(

@@ -31,7 +31,7 @@ class SidePanel extends ConsumerWidget {
         children: [
           // Header
           Container(
-            height: 35,
+            height: AppDimensions.topBarHeight,
             padding: AppSpacing.paddingSm,
             decoration: BoxDecoration(
               border: Border(
@@ -51,13 +51,14 @@ class SidePanel extends ConsumerWidget {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(LucideIcons.x, size: 14),
+                  icon:
+                      const Icon(LucideIcons.x, size: AppDimensions.iconMedium),
                   onPressed: onClose,
-                  splashRadius: 12,
+                  splashRadius: AppDimensions.buttonSplashRadius,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(
-                    minWidth: 24,
-                    minHeight: 24,
+                    minWidth: AppDimensions.buttonMinWidth,
+                    minHeight: AppDimensions.buttonMinHeight,
                   ),
                 ),
               ],
@@ -137,17 +138,26 @@ class _ExplorerPanel extends ConsumerWidget {
               ),
               const Spacer(),
               IconButton(
-                icon: const Icon(LucideIcons.folderPlus, size: 14),
+                icon: const Icon(
+                  LucideIcons.folderPlus,
+                  size: AppDimensions.iconMedium,
+                ),
                 onPressed: () => _createNewFolder(context, ref),
-                splashRadius: 12,
+                splashRadius: AppDimensions.buttonSplashRadius,
               ),
               IconButton(
-                icon: const Icon(LucideIcons.filePlus, size: 14),
+                icon: const Icon(
+                  LucideIcons.filePlus,
+                  size: AppDimensions.iconMedium,
+                ),
                 onPressed: () => _createNewFile(context, ref),
-                splashRadius: 12,
+                splashRadius: AppDimensions.buttonSplashRadius,
               ),
               IconButton(
-                icon: const Icon(LucideIcons.refreshCw, size: 14),
+                icon: const Icon(
+                  LucideIcons.refreshCw,
+                  size: AppDimensions.iconMedium,
+                ),
                 onPressed: () {
                   // TODO(user): Refresh
                 },
@@ -418,10 +428,10 @@ class _FileTreeItem extends StatelessWidget {
             onTap: onTap,
             child: Container(
               padding: EdgeInsets.only(
-                left: 6.0 + (depth * 12.0),
-                right: 6,
-                top: 2,
-                bottom: 2,
+                left: AppSpacing.xs + (depth * AppDimensions.listIndentWidth),
+                right: AppSpacing.xs,
+                top: AppSpacing.paddingVerticalXs.top,
+                bottom: AppSpacing.paddingVerticalXs.bottom,
               ),
               child: Row(
                 children: [
@@ -430,18 +440,18 @@ class _FileTreeItem extends StatelessWidget {
                       isExpanded
                           ? LucideIcons.chevronDown
                           : LucideIcons.chevronRight,
-                      size: 10,
+                      size: AppDimensions.iconTiny,
                       color: theme.colorScheme.onSurfaceVariant,
                     )
                   else
-                    const SizedBox(width: 12),
-                  const SizedBox(width: 4),
+                    const SizedBox(width: AppDimensions.listIndentWidth),
+                  const SizedBox(width: AppSpacing.xs),
                   Icon(
                     icon,
-                    size: 12,
+                    size: AppDimensions.iconSmall,
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: AppSpacing.xs),
                   Expanded(
                     child: Text(
                       name,

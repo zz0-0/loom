@@ -3,6 +3,7 @@ import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_highlight/themes/vs2015.dart';
 import 'package:loom/common/index.dart';
+import 'package:loom/common/presentation/widgets/editor/blox_syntax_highlighter.dart';
 import 'package:path/path.dart' as path;
 
 /// A syntax-highlighted code editor widget
@@ -139,17 +140,17 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
     final theme = Theme.of(context);
     final lineNumberStyle = widget.style?.copyWith(
           color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
-          fontSize: 14,
+          fontSize: AppTypography.editorBody,
           fontFamily: 'monospace',
         ) ??
         TextStyle(
           color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
-          fontSize: 14,
+          fontSize: AppTypography.editorBody,
           fontFamily: 'monospace',
         );
 
     return Container(
-      width: 60,
+      width: AppDimensions.lineNumbersWidth,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.1),
         border: Border(
@@ -168,7 +169,7 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
             children: lines.asMap().entries.map((entry) {
               final lineNumber = entry.key + 1;
               return Container(
-                height: 24, // Match line height
+                height: AppDimensions.listItemHeight, // Match line height
                 alignment: Alignment.centerRight,
                 padding: AppSpacing.paddingRightSm,
                 child: Text(
@@ -223,13 +224,13 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
                     padding: EdgeInsets.zero,
                     textStyle: widget.style?.copyWith(
                           fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
+                          fontSize: AppTypography.editorBody,
+                          height: AppTypography.lineHeightNormal,
                         ) ??
                         TextStyle(
                           fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
+                          fontSize: AppTypography.editorBody,
+                          height: AppTypography.lineHeightNormal,
                           color: theme.colorScheme.onSurface,
                         ),
                   ),
@@ -241,10 +242,10 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
                 controller: _scrollController,
                 child: Padding(
                   padding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 16,
-                    bottom: 8,
+                    left: AppSpacing.md,
+                    right: AppSpacing.md,
+                    top: AppSpacing.md,
+                    bottom: AppSpacing.sm,
                   ),
                   child: TextField(
                     controller: widget.controller,
@@ -252,14 +253,14 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
                     maxLines: null,
                     style: widget.style?.copyWith(
                           fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
+                          fontSize: AppTypography.editorBody,
+                          height: AppTypography.lineHeightNormal,
                           color: Colors.transparent, // Make text invisible
                         ) ??
                         const TextStyle(
                           fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
+                          fontSize: AppTypography.editorBody,
+                          height: AppTypography.lineHeightNormal,
                           color: Colors.transparent,
                         ),
                     decoration: const InputDecoration(
@@ -306,8 +307,8 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
                     bloxController.getHighlightedText(),
                     style: const TextStyle(
                       fontFamily: 'monospace',
-                      fontSize: 14,
-                      height: 1.5,
+                      fontSize: AppTypography.editorBody,
+                      height: AppTypography.lineHeightNormal,
                     ),
                   ),
                 ),
@@ -329,14 +330,14 @@ class _SyntaxHighlightedEditorState extends State<SyntaxHighlightedEditor> {
                     maxLines: null,
                     style: widget.style?.copyWith(
                           fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
+                          fontSize: AppTypography.editorBody,
+                          height: AppTypography.lineHeightNormal,
                           color: Colors.transparent, // Make text invisible
                         ) ??
                         const TextStyle(
                           fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
+                          fontSize: AppTypography.editorBody,
+                          height: AppTypography.lineHeightNormal,
                           color: Colors.transparent,
                         ),
                     decoration: const InputDecoration(

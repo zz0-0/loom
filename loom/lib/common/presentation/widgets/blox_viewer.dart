@@ -27,6 +27,8 @@ class BloxViewer extends StatelessWidget {
       padding: padding,
       child: ListView.builder(
         controller: scrollController,
+        shrinkWrap:
+            true, // Don't expand to fill available height, align content to top
         itemCount: blocks.length,
         itemBuilder: (context, index) {
           final block = blocks[index];
@@ -114,7 +116,9 @@ class _BloxDocumentViewerState extends State<BloxDocumentViewer> {
           scrollController: _scrollController,
           isDark: widget.isDark,
           padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md, vertical: AppSpacing.sm,),
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
         ),
       ),
     );

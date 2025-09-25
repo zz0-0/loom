@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loom/common/index.dart';
 
 /// Syntax highlighter for Blox markup language
 class BloxSyntaxHighlighter extends TextEditingController {
@@ -218,58 +219,58 @@ class BloxSyntaxColors {
       text: TextStyle(
         color: theme.colorScheme.onSurface,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
       ),
       comment: TextStyle(
         color: isDark ? Colors.grey[400] : Colors.grey[600],
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontStyle: FontStyle.italic,
       ),
       blockIndicator: TextStyle(
         color: theme.colorScheme.primary,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontWeight: FontWeight.bold,
       ),
       blockType: TextStyle(
         color: isDark ? Colors.lightBlue[300] : Colors.blue[700],
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontWeight: FontWeight.w600,
       ),
       attributeKey: TextStyle(
         color: isDark ? Colors.orange[300] : Colors.orange[800],
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontWeight: FontWeight.w500,
       ),
       attributeValue: TextStyle(
         color: isDark ? Colors.green[300] : Colors.green[700],
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
       ),
       string: TextStyle(
         color: isDark ? Colors.green[300] : Colors.green[700],
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
       ),
       inlineBracket: TextStyle(
         color: isDark ? Colors.purple[300] : Colors.purple[700],
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontWeight: FontWeight.bold,
       ),
       inlineType: TextStyle(
         color: isDark ? Colors.cyan[300] : Colors.cyan[700],
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontWeight: FontWeight.w500,
       ),
       inlineContent: TextStyle(
         color: isDark ? Colors.yellow[300] : Colors.amber[800],
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
       ),
     );
   }
@@ -279,58 +280,58 @@ class BloxSyntaxColors {
       text: TextStyle(
         color: Colors.black,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
       ),
       comment: TextStyle(
         color: Colors.grey,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontStyle: FontStyle.italic,
       ),
       blockIndicator: TextStyle(
         color: Colors.blue,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontWeight: FontWeight.bold,
       ),
       blockType: TextStyle(
         color: Colors.blue,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontWeight: FontWeight.w600,
       ),
       attributeKey: TextStyle(
         color: Colors.orange,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontWeight: FontWeight.w500,
       ),
       attributeValue: TextStyle(
         color: Colors.green,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
       ),
       string: TextStyle(
         color: Colors.green,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
       ),
       inlineBracket: TextStyle(
         color: Colors.purple,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontWeight: FontWeight.bold,
       ),
       inlineType: TextStyle(
         color: Colors.cyan,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
         fontWeight: FontWeight.w500,
       ),
       inlineContent: TextStyle(
         color: Colors.amber,
         fontFamily: 'monospace',
-        fontSize: 14,
+        fontSize: AppTypography.editorBody,
       ),
     );
   }

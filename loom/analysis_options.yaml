@@ -6,7 +6,7 @@ analyzer:
     lines_longer_than_80_chars: ignore
   exclude: 
     - build/**
-    - lib/src/rust/*
+    - lib/src/rust/**
     - flutter_gen/**
   language:
     strict-casts: true

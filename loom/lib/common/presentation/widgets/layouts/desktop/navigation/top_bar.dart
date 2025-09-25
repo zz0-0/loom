@@ -305,7 +305,7 @@ class TopBar extends ConsumerWidget {
       onTap: () => _showCommandPalette(context),
       child: Container(
         width: searchBarWidth,
-        height: 22,
+        height: AppDimensions.searchBarHeight,
         margin: AppSpacing.marginHorizontalMd,
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
@@ -316,31 +316,31 @@ class TopBar extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            const SizedBox(width: 6),
+            const SizedBox(width: AppSpacing.xs),
             Icon(
               Icons.search,
-              size: 12,
+              size: AppDimensions.iconSmall,
               color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: AppSpacing.xs),
             Expanded(
               child: Text(
                 AppLocalizations.of(context).searchFilesAndCommands,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  fontSize: 12,
+                  fontSize: AppTypography.small,
                   color: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
                 ),
               ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: AppSpacing.xs),
             Text(
               AppLocalizations.of(context).commandKeyShortcut,
               style: theme.textTheme.bodySmall?.copyWith(
-                fontSize: 10,
+                fontSize: AppTypography.tiny,
                 color: theme.colorScheme.onSurfaceVariant.withOpacity(0.5),
               ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: AppSpacing.xs),
           ],
         ),
       ),
@@ -404,8 +404,8 @@ class TopBar extends ConsumerWidget {
             child: Row(
               children: [
                 if (child.icon != null) ...[
-                  Icon(child.icon, size: 16),
-                  const SizedBox(width: 8),
+                  Icon(child.icon, size: AppDimensions.iconLarge),
+                  const SizedBox(width: AppSpacing.sm),
                 ],
                 Text(child.label),
               ],

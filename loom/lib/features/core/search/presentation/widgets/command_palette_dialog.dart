@@ -251,19 +251,19 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
     final theme = Theme.of(context);
 
     return Dialog(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       child: Container(
         width: 550,
         constraints: const BoxConstraints(maxHeight: 450),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppRadius.radiusLg,
           border: Border.all(
             color: theme.colorScheme.outline.withOpacity(0.2),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: AppColors.black.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -314,7 +314,10 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
                     hintStyle: TextStyle(
                       color: theme.colorScheme.onSurface.withOpacity(0.4),
                     ),
-                    prefixIcon: const Icon(LucideIcons.search, size: 20),
+                    prefixIcon: const Icon(
+                      LucideIcons.search,
+                      size: AppDimensions.iconLarge,
+                    ),
                     border: InputBorder.none,
                   ),
                   onChanged: _filterItems,
@@ -340,7 +343,7 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
                               children: [
                                 Icon(
                                   LucideIcons.searchX,
-                                  size: 48,
+                                  size: AppDimensions.iconMassive,
                                   color: theme.colorScheme.onSurfaceVariant,
                                 ),
                                 const SizedBox(height: 16),
@@ -381,7 +384,7 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
                                   children: [
                                     Icon(
                                       item.icon,
-                                      size: 20,
+                                      size: AppDimensions.iconLarge,
                                       color: isSelected
                                           ? theme.colorScheme.primary
                                           : theme.colorScheme.onSurfaceVariant,
@@ -425,8 +428,7 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
                                         decoration: BoxDecoration(
                                           color: theme.colorScheme
                                               .surfaceContainerHighest,
-                                          borderRadius:
-                                              BorderRadius.circular(12),
+                                          borderRadius: AppRadius.radiusXl,
                                         ),
                                         child: Text(
                                           item.category,
@@ -434,7 +436,7 @@ class _CommandPaletteDialogState extends ConsumerState<CommandPaletteDialog> {
                                               ?.copyWith(
                                             color: theme
                                                 .colorScheme.onSurfaceVariant,
-                                            fontSize: 10,
+                                            fontSize: AppTypography.tiny,
                                           ),
                                         ),
                                       ),
@@ -626,19 +628,19 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
     final theme = Theme.of(context);
 
     return Dialog(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppColors.transparent,
       child: Container(
         width: 550,
         height: 350,
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: AppRadius.radiusLg,
           border: Border.all(
             color: theme.colorScheme.outline.withOpacity(0.2),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: AppColors.black.withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -710,7 +712,10 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
                     hintStyle: TextStyle(
                       color: theme.colorScheme.onSurface.withOpacity(0.4),
                     ),
-                    prefixIcon: const Icon(LucideIcons.search, size: 20),
+                    prefixIcon: const Icon(
+                      LucideIcons.search,
+                      size: AppDimensions.iconLarge,
+                    ),
                     border: const OutlineInputBorder(),
                   ),
                   onChanged: _filterFiles,
@@ -731,7 +736,7 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
                             children: [
                               Icon(
                                 LucideIcons.fileX,
-                                size: 48,
+                                size: AppDimensions.iconMassive,
                                 color: theme.colorScheme.onSurfaceVariant,
                               ),
                               const SizedBox(height: 16),
@@ -781,7 +786,7 @@ class _FileSearchDialogState extends State<_FileSearchDialog> {
                                   children: [
                                     Icon(
                                       _getFileIcon(fileName),
-                                      size: 20,
+                                      size: AppDimensions.iconLarge,
                                       color: isSelected
                                           ? theme.colorScheme.primary
                                           : theme.colorScheme.onSurfaceVariant,

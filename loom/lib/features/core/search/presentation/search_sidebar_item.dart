@@ -62,9 +62,10 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
               hintStyle: TextStyle(
                 color: theme.colorScheme.onSurface.withOpacity(0.4),
               ),
-              prefixIcon: const Icon(Icons.search, size: 16),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
+              prefixIcon:
+                  const Icon(Icons.search, size: AppDimensions.iconMedium),
+              border: const OutlineInputBorder(
+                borderRadius: AppRadius.radiusMd,
               ),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.sm,
@@ -185,7 +186,7 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
           children: [
             Icon(
               Icons.error_outline,
-              size: 32,
+              size: AppDimensions.iconHuge,
               color: theme.colorScheme.error,
             ),
             const SizedBox(height: 8),
@@ -218,7 +219,7 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
           children: [
             Icon(
               Icons.search_off,
-              size: 32,
+              size: AppDimensions.iconHuge,
               color: theme.colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 8),
@@ -279,13 +280,13 @@ class _SearchPanelState extends ConsumerState<SearchPanel> {
             ),
             decoration: BoxDecoration(
               color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: AppRadius.radiusXs,
             ),
             child: Row(
               children: [
                 Icon(
                   Icons.description,
-                  size: 14,
+                  size: AppDimensions.iconSmall,
                   color: theme.colorScheme.primary,
                 ),
                 const SizedBox(width: 6),
@@ -472,7 +473,7 @@ class _SearchOption extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Material(
-      color: Colors.transparent,
+      color: AppColors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: AppRadius.radiusSm,
@@ -484,8 +485,8 @@ class _SearchOption extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected
                 ? theme.colorScheme.primaryContainer.withOpacity(0.3)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(4),
+                : AppColors.transparent,
+            borderRadius: AppRadius.radiusXs,
             border: isSelected
                 ? Border.all(
                     color: theme.colorScheme.primary.withOpacity(0.5),
@@ -496,7 +497,7 @@ class _SearchOption extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 14,
+                size: AppDimensions.iconSmall,
                 color: isSelected
                     ? theme.colorScheme.primary
                     : theme.colorScheme.onSurfaceVariant,
@@ -518,7 +519,7 @@ class _SearchOption extends StatelessWidget {
                     Text(
                       subtitle,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: 10,
+                        fontSize: AppTypography.tiny,
                         color: isSelected
                             ? theme.colorScheme.primary.withOpacity(0.7)
                             : theme.colorScheme.onSurfaceVariant,

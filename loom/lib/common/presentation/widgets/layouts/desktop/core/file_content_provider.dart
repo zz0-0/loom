@@ -82,17 +82,13 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   late final EditHistoryService _editHistoryService;
   late final AutoSaveService _autoSaveService;
 
-  // Syntax highlighting
-  BloxSyntaxHighlighter? _bloxHighlighter;
-  final bool _enableSyntaxHighlighting = true;
-
   String? _currentFilePath;
   bool _isLoading = false;
   String? _error;
   bool _showLineNumbers = true;
+  bool _showMinimap = false;
   bool _isBloxFile = false;
   bool _isLoadingFile = false; // Flag to track if we're loading a file
-  bool _showMinimap = false; // Minimap visibility toggle
   String _previousContent =
       ''; // Track previous content to detect actual changes
 
@@ -109,7 +105,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       }
     });
     _controller.addListener(_onTextChanged);
-    _initializeSyntaxHighlighter();
     _foldingManager = CodeFoldingManager('');
 
     // Add scroll listener to sync other scroll controllers
@@ -154,7 +149,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     _syntaxScrollController.dispose();
     _keyboardFocusNode.dispose();
     _textFieldFocusNode.dispose();
-    _bloxHighlighter?.dispose();
 
     // Clean up auto-save for current file
     if (_currentFilePath != null) {
@@ -162,11 +156,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     }
 
     super.dispose();
-  }
-
-  void _initializeSyntaxHighlighter() {
-    _bloxHighlighter = BloxSyntaxHighlighter();
-    // Theme will be updated in _buildBloxEditor when the widget is built
   }
 
   void _loadCurrentFile() {
@@ -663,20 +652,24 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
   List<_EditorToolbarAction> _getToolbarActions() {
     return [
-      _EditorToolbarAction(
-        key: 'line_numbers',
-        icon: _showLineNumbers
-            ? Icons.format_list_numbered
-            : Icons.format_list_numbered_outlined,
-        tooltip: 'Toggle line numbers',
-        onPressed: () => setState(() => _showLineNumbers = !_showLineNumbers),
-      ),
-      _EditorToolbarAction(
-        key: 'minimap',
-        icon: _showMinimap ? Icons.map : Icons.map_outlined,
-        tooltip: 'Toggle minimap',
-        onPressed: () => setState(() => _showMinimap = !_showMinimap),
-      ),
+      // Line numbers toggle only for non-Blox files
+      if (!_isBloxFile)
+        _EditorToolbarAction(
+          key: 'line_numbers',
+          icon: _showLineNumbers
+              ? Icons.format_list_numbered
+              : Icons.format_list_numbered_outlined,
+          tooltip: 'Toggle line numbers',
+          onPressed: () => setState(() => _showLineNumbers = !_showLineNumbers),
+        ),
+      // Minimap toggle only for non-Blox files
+      if (!_isBloxFile)
+        _EditorToolbarAction(
+          key: 'minimap',
+          icon: _showMinimap ? Icons.map : Icons.map_outlined,
+          tooltip: 'Toggle minimap',
+          onPressed: () => setState(() => _showMinimap = !_showMinimap),
+        ),
       _EditorToolbarAction(
         key: 'undo',
         icon: Icons.undo,
@@ -773,7 +766,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           children: [
             Icon(
               Icons.error_outline,
-              size: 48,
+              size: AppDimensions.iconMassive,
               color: theme.colorScheme.error,
             ),
             const SizedBox(height: 16),
@@ -872,8 +865,8 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                 builder: (context, constraints) => Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Line numbers (optional)
-                    if (_showLineNumbers)
+                    // Line numbers and minimap are handled by BloxEditor for Blox files
+                    if (!_isBloxFile && _showLineNumbers)
                       _buildLineNumbers(theme, constraints.maxWidth),
 
                     // Text editor with syntax highlighting
@@ -881,8 +874,8 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                       child: _buildEditor(theme),
                     ),
 
-                    // Minimap (optional)
-                    if (_showMinimap)
+                    // Minimap is handled by BloxEditor for Blox files
+                    if (!_isBloxFile && _showMinimap)
                       SizedBox(
                         width: 200, // Fixed width for minimap
                         child: MinimapWidget(
@@ -912,8 +905,15 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   }
 
   Widget _buildEditor(ThemeData theme) {
-    if (_isBloxFile && _enableSyntaxHighlighting && _bloxHighlighter != null) {
-      return _buildBloxEditor(theme);
+    if (_isBloxFile) {
+      return BloxEditor(
+        controller: _controller,
+        focusNode: _textFieldFocusNode,
+        onChanged: _onTextChanged,
+        filePath: _currentFilePath,
+        showLineNumbers: _showLineNumbers,
+        showMinimap: _showMinimap,
+      );
     } else {
       return _buildPlainEditor(theme);
     }
@@ -922,15 +922,17 @@ class _FileEditorState extends ConsumerState<FileEditor> {
   // Cache for line numbers to prevent unnecessary rebuilds
   int? _cachedFoldingHash;
   double? _cachedMaxWidth;
-  bool? _cachedShowMinimap;
+  bool? _cachedShowLineNumbers;
 
   // New cached variables for folded text with line mapping
-  late int _cachedFoldedTextHash;
-  late List<String> _cachedFoldedLines;
-  late List<double> _cachedFoldedLineHeights;
-  late List<int>
+  int? _cachedFoldedTextHash;
+  List<String>? _cachedFoldedLines;
+  // ignore: use_late_for_private_fields_and_variables
+  List<double>? _cachedFoldedLineHeights;
+  List<int>?
+      // ignore: lines_longer_than_80_chars, use_late_for_private_fields_and_variables
       _cachedFoldedLineNumbers; // Maps folded line index to original line number
-  late bool _cachedIsUsingFoldedText;
+  bool? _cachedIsUsingFoldedText;
 
   Widget _buildLineNumbers(ThemeData theme, double maxWidth) {
     // Calculate folding hash based on regions
@@ -956,19 +958,22 @@ class _FileEditorState extends ConsumerState<FileEditor> {
             List.generate(currentFoldedLines.length, (i) => i + 1))
         : List.generate(currentFoldedLines.length, (i) => i + 1);
 
-    // Only rebuild if folded text, folding, width, or minimap visibility has actually changed
-    if (_cachedFoldedTextHash != currentFoldedTextHash ||
-        _cachedFoldedLines.length != currentFoldedLines.length ||
+    // Only rebuild if folded text, folding, width, or line numbers visibility has actually changed
+    if (_cachedFoldedTextHash == null ||
+        _cachedFoldedTextHash != currentFoldedTextHash ||
+        _cachedFoldedLines == null ||
+        _cachedFoldedLines!.length != currentFoldedLines.length ||
         _cachedFoldingHash != currentFoldingHash ||
         _cachedMaxWidth != maxWidth ||
-        _cachedShowMinimap != _showMinimap ||
+        _cachedShowLineNumbers != _showLineNumbers ||
+        _cachedIsUsingFoldedText == null ||
         _cachedIsUsingFoldedText != isUsingFoldedText) {
       _cachedFoldedTextHash = currentFoldedTextHash;
       _cachedFoldedLines = currentFoldedLines;
       _cachedFoldedLineNumbers = currentFoldedLineNumbers;
       _cachedFoldingHash = currentFoldingHash;
       _cachedMaxWidth = maxWidth;
-      _cachedShowMinimap = _showMinimap;
+      _cachedShowLineNumbers = _showLineNumbers;
       _cachedIsUsingFoldedText = isUsingFoldedText;
 
       // Calculate the available width for text wrapping
@@ -984,12 +989,13 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           _calculateWrappedLineHeights(currentFoldedLines, textWidth, theme);
     }
 
-    final foldedLines = _cachedFoldedLines;
-    final foldedLineHeights = _cachedFoldedLineHeights;
-    final foldedLineNumbers = _cachedFoldedLineNumbers;
+    final foldedLines = _cachedFoldedLines!;
+    final foldedLineHeights = _cachedFoldedLineHeights!;
+    final foldedLineNumbers = _cachedFoldedLineNumbers!;
 
     return Container(
-      width: 80, // Increased width for folding controls
+      width: AppDimensions
+          .lineNumbersWidth, // Increased width for folding controls
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.1),
         border: Border(
@@ -1044,25 +1050,23 @@ class _FileEditorState extends ConsumerState<FileEditor> {
                           isFolded
                               ? Icons.chevron_right // Folded state
                               : Icons.expand_more, // Unfolded state
-                          size: 14,
+                          size: AppDimensions.iconMedium,
                           color: theme.colorScheme.onSurfaceVariant
                               .withOpacity(0.6),
                         ),
                       )
                     else
-                      const SizedBox(width: 14),
+                      const SizedBox(width: AppDimensions.iconMedium),
 
                     // Line number
                     SizedBox(
-                      width: 30, // Fixed width for line numbers
+                      width: AppDimensions
+                          .lineNumbersMinWidth, // Fixed width for line numbers
                       child: Text(
                         '$lineNumber',
-                        style: theme.textTheme.bodyMedium?.copyWith(
+                        style: AppTypography.lineNumbersTextStyle.copyWith(
                           color: theme.colorScheme.onSurfaceVariant
                               .withOpacity(0.6),
-                          fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
                         ),
                         textAlign: TextAlign.right,
                       ),
@@ -1144,8 +1148,8 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     ThemeData theme,
   ) {
     final heights = <double>[];
-    const fontSize = 14.0;
-    const lineHeight = 1.5;
+    const fontSize = AppTypography.editorBody;
+    const lineHeight = AppTypography.lineHeightNormal;
     const minLineHeight = fontSize * lineHeight; // 21.0
 
     for (final line in lines) {
@@ -1158,11 +1162,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
       final textPainter = TextPainter(
         text: TextSpan(
           text: line,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontFamily: 'monospace',
-            fontSize: fontSize,
-            height: lineHeight,
-          ),
+          style: AppTypography.editorTextStyle,
         ),
         textDirection: TextDirection.ltr,
       )..layout(maxWidth: maxWidth);
@@ -1177,84 +1177,6 @@ class _FileEditorState extends ConsumerState<FileEditor> {
     return heights;
   }
 
-  Widget _buildBloxEditor(ThemeData theme) {
-    // Update highlighter text and theme
-    final displayText = _foldingManager.regions.isNotEmpty &&
-            _foldingManager.regions.any((r) => r.isFolded)
-        ? _foldingManager.getFoldedText()
-        : _controller.text;
-    _bloxHighlighter!.text = displayText;
-    _bloxHighlighter!.updateTheme(theme);
-
-    return Stack(
-      children: [
-        // Syntax highlighted display (background)
-        SingleChildScrollView(
-          controller: _syntaxScrollController,
-          physics: const NeverScrollableScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.only(
-              left: AppSpacing.md,
-              right: AppSpacing.md,
-              top: AppSpacing.md,
-              bottom: AppSpacing.sm,
-            ),
-            child: Container(
-              constraints: const BoxConstraints(minWidth: double.infinity),
-              child: SelectableText.rich(
-                _bloxHighlighter!.getHighlightedText(),
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 14,
-                  height: 1.5,
-                ),
-              ),
-            ),
-          ),
-        ),
-
-        // Editable TextField (foreground)
-        Positioned.fill(
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            physics:
-                const NeverScrollableScrollPhysics(), // Prevent horizontal scroll
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: AppSpacing.md,
-                right: AppSpacing.md,
-                top: AppSpacing.md,
-                bottom: AppSpacing.sm,
-              ),
-              child: Container(
-                constraints: const BoxConstraints(minWidth: double.infinity),
-                child: TextField(
-                  controller: _controller,
-                  maxLines: null, // Allow multiple logical lines
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontFamily: 'monospace',
-                    fontSize: 14,
-                    height: 1.5,
-                    color: Colors.transparent, // Make text invisible
-                  ),
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                    isDense: true,
-                  ),
-                  onChanged: (_) => _onTextChanged(),
-                  focusNode: _textFieldFocusNode,
-                  cursorColor: theme.colorScheme.primary,
-                  showCursor: true,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildPlainEditor(ThemeData theme) {
     return Scrollbar(
       controller: _scrollController,
@@ -1266,10 +1188,7 @@ class _FileEditorState extends ConsumerState<FileEditor> {
           child: TextField(
             controller: _controller,
             maxLines: null,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontFamily: 'monospace',
-              fontSize: 14,
-            ),
+            style: AppTypography.editorTextStyle,
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(
@@ -1440,13 +1359,15 @@ class _EditorToolbarAction {
   final String? tooltip;
   final VoidCallback? onPressed;
 
-  double get estimatedWidth => 32; // Icon buttons are typically 32 pixels wide
+  double get estimatedWidth =>
+      AppDimensions.buttonMinWidth +
+      8; // Icon buttons are typically buttonMinWidth + padding wide
 
   Widget build(BuildContext context) {
     return IconButton(
       icon: Icon(icon),
       onPressed: onPressed,
-      splashRadius: 12,
+      splashRadius: AppDimensions.buttonSplashRadius,
       tooltip: tooltip,
     ).withHoverAnimation().withPressAnimation();
   }
@@ -1471,16 +1392,16 @@ class _EditorOverflowMenu extends StatelessWidget {
     Theme.of(context);
 
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_vert, size: 16),
-      splashRadius: 12,
+      icon: const Icon(Icons.more_vert, size: AppDimensions.iconLarge),
+      splashRadius: AppDimensions.buttonSplashRadius,
       tooltip: 'More actions',
       itemBuilder: (context) => actions.map((action) {
         return PopupMenuItem<String>(
           value: action.key,
           child: Row(
             children: [
-              Icon(action.icon, size: 16),
-              const SizedBox(width: 8),
+              Icon(action.icon, size: AppDimensions.iconLarge),
+              const SizedBox(width: AppSpacing.sm),
               Text(action.tooltip ?? action.key),
             ],
           ),
@@ -1538,6 +1459,8 @@ class CodeFoldingManager {
   final String _text;
 
   List<UIFoldableRegion> get regions => _regions;
+
+  List<int>? get lastLineMapping => _lastLineMapping;
 
   void _parseRegions() {
     final lines = _text.split('\n');
