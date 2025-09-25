@@ -99,8 +99,15 @@ class BloxRenderer {
 
     final title = block.getAttribute('title') ?? '';
 
+    // Document titles get more padding, sections get medium padding, regular headings get minimal padding
+    final padding = switch (block.blockType.toLowerCase()) {
+      'document' => AppSpacing.paddingVerticalMd, // 16px for document titles
+      'section' => AppSpacing.paddingVerticalSm, // 8px for sections
+      _ => AppSpacing.paddingVerticalXs, // 4px for regular headings
+    };
+
     return Padding(
-      padding: AppSpacing.paddingVerticalXs, // Reduced from paddingVerticalMd
+      padding: padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

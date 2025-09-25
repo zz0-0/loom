@@ -766,7 +766,7 @@ class _BloxEditorState extends ConsumerState<BloxEditor> {
           PreviewModeLineNumbersWidget(
             scrollController: _lineNumbersScrollController,
             theme: theme,
-            text: widget.controller.text,
+            blocks: _parsedBlocks,
             foldingManager: _foldingManager,
             maxWidth: maxWidth,
             showMinimap: widget.showMinimap,
@@ -829,7 +829,7 @@ class _BloxEditorState extends ConsumerState<BloxEditor> {
                 PreviewModeLineNumbersWidget(
                   scrollController: _lineNumbersScrollController,
                   theme: theme,
-                  text: widget.controller.text,
+                  blocks: _parsedBlocks,
                   foldingManager: _foldingManager,
                   maxWidth: maxWidth,
                   showMinimap: widget.showMinimap,
@@ -865,7 +865,7 @@ class _BloxEditorState extends ConsumerState<BloxEditor> {
           LivePreviewModeLineNumbersWidget(
             scrollController: _lineNumbersScrollController,
             theme: theme,
-            text: widget.controller.text,
+            blocks: _parsedBlocks,
             foldingManager: _foldingManager,
             maxWidth: maxWidth,
             showMinimap: widget.showMinimap,
