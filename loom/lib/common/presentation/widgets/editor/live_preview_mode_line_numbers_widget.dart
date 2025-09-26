@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:loom/common/index.dart';
 import 'package:loom/src/rust/api/blox_api.dart';
 
-/// Line numbers widget for live preview mode that calculates heights based on rendered block heights
+/// Line numbers widget for preview mode that calculates heights based on rendered block heights
 class LivePreviewModeLineNumbersWidget extends BaseLineNumbersWidget {
   const LivePreviewModeLineNumbersWidget({
     required super.scrollController,
@@ -25,7 +25,7 @@ class LivePreviewModeLineNumbersWidget extends BaseLineNumbersWidget {
 
   @override
   List<int> getLineNumbers() {
-    // For live preview mode, we need to generate line numbers based on the blocks
+    // For preview mode, we need to generate line numbers based on the blocks
     // Each block may span multiple lines, so we need to expand them
     final lineNumbers = <int>[];
     var currentLine = 1;
@@ -49,17 +49,13 @@ class LivePreviewModeLineNumbersWidget extends BaseLineNumbersWidget {
 
     for (final block in blocks) {
       if (block.blockType.toLowerCase() == 'list') {
-        // Handle list items individually, accounting for list container padding
-        final itemCount = block.listItems.length;
-        const listContainerPadding =
-            8.0; // 4px top + 4px bottom from BloxRenderer
-        final paddingPerItem =
-            itemCount > 0 ? listContainerPadding / itemCount : 0.0;
-
+        // Handle list items individually
+        // Each item gets its text height + bottom padding (4px)
+        // The container padding (4px top + 4px bottom) is handled by top padding
         for (final item in block.listItems) {
           final itemHeight =
               _calculateListItemHeight(item.content, baseLineHeight);
-          heights.add(itemHeight + paddingPerItem);
+          heights.add(itemHeight); // AppSpacing.xs bottom padding per item
         }
       } else {
         final lineSpan = _getBlockLineSpan(block);
@@ -78,76 +74,37 @@ class LivePreviewModeLineNumbersWidget extends BaseLineNumbersWidget {
   List<double> getLineTopPaddings() {
     // Calculate top padding for each line number to align with content
     final paddings = <double>[];
+    var previousBottomPadding = 0.0;
 
     for (final block in blocks) {
       final topPadding = _getBlockTopPadding(block);
 
       if (block.blockType.toLowerCase() == 'list') {
         // Handle list items individually - each gets the block's top padding
-        for (final _ in block.listItems) {
+        // First item includes previous block's bottom padding
+        paddings.add(topPadding + previousBottomPadding);
+        // Subsequent items only get top padding
+        for (var i = 1; i < block.listItems.length; i++) {
           paddings.add(topPadding);
         }
       } else {
         final lineSpan = _getBlockLineSpan(block);
-
-        for (var i = 0; i < lineSpan; i++) {
+        // First line includes previous block's bottom padding
+        paddings.add(topPadding + previousBottomPadding);
+        // Subsequent lines only get top padding
+        for (var i = 1; i < lineSpan; i++) {
           paddings.add(topPadding);
         }
+      }
+
+      if (block.blockType.toLowerCase() == 'list') {
+        // Update previous bottom padding for next block only when
+        // previous block is a list
+        previousBottomPadding = _getBlockBottomPadding(block);
       }
     }
 
     return paddings;
-  }
-
-  double _getBlockTopPadding(BloxBlock block) {
-    // Calculate the top padding offset for line number alignment
-    // This matches the padding structure in BloxRenderer for each block type
-    switch (block.blockType.toLowerCase()) {
-      case 'paragraph':
-      case 'p':
-        // Paragraphs: padding 4px
-        return 4;
-      case 'document':
-        // Document titles: padding 16px
-        return 16.0 + 13;
-      case 'section':
-        // Sections: padding 8px
-        return 8.0 + 13;
-      case 'h1':
-      case 'h2':
-      case 'h3':
-      case 'h4':
-      case 'h5':
-      case 'h6':
-        // Regular headings: padding 4px
-        return 4.0 + 8;
-      case 'code':
-      case 'c':
-        // Code blocks: margin 4px + internal padding 8px = 12px
-        return 12;
-      case 'quote':
-      case 'q':
-        // Quote blocks: margin 4px + internal padding 8px = 12px
-        return 12;
-      case 'list':
-        // Lists: padding 4px
-        return 4;
-      case 'table':
-      case 'tbl':
-        // Tables: padding 4px
-        return 4;
-      case 'image':
-      case 'img':
-        // Image blocks: padding 4px + internal padding 16px = 20px
-        return 20;
-      case 'math':
-      case 'm':
-        // Math blocks: margin 4px + internal padding 8px = 12px
-        return 12;
-      default:
-        // Default blocks (treated as paragraphs): padding 4px
-        return 4;
-    }
   }
 
   int _getBlockLineSpan(BloxBlock block) {
@@ -200,7 +157,7 @@ class LivePreviewModeLineNumbersWidget extends BaseLineNumbersWidget {
           return 28; // Measured actual height for empty paragraphs
         }
         return _measureTextHeight(text, AppTypography.editorTextStyle) +
-            6; // Adjusted padding to match actual rendering
+            8; // AppSpacing.paddingVerticalXs = 4px top + 4px bottom
 
       case 'document':
       case 'section':
@@ -222,18 +179,19 @@ class LivePreviewModeLineNumbersWidget extends BaseLineNumbersWidget {
             _measureTextHeight(block.getAttribute('title') ?? '', headingStyle);
         // Add padding based on block type: document=32px, section=16px, headings=8px
         final padding = switch (block.blockType.toLowerCase()) {
-          'document' => 32.0,
-          'section' => 16.0,
-          _ => 8.0, // h1-h6
+          'document' => 32, // AppSpacing.paddingVerticalMd
+          'section' => 16, // AppSpacing.paddingVerticalSm
+          _ => 8, // AppSpacing.paddingVerticalXs for h1-h6
         };
         return textHeight + padding;
 
       case 'code':
       case 'c':
-        // Measure the code content height + padding
+        // Measure the code content height + margin + padding
         final codeHeight =
             _measureTextHeight(block.content, AppTypography.codeTextStyle);
-        return codeHeight + 32; // Add padding from BloxRenderer
+        return codeHeight +
+            16; // AppSpacing.marginVerticalXs (4+4) + AppSpacing.paddingSm (8+8) = 16
 
       case 'quote':
       case 'q':
@@ -259,7 +217,8 @@ class LivePreviewModeLineNumbersWidget extends BaseLineNumbersWidget {
               .join(),
           AppTypography.editorTextStyle,
         );
-        return quoteHeight + 16; // Add padding from BloxRenderer
+        return quoteHeight +
+            16; // AppSpacing.marginVerticalXs (4+4) + AppSpacing.paddingSm (8+8) = 16
 
       case 'list':
         // Lists are handled separately in getLineHeights
@@ -270,7 +229,8 @@ class LivePreviewModeLineNumbersWidget extends BaseLineNumbersWidget {
         // Tables have header + data rows
         final rows = block.table?.rows.length ?? 0;
         final hasHeader = block.table?.header != null;
-        return baseLineHeight * (rows + (hasHeader ? 1 : 0)) + 16;
+        return baseLineHeight * (rows + (hasHeader ? 1 : 0)) +
+            8; // AppSpacing.paddingVerticalXs
 
       case 'image':
       case 'img':
@@ -279,31 +239,32 @@ class LivePreviewModeLineNumbersWidget extends BaseLineNumbersWidget {
       case 'math':
       case 'm':
         return _measureTextHeight(block.content, AppTypography.mathTextStyle) +
-            16;
+            16; // AppSpacing.marginVerticalXs (4+4) + AppSpacing.paddingSm (8+8) = 16
 
       default:
         return _measureTextHeight(
-          block.inlineElements
-              .map(
-                (e) => e.when(
-                  text: (content) => content,
-                  bold: (content) => content,
-                  italic: (content) => content,
-                  code: (content) => content,
-                  link: (text, url) => text,
-                  strikethrough: (content) => content,
-                  highlight: (content) => content,
-                  subscript: (content) => content,
-                  superscript: (content) => content,
-                  math: (content) => content,
-                  reference: (content) => content,
-                  footnote: (id, text) => '[$id]',
-                  custom: (elementType, attributes, content) => content,
-                ),
-              )
-              .join(),
-          AppTypography.editorTextStyle,
-        );
+              block.inlineElements
+                  .map(
+                    (e) => e.when(
+                      text: (content) => content,
+                      bold: (content) => content,
+                      italic: (content) => content,
+                      code: (content) => content,
+                      link: (text, url) => text,
+                      strikethrough: (content) => content,
+                      highlight: (content) => content,
+                      subscript: (content) => content,
+                      superscript: (content) => content,
+                      math: (content) => content,
+                      reference: (content) => content,
+                      footnote: (id, text) => '[$id]',
+                      custom: (elementType, attributes, content) => content,
+                    ),
+                  )
+                  .join(),
+              AppTypography.editorTextStyle,
+            ) +
+            8; // Default to paragraph padding
     }
   }
 
@@ -331,9 +292,113 @@ class LivePreviewModeLineNumbersWidget extends BaseLineNumbersWidget {
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       textDirection: TextDirection.ltr,
-    )..layout(maxWidth: maxWidth - width - 64); // Account for padding and width
+    )..layout(
+        maxWidth: maxWidth - width - 32,
+      ); // Account for BloxViewer horizontal padding (16+16)
 
     return textPainter.height;
+  }
+
+  double _getBlockTopPadding(BloxBlock block) {
+    // Calculate the top padding offset for line number alignment
+    // This matches the padding structure in BloxRenderer for each block type
+    switch (block.blockType.toLowerCase()) {
+      case 'paragraph':
+      case 'p':
+        // Paragraphs: padding 4px top
+        return 4;
+      case 'document':
+        // Document titles: padding 16px
+        return 16.0 + 15;
+      case 'section':
+        // Sections: padding 8px
+        return 8.0 + 15;
+      case 'h1':
+      case 'h2':
+      case 'h3':
+      case 'h4':
+      case 'h5':
+      case 'h6':
+        // Regular headings: padding 4px
+        return 4.0 + 10;
+      case 'code':
+      case 'c':
+        // Code blocks: margin 4px top
+        return 4;
+      case 'quote':
+      case 'q':
+        // Quote blocks: margin 4px top
+        return 4;
+      case 'list':
+        // Lists: padding 4px top
+        return 4;
+      case 'table':
+      case 'tbl':
+        // Tables: padding 4px top
+        return 4;
+      case 'image':
+      case 'img':
+        // Image blocks: padding 4px top
+        return 4;
+      case 'math':
+      case 'm':
+        // Math blocks: margin 4px top
+        return 4;
+      default:
+        // Default blocks (treated as paragraphs): padding 4px top
+        return 4;
+    }
+  }
+
+  double _getBlockBottomPadding(BloxBlock block) {
+    // Calculate the bottom padding for each block type
+    // This matches the padding structure in BloxRenderer for each block type
+    switch (block.blockType.toLowerCase()) {
+      case 'paragraph':
+      case 'p':
+        // Paragraphs: padding 4px bottom
+        return 4;
+      case 'document':
+        // Document titles: padding 16px bottom
+        return 16;
+      case 'section':
+        // Sections: padding 8px bottom
+        return 8;
+      case 'h1':
+      case 'h2':
+      case 'h3':
+      case 'h4':
+      case 'h5':
+      case 'h6':
+        // Regular headings: padding 4px bottom
+        return 4;
+      case 'code':
+      case 'c':
+        // Code blocks: margin 4px bottom
+        return 4;
+      case 'quote':
+      case 'q':
+        // Quote blocks: margin 4px bottom
+        return 4;
+      case 'list':
+        // Lists: padding 4px bottom
+        return 4;
+      case 'table':
+      case 'tbl':
+        // Tables: padding 4px bottom
+        return 4;
+      case 'image':
+      case 'img':
+        // Image blocks: padding 4px bottom
+        return 4;
+      case 'math':
+      case 'm':
+        // Math blocks: margin 4px bottom
+        return 4;
+      default:
+        // Default blocks (treated as paragraphs): padding 4px bottom
+        return 4;
+    }
   }
 
   double _measureTextHeightWithWidth(
