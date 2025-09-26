@@ -652,24 +652,22 @@ class _FileEditorState extends ConsumerState<FileEditor> {
 
   List<_EditorToolbarAction> _getToolbarActions() {
     return [
-      // Line numbers toggle only for non-Blox files
-      if (!_isBloxFile)
-        _EditorToolbarAction(
-          key: 'line_numbers',
-          icon: _showLineNumbers
-              ? Icons.format_list_numbered
-              : Icons.format_list_numbered_outlined,
-          tooltip: 'Toggle line numbers',
-          onPressed: () => setState(() => _showLineNumbers = !_showLineNumbers),
-        ),
-      // Minimap toggle only for non-Blox files
-      if (!_isBloxFile)
-        _EditorToolbarAction(
-          key: 'minimap',
-          icon: _showMinimap ? Icons.map : Icons.map_outlined,
-          tooltip: 'Toggle minimap',
-          onPressed: () => setState(() => _showMinimap = !_showMinimap),
-        ),
+      // Line numbers toggle
+      _EditorToolbarAction(
+        key: 'line_numbers',
+        icon: _showLineNumbers
+            ? Icons.format_list_numbered
+            : Icons.format_list_numbered_outlined,
+        tooltip: 'Toggle line numbers',
+        onPressed: () => setState(() => _showLineNumbers = !_showLineNumbers),
+      ),
+      // Minimap toggle
+      _EditorToolbarAction(
+        key: 'minimap',
+        icon: _showMinimap ? Icons.map : Icons.map_outlined,
+        tooltip: 'Toggle minimap',
+        onPressed: () => setState(() => _showMinimap = !_showMinimap),
+      ),
       _EditorToolbarAction(
         key: 'undo',
         icon: Icons.undo,

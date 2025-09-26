@@ -787,6 +787,35 @@ class _BloxEditorState extends ConsumerState<BloxEditor> {
             ), // Match editing mode padding
           ),
         ),
+
+        // Minimap
+        if (widget.showMinimap)
+          SizedBox(
+            width: 200,
+            child: MinimapWidget(
+              text: widget.controller.text,
+              scrollPosition: _previewScrollController.hasClients
+                  ? _previewScrollController.position.pixels
+                  : 0,
+              maxScrollExtent: _previewScrollController.hasClients
+                  ? _previewScrollController.position.maxScrollExtent
+                  : 0,
+              viewportHeight: _previewScrollController.hasClients
+                  ? _previewScrollController.position.viewportDimension
+                  : 0,
+              onScrollToPosition: (position) {
+                if (_previewScrollController.hasClients) {
+                  _previewScrollController.animateTo(
+                    position,
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                  );
+                }
+              },
+              isBloxFile: true,
+              showLineNumbers: widget.showLineNumbers,
+            ),
+          ),
       ],
     );
   }
@@ -848,6 +877,34 @@ class _BloxEditorState extends ConsumerState<BloxEditor> {
                   ), // Match editing mode padding
                 ),
               ),
+              // Minimap
+              if (widget.showMinimap)
+                SizedBox(
+                  width: 100, // Smaller width for side-by-side
+                  child: MinimapWidget(
+                    text: widget.controller.text,
+                    scrollPosition: _previewScrollController.hasClients
+                        ? _previewScrollController.position.pixels
+                        : 0,
+                    maxScrollExtent: _previewScrollController.hasClients
+                        ? _previewScrollController.position.maxScrollExtent
+                        : 0,
+                    viewportHeight: _previewScrollController.hasClients
+                        ? _previewScrollController.position.viewportDimension
+                        : 0,
+                    onScrollToPosition: (position) {
+                      if (_previewScrollController.hasClients) {
+                        _previewScrollController.animateTo(
+                          position,
+                          duration: const Duration(milliseconds: 200),
+                          curve: Curves.easeInOut,
+                        );
+                      }
+                    },
+                    isBloxFile: true,
+                    showLineNumbers: widget.showLineNumbers,
+                  ),
+                ),
             ],
           ),
         ),
